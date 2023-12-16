@@ -32,7 +32,6 @@ namespace CommonUtilities
 		[[nodiscard]] constexpr auto GetTranspose() const -> Matrix4x4;
 
 		[[nodiscard]] constexpr Vector3<T> GetTranslation() const;
-		[[nodiscard]] constexpr Vector3<T> GetRotation() const;
 		[[nodiscard]] constexpr Vector3<T> GetScale() const;
 
 		[[nodiscard]] constexpr auto Inverse() const -> Matrix4x4;
@@ -139,11 +138,6 @@ namespace CommonUtilities
 		return Vector3<T>(myMatrix[12], myMatrix[13], myMatrix[14]);
 	}
 	template<typename T>
-	constexpr Vector3<T> Matrix4x4<T>::GetRotation() const
-	{
-		return Vector3<T>();
-	}
-	template<typename T>
 	constexpr Vector3<T> Matrix4x4<T>::GetScale() const
 	{
 		return Vector3<T>
@@ -164,7 +158,9 @@ namespace CommonUtilities
 	{
 		const Vector3<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");
+
 		const Vector3<T> is = static_cast<T>(1) / s;
+		const Vector3<T> ip = -GetTranslation();
 
 		Matrix4x4 inverseMatrix
 		{
@@ -174,7 +170,7 @@ namespace CommonUtilities
 			0,				0,				0,				1
 		};
 
-		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(-GetTranslation()));
+		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(ip));
 
 		const Matrix4x4 scalingInverse =
 		{

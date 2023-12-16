@@ -211,7 +211,9 @@ namespace CommonUtilities
 	{
 		const Vector2<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && "Cannot divide by zero");
+
 		const Vector2<T> is = static_cast<T>(1) / s;
+		const Vector2<T> ip	= -GetTranslation();
 
 		Matrix3x3 inverseMatrix
 		{
@@ -220,7 +222,7 @@ namespace CommonUtilities
 			0,				0,				1
 		};
 
-		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(-GetTranslation()));
+		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(ip));
 
 		const Matrix3x3 scalingInverse =
 		{

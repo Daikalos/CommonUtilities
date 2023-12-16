@@ -17,6 +17,8 @@ namespace CommonUtilities
 	{
 	public:
 		constexpr Matrix3x3();
+		constexpr ~Matrix3x3();
+
 		constexpr Matrix3x3(
 			T a00, T a10, T a20,
 			T a01, T a11, T a21,
@@ -80,6 +82,9 @@ namespace CommonUtilities
 
 	template<typename T>
 	constexpr Matrix3x3<T>::Matrix3x3() = default;
+
+	template<typename T>
+	constexpr Matrix3x3<T>::~Matrix3x3() = default;
 
 	template<typename T>
 	constexpr Matrix3x3<T>::Matrix3x3(

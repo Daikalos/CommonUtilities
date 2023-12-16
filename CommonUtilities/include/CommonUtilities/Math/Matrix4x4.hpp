@@ -13,6 +13,8 @@ namespace CommonUtilities
 	{
 	public:
 		constexpr Matrix4x4();
+		constexpr ~Matrix4x4();
+
 		constexpr Matrix4x4(
 			T a00, T a10, T a20, T a30,
 			T a01, T a11, T a21, T a31,
@@ -73,6 +75,9 @@ namespace CommonUtilities
 
 	template<typename T>
 	constexpr Matrix4x4<T>::Matrix4x4() = default;
+
+	template<typename T>
+	constexpr Matrix4x4<T>::~Matrix4x4() = default;
 
 	template<typename T>
 	constexpr Matrix4x4<T>::Matrix4x4(

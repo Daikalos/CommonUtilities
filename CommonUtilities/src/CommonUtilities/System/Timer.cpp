@@ -19,17 +19,17 @@ float Timer::GetScaledTime() const noexcept			{ return myScaledTime; }
 float Timer::GetAlpha() const noexcept				{ return myAlpha; }
 long double Timer::GetTotalTime() const noexcept	{ return myTotalTime; }
 long double Timer::GetTotalRunTime() const noexcept { return myTotalRunTime; }
-int Timer::GetFPS() const noexcept					{ return (int)std::round(1.0f / GetRealDT()); }
-int Timer::GetFixedFPS() const noexcept				{ return myFixedFPS; }
+int Timer::GetFPS() const							{ return (int)std::round(1.0f / GetRealDT()); }
+int Timer::GetFixedFPS() const						{ return myFixedFPS; }
 
-void Timer::SetScaledTime(float value) noexcept
+void Timer::SetScaledTime(float aValue) noexcept
 {
-	myScaledTime = value;
+	myScaledTime = aValue;
 	myFixedDeltaTime = GetRealFixedDT() * GetScaledTime();
 }
-void Timer::SetAlpha(float value) noexcept
+void Timer::SetAlpha(float aValue) noexcept
 {
-	myAlpha = value;
+	myAlpha = aValue;
 }
 
 void Timer::Reset()

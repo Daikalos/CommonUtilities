@@ -1,6 +1,6 @@
 #include <CommonUtilities/Utility/StringUtils.h>
 
-namespace CommonUtilities::su
+namespace CommonUtilities
 {
 	std::string RemoveTrailingZeroes(std::string_view aStr)
 	{

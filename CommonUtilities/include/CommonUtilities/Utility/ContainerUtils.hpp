@@ -80,12 +80,7 @@ namespace CommonUtilities::ctr
 	{
 		assert(aIndex < aContainer.size());
 
-		// if popping last, no need to move item
-		if (aIndex != aContainer.size() - 1)
-		{
-			aContainer[aIndex] = std::move(aContainer.back());
-		}
-
+		std::swap(aContainer[aIndex], aContainer.back());
 		aContainer.pop_back();
 	}
 

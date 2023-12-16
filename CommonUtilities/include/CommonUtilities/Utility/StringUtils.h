@@ -5,7 +5,7 @@
 
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities::su
+namespace CommonUtilities
 {
 	NODISC COMMON_UTILITIES_API std::string RemoveTrailingZeroes(std::string_view aString);
 }

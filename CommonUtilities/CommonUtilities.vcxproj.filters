@@ -123,7 +123,7 @@
     <ClInclude Include="include\CommonUtilities\Math\PlaneVolume.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\Color.h">
+    <ClInclude Include="include\CommonUtilities\System\Color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Sphere.hpp">
@@ -154,6 +154,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\Event.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\EventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\IEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\EventID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\EventIdentifiers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -192,6 +207,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Math\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\System\EventID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

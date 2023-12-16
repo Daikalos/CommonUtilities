@@ -22,11 +22,12 @@ namespace CommonUtilities
 		NODISC float GetAlpha() const noexcept;
 		NODISC long double GetTotalTime() const noexcept;
 		NODISC long double GetTotalRunTime() const noexcept;
-		NODISC int GetFPS() const noexcept;
-		NODISC int GetFixedFPS() const noexcept;
 
-		void SetScaledTime(float value) noexcept;
-		void SetAlpha(float value) noexcept;
+		NODISC int GetFPS() const;
+		NODISC int GetFixedFPS() const;
+
+		void SetScaledTime(float aValue) noexcept;
+		void SetAlpha(float aValue) noexcept;
 
 		void Reset();
 		void Update();
@@ -47,7 +48,6 @@ namespace CommonUtilities
 		long double	myTotalTime				{0.0};	// total time in seconds the applicaton has ran
 		long double	myTotalRunTime			{0.0};	// total time the application has ran factoring in scaled time
 
-		int			myFPS					{0};
 		int			myFixedFPS				{60};
 	};
 }

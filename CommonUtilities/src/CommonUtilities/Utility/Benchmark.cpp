@@ -119,7 +119,7 @@ namespace CommonUtilities::bm
 
 			const auto print = [](auto aValue, int aPlaces)
 			{
-				return CommonUtilities::su::RemoveTrailingZeroes(std::to_string(CommonUtilities::au::SetPrecision(aValue, aPlaces)));
+				return CommonUtilities::RemoveTrailingZeroes(std::to_string(CommonUtilities::SetPrecision(aValue, aPlaces)));
 			};
 
 			{

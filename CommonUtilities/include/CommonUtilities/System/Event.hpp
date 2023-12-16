@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <future>
+#include <shared_mutex>
 
 #include <CommonUtilities/Config.h>
 
@@ -42,11 +43,11 @@ namespace CommonUtilities
 		evnt::IDType operator-=(const HandlerType& aHandler);
 		evnt::IDType operator-=(evnt::IDType aHandlerID) override;
 
-		NODISC std::size_t Count() const noexcept override;
-		NODISC bool IsEmpty() const noexcept override;
+		NODISC std::size_t Count() const override;
+		NODISC bool IsEmpty() const override;
 
 		void Reserve(std::size_t aSize) override;
-		void Clear() noexcept override;
+		void Clear() override;
 
 		evnt::IDType Add(const HandlerType& aHandler);
 		evnt::IDType Add(const typename HandlerType::FuncType& aHandler);
@@ -61,6 +62,7 @@ namespace CommonUtilities
 		using HandlerList = std::vector<HandlerType>;
 
 		HandlerList	myHandlers;
+		std::shared_mutex myMutex;
 	};
 
 	template<typename... Args>
@@ -71,27 +73,35 @@ namespace CommonUtilities
 
 	template<typename... Args>
 	inline Event<Args...>::Event(const Event& aOther)
-		: myHandlers(aOther.myHandlers)
 	{
-
+		std::shared_lock lock(aOther.myMutex);
+		myHandlers = aOther.myHandlers;
 	}
 	template<typename... Args>
 	inline Event<Args...>::Event(Event&& aOther)
-		: myHandlers(std::move(aOther.myHandlers))
 	{
-
+		std::scoped_lock lock(aOther.myMutex);
+		myHandlers = std::move(aOther.myHandlers);
 	}
 
 	template<typename... Args>
 	inline auto Event<Args...>::operator=(const Event& aOther) -> Event&
 	{
+		std::scoped_lock lock1(myMutex);
+		std::shared_lock lock2(aOther.myMutex);
+
 		myHandlers = aOther.myHandlers;
+
 		return *this;
 	}
 	template<typename... Args>
 	inline auto Event<Args...>::operator=(Event&& aOther) noexcept -> Event&
 	{
+		std::scoped_lock lock1(myMutex);
+		std::scoped_lock lock2(aOther.myMutex);
+
 		myHandlers = std::move(aOther.myHandlers);
+
 		return *this;
 	}
 
@@ -130,42 +140,54 @@ namespace CommonUtilities
 	}
 
 	template<typename... Args>
-	inline std::size_t Event<Args...>::Count() const noexcept
+	inline std::size_t Event<Args...>::Count() const
 	{
+		std::shared_lock lock(myMutex);
 		return myHandlers.size();
 	}
 	template<typename... Args>
-	inline bool Event<Args...>::IsEmpty() const noexcept
+	inline bool Event<Args...>::IsEmpty() const
 	{
+		std::shared_lock lock(myMutex);
 		return myHandlers.empty();
 	}
 	template<typename... Args>
 	inline void Event<Args...>::Reserve(std::size_t aSize)
 	{
+		std::scoped_lock lock(myMutex);
 		myHandlers.reserve(aSize);
 	}
 	template<typename... Args>
-	inline void Event<Args...>::Clear() noexcept
+	inline void Event<Args...>::Clear()
 	{
+		std::scoped_lock lock(myMutex);
 		myHandlers.clear();
 	}
 
 	template<typename... Args>
 	inline evnt::IDType Event<Args...>::Add(const HandlerType& aHandler)
 	{
+		std::scoped_lock lock(myMutex);
+
 		myHandlers.emplace_back(aHandler);
+
 		return aHandler.GetID();
 	}
 	template<typename... Args>
 	inline evnt::IDType Event<Args...>::Add(const typename HandlerType::FuncType& aHandler)
 	{
+		std::scoped_lock lock(myMutex);
+
 		myHandlers.emplace_back(aHandler);
+
 		return myHandlers.back().GetID();
 	}
 
 	template<typename... Args>
 	inline bool Event<Args...>::Remove(const HandlerType& aHandler)
 	{
+		std::scoped_lock lock(myMutex);
+
 		const auto it = std::find(myHandlers.begin(), myHandlers.end(), aHandler);
 
 		if (it == myHandlers.end())
@@ -178,6 +200,8 @@ namespace CommonUtilities
 	template<typename... Args>
 	inline bool Event<Args...>::RemoveID(evnt::IDType aHandlerID)
 	{
+		std::scoped_lock lock(myMutex);
+
 		const auto it = std::find_if(myHandlers.begin(), myHandlers.end(),
 			[aHandlerID](const HandlerType& aHandler)
 			{
@@ -195,6 +219,8 @@ namespace CommonUtilities
 	template<typename... Args>
 	inline void Event<Args...>::Call(Args... someParams) const
 	{
+		std::shared_lock lock(myMutex);
+
 		for (const auto& handler : myHandlers)
 		{
 			handler(someParams...);
@@ -203,12 +229,15 @@ namespace CommonUtilities
 	template<typename... Args>
 	inline std::future<void> Event<Args...>::CallAsync(Args... someParams) const
 	{
-		// TODO: this will likely not always work since user may pass arguments that are destroyed when out-of-scope, add some safety to it, or just let user decide
-
 		return std::async(std::launch::async, 
 			[this](Args... asyncParams)
 			{
-				Call(asyncParams...);
+				std::scoped_lock lock(myMutex);
+
+				for (const auto& handler : myHandlers)
+				{
+					handler(asyncParams...);
+				}
 			}, someParams...);
 	}
 }

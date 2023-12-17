@@ -6,14 +6,52 @@
 
 using namespace CommonUtilities;
 
+bool InputHandler::GetEnabled() const noexcept
+{
+	return myEnabled;
+}
+bool InputHandler::GetInFocus() const noexcept
+{
+	return myInFocus;
+}
+
 void InputHandler::SetEnabled(bool flag) noexcept
 {
 	myEnabled = flag;
 }
-
+void InputHandler::SetFocusAffectInput(bool aFlag)
+{
+	if (myFocusInput != aFlag)
+	{
+		myInFocus = true;
+		myFocusInput = aFlag;
+	}
+}
 void InputHandler::SetHeldThreshold(float value) noexcept
 {
 	myHeldThreshold = value;
+}
+
+bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+{
+	if (myFocusInput)
+	{
+		switch (aMessage)
+		{
+			case WM_SETFOCUS:
+			{
+				myInFocus = true;
+				return false;
+			}
+			case WM_KILLFOCUS:
+			{
+				myInFocus = false;
+				return false;
+			}
+		}
+	}
+	
+	return HandleEventImpl(aMessage, wParam, lParam);
 }
 
 namespace CommonUtilities::old

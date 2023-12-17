@@ -31,14 +31,12 @@ const Vector2i& MouseCursor::GetPosition() const
 }
 Vector2i MouseCursor::GetRelativePosition() const
 {
-	if (myHandle)
-	{
-		POINT point;
-		GetCursorPos(&point);
-		ScreenToClient(myHandle, &point);
-		return { point.x, point.y };
-	}
-	return Vector2i();
+	assert(myHandle != nullptr && "A handle is required for retrieving relative position");
+
+	POINT point;
+	GetCursorPos(&point);
+	ScreenToClient(myHandle, &point);
+	return { point.x, point.y };
 }
 
 const Vector2i& MouseCursor::GetMouseDelta() const
@@ -48,6 +46,8 @@ const Vector2i& MouseCursor::GetMouseDelta() const
 
 void MouseCursor::SetHandle(HWND aHandle)
 {
+	assert(aHandle != nullptr && "You provided a nullptr handle...");
+
 	myHandle = aHandle;
 
 	RAWINPUTDEVICE Rid[1];
@@ -64,12 +64,11 @@ void MouseCursor::SetPosition(const Vector2i& aPoint)
 }
 void MouseCursor::SetRelativePosition(const Vector2i& aPoint)
 {
-	if (myHandle)
-	{
-		POINT point { aPoint.x, aPoint.y };
-		ClientToScreen(myHandle, &point);
-		SetCursorPos(point.x, point.y);
-	}
+	assert(myHandle != nullptr && "A handle is required for setting relative position");
+
+	POINT point { aPoint.x, aPoint.y };
+	ClientToScreen(myHandle, &point);
+	SetCursorPos(point.x, point.y);
 }
 
 void MouseCursor::SetGrabbed(bool aGrabbed)
@@ -91,14 +90,17 @@ void MouseCursor::SetVisible(bool aState)
 
 void MouseCursor::Update()
 {
-	myPreviousPosition = myCurrentPosition;
-	myCurrentPosition = myTentativePosition;
+	if (!GetInFocus() || !GetEnabled())
+		return;
 
-	myMoveDelta = myTentativeMoveDelta;
-	myTentativeMoveDelta = { 0, 0 };
+	myPreviousPosition	= myCurrentPosition;
+	myCurrentPosition	= myTentativePosition;
+
+	myMoveDelta				= myTentativeMoveDelta;
+	myTentativeMoveDelta	= { 0, 0 };
 }
 
-bool MouseCursor::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool MouseCursor::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
@@ -147,13 +149,13 @@ bool MouseCursor::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		case WM_SETFOCUS:
 		{
 			GrabCursor(myIsGrabbed);
-			myEnabled = true;
+			SetVisible(myIsVisible);
 			return false;
 		}
 		case WM_KILLFOCUS:
 		{
 			GrabCursor(false);
-			myEnabled = false;
+			SetVisible(true);
 			return false;
 		}
 	}

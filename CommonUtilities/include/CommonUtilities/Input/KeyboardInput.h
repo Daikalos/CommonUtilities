@@ -21,7 +21,7 @@ namespace CommonUtilities
 		NODISC bool IsReleased(ButtonType aKey) const;
 
 		void Update() override;
-		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
 		bool SetTentativeState(WPARAM wParam, bool aState);

@@ -8,24 +8,24 @@ MouseInput::~MouseInput() = default;
 
 bool MouseInput::ScrollUp() const noexcept
 {
-    return myEnabled && myScrollDelta > myScrollThreshold;
+    return GetInFocus() && GetEnabled() && myScrollDelta > myScrollThreshold;
 }
 bool MouseInput::ScrollDown() const noexcept
 {
-	return myEnabled && myScrollDelta < -myScrollThreshold;
+	return GetInFocus() && GetEnabled() && myScrollDelta < -myScrollThreshold;
 }
 
 bool MouseInput::IsHeld(ButtonType aButton) const
 {
-    return myEnabled && myCurrentState[aButton];
+    return GetInFocus() && GetEnabled() && myCurrentState[aButton];
 }
 bool MouseInput::IsPressed(ButtonType aButton) const
 {
-	return myEnabled && myCurrentState[aButton] && !myPreviousState[aButton];
+	return GetInFocus() && GetEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
 }
 bool MouseInput::IsReleased(ButtonType aButton) const
 {
-	return myEnabled && !myCurrentState[aButton] && myPreviousState[aButton];
+	return GetInFocus() && GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
 void MouseInput::SetScrollThreshold(float aScrollThreshold)
@@ -35,7 +35,7 @@ void MouseInput::SetScrollThreshold(float aScrollThreshold)
 
 void MouseInput::Update()
 {
-	if (!myEnabled)
+	if (!GetInFocus() || !GetEnabled())
 		return;
 
 	myScrollDelta = myTentativeScrollDelta;
@@ -45,7 +45,7 @@ void MouseInput::Update()
 	myCurrentState = myTentativeState;
 }
 
-bool MouseInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
     switch (aMessage)
     {
@@ -88,16 +88,6 @@ bool MouseInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 			std::int16_t delta = static_cast<std::int16_t>(HIWORD(wParam)); // value between 0 and 120
 			myTentativeScrollDelta = static_cast<float>(delta) / 120.0f;
 			return true;
-		}
-		case WM_SETFOCUS:
-		{
-			myEnabled = true;
-			return false;
-		}
-		case WM_KILLFOCUS:
-		{
-			myEnabled = false;
-			return false;
 		}
     }
 

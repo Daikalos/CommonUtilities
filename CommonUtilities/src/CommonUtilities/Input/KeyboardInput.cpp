@@ -8,27 +8,27 @@ KeyboardInput::~KeyboardInput() = default;
 
 bool KeyboardInput::IsHeld(ButtonType aKey) const
 {
-	return myEnabled && myCurrentState[aKey];
+	return GetInFocus() && GetEnabled() && myCurrentState[aKey];
 }
 bool KeyboardInput::IsPressed(ButtonType aKey) const
 {
-	return myEnabled && myCurrentState[aKey] && !myPreviousState[aKey];
+	return GetInFocus() && GetEnabled() && myCurrentState[aKey] && !myPreviousState[aKey];
 }
 bool KeyboardInput::IsReleased(ButtonType aKey) const
 {
-	return myEnabled && !myCurrentState[aKey] && myPreviousState[aKey];
+	return GetInFocus() && GetEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
 }
 
 void KeyboardInput::Update()
 {	 
-	if (!myEnabled)
+	if (!GetInFocus() || !GetEnabled())
 		return;
 
 	myPreviousState = myCurrentState;
 	myCurrentState = myTentativeState;
 }	 
 	 
-bool KeyboardInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
@@ -41,16 +41,6 @@ bool KeyboardInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		case WM_KEYUP:
 		{
 			return SetTentativeState(wParam, false);
-		}
-		case WM_SETFOCUS:
-		{
-			myEnabled = true;
-			return false;
-		}
-		case WM_KILLFOCUS:
-		{
-			myEnabled = false;
-			return false;
 		}
 	}
 

@@ -8,7 +8,7 @@
 
 namespace CommonUtilities
 {
-	///	Base class for Keyboard, Mouse, and Joystick 
+	///	Base class for input types
 	/// 
 	class COMMON_UTILITIES_API InputHandler : private NonCopyable
 	{
@@ -16,23 +16,34 @@ namespace CommonUtilities
 		InputHandler() = default;
 		virtual ~InputHandler() = default;
 
+		NODISC bool GetEnabled() const noexcept;
+		NODISC bool GetInFocus() const noexcept;
+
 		/// Enable or disable the InputHandler, will cause all input to return false or 0.0f.
 		/// 
-		void SetEnabled(bool flag) noexcept;
+		void SetEnabled(bool aFlag) noexcept;
+
+		/// Enable or disable for focus to affect whether input gets enabled or disabled
+		/// 
+		void SetFocusAffectInput(bool aFlag);
 
 		///	Determine the threshold before the button/key is considered held
 		/// 
-		void SetHeldThreshold(float value) noexcept;
+		void SetHeldThreshold(float aValue) noexcept;
 
-		///	Always put Update before HandleEvent for input to work correctly
+		///	Put Update after HandleEvent for input to work correctly
 		/// 
 		virtual void Update() = 0;
 
-		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
+		NODISC bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	protected:
-		bool	myEnabled		{true};	// is always enabled initially
-		float	myHeldThreshold	{0.1f}; // threshold before button/key is considered held
+		virtual bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
+
+		bool	myEnabled			{true};		// is always enabled initially
+		bool	myInFocus			{true};
+		bool	myFocusInput		{true};		// focus affects input at start
+		float	myHeldThreshold		{0.1f};		// threshold before button/key is considered held
 	};
 
 	namespace old

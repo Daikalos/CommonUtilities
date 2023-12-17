@@ -31,7 +31,7 @@ namespace CommonUtilities
 		void SetVisible(bool aState);
 
 		void Update() override;
-		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
 		void GrabCursor(bool aGrabbed);

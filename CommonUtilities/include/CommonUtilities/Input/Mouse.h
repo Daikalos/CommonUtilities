@@ -19,6 +19,8 @@ namespace CommonUtilities::Mouse
         ButtonCount
     };
 
+    COMMON_UTILITIES_API NODISC Button VirtualKeyToCUButton(int aVirtualKey);
+    COMMON_UTILITIES_API NODISC int CUButtonToVirtualKey(Button aButton);
     COMMON_UTILITIES_API NODISC bool IsMouseButtonPressed(Button aButton);
 
     COMMON_UTILITIES_API NODISC POINT GetMousePosition();

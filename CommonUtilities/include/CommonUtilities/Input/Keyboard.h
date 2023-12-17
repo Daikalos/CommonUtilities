@@ -113,6 +113,7 @@ namespace CommonUtilities::Keyboard
 		KeyCount
 	};
 
+    COMMON_UTILITIES_API NODISC Key VirtualKeyToCUKey(int aVirtualKey);
     COMMON_UTILITIES_API NODISC int CUKeyToVirtualKey(Key aKey);
     COMMON_UTILITIES_API NODISC bool IsKeyPressed(Key aKey);
 }

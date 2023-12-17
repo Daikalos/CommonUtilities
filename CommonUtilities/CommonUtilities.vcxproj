@@ -204,6 +204,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CommonUtilities\Input\MouseCursor.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\InputHolder.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\MouseInput.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\KeyboardInput.cpp" />

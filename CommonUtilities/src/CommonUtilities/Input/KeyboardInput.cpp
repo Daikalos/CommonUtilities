@@ -2,6 +2,10 @@
 
 using namespace CommonUtilities;
 
+KeyboardInput::KeyboardInput() = default;
+
+KeyboardInput::~KeyboardInput() = default;
+
 bool KeyboardInput::IsHeld(ButtonType aKey) const
 {
 	return myEnabled && myCurrentState[aKey];
@@ -20,22 +24,51 @@ void KeyboardInput::Update()
 	if (!myEnabled)
 		return;
 
-	for (int i = 0; i < Keyboard::KeyCount; ++i)
-	{
-		myPreviousState[i] = myCurrentState[i];
-		myCurrentState[i] = Keyboard::IsKeyPressed(static_cast<Keyboard::Key>(i));
-	}
+	myPreviousState = myCurrentState;
+	myCurrentState = myTentativeState;
 }	 
 	 
-void KeyboardInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool KeyboardInput::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
-	case WM_SETFOCUS:
-
-		break;
-	case WM_KILLFOCUS:
-
-		break;
+		case WM_SYSKEYDOWN:
+		case WM_KEYDOWN:
+		{
+			return SetTentativeState(wParam, true);
+		}
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+		{
+			return SetTentativeState(wParam, false);
+		}
+		case WM_SETFOCUS:
+		{
+			myEnabled = true;
+			return false;
+		}
+		case WM_KILLFOCUS:
+		{
+			myEnabled = false;
+			return false;
+		}
 	}
+
+	return false;
+}
+
+bool KeyboardInput::SetTentativeState(WPARAM wParam, bool aState)
+{
+	Keyboard::Key key = Keyboard::VirtualKeyToCUKey(wParam);
+	if (key != Keyboard::None)
+	{
+		myTentativeState[key] = aState;
+		return true;
+	}
+	else
+	{
+		// keyboard does not support this key
+	}
+
+	return false;
 }

@@ -4,7 +4,7 @@
 
 using namespace CommonUtilities;
 
-Keyboard::Key VirtualKeyToCUKey(UINT aVirtualKey)
+Keyboard::Key Keyboard::VirtualKeyToCUKey(int aVirtualKey)
 {
     switch (aVirtualKey)
     {

@@ -1,28 +1,38 @@
 #include <CommonUtilities/Input/Mouse.h>
 
+#include <Windows.h>
+
 using namespace CommonUtilities;
+
+Mouse::Button Mouse::VirtualKeyToCUButton(int aVirtualKey)
+{
+    switch (aVirtualKey)
+    {
+        case VK_LBUTTON:    return Mouse::Left;
+        case VK_RBUTTON:    return Mouse::Right;
+        case VK_MBUTTON:    return Mouse::Middle;
+        case VK_XBUTTON1:   return Mouse::XButton1;
+        case VK_XBUTTON2:   return Mouse::XButton2;
+        default:            return Mouse::None;
+    }
+}
+
+int Mouse::CUButtonToVirtualKey(Button aButton)
+{
+    switch (aButton)
+    {
+        case Mouse::Left:       return GetSystemMetrics(SM_SWAPBUTTON) ? VK_RBUTTON : VK_LBUTTON;
+        case Mouse::Right:      return GetSystemMetrics(SM_SWAPBUTTON) ? VK_LBUTTON : VK_RBUTTON;
+        case Mouse::Middle:     return VK_MBUTTON;
+        case Mouse::XButton1:   return VK_XBUTTON1;
+        case Mouse::XButton2:   return VK_XBUTTON2;
+        default:                return 0;
+    }
+}
 
 bool Mouse::IsMouseButtonPressed(Mouse::Button aButton)
 {
-    int virtualKey = 0;
-    switch (aButton)
-    {
-        case Mouse::Left:
-            virtualKey = GetSystemMetrics(SM_SWAPBUTTON) ? VK_RBUTTON : VK_LBUTTON;
-            break;
-        case Mouse::Right:
-            virtualKey = GetSystemMetrics(SM_SWAPBUTTON) ? VK_LBUTTON : VK_RBUTTON;
-            break;
-        case Mouse::Middle:
-            virtualKey = VK_MBUTTON;
-            break;
-        case Mouse::XButton1:
-            virtualKey = VK_XBUTTON1;
-            break;
-        case Mouse::XButton2:
-            virtualKey = VK_XBUTTON2;
-            break;
-    }
+    int virtualKey = CUButtonToVirtualKey(aButton);
     return (GetAsyncKeyState(virtualKey) & 0x8000) != 0;
 }
 

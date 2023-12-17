@@ -13,18 +13,21 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Keyboard::Key;
 
-		KeyboardInput() = default;
-		~KeyboardInput() = default;
+		KeyboardInput();
+		~KeyboardInput();
 
 		NODISC bool IsHeld(ButtonType aKey) const;
 		NODISC bool IsPressed(ButtonType aKey) const;
 		NODISC bool IsReleased(ButtonType aKey) const;
 
 		void Update() override;
-		void HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
+		bool SetTentativeState(WPARAM wParam, bool aState);
+
 		std::array<bool, Keyboard::KeyCount> myCurrentState		= {false};
 		std::array<bool, Keyboard::KeyCount> myPreviousState	= {false};
+		std::array<bool, Keyboard::KeyCount> myTentativeState	= {false};
 	};
 }

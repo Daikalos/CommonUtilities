@@ -21,11 +21,15 @@ namespace CommonUtilities
 		const MouseInput& Mouse() const noexcept;
 		MouseInput& Mouse() noexcept;
 
+		const MouseCursor& Cursor() const noexcept;
+		MouseCursor& Cursor() noexcept;
+
 		void Update();
-		void HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
+		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:
 		KeyboardInput	myKeyboard;
 		MouseInput		myMouse;
+		MouseCursor		myCursor;
 	};
 }

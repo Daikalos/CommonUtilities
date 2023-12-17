@@ -8,14 +8,28 @@ KeyboardInput& InputHolder::Keyboard() noexcept             { return myKeyboard;
 const MouseInput& InputHolder::Mouse() const noexcept		{ return myMouse; }
 MouseInput& InputHolder::Mouse() noexcept					{ return myMouse; }
 
+const MouseCursor& InputHolder::Cursor() const noexcept		{ return myCursor; }
+MouseCursor& InputHolder::Cursor() noexcept					{ return myCursor; }
+
 void InputHolder::Update()
 {
 	myKeyboard.Update();
 	myMouse.Update();
+	myCursor.Update();
 }
 
-void InputHolder::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool InputHolder::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
-	myKeyboard.HandleEvent(aMessage, wParam, lParam);
-	myMouse.HandleEvent(aMessage, wParam, lParam);
+	if (myKeyboard.HandleEvent(aMessage, wParam, lParam))
+	{
+		return true;
+	}
+	if (myMouse.HandleEvent(aMessage, wParam, lParam))
+	{
+		return true;
+	}
+	if (myCursor.HandleEvent(aMessage, wParam, lParam))
+	{
+		return true;
+	}
 }

@@ -13,8 +13,8 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Mouse::Button;
 
-		MouseInput() = default;
-		~MouseInput() = default;
+		MouseInput();
+		~MouseInput();
 
 		NODISC bool ScrollUp() const noexcept;
 		NODISC bool ScrollDown() const noexcept;
@@ -23,14 +23,20 @@ namespace CommonUtilities
 		NODISC bool IsPressed(ButtonType aButton) const;
 		NODISC bool IsReleased(ButtonType aButton) const;
 
+		void SetScrollThreshold(float aScrollThreshold);
+
 		void Update() override;
-		void HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
-		float myScrollDelta		{0.0f};
-		float myScrollThreshold {0.01f};
+		bool SetTentativeState(WPARAM wParam, bool aState);
+
+		float myScrollDelta				{0.0f};
+		float myTentativeScrollDelta	{0.0f};
+		float myScrollThreshold			{0.01f};
 
 		std::array<bool, Mouse::ButtonCount> myCurrentState		= {false};
 		std::array<bool, Mouse::ButtonCount> myPreviousState	= {false};
+		std::array<bool, Mouse::ButtonCount> myTentativeState	= {false};
 	};
 }

@@ -28,7 +28,7 @@ namespace CommonUtilities
 		/// 
 		virtual void Update() = 0;
 
-		virtual void HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
+		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
 
 	protected:
 		bool	myEnabled		{true};	// is always enabled initially

@@ -29,8 +29,8 @@ namespace CommonUtilities
 		auto GetID() const noexcept -> evnt::IDType;
 
 	private:
-		FunctionType	myFunc;
-		evnt::IDType	myID {NULL};
+		FunctionType myFunc;
+		evnt::IDType myID {NULL};
 
 		static evnt::AtomicID locIDCounter;
 	};

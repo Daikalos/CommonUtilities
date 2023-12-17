@@ -56,14 +56,16 @@ namespace CommonUtilities
 	template<typename Bind, typename Reg>
 	CONSTEXPR Reg& Binds<Bind, Reg>::At(const Bind& aBind)
 	{
-		return const_cast<Reg&>(std::as_const(*this).At(nameaBind);;
+		return const_cast<Reg&>(std::as_const(*this).At(aBind));
 	}
 	template<typename Bind, typename Reg>
 	CONSTEXPR const Reg& Binds<Bind, Reg>::At(const Bind& aBind) const
 	{
 		const auto it = myBinds.find(aBind);
 		if (it == myBinds.end())
+		{
 			throw std::runtime_error("Bind could not be found");
+		}
 
 		return it->second;
 	}
@@ -79,7 +81,9 @@ namespace CommonUtilities
 	{
 		const auto it = myBinds.find(aBind);
 		if (it == myBinds.end())
+		{
 			throw std::runtime_error("Bind could not be found");
+		}
 
 		myBinds.erase(it);
 	}

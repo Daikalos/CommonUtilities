@@ -93,11 +93,11 @@ void MouseCursor::Update()
 	if (!GetInFocus() || !GetEnabled())
 		return;
 
-	myPreviousPosition	= myCurrentPosition;
-	myCurrentPosition	= myTentativePosition;
+	myPreviousPosition = myCurrentPosition;
+	myCurrentPosition = myTentativePosition;
 
-	myMoveDelta				= myTentativeMoveDelta;
-	myTentativeMoveDelta	= { 0, 0 };
+	myMoveDelta	= myTentativeMoveDelta;
+	myTentativeMoveDelta = { 0, 0 };
 }
 
 bool MouseCursor::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
@@ -116,20 +116,25 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_INPUT:
 		{
-			UINT dwSize = sizeof(RAWINPUT);
-			static BYTE lpb[sizeof(RAWINPUT)];
-
-			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
-
-			RAWINPUT* raw = (RAWINPUT*)lpb;
-
-			if (raw->header.dwType == RIM_TYPEMOUSE)
+			if (myHandle != nullptr)
 			{
-				myTentativeMoveDelta.x += raw->data.mouse.lLastX;
-				myTentativeMoveDelta.y += raw->data.mouse.lLastY;
+				UINT dwSize = sizeof(RAWINPUT);
+				static BYTE lpb[sizeof(RAWINPUT)];
+
+				GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+
+				RAWINPUT* raw = (RAWINPUT*)lpb;
+
+				if (raw->header.dwType == RIM_TYPEMOUSE)
+				{
+					myTentativeMoveDelta.x += raw->data.mouse.lLastX;
+					myTentativeMoveDelta.y += raw->data.mouse.lLastY;
+				}
+
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 		case WM_SIZE:
 		{

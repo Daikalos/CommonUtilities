@@ -2,10 +2,10 @@
 
 using namespace CommonUtilities;
 
-ThreadPool::ThreadPool(std::size_t size) : myShutdown(false)
+ThreadPool::ThreadPool(std::size_t aThreadCount) : myShutdown(false)
 {
-    myThreads.reserve(size);
-    for (std::size_t i = 0; i < size; ++i)
+    myThreads.reserve(aThreadCount);
+    for (std::size_t i = 0; i < aThreadCount; ++i)
     {
         myThreads.emplace_back(&ThreadPool::ThreadLoop, this);
     }
@@ -26,10 +26,11 @@ void ThreadPool::ThreadLoop()
         std::function<void()> task;
         {
             std::unique_lock<std::mutex> lock(myMutex);
+
             myCV.wait(lock, [this]
-                {
-                    return !myTasks.empty() || myShutdown;
-                });
+            {
+                return !myTasks.empty() || myShutdown;
+            });
 
             if (myTasks.empty() && myShutdown)
                 break;

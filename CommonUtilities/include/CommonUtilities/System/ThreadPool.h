@@ -15,7 +15,7 @@ namespace CommonUtilities
     class ThreadPool : private NonCopyable
     {
     public:
-        explicit ThreadPool(std::size_t size);
+        explicit ThreadPool(std::size_t aThreadCount);
         ~ThreadPool();
 
         template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)
@@ -24,11 +24,11 @@ namespace CommonUtilities
     private:
         void ThreadLoop();
 
-        std::vector<std::jthread> myThreads;
-        std::queue<std::function<void()>> myTasks;
-        std::condition_variable myCV;
-        std::mutex myMutex; // sync access to task queue
-        bool myShutdown;
+        std::vector<std::jthread>           myThreads;
+        std::queue<std::function<void()>>   myTasks;
+        std::condition_variable             myCV;
+        std::mutex                          myMutex; // sync access to task queue
+        bool                                myShutdown;
     };
 
     template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)

@@ -12,7 +12,7 @@ bool InputHandler::GetEnabled() const noexcept
 }
 bool InputHandler::GetInFocus() const noexcept
 {
-	return myInFocus;
+	return (myInFocus || !myFocusInput);
 }
 
 void InputHandler::SetEnabled(bool flag) noexcept
@@ -21,11 +21,7 @@ void InputHandler::SetEnabled(bool flag) noexcept
 }
 void InputHandler::SetFocusAffectInput(bool aFlag)
 {
-	if (myFocusInput != aFlag)
-	{
-		myInFocus = true;
-		myFocusInput = aFlag;
-	}
+	myFocusInput = aFlag;
 }
 void InputHandler::SetHeldThreshold(float value) noexcept
 {
@@ -34,20 +30,17 @@ void InputHandler::SetHeldThreshold(float value) noexcept
 
 bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
-	if (myFocusInput)
+	switch (aMessage)
 	{
-		switch (aMessage)
+		case WM_SETFOCUS:
 		{
-			case WM_SETFOCUS:
-			{
-				myInFocus = true;
-				return false;
-			}
-			case WM_KILLFOCUS:
-			{
-				myInFocus = false;
-				return false;
-			}
+			myInFocus = true;
+			return false;
+		}
+		case WM_KILLFOCUS:
+		{
+			myInFocus = false;
+			return false;
 		}
 	}
 	

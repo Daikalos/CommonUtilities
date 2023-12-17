@@ -15,17 +15,19 @@ namespace CommonUtilities
 		InputHolder() = default;
 		~InputHolder() = default;
 
-		const KeyboardInput& Keyboard() const noexcept;
-		KeyboardInput& Keyboard() noexcept;
+		NODISC const KeyboardInput& Keyboard() const noexcept;
+		NODISC KeyboardInput& Keyboard() noexcept;
 
-		const MouseInput& Mouse() const noexcept;
-		MouseInput& Mouse() noexcept;
+		NODISC const MouseInput& Mouse() const noexcept;
+		NODISC MouseInput& Mouse() noexcept;
 
-		const MouseCursor& Cursor() const noexcept;
-		MouseCursor& Cursor() noexcept;
+		NODISC const MouseCursor& Cursor() const noexcept;
+		NODISC MouseCursor& Cursor() noexcept;
+
+		void SetEnabled(bool aFlag);
 
 		void Update();
-		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
+		NODISC bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:
 		KeyboardInput	myKeyboard;

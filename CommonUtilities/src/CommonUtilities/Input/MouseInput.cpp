@@ -85,8 +85,8 @@ bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		}
         case WM_MOUSEWHEEL:
 		{
-			std::int16_t delta = static_cast<std::int16_t>(HIWORD(wParam)); // value between 0 and 120
-			myTentativeScrollDelta = static_cast<float>(delta) / 120.0f;
+			std::int16_t delta = (std::int16_t)HIWORD(wParam); // value between 0 and 120
+			myTentativeScrollDelta = (float)delta / 120.0f;
 			return true;
 		}
     }

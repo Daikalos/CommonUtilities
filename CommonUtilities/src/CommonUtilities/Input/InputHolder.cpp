@@ -11,6 +11,13 @@ MouseInput& InputHolder::Mouse() noexcept					{ return myMouse; }
 const MouseCursor& InputHolder::Cursor() const noexcept		{ return myCursor; }
 MouseCursor& InputHolder::Cursor() noexcept					{ return myCursor; }
 
+void InputHolder::SetEnabled(bool aFlag)
+{
+	myKeyboard.SetEnabled(aFlag);
+	myMouse.SetEnabled(aFlag);
+	myCursor.SetEnabled(aFlag);
+}
+
 void InputHolder::Update()
 {
 	myKeyboard.Update();

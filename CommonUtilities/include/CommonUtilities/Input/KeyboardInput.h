@@ -21,10 +21,11 @@ namespace CommonUtilities
 		NODISC bool IsReleased(ButtonType aKey) const;
 
 		void Update() override;
-		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
-		bool SetTentativeState(WPARAM wParam, bool aState);
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+
+		NODISC bool SetTentativeState(WPARAM wParam, bool aState);
 
 		std::array<bool, Keyboard::KeyCount> myCurrentState		= {false};
 		std::array<bool, Keyboard::KeyCount> myPreviousState	= {false};

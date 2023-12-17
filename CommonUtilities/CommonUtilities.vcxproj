@@ -153,7 +153,10 @@
     <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Game\BaseEntity.hpp" />
+    <ClInclude Include="include\CommonUtilities\Input\Binds.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Joystick.h" />
+    <ClInclude Include="include\CommonUtilities\Input\KeyboardBindable.hpp" />
+    <ClInclude Include="include\CommonUtilities\Input\MouseBindable.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\AABB3D.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Intersection.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Line.hpp" />

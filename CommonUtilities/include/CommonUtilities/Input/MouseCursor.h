@@ -14,13 +14,13 @@ namespace CommonUtilities
 
 		MouseCursor(HWND aHandle);
 
-		bool GetGrabbed() const;
-		bool GetVisible() const;
+		NODISC bool GetGrabbed() const;
+		NODISC bool GetVisible() const;
 
-		const Vector2i& GetPosition() const;
-		Vector2i GetRelativePosition() const;
+		NODISC const Vector2i& GetPosition() const;
+		NODISC Vector2i GetRelativePosition() const;
 
-		const Vector2i& GetMouseDelta() const;
+		NODISC const Vector2i& GetMouseDelta() const;
 
 		void SetHandle(HWND aHandle);
 
@@ -31,9 +31,10 @@ namespace CommonUtilities
 		void SetVisible(bool aState);
 
 		void Update() override;
-		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+
 		void GrabCursor(bool aGrabbed);
 
 		HWND		myHandle	{nullptr};

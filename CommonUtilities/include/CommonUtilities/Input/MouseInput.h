@@ -26,10 +26,11 @@ namespace CommonUtilities
 		void SetScrollThreshold(float aScrollThreshold);
 
 		void Update() override;
-		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 	private:
-		bool SetTentativeState(WPARAM wParam, bool aState);
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
+
+		NODISC bool SetTentativeState(WPARAM wParam, bool aState);
 
 		float myScrollDelta				{0.0f};
 		float myTentativeScrollDelta	{0.0f};

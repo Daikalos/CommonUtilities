@@ -180,6 +180,7 @@
     <ClInclude Include="include\CommonUtilities\Input\Mouse.h" />
     <ClInclude Include="include\CommonUtilities\Input\MouseCursor.h" />
     <ClInclude Include="include\CommonUtilities\Input\MouseInput.h" />
+    <ClInclude Include="include\CommonUtilities\Structures\PriorityQueue.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\SmallVector.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\StaticVector.hpp" />
     <ClInclude Include="include\CommonUtilities\System\Color.hpp" />

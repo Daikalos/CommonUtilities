@@ -10,8 +10,6 @@
 
 #include <CommonUtilities/Config.h>
 
-#include <iostream>
-
 namespace CommonUtilities
 {
 	template<typename T, bool Reverse>

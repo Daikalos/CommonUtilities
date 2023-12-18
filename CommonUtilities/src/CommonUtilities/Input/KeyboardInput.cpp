@@ -28,7 +28,7 @@ void KeyboardInput::Update()
 	myCurrentState = myTentativeState;
 }	 
 	 
-bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
 	switch (aMessage)
 	{

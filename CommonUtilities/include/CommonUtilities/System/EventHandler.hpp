@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 #include "EventIdentifiers.h"
 
@@ -26,7 +27,7 @@ namespace CommonUtilities
 		bool operator==(const EventHandler& aOther) const;
 		bool operator!=(const EventHandler& aOther) const;
 
-		auto GetID() const noexcept -> evnt::IDType;
+		evnt::IDType GetID() const noexcept;
 
 	private:
 		FunctionType myFunc;
@@ -105,7 +106,7 @@ namespace CommonUtilities
 	}
 
 	template<typename ...Args>
-	inline auto EventHandler<Args...>::GetID() const noexcept -> evnt::IDType
+	inline evnt::IDType EventHandler<Args...>::GetID() const noexcept
 	{
 		return myID;
 	}

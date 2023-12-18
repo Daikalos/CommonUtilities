@@ -207,14 +207,14 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR void Matrix3x3<T>::SetScale(const Vector2<T>& aScale)
 	{
-		Vector2<T> row1{ myMatrix[0], myMatrix[1] };
-		Vector2<T> row2{ myMatrix[3], myMatrix[4] };
+		Vector2<T> scaleX{ myMatrix[0], myMatrix[1] };
+		Vector2<T> scaleY{ myMatrix[3], myMatrix[4] };
 
-		row1.Normalize(aScale.x);
-		row2.Normalize(aScale.y);
+		scaleX.Normalize(aScale.x);
+		scaleY.Normalize(aScale.y);
 
-		myMatrix[0] = row1.x; myMatrix[1] = row1.y;
-		myMatrix[3] = row2.x; myMatrix[4] = row2.y;
+		myMatrix[0] = scaleX.x; myMatrix[1] = scaleX.y;
+		myMatrix[3] = scaleY.x; myMatrix[4] = scaleY.y;
 	}
 
 	template<typename T>

@@ -41,6 +41,10 @@ namespace CommonUtilities
 		NODISC CONSTEXPR Vector3<T> GetUp() const;
 		NODISC CONSTEXPR Vector3<T> GetRight() const;
 
+		CONSTEXPR void SetTranslation(const Vector3<T>& aTranslation);
+		CONSTEXPR void SetRotation(const Vector3<T>& aRotation);
+		CONSTEXPR void SetScale(const Vector3<T>& aScale);
+
 		NODISC CONSTEXPR auto Inverse() const -> Matrix4x4;
 		NODISC CONSTEXPR auto FastInverse() const -> Matrix4x4;
 
@@ -185,6 +189,34 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	CONSTEXPR void Matrix4x4<T>::SetTranslation(const Vector3<T>& aTranslation)
+	{
+		myMatrix[12] = aTranslation.x;
+		myMatrix[13] = aTranslation.y;
+		myMatrix[14] = aTranslation.z;
+	}
+	template<typename T>
+	CONSTEXPR void Matrix4x4<T>::SetRotation(const Vector3<T>& aRotation)
+	{
+		*this = CreateTRS(GetTranslation(), aRotation, GetScale());
+	}
+	template<typename T>
+	CONSTEXPR void Matrix4x4<T>::SetScale(const Vector3<T>& aScale)
+	{
+		Vector2<T> scaleX{ myMatrix[0], myMatrix[1], myMatrix[2 ] };
+		Vector2<T> scaleY{ myMatrix[3], myMatrix[4], myMatrix[6 ] };
+		Vector2<T> scaleZ{ myMatrix[3], myMatrix[4], myMatrix[10] };
+
+		scaleX.Normalize(aScale.x);
+		scaleY.Normalize(aScale.y);
+		scaleZ.Normalize(aScale.z);
+
+		myMatrix[0] = scaleX.x; myMatrix[1] = scaleX.y; myMatrix[2 ] = scaleX.z;
+		myMatrix[4] = scaleY.x; myMatrix[5] = scaleY.y; myMatrix[6 ] = scaleY.z;
+		myMatrix[8] = scaleZ.x; myMatrix[9] = scaleZ.y; myMatrix[10] = scaleZ.z;
+	}
+
+	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::Inverse() const -> Matrix4x4
 	{
 		return Matrix4x4();
@@ -231,7 +263,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::Scale(const Vector3<T>& someFactors) -> Matrix4x4&
 	{
-		const Matrix4x4<T> scaling
+		const Matrix4x4 scaling
 		{
 			someFactors.x,	0,				0,				0,
 			0,				someFactors.y,	0,				0,
@@ -341,15 +373,9 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4
 	{
-		const Matrix4x4 translationMatrix
-		{
-			1,				0,				0,				0,
-			0,				1,				0,				0,
-			0,				0,				1,				0,
-			aPosition.x,	aPosition.y, 	aPosition.z,	1
-		};
+		Matrix4x4 trsMatrix = CreateRotationAroundX(aRotation.x).Combine(CreateRotationAroundY(aRotation.y)).Combine(CreateRotationAroundZ(aRotation.z));
 
-		const Matrix4x4 rotationMatrix = CreateRotationAroundX(aRotation.x) * CreateRotationAroundY(aRotation.y) * CreateRotationAroundZ(aRotation.z);
+		trsMatrix.SetTranslation(aPosition);
 
 		const Matrix4x4 scalingMatrix
 		{
@@ -359,7 +385,9 @@ namespace CommonUtilities
 			0,			0,			0,			1
 		};
 
-		return translationMatrix * rotationMatrix * scalingMatrix;
+		trsMatrix.Combine(scalingMatrix);
+
+		return trsMatrix;
 	}
 
 	template<typename T>

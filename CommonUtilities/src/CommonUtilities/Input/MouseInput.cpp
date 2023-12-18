@@ -96,7 +96,7 @@ bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 
 bool MouseInput::SetTentativeState(WPARAM wParam, bool aState)
 {
-	Mouse::Button button = Mouse::VirtualKeyToCUButton(wParam);
+	Mouse::Button button = Mouse::VirtualKeyToCUButton((int)wParam);
 	if (button != Mouse::Button::None)
 	{
 		myTentativeState[button] = aState;

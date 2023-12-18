@@ -49,7 +49,7 @@ bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 
 bool KeyboardInput::SetTentativeState(WPARAM wParam, bool aState)
 {
-	Keyboard::Key key = Keyboard::VirtualKeyToCUKey(wParam);
+	Keyboard::Key key = Keyboard::VirtualKeyToCUKey((int)wParam);
 	if (key != Keyboard::None)
 	{
 		myTentativeState[key] = aState;

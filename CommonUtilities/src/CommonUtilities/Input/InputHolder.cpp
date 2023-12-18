@@ -39,4 +39,5 @@ bool InputHolder::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 	{
 		return true;
 	}
+	return false;
 }

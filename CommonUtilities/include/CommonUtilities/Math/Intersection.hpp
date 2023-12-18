@@ -13,6 +13,18 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
+
+	template<typename T>
+	inline bool IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D, Vector3<T>& outIntersectionPoint);
+
+	template<typename T>
+	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay);
+
+	template<typename T>
+	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+
+	template<typename T>
 	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
 	{
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
@@ -93,101 +105,6 @@ namespace CommonUtilities
 	template<typename T>
 	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
 	{
-		//if (aAABB3D.IsInside(aRay.GetOrigin()))
-		//{
-		//	return true;
-		//}
-
-		//const std::array<Plane<T>, 6> planes
-		//{
-		//	Plane<T>(aAABB3D.GetMin(), Vector3<T>(-1,  0,  0)),
-		//	Plane<T>(aAABB3D.GetMin(), Vector3<T>( 0, -1,  0)),
-		//	Plane<T>(aAABB3D.GetMin(), Vector3<T>( 0,  0, -1)),
-		//	Plane<T>(aAABB3D.GetMax(), Vector3<T>( 1,  0,  0)),
-		//	Plane<T>(aAABB3D.GetMax(), Vector3<T>( 0,  1,  0)),
-		//	Plane<T>(aAABB3D.GetMax(), Vector3<T>( 0,  0,  1)),
-		//};
-
-		//for (const Plane<T>& plane : planes)
-		//{
-		//	Vector3<T> intersection;
-		//	if (IntersectionPlaneRay(plane, aRay, intersection))
-		//	{
-		//		if (aAABB3D.IsInside(intersection))
-		//		{
-		//			return true;
-		//		}
-		//	}
-		//}
-
-		//bool inside = true;
-
-		//T xt{};
-		//if (aRay.GetOrigin().x < aAABB3D.GetMin().x)
-		//{
-		//	xt = aAABB3D.GetMin().x - aRay.GetOrigin().x;
-		//	inside = false;
-		//}
-		//else if (aRay.GetOrigin().x > aAABB3D.GetMax().x)
-		//{
-		//	xt = aAABB3D.GetMax().x - aRay.GetOrigin().x;
-		//	inside = false;
-		//}
-		//else
-		//{
-		//	xt = -1;
-		//}
-
-		//T yt{};
-		//if (aRay.GetOrigin().y < aAABB3D.GetMin().y)
-		//{
-		//	yt = aAABB3D.GetMin().y - aRay.GetOrigin().y;
-		//	inside = false;
-		//}
-		//else if (aRay.GetOrigin().y > aAABB3D.GetMax().y)
-		//{
-		//	yt = aAABB3D.GetMax().y - aRay.GetOrigin().y;
-		//	inside = false;
-		//}
-		//else
-		//{
-		//	yt = -1;
-		//}
-
-		//T zt{};
-		//if (aRay.GetOrigin().z < aAABB3D.GetMin().z)
-		//{
-		//	zt = aAABB3D.GetMin().z - aRay.GetOrigin().z;
-		//	inside = false;
-		//}
-		//else if (aRay.GetOrigin().z > aAABB3D.GetMax().z)
-		//{
-		//	zt = aAABB3D.GetMax().z - aRay.GetOrigin().z;
-		//	inside = false;
-		//}
-		//else
-		//{
-		//	zt = -1;
-		//}
-
-		//if (xt != 0 && aRay.GetDirection().x != 0)
-		//{
-		//	xt /= aRay.GetDirection().x;
-		//}
-		//if (yt != 0 && aRay.GetDirection().y != 0)
-		//{
-		//	yt /= aRay.GetDirection().y;
-		//}
-		//if (zt != 0 && aRay.GetDirection().z != 0)
-		//{
-		//	zt /= aRay.GetDirection().z;
-		//}
-
-		//if (inside)
-		//{
-		//	return true;
-		//}
-
 		if (aAABB3D.IsInside(aRay.GetOrigin()))
 		{
 			// for now have this check at start

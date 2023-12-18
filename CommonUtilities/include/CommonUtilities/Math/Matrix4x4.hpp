@@ -6,59 +6,63 @@
 #include "Vector3.hpp"
 #include "Vector4.hpp"
 
+#include <CommonUtilities/Config.h>
+
 namespace CommonUtilities
 {
 	template<typename T>
 	class Matrix4x4
 	{
 	public:
-		constexpr Matrix4x4();
-		constexpr ~Matrix4x4();
+		CONSTEXPR Matrix4x4();
+		CONSTEXPR ~Matrix4x4();
 
-		constexpr Matrix4x4(
+		CONSTEXPR Matrix4x4(
 			T a00, T a10, T a20, T a30,
 			T a01, T a11, T a21, T a31,
 			T a02, T a12, T a22, T a32,
 			T a03, T a13, T a23, T a33);
 
-		[[nodiscard]] constexpr T& operator[](int aIndex);
-		[[nodiscard]] constexpr const T& operator[](int aIndex) const;
+		NODISC CONSTEXPR T& operator[](int aIndex);
+		NODISC CONSTEXPR const T& operator[](int aIndex) const;
 
-		[[nodiscard]] constexpr T& operator()(int aRow, int aColumn);
-		[[nodiscard]] constexpr const T& operator()(int aRow, int aColumn) const;
+		NODISC CONSTEXPR T& operator()(int aRow, int aColumn);
+		NODISC CONSTEXPR const T& operator()(int aRow, int aColumn) const;
 
-		[[nodiscard]] constexpr const T* GetData() const noexcept;
+		NODISC CONSTEXPR const T* GetData() const noexcept;
 
-		[[nodiscard]] constexpr auto GetTranspose() const -> Matrix4x4;
+		NODISC CONSTEXPR auto GetTranspose() const -> Matrix4x4;
 
-		[[nodiscard]] constexpr Vector3<T> GetTranslation() const;
-		[[nodiscard]] constexpr Vector3<T> GetScale() const;
+		NODISC CONSTEXPR Vector3<T> GetTranslation() const;
+		NODISC CONSTEXPR Vector3<T> GetScale() const;
 
-		[[nodiscard]] constexpr auto Inverse() const -> Matrix4x4;
-		[[nodiscard]] constexpr auto FastInverse() const -> Matrix4x4;
+		NODISC CONSTEXPR auto Inverse() const -> Matrix4x4;
+		NODISC CONSTEXPR auto FastInverse() const -> Matrix4x4;
 
-		constexpr auto Translate(const Vector3<T>& aTranslation) -> Matrix4x4&;
-		constexpr auto Scale(const Vector3<T>& someFactors) -> Matrix4x4&;
-		constexpr auto Rotate(T aRoll, T aYaw, T aPitch) -> Matrix4x4&;
+		CONSTEXPR auto Translate(const Vector3<T>& aTranslation) -> Matrix4x4&;
+		CONSTEXPR auto Scale(const Vector3<T>& someFactors) -> Matrix4x4&;
+		CONSTEXPR auto Rotate(T aRoll, T aYaw, T aPitch) -> Matrix4x4&;
 
-		constexpr auto RotateRoll(T aRoll) -> Matrix4x4&;
-		constexpr auto RotateYaw(T aYaw) -> Matrix4x4&;
-		constexpr auto RotatePitch(T aPitch) -> Matrix4x4&;
+		CONSTEXPR auto RotateRoll(T aRoll) -> Matrix4x4&;
+		CONSTEXPR auto RotateYaw(T aYaw) -> Matrix4x4&;
+		CONSTEXPR auto RotatePitch(T aPitch) -> Matrix4x4&;
 
-		[[nodiscard]] constexpr Vector3<T> TransformPoint(const Vector3<T>& aPoint) const;
-		[[nodiscard]] constexpr Vector4<T> TransformPoint(const Vector4<T>& aPoint) const;
+		NODISC CONSTEXPR Vector3<T> TransformPoint(const Vector3<T>& aPoint) const;
+		NODISC CONSTEXPR Vector4<T> TransformPoint(const Vector4<T>& aPoint) const;
 
-		constexpr auto Add(const Matrix4x4& aRight) -> Matrix4x4&;
-		constexpr auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
-		constexpr auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
+		CONSTEXPR auto Add(const Matrix4x4& aRight) -> Matrix4x4&;
+		CONSTEXPR auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
+		CONSTEXPR auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
 
-		[[nodiscard]] constexpr static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
-		[[nodiscard]] constexpr static auto CreateRotationAroundY(T aRadians) -> Matrix4x4;
-		[[nodiscard]] constexpr static auto CreateRotationAroundZ(T aRadians) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
-		static constexpr int ROWS		= 4;
-		static constexpr int COLUMNS	= 4;
-		static constexpr int COUNT		= ROWS * COLUMNS;
+		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreateRotationAroundY(T aRadians) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreateRotationAroundZ(T aRadians) -> Matrix4x4;
+
+		static CONSTEXPR int ROWS		= 4;
+		static CONSTEXPR int COLUMNS	= 4;
+		static CONSTEXPR int COUNT		= ROWS * COLUMNS;
 
 		static const Matrix4x4 IDENTITY;
 
@@ -73,13 +77,13 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4() = default;
+	CONSTEXPR Matrix4x4<T>::Matrix4x4() = default;
 
 	template<typename T>
-	constexpr Matrix4x4<T>::~Matrix4x4() = default;
+	CONSTEXPR Matrix4x4<T>::~Matrix4x4() = default;
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4(
+	CONSTEXPR Matrix4x4<T>::Matrix4x4(
 		T a00, T a10, T a20, T a30, 
 		T a01, T a11, T a21, T a31, 
 		T a02, T a12, T a22, T a32, 
@@ -93,35 +97,35 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr T& Matrix4x4<T>::operator[](int aIndex)
+	CONSTEXPR T& Matrix4x4<T>::operator[](int aIndex)
 	{
 		return myMatrix[aIndex];
 	}
 	template<typename T>
-	constexpr const T& Matrix4x4<T>::operator[](int aIndex) const
+	CONSTEXPR const T& Matrix4x4<T>::operator[](int aIndex) const
 	{
 		return myMatrix[aIndex];
 	}
 
 	template<typename T>
-	constexpr T& Matrix4x4<T>::operator()(int aRow, int aColumn)
+	CONSTEXPR T& Matrix4x4<T>::operator()(int aRow, int aColumn)
 	{
 		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
 	}
 	template<typename T>
-	constexpr const T& Matrix4x4<T>::operator()(int aRow, int aColumn) const
+	CONSTEXPR const T& Matrix4x4<T>::operator()(int aRow, int aColumn) const
 	{
 		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
 	}
 
 	template<typename T>
-	inline constexpr const T* Matrix4x4<T>::GetData() const noexcept
+	inline CONSTEXPR const T* Matrix4x4<T>::GetData() const noexcept
 	{
 		return myMatrix.data();
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::GetTranspose() const -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::GetTranspose() const -> Matrix4x4
 	{
 		return Matrix4x4<T> 
 		{
@@ -133,12 +137,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Matrix4x4<T>::GetTranslation() const
+	CONSTEXPR Vector3<T> Matrix4x4<T>::GetTranslation() const
 	{
 		return Vector3<T>(myMatrix[12], myMatrix[13], myMatrix[14]);
 	}
 	template<typename T>
-	constexpr Vector3<T> Matrix4x4<T>::GetScale() const
+	CONSTEXPR Vector3<T> Matrix4x4<T>::GetScale() const
 	{
 		return Vector3<T>
 		{
@@ -149,12 +153,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Inverse() const -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::Inverse() const -> Matrix4x4
 	{
 		return Matrix4x4();
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::FastInverse() const -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::FastInverse() const -> Matrix4x4
 	{
 		const Vector3<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");
@@ -184,7 +188,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Translate(const Vector3<T>& aTranslation) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Translate(const Vector3<T>& aTranslation) -> Matrix4x4&
 	{
 		myMatrix[12] += aTranslation.x;
 		myMatrix[13] += aTranslation.y;
@@ -193,7 +197,7 @@ namespace CommonUtilities
 		return *this;
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Scale(const Vector3<T>& someFactors) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Scale(const Vector3<T>& someFactors) -> Matrix4x4&
 	{
 		const Matrix4x4<T> scaling
 		{
@@ -206,29 +210,29 @@ namespace CommonUtilities
 		return Combine(scaling);
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Rotate(T aRoll, T aYaw, T aPitch) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Rotate(T aRoll, T aYaw, T aPitch) -> Matrix4x4&
 	{
 		return Combine(CreateRotationAroundZ(aRoll) * CreateRotationAroundY(aYaw) * CreateRotationAroundX(aPitch));
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::RotateRoll(T aRoll) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::RotateRoll(T aRoll) -> Matrix4x4&
 	{
 		return Combine(CreateRotationAroundZ(aRoll));
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::RotateYaw(T aYaw) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::RotateYaw(T aYaw) -> Matrix4x4&
 	{
 		return Combine(CreateRotationAroundY(aYaw));
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::RotatePitch(T aPitch) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::RotatePitch(T aPitch) -> Matrix4x4&
 	{
 		return Combine(CreateRotationAroundX(aPitch));
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Matrix4x4<T>::TransformPoint(const Vector3<T>& aPoint) const
+	CONSTEXPR Vector3<T> Matrix4x4<T>::TransformPoint(const Vector3<T>& aPoint) const
 	{
 		return Vector3<T>
 		{
@@ -238,7 +242,7 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	constexpr Vector4<T> Matrix4x4<T>::TransformPoint(const Vector4<T>& aPoint) const
+	CONSTEXPR Vector4<T> Matrix4x4<T>::TransformPoint(const Vector4<T>& aPoint) const
 	{
 		return Vector4<T> 
 		{	
@@ -250,7 +254,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Add(const Matrix4x4& aRight) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Add(const Matrix4x4& aRight) -> Matrix4x4&
 	{
 		for (int i = 0; i < COUNT; ++i)
 		{
@@ -261,7 +265,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Subtract(const Matrix4x4& aRight) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Subtract(const Matrix4x4& aRight) -> Matrix4x4&
 	{
 		for (int i = 0; i < COUNT; ++i)
 		{
@@ -272,7 +276,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Combine(const Matrix4x4& aRight) -> Matrix4x4&
+	CONSTEXPR auto Matrix4x4<T>::Combine(const Matrix4x4& aRight) -> Matrix4x4&
 	{
 		const T* a = myMatrix.data();
 		const T* b = aRight.myMatrix.data();
@@ -289,7 +293,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateRotationAroundX(T aRadians) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4
+	{
+		return Matrix3x3();
+	}
+
+	template<typename T>
+	CONSTEXPR auto Matrix4x4<T>::CreateRotationAroundX(T aRadians) -> Matrix4x4
 	{
 		const T c = std::cos(aRadians);
 		const T s = std::sin(aRadians);
@@ -303,7 +313,7 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateRotationAroundY(T aRadians) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreateRotationAroundY(T aRadians) -> Matrix4x4
 	{
 		const T c = std::cos(aRadians);
 		const T s = std::sin(aRadians);
@@ -317,7 +327,7 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateRotationAroundZ(T aRadians) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreateRotationAroundZ(T aRadians) -> Matrix4x4
 	{
 		const T c = std::cos(aRadians);
 		const T s = std::sin(aRadians);
@@ -334,45 +344,45 @@ namespace CommonUtilities
 	// GLOBAL OPERATORS
 
 	template<typename T>
-	constexpr Matrix4x4<T> operator+(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T> operator+(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Add(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T> operator-(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T> operator-(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Subtract(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T> operator*(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T> operator*(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Combine(aRight);
 	}
 
 	template<typename T>
-	constexpr Matrix4x4<T>& operator+=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T>& operator+=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return aLeft.Add(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T>& operator-=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T>& operator-=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return aLeft.Subtract(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T>& operator*=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Matrix4x4<T>& operator*=(Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return aLeft.Combine(aRight);
 	}
 
 	template<typename T>
-	constexpr Vector4<T> operator*(const Vector4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR Vector4<T> operator*(const Vector4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return aRight.TransformPoint(aLeft);
 	}
 
 	template<typename T>
-	constexpr bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		for (int i = 0; i < Matrix4x4<T>::COUNT; ++i)
 		{
@@ -385,7 +395,7 @@ namespace CommonUtilities
 		return true;
 	}
 	template<typename T>
-	constexpr bool operator!=(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	CONSTEXPR bool operator!=(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return !(aLeft == aRight);
 	}

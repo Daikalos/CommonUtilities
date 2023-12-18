@@ -81,7 +81,7 @@ namespace CommonUtilities::old
 		return false;
 	}
 
-	bool InputHandler::HandleWindowEvents(HWND aHandle, UINT aMessage, WPARAM wParam, LPARAM lParam)
+	bool InputHandler::HandleWindowEvents(HWND aHandle, UINT aMessage, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 	{
 		assert(aHandle != nullptr && "A handle is required for window events!");
 
@@ -126,7 +126,7 @@ namespace CommonUtilities::old
 		return false;
 	}
 
-	bool InputHandler::HandleKeyboardEvents(UINT aMessage, WPARAM wParam, LPARAM lParam)
+	bool InputHandler::HandleKeyboardEvents(UINT aMessage, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 	{
 		switch (aMessage)
 		{

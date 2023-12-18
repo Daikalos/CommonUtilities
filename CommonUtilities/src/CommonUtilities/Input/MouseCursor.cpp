@@ -50,12 +50,12 @@ void MouseCursor::SetHandle(HWND aHandle)
 
 	myHandle = aHandle;
 
-	RAWINPUTDEVICE Rid[1];
-	Rid[0].usUsagePage	= HID_USAGE_PAGE_GENERIC;
-	Rid[0].usUsage		= HID_USAGE_GENERIC_MOUSE;
-	Rid[0].dwFlags		= RIDEV_INPUTSINK;
-	Rid[0].hwndTarget	= myHandle;
-	RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
+	RAWINPUTDEVICE rid[1]{};
+	rid[0].usUsagePage	= HID_USAGE_PAGE_GENERIC;
+	rid[0].usUsage		= HID_USAGE_GENERIC_MOUSE;
+	rid[0].dwFlags		= RIDEV_INPUTSINK;
+	rid[0].hwndTarget	= myHandle;
+	RegisterRawInputDevices(rid, 1, sizeof(rid[0]));
 }
 
 void MouseCursor::SetPosition(const Vector2i& aPoint)
@@ -100,7 +100,7 @@ void MouseCursor::Update()
 	myTentativeMoveDelta = { 0, 0 };
 }
 
-bool MouseCursor::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{

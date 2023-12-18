@@ -45,7 +45,7 @@ void MouseInput::Update()
 	myCurrentState = myTentativeState;
 }
 
-bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     switch (aMessage)
     {

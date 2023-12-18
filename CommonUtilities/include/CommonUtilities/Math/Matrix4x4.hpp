@@ -34,7 +34,12 @@ namespace CommonUtilities
 		NODISC CONSTEXPR auto GetTranspose() const -> Matrix4x4;
 
 		NODISC CONSTEXPR Vector3<T> GetTranslation() const;
+		NODISC CONSTEXPR Vector3<T> GetRotation() const;
 		NODISC CONSTEXPR Vector3<T> GetScale() const;
+
+		NODISC CONSTEXPR Vector3<T> GetForward() const;
+		NODISC CONSTEXPR Vector3<T> GetUp() const;
+		NODISC CONSTEXPR Vector3<T> GetRight() const;
 
 		NODISC CONSTEXPR auto Inverse() const -> Matrix4x4;
 		NODISC CONSTEXPR auto FastInverse() const -> Matrix4x4;
@@ -54,6 +59,7 @@ namespace CommonUtilities
 		CONSTEXPR auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
 		CONSTEXPR auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
 
+		NODISC CONSTEXPR static auto CreateProjection(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -142,14 +148,40 @@ namespace CommonUtilities
 		return Vector3<T>(myMatrix[12], myMatrix[13], myMatrix[14]);
 	}
 	template<typename T>
+	CONSTEXPR Vector3<T> Matrix4x4<T>::GetRotation() const
+	{
+		return Vector3<T>
+		{
+			std::atan2f(myMatrix[6], myMatrix[10]),
+			std::atan2f(-myMatrix[2], std::sqrtf(myMatrix[6] * myMatrix[6] + myMatrix[10] * myMatrix[10])),
+			std::atan2f(myMatrix[1], myMatrix[0])
+		};
+	}
+	template<typename T>
 	CONSTEXPR Vector3<T> Matrix4x4<T>::GetScale() const
 	{
 		return Vector3<T>
 		{
-			Vector3<T>(myMatrix[0], myMatrix[4], myMatrix[8]).Length(),
-			Vector3<T>(myMatrix[1], myMatrix[5], myMatrix[9]).Length(),
-			Vector3<T>(myMatrix[2], myMatrix[6], myMatrix[10]).Length()
+			Vector3<T>{ myMatrix[0], myMatrix[1], myMatrix[2 ] }.Length(),
+			Vector3<T>{ myMatrix[4], myMatrix[5], myMatrix[6 ] }.Length(),
+			Vector3<T>{ myMatrix[8], myMatrix[9], myMatrix[10] }.Length()
 		};
+	}
+
+	template<typename T>
+	NODISC CONSTEXPR Vector3<T> Matrix4x4<T>::GetForward() const
+	{
+		return Vector3<T>{ myMatrix[8], myMatrix[9], myMatrix[10] };
+	}
+	template<typename T>
+	NODISC CONSTEXPR Vector3<T> Matrix4x4<T>::GetUp() const 
+	{
+		return Vector3<T>{ myMatrix[4], myMatrix[5], myMatrix[6] };
+	}
+	template<typename T>
+	NODISC CONSTEXPR Vector3<T> Matrix4x4<T>::GetRight() const 
+	{
+		return Vector3<T>{ myMatrix[0], myMatrix[1], myMatrix[2] };
 	}
 
 	template<typename T>
@@ -293,9 +325,41 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	CONSTEXPR auto Matrix4x4<T>::CreateProjection(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
+	{
+		float xScale = T(1) / std::tan(aFov / T(2));
+		float yScale = xScale * aAspectRatio;
+
+		return Matrix4x4
+		{
+			xScale, 0,		0,													0,
+			0,		yScale,	0,													0,
+			0,		0,		aFarClip / (aFarClip - aNearClip),					1,
+			0,		0,		(-aNearClip * aFarClip) / (aFarClip - aNearClip),	0
+		};
+	}
+	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4
 	{
-		return Matrix3x3();
+		const Matrix4x4 translationMatrix
+		{
+			1,				0,				0,				0,
+			0,				1,				0,				0,
+			0,				0,				1,				0,
+			aPosition.x,	aPosition.y, 	aPosition.z,	1
+		};
+
+		const Matrix4x4 rotationMatrix = CreateRotationAroundX(aRotation.x) * CreateRotationAroundY(aRotation.y) * CreateRotationAroundZ(aRotation.z);
+
+		const Matrix4x4 scalingMatrix
+		{
+			aScale.x,	0,			0,			0,
+			0,			aScale.y,	0,			0,
+			0,			0,			aScale.z,	0,
+			0,			0,			0,			1
+		};
+
+		return translationMatrix * rotationMatrix * scalingMatrix;
 	}
 
 	template<typename T>

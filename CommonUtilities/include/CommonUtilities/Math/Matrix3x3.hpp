@@ -42,6 +42,9 @@ namespace CommonUtilities
 		NODISC CONSTEXPR T GetRotation() const;
 		NODISC CONSTEXPR Vector2<T> GetScale() const;
 
+		NODISC CONSTEXPR Vector2<T> GetUp() const;
+		NODISC CONSTEXPR Vector2<T> GetRight() const;
+
 		CONSTEXPR void SetTranslation(const Vector2<T>& aTranslation);
 		CONSTEXPR void SetRotation(T aRotation);
 		CONSTEXPR void SetScale(const Vector2<T>& aScale);
@@ -133,7 +136,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CONSTEXPR const T* Matrix3x3<T>::GetData() const noexcept
+	CONSTEXPR const T* Matrix3x3<T>::GetData() const noexcept
 	{
 		return myMatrix.data();
 	}
@@ -157,16 +160,27 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR T Matrix3x3<T>::GetRotation() const
 	{
-		return std::atan2f(myMatrix[1], myMatrix[4]);
+		return std::atan2f(myMatrix[1], myMatrix[0]);
 	}
 	template<typename T>
 	CONSTEXPR Vector2<T> Matrix3x3<T>::GetScale() const
 	{
 		return Vector2<T>
 		{
-			Vector2<T>{ myMatrix[0], myMatrix[3] }.Length(),
-			Vector2<T>{ myMatrix[1], myMatrix[4] }.Length()
+			Vector2<T>{ myMatrix[0], myMatrix[1] }.Length(),
+			Vector2<T>{ myMatrix[3], myMatrix[4] }.Length()
 		};
+	}
+
+	template<typename T>
+	CONSTEXPR Vector2<T> Matrix3x3<T>::GetUp() const
+	{
+		return Vector2<T>{ myMatrix[3], myMatrix[4] };
+	}
+	template<typename T>
+	CONSTEXPR Vector2<T> Matrix3x3<T>::GetRight() const
+	{
+		return Vector2<T>{ myMatrix[0], myMatrix[1] };
 	}
 
 	template<typename T>
@@ -187,20 +201,20 @@ namespace CommonUtilities
 		const T sxs = scale.x * s;
 		const T sys = scale.y * s;
 
-		myMatrix[0] =  sxc; myMatrix[1] = sys;
-		myMatrix[3] = -sxs; myMatrix[4] = syc;
+		myMatrix[0] =  sxc; myMatrix[1] = sxs;
+		myMatrix[3] = -sys; myMatrix[4] = syc;
 	}
 	template<typename T>
 	CONSTEXPR void Matrix3x3<T>::SetScale(const Vector2<T>& aScale)
 	{
-		Vector2<T> column1{ myMatrix[0], myMatrix[3] };
-		Vector2<T> column2{ myMatrix[1], myMatrix[4] };
+		Vector2<T> row1{ myMatrix[0], myMatrix[1] };
+		Vector2<T> row2{ myMatrix[3], myMatrix[4] };
 
-		column1.Normalize(aScale.x);
-		column2.Normalize(aScale.y);
+		row1.Normalize(aScale.x);
+		row2.Normalize(aScale.y);
 
-		myMatrix[0] = column1.x; myMatrix[1] = column2.x;
-		myMatrix[3] = column1.y; myMatrix[4] = column2.y;
+		myMatrix[0] = row1.x; myMatrix[1] = row1.y;
+		myMatrix[3] = row2.x; myMatrix[4] = row2.y;
 	}
 
 	template<typename T>
@@ -332,8 +346,8 @@ namespace CommonUtilities
 
 		return Matrix3x3
 		{
-			 sxc,			sys,			0,
-			-sxs,			syc,			0,
+			 sxc,			sxs,			0,
+			-sys,			syc,			0,
 			 aPosition.x,	aPosition.y,	1
 		};
 	}

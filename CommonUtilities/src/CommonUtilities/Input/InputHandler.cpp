@@ -47,8 +47,8 @@ bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 			return false;
 		}
 	}
-	
-	return HandleEventImpl(aMessage, wParam, lParam);
+
+	return GetInFocus() ? HandleEventImpl(aMessage, wParam, lParam) : false;
 }
 
 namespace CommonUtilities::old

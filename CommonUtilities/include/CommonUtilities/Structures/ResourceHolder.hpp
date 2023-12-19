@@ -172,12 +172,12 @@ namespace CommonUtilities
 	template<class R, typename I>
 	inline auto ResourceHolder<R, I>::Load(const I& aID, const ResourceLoader<R>& aLoader) -> ReturnType
 	{
-		ResourcePtr aResource = aLoader();
+		ResourcePtr resource = aLoader();
 
-		if (!aResource)
+		if (!resource)
 			throw std::runtime_error("Failed to load resource");
 
-		return Insert(aID, std::move(aResource));
+		return Insert(aID, std::move(resource));
 	}
 
 	template<class R, typename I>

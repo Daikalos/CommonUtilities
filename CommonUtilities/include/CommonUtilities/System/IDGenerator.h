@@ -9,7 +9,7 @@ namespace CommonUtilities::id
 {
 	/// FNV-1a implementation
 	/// 
-	static consteval std::size_t HashFunction(const std::string_view aSignature)
+	inline consteval std::size_t HashFunction(const std::string_view aSignature)
 	{
 		std::size_t result = 0xcbf29ce484222325; // FNV offset basis
 

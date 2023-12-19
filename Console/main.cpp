@@ -7,7 +7,7 @@
 
 int main()
 {
-	cu::Mat3f mat = cu::Mat3f::CreateTRS(cu::Vector2f(100.0f, 100.0f), cu::PI_2<>, cu::Vector2f(1.0f, 1.0f));
+	cu::Mat3f mat = cu::Mat3f::CreateTRS(cu::Vector2f(100.0f, 100.0f), cu::PI_2_F, cu::Vector2f(1.0f, 1.0f));
 	cu::Mat3f mat2;
 
 	mat2.Combine(mat);
@@ -17,14 +17,6 @@ int main()
 	float rotation2 = mat.GetRotation() * cu::RAD2DEG<>;
 
 	mat2.Combine(inv);
-
-	cu::Event<int, int> test;
-	cu::evnt::IDType id = (test += [](int a, int b)
-	{
-		return a + b;
-	});
-
-	test(5, 2);
 
 	return 0;
 }

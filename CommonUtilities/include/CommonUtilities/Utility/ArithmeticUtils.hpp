@@ -75,4 +75,12 @@ namespace CommonUtilities
 		double n = Pow(10.0, aPlaces);
 		return std::round(aValue * n) / n;
 	}
+
+	inline constexpr float PI_F = PI<float>;
+	inline constexpr float PI_2_F = PI_2<float>;
+	inline constexpr float PI_4_F = PI_4<float>;
+
+	inline constexpr float PI_D = PI<double>;
+	inline constexpr float PI_2_D = PI_2<double>;
+	inline constexpr float PI_4_D = PI_4<double>;
 }

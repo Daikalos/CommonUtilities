@@ -38,6 +38,7 @@ namespace CommonUtilities
 		NODISC bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	protected:
+		virtual void ResetTentativeState() = 0;
 		virtual bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
 
 		bool	myEnabled			{true};		// is always enabled initially

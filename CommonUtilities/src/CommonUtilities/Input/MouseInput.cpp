@@ -35,9 +35,6 @@ void MouseInput::SetScrollThreshold(float aScrollThreshold)
 
 void MouseInput::Update()
 {
-	if (!GetInFocus() || !GetEnabled())
-		return;
-
 	myScrollDelta = myTentativeScrollDelta;
 	myTentativeScrollDelta = 0.0f;
 
@@ -92,6 +89,11 @@ bool MouseInput::HandleEventImpl(UINT aMessage, WPARAM wParam, [[maybe_unused]] 
     }
 
 	return false;
+}
+
+void MouseInput::ResetTentativeState()
+{
+	std::fill(myTentativeState.begin(), myTentativeState.end(), false);
 }
 
 bool MouseInput::SetTentativeState(WPARAM wParam, bool aState)

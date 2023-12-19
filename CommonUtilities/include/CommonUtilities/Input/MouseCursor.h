@@ -45,5 +45,8 @@ namespace CommonUtilities
 		Vector2i	myMoveDelta;
 		bool		myIsVisible {true};
 		bool		myIsGrabbed {false};
+
+		// Inherited via InputHandler
+		void ResetTentativeState() override;
 	};
 }

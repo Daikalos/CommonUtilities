@@ -21,9 +21,6 @@ bool KeyboardInput::IsReleased(ButtonType aKey) const
 
 void KeyboardInput::Update()
 {	 
-	if (!GetInFocus() || !GetEnabled())
-		return;
-
 	myPreviousState = myCurrentState;
 	myCurrentState = myTentativeState;
 }	 
@@ -45,6 +42,11 @@ bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 	}
 
 	return false;
+}
+
+void KeyboardInput::ResetTentativeState()
+{
+	std::fill(myTentativeState.begin(), myTentativeState.end(), false);
 }
 
 bool KeyboardInput::SetTentativeState(WPARAM wParam, LPARAM lParam, bool aState)

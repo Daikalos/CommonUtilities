@@ -90,9 +90,6 @@ void MouseCursor::SetVisible(bool aState)
 
 void MouseCursor::Update()
 {
-	if (!GetInFocus() || !GetEnabled())
-		return;
-
 	myPreviousPosition = myCurrentPosition;
 	myCurrentPosition = myTentativePosition;
 
@@ -182,4 +179,9 @@ void MouseCursor::GrabCursor(bool aGrabbed)
 	{
 		ClipCursor(nullptr);
 	}
+}
+
+void MouseCursor::ResetTentativeState()
+{
+
 }

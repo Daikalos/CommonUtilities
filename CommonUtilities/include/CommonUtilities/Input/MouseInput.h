@@ -30,6 +30,7 @@ namespace CommonUtilities
 	private:
 		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
+		void ResetTentativeState() override;
 		NODISC bool SetTentativeState(WPARAM wParam, bool aState);
 
 		float myScrollDelta				{0.0f};

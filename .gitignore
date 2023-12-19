@@ -275,4 +275,6 @@ examples/*/*.xml
 *.csproj.user
 *.VC.db
 
-misc/
+/TGE/*
+
+!TGE/Local

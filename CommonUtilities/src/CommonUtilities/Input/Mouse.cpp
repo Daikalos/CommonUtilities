@@ -4,9 +4,9 @@
 
 using namespace CommonUtilities;
 
-Mouse::Button Mouse::VirtualKeyToCUButton(int aVirtualKey)
+Mouse::Button Mouse::VirtualKeyToCUButton(WPARAM aKey)
 {
-    switch (aVirtualKey)
+    switch (aKey)
     {
         case VK_LBUTTON:    return Mouse::Left;
         case VK_RBUTTON:    return Mouse::Right;

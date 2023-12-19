@@ -28,28 +28,28 @@ void KeyboardInput::Update()
 	myCurrentState = myTentativeState;
 }	 
 	 
-bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
+bool KeyboardInput::HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			return SetTentativeState(wParam, true);
+			return SetTentativeState(wParam, lParam, true);
 		}
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 		{
-			return SetTentativeState(wParam, false);
+			return SetTentativeState(wParam, lParam, false);
 		}
 	}
 
 	return false;
 }
 
-bool KeyboardInput::SetTentativeState(WPARAM wParam, bool aState)
+bool KeyboardInput::SetTentativeState(WPARAM wParam, LPARAM lParam, bool aState)
 {
-	Keyboard::Key key = Keyboard::VirtualKeyToCUKey((int)wParam);
+	Keyboard::Key key = Keyboard::ProcessVirtualKey(wParam, lParam);
 	if (key != Keyboard::None)
 	{
 		myTentativeState[key] = aState;

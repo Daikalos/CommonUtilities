@@ -25,7 +25,7 @@ namespace CommonUtilities
 	private:
 		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
-		NODISC bool SetTentativeState(WPARAM wParam, bool aState);
+		NODISC bool SetTentativeState(WPARAM wParam, LPARAM lParam, bool aState);
 
 		std::array<bool, Keyboard::KeyCount> myCurrentState		= {false};
 		std::array<bool, Keyboard::KeyCount> myPreviousState	= {false};

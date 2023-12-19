@@ -11,7 +11,8 @@
 
 namespace CommonUtilities
 {
-	/// Can hold any number of functions that may all be executed manually.
+	/// Can hold any number of functions that may all be executed manually. No return value since there is no way to determine
+	/// from who to return from.
 	/// 
 	/// Based on article by Shmuel Zang:
 	/// https://www.codeproject.com/Articles/1256352/CppEvent-How-to-Implement-Events-using-Standard-Cp
@@ -38,7 +39,7 @@ namespace CommonUtilities
 		void operator()(Args... someParams) const;
 
 		evnt::IDType operator+=(const HandlerType& aHandler);
-		evnt::IDType operator+=(const typename HandlerType::FuncType& aHandler);
+		evnt::IDType operator+=(const typename HandlerType::FunctionType& aHandler);
 
 		evnt::IDType operator-=(const HandlerType& aHandler);
 		evnt::IDType operator-=(evnt::IDType aHandlerID) override;
@@ -50,7 +51,7 @@ namespace CommonUtilities
 		void Clear() override;
 
 		evnt::IDType Add(const HandlerType& aHandler);
-		evnt::IDType Add(const typename HandlerType::FuncType& aHandler);
+		evnt::IDType Add(const typename HandlerType::FunctionType& aHandler);
 
 		bool Remove(const HandlerType& aHandler);
 		bool RemoveID(evnt::IDType aHandlerID) override;
@@ -62,7 +63,7 @@ namespace CommonUtilities
 		using HandlerList = std::vector<HandlerType>;
 
 		HandlerList	myHandlers;
-		std::shared_mutex myMutex;
+		mutable std::shared_mutex myMutex;
 	};
 
 	template<typename... Args>
@@ -123,7 +124,7 @@ namespace CommonUtilities
 		return Add(aHandler);
 	}
 	template<typename... Args>
-	inline evnt::IDType Event<Args...>::operator+=(const typename HandlerType::FuncType& aHandler)
+	inline evnt::IDType Event<Args...>::operator+=(const typename HandlerType::FunctionType& aHandler)
 	{
 		return Add(aHandler);
 	}
@@ -174,7 +175,7 @@ namespace CommonUtilities
 		return aHandler.GetID();
 	}
 	template<typename... Args>
-	inline evnt::IDType Event<Args...>::Add(const typename HandlerType::FuncType& aHandler)
+	inline evnt::IDType Event<Args...>::Add(const typename HandlerType::FunctionType& aHandler)
 	{
 		std::scoped_lock lock(myMutex);
 

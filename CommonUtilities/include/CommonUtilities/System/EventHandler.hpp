@@ -82,7 +82,7 @@ namespace CommonUtilities
 	{
 		myFunc = std::move(aOther.myFunc);
 
-		m_id = aOther.myID;
+		myID = aOther.myID;
 		aOther.myID = NULL;
 
 		return *this;

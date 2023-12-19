@@ -12,10 +12,10 @@ namespace CommonUtilities
 		virtual evnt::IDType operator-=(evnt::IDType aHandlerID) = 0;
 		virtual bool RemoveID(evnt::IDType aHandlerID) = 0;
 
-		virtual std::size_t Count() const noexcept = 0;
-		virtual bool IsEmpty() const noexcept = 0;
+		virtual std::size_t Count() const = 0;
+		virtual bool IsEmpty() const = 0;
 
 		virtual void Reserve(std::size_t aSize) = 0;
-		virtual void Clear() noexcept = 0;
+		virtual void Clear() = 0;
 	};
 }

@@ -20,13 +20,13 @@ namespace CommonUtilities
 		NODISC CONSTEXPR Reg& At(const Bind& aBind);
 		NODISC CONSTEXPR const Reg& At(const Bind& aBind) const;
 
-		///	Set the bind name to match to button
+		///	Set the bind to match to button
 		/// 
 		CONSTEXPR void Set(const Bind& aBind, const Reg& aButton);
 
 		///	Remove the existing bind
 		/// 
-		CONSTEXPR void Remove(const Bind& name);
+		CONSTEXPR void Remove(const Bind& aBind);
 
 		NODISC CONSTEXPR bool GetEnabled() const noexcept;
 		CONSTEXPR void SetEnabled(bool aFlag) noexcept;

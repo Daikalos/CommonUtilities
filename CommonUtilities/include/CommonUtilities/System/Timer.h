@@ -34,6 +34,7 @@ namespace CommonUtilities
 
 	private:
 		static constexpr long double ourMaxDeltaTime = 0.075;
+
 		using ClockImpl = std::chrono::high_resolution_clock;
 
 		ClockImpl::time_point myReferencePoint;

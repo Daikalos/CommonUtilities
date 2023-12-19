@@ -17,9 +17,9 @@ namespace CommonUtilities
 		NODISC const MouseInput& GetMouse() const;
 		NODISC MouseInput& GetMouse();
 
-		NODISC bool Held(const ButtonType& aBind) const;
-		NODISC bool Pressed(const ButtonType& aBind) const;
-		NODISC bool Released(const ButtonType& aBind) const;
+		NODISC bool IsHeld(const ButtonType& aBind) const;
+		NODISC bool IsPressed(const ButtonType& aBind) const;
+		NODISC bool IsReleased(const ButtonType& aBind) const;
 
 	private:
 		const MouseInput* myMouse {nullptr};
@@ -44,19 +44,19 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::Held(const ButtonType& aBind) const
+	inline bool MouseBindable<Bind>::IsHeld(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::Pressed(const ButtonType& aBind) const
+	inline bool MouseBindable<Bind>::IsPressed(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::Released(const ButtonType& aBind) const
+	inline bool MouseBindable<Bind>::IsReleased(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsReleased(this->At(aBind));
 	}

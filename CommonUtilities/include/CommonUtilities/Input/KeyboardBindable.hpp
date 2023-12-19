@@ -17,9 +17,9 @@ namespace CommonUtilities
 		NODISC const KeyboardInput& GetKeyboard() const;
 		NODISC KeyboardInput& GetKeyboard();
 
-		NODISC bool Held(const ButtonType& aBind) const;
-		NODISC bool Pressed(const ButtonType& aBind) const;
-		NODISC bool Released(const ButtonType& aBind) const;
+		NODISC bool IsHeld(const ButtonType& aBind) const;
+		NODISC bool IsPressed(const ButtonType& aBind) const;
+		NODISC bool IsReleased(const ButtonType& aBind) const;
 
 	private:
 		const KeyboardInput* myKeyboard {nullptr};
@@ -47,19 +47,19 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::Held(const ButtonType& aBind) const
+	inline bool KeyboardBindable<Bind>::IsHeld(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::Pressed(const ButtonType& aBind) const
+	inline bool KeyboardBindable<Bind>::IsPressed(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::Released(const ButtonType& aBind) const
+	inline bool KeyboardBindable<Bind>::IsReleased(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsReleased(this->At(aBind));
 	}

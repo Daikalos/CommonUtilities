@@ -1,5 +1,6 @@
 #pragma once
 
+#include <CommonUtilities/Math/Vector2.hpp>
 #include <CommonUtilities/Config.h>
 
 #include <Windows.h>
@@ -23,9 +24,9 @@ namespace CommonUtilities::Mouse
     COMMON_UTILITIES_API NODISC int CUButtonToVirtualKey(Button aButton);
     COMMON_UTILITIES_API NODISC bool IsMouseButtonPressed(Button aButton);
 
-    COMMON_UTILITIES_API NODISC POINT GetMousePosition();
-    COMMON_UTILITIES_API NODISC POINT GetMousePosition(HWND aHandle);
+    COMMON_UTILITIES_API NODISC Vector2i GetMousePosition();
+    COMMON_UTILITIES_API NODISC Vector2i GetMousePosition(HWND aHandle);
 
-    COMMON_UTILITIES_API void SetMousePosition(const POINT& aPoint);
-    COMMON_UTILITIES_API void SetMousePosition(POINT aPoint, HWND aHandle);
+    COMMON_UTILITIES_API void SetMousePosition(const Vector2i& aPoint);
+    COMMON_UTILITIES_API void SetMousePosition(const Vector2i& aPoint, HWND aHandle);
 }

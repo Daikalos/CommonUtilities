@@ -14,13 +14,11 @@ namespace CommonUtilities
 
 		MouseCursor(HWND aHandle);
 
-		NODISC bool GetGrabbed() const;
-		NODISC bool GetVisible() const;
+		NODISC bool GetGrabbed() const noexcept;
+		NODISC bool GetVisible() const noexcept;
 
-		NODISC const Vector2i& GetPosition() const;
-		NODISC Vector2i GetRelativePosition() const;
-
-		NODISC const Vector2i& GetMouseDelta() const;
+		NODISC const Vector2i& GetPosition() const noexcept;
+		NODISC const Vector2i& GetMouseDelta() const noexcept;
 
 		void SetHandle(HWND aHandle);
 

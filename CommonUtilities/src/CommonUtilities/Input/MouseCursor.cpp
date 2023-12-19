@@ -1,5 +1,7 @@
 #include <CommonUtilities/Input/MouseCursor.h>
 
+#include <CommonUtilities/Input/Mouse.h>
+
 #include <cassert>
 #include <windowsx.h>
 #include <WinUser.h>
@@ -16,30 +18,20 @@ MouseCursor::MouseCursor(HWND aHandle)
 	SetHandle(aHandle);
 }
 
-bool MouseCursor::GetGrabbed() const
+bool MouseCursor::GetGrabbed() const noexcept
 {
 	return myIsGrabbed;
 }
-bool MouseCursor::GetVisible() const
+bool MouseCursor::GetVisible() const noexcept
 {
 	return myIsVisible;
 }
 
-const Vector2i& MouseCursor::GetPosition() const
+const Vector2i& MouseCursor::GetPosition() const noexcept
 {
 	return myCurrentPosition;
 }
-Vector2i MouseCursor::GetRelativePosition() const
-{
-	assert(myHandle != nullptr && "A handle is required for retrieving relative position");
-
-	POINT point;
-	GetCursorPos(&point);
-	ScreenToClient(myHandle, &point);
-	return { point.x, point.y };
-}
-
-const Vector2i& MouseCursor::GetMouseDelta() const
+const Vector2i& MouseCursor::GetMouseDelta() const noexcept
 {
 	return myMoveDelta;
 }
@@ -60,15 +52,11 @@ void MouseCursor::SetHandle(HWND aHandle)
 
 void MouseCursor::SetPosition(const Vector2i& aPoint)
 {
-	SetCursorPos(aPoint.x, aPoint.y);
+	Mouse::SetMousePosition(aPoint);
 }
 void MouseCursor::SetRelativePosition(const Vector2i& aPoint)
 {
-	assert(myHandle != nullptr && "A handle is required for setting relative position");
-
-	POINT point { aPoint.x, aPoint.y };
-	ClientToScreen(myHandle, &point);
-	SetCursorPos(point.x, point.y);
+	Mouse::SetMousePosition(aPoint, myHandle);
 }
 
 void MouseCursor::SetGrabbed(bool aGrabbed)

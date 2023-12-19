@@ -1,5 +1,6 @@
 #include <CommonUtilities/Input/Mouse.h>
 
+#include <cassert>
 #include <Windows.h>
 
 using namespace CommonUtilities;
@@ -36,35 +37,33 @@ bool Mouse::IsMouseButtonPressed(Mouse::Button aButton)
     return (GetAsyncKeyState(virtualKey) & 0x8000) != 0;
 }
 
-POINT Mouse::GetMousePosition()
+Vector2i Mouse::GetMousePosition()
 {
     POINT point;
     GetCursorPos(&point);
-    return point;
+    return { point.x, point.y };
 }
 
-POINT Mouse::GetMousePosition(HWND aHandle)
+Vector2i Mouse::GetMousePosition(HWND aHandle)
 {
-    if (aHandle)
-    {
-    	POINT point;
-    	GetCursorPos(&point);
-    	ScreenToClient(aHandle, &point);
-    	return point;
-    }
-    return POINT();
+    assert(aHandle != nullptr && "A handle is required for retrieving relative position");
+
+    POINT point;
+    GetCursorPos(&point);
+    ScreenToClient(aHandle, &point);
+    return { point.x, point.y };
 }
 
-void Mouse::SetMousePosition(const POINT& aPoint)
+void Mouse::SetMousePosition(const Vector2i& aPoint)
 {
     SetCursorPos(aPoint.x, aPoint.y);
 }
 
-void Mouse::SetMousePosition(POINT aPoint, HWND aHandle)
+void Mouse::SetMousePosition(const Vector2i& aPoint, HWND aHandle)
 {
-    if (aHandle)
-    {
-    	ClientToScreen(aHandle, &aPoint);
-    	SetCursorPos(aPoint.x, aPoint.y);
-    }
+    assert(aHandle != nullptr && "A handle is required for setting relative position");
+
+    POINT point { aPoint.x, aPoint.y };
+    ClientToScreen(aHandle, &point);
+    SetCursorPos(point.x, point.y);
 }

@@ -19,7 +19,7 @@ void InputHandler::SetEnabled(bool aFlag) noexcept
 {
 	myEnabled = aFlag;
 }
-void InputHandler::SetFocusAffectInput(bool aFlag)
+void InputHandler::SetFocusAffectInput(bool aFlag) noexcept
 {
 	myFocusInput = aFlag;
 }

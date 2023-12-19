@@ -72,17 +72,17 @@ namespace CommonUtilities
 
 		constexpr void shrink_to_fit();
 
-		NODISC constexpr auto begin() const -> const_iterator;
-		NODISC constexpr auto end() const -> const_iterator;
+		NODISC constexpr auto begin() const noexcept -> const_iterator;
+		NODISC constexpr auto end() const noexcept -> const_iterator;
 
-		NODISC constexpr auto cbegin() const -> const_iterator;
-		NODISC constexpr auto cend() const -> const_iterator;
+		NODISC constexpr auto cbegin() const noexcept -> const_iterator;
+		NODISC constexpr auto cend() const noexcept -> const_iterator;
 
-		NODISC constexpr auto rbegin() const -> const_reverse_iterator;
-		NODISC constexpr auto rend() const -> const_reverse_iterator;
+		NODISC constexpr auto rbegin() const noexcept -> const_reverse_iterator;
+		NODISC constexpr auto rend() const noexcept -> const_reverse_iterator;
 
-		NODISC constexpr auto crbegin() const -> const_reverse_iterator;
-		NODISC constexpr auto crend() const -> const_reverse_iterator;
+		NODISC constexpr auto crbegin() const noexcept -> const_reverse_iterator;
+		NODISC constexpr auto crend() const noexcept -> const_reverse_iterator;
 
 	private:
 		template<pq::Comparison>
@@ -205,45 +205,45 @@ namespace CommonUtilities
 	}
 
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::begin() const -> const_iterator
+	constexpr auto PriorityQueue<T, C>::begin() const noexcept -> const_iterator
 	{
 		return myNodes.begin();
 	}
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::end() const -> const_iterator
+	constexpr auto PriorityQueue<T, C>::end() const noexcept -> const_iterator
 	{
 		return myNodes.begin();
 	}
 
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::cbegin() const -> const_iterator
+	constexpr auto PriorityQueue<T, C>::cbegin() const noexcept -> const_iterator
 	{
 		return myNodes.cbegin();
 	}
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::cend() const -> const_iterator
+	constexpr auto PriorityQueue<T, C>::cend() const noexcept -> const_iterator
 	{
 		return myNodes.cbegin();
 	}
 
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::rbegin() const -> const_reverse_iterator
+	constexpr auto PriorityQueue<T, C>::rbegin() const noexcept -> const_reverse_iterator
 	{
 		return myNodes.rbegin();
 	}
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::rend() const -> const_reverse_iterator
+	constexpr auto PriorityQueue<T, C>::rend() const noexcept -> const_reverse_iterator
 	{
 		return myNodes.rbegin();
 	}
 
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::crbegin() const -> const_reverse_iterator
+	constexpr auto PriorityQueue<T, C>::crbegin() const noexcept -> const_reverse_iterator
 	{
 		return myNodes.crbegin();
 	}
 	template<typename T, pq::Comparison C>
-	constexpr auto PriorityQueue<T, C>::crend() const -> const_reverse_iterator
+	constexpr auto PriorityQueue<T, C>::crend() const noexcept -> const_reverse_iterator
 	{
 		return myNodes.crbegin();
 	}

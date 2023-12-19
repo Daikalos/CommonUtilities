@@ -25,7 +25,7 @@ namespace CommonUtilities
 
 		/// Enable or disable for focus to affect whether input gets enabled or disabled
 		/// 
-		void SetFocusAffectInput(bool aFlag);
+		void SetFocusAffectInput(bool aFlag) noexcept;
 
 		///	Determine the threshold before the button/key is considered held
 		/// 

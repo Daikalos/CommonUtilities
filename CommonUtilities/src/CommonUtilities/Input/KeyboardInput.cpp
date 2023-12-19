@@ -8,15 +8,15 @@ KeyboardInput::~KeyboardInput() = default;
 
 bool KeyboardInput::IsHeld(ButtonType aKey) const
 {
-	return GetInFocus() && GetEnabled() && myCurrentState[aKey];
+	return GetEnabled() && myCurrentState[aKey];
 }
 bool KeyboardInput::IsPressed(ButtonType aKey) const
 {
-	return GetInFocus() && GetEnabled() && myCurrentState[aKey] && !myPreviousState[aKey];
+	return GetEnabled() && myCurrentState[aKey] && !myPreviousState[aKey];
 }
 bool KeyboardInput::IsReleased(ButtonType aKey) const
 {
-	return GetInFocus() && GetEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
+	return GetEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
 }
 
 void KeyboardInput::Update()

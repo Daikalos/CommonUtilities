@@ -8,24 +8,24 @@ MouseInput::~MouseInput() = default;
 
 bool MouseInput::ScrollUp() const noexcept
 {
-    return GetInFocus() && GetEnabled() && myScrollDelta > myScrollThreshold;
+    return GetEnabled() && myScrollDelta > myScrollThreshold;
 }
 bool MouseInput::ScrollDown() const noexcept
 {
-	return GetInFocus() && GetEnabled() && myScrollDelta < -myScrollThreshold;
+	return GetEnabled() && myScrollDelta < -myScrollThreshold;
 }
 
 bool MouseInput::IsHeld(ButtonType aButton) const
 {
-    return GetInFocus() && GetEnabled() && myCurrentState[aButton];
+    return GetEnabled() && myCurrentState[aButton];
 }
 bool MouseInput::IsPressed(ButtonType aButton) const
 {
-	return GetInFocus() && GetEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
+	return GetEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
 }
 bool MouseInput::IsReleased(ButtonType aButton) const
 {
-	return GetInFocus() && GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
+	return GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
 void MouseInput::SetScrollThreshold(float aScrollThreshold)

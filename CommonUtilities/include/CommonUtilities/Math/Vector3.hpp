@@ -26,9 +26,21 @@ namespace CommonUtilities
 		template<class OtherVector>
 		NODISC CONSTEXPR explicit operator OtherVector() const;
 
-		/// \returns Directional vector pointing between aFrom and aTo.
+		/// \returns Directional vector pointing from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector3 Direction(const Vector3& aFrom, const Vector3& aTo);
+		NODISC CONSTEXPR static Vector3 Direction(const Vector3& aCurrent, const Vector3& aTarget);
+
+		/// \returns Lerped vector between current and target.
+		/// 
+		NODISC CONSTEXPR static Vector3 Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
+
+		/// \returns Slerped vector between current and target.
+		/// 
+		NODISC CONSTEXPR static Vector3 Slerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
+
+		/// \returns Moved vector going from current towards target.
+		/// 
+		NODISC CONSTEXPR static Vector3 MoveTowards(const Vector3& aCurrent, const Vector3& aTarget, float aDistance);
 
 		///	Length of the vector.
 		/// 
@@ -78,6 +90,14 @@ namespace CommonUtilities
 		/// \returns Projected vector
 		/// 
 		NODISC CONSTEXPR Vector3 ProjectOnto(const Vector3& aVector) const;
+
+		/// Reflects provided vector from this acting as a normal.
+		/// 
+		/// \param Vector: vector to reflect.
+		/// 
+		/// \returns Reflected vector
+		/// 
+		NODISC CONSTEXPR Vector3 Reflect(const Vector3& aVector) const;
 	};
 
 	template<typename T>
@@ -104,9 +124,41 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector3<T> Vector3<T>::Direction(const Vector3& aFrom, const Vector3& aTo)
+	CONSTEXPR Vector3<T> Vector3<T>::Direction(const Vector3& aCurrent, const Vector3& aTarget)
 	{
-		return Vector3<T>(aTo.x - aFrom.x, aTo.y - aFrom.y, aTo.z - aFrom.z);
+		return Vector3<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y, aTarget.z - aCurrent.z);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector3<T>::Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
+	{
+		const auto LerpFloat = [](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
+
+		return Vector3<T>
+		{
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.z), static_cast<float>(aTarget.z))),
+		};
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector3<T>::Slerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
+	{
+		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue)); };
+
+		const float dot = ClampFloat(static_cast<float>(aCurrent.Dot(aTarget)), -1.0f, 1.0f);
+
+		const Vector3 relativeVec = (aTarget - aCurrent * dot).GetNormalized();
+		const float theta = std::acos(dot) * aPercentage;
+
+		return aCurrent * std::cos(theta) + relativeVec * std::sin(theta);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector3<T>::MoveTowards(const Vector3& aCurrent, const Vector3& aTarget, float aDistance)
+	{
+		return aCurrent + Vector3::Direction(aCurrent, aTarget).GetNormalized(aDistance);
 	}
 
 	template<typename T>
@@ -159,6 +211,12 @@ namespace CommonUtilities
 	{
 		assert(aVector != Vector3<T>() && "Cannot project onto a zero vector");
 		return (Dot(aVector) / aVector.LengthSqr()) * aVector; // div by lengthsqr
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector3<T>::Reflect(const Vector3& aVector) const
+	{
+		return aVector - 2 * ProjectOnto(aVector);
 	}
 
 	// GLOBAL OPERATORS

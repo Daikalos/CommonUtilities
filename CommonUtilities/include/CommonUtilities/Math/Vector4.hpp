@@ -27,9 +27,21 @@ namespace CommonUtilities
 		template<class OtherVector>
 		NODISC CONSTEXPR explicit operator OtherVector() const;
 
-		/// \returns Directional vector pointing between aFrom and aTo.
+		/// \returns Directional vector pointing from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector4 Direction(const Vector4& aFrom, const Vector4& aTo);
+		NODISC CONSTEXPR static Vector4 Direction(const Vector4& aCurrent, const Vector4& aTarget);
+
+		/// \returns Lerped vector between current and target.
+		/// 
+		NODISC CONSTEXPR static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
+
+		/// \returns Slerped vector between current and target.
+		/// 
+		NODISC CONSTEXPR static Vector4 Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
+
+		/// \returns Moved vector going from current towards target.
+		/// 
+		NODISC CONSTEXPR static Vector4 MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance);
 
 		///	Length of the vector.
 		/// 
@@ -91,9 +103,42 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::Direction(const Vector4& aFrom, const Vector4& aTo)
+	CONSTEXPR Vector4<T> Vector4<T>::Direction(const Vector4& aCurrent, const Vector4& aTarget)
 	{
-		return Vector4<T>(aTo.x - aFrom.x, aTo.y - aFrom.y, aTo.z - aFrom.z, aTo.w - aFrom.w);
+		return Vector4<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y, aTarget.z - aCurrent.z, aTarget.w - aCurrent.w);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
+	{
+		const auto LerpFloat = [](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
+
+		return Vector4<T>
+		{
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.z), static_cast<float>(aTarget.z))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.w), static_cast<float>(aTarget.w)))
+		};
+	}
+
+	template<typename T>
+	CONSTEXPR Vector4<T> Vector4<T>::Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
+	{
+		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue)); };
+
+		const float dot = ClampFloat(static_cast<float>(aCurrent.Dot(aTarget)), -1.0f, 1.0f);
+
+		const Vector4 relativeVec = (aTarget - aCurrent * dot).GetNormalized();
+		const float theta = std::acos(dot) * aPercentage;
+
+		return aCurrent * std::cos(theta) + relativeVec * std::sin(theta);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector4<T> Vector4<T>::MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance)
+	{
+		return aCurrent + Vector4::Direction(aCurrent, aTarget).GetNormalized(aDistance);
 	}
 
 	template<typename T>

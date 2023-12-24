@@ -414,6 +414,11 @@ namespace CommonUtilities
 	template<std::size_t OtherCapacity> requires(std::is_copy_constructible_v<T>&& std::is_copy_assignable_v<T> && (Capacity != OtherCapacity))
 	inline constexpr auto StaticVector<T, Capacity>::operator=(const StaticVector& aOther) noexcept(std::is_nothrow_copy_constructible_v<T> && std::is_nothrow_copy_assignable_v<T> && std::is_nothrow_destructible_v<T> && (Capacity > OtherCapacity)) -> StaticVector&
 	{
+		if (this == &aOther)
+		{
+			return *this;
+		}
+
 		if constexpr (OtherCapacity > Capacity)
 		{
 			if (aOther.size() > Capacity)
@@ -494,6 +499,11 @@ namespace CommonUtilities
 	template<std::size_t OtherCapacity> requires(((std::is_copy_constructible_v<T>&& std::is_copy_assignable_v<T>) || (std::is_move_constructible_v<T> && std::is_move_assignable_v<T>)) && (Capacity != OtherCapacity))
 	inline constexpr auto StaticVector<T, Capacity>::operator=(StaticVector&& aOther) noexcept(NoThrowMoveAssignment && (Capacity > OtherCapacity)) -> StaticVector&
 	{
+		if (this == &aOther)
+		{
+			return *this;
+		}
+
 		if constexpr (!MoveConstructableAndMoveAssignable || !NoThrowMoveConstructableAndMoveAssignable)
 		{
 			*this = aOther;

@@ -125,11 +125,11 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector4<T> Vector4<T>::Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
-		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue)); };
+		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
 		const float dot = ClampFloat(static_cast<float>(aCurrent.Dot(aTarget)), -1.0f, 1.0f);
 
-		const Vector4 relativeVec = (aTarget - aCurrent * dot).GetNormalized();
+		const Vector4<T> relativeVec = (aTarget - aCurrent * dot).GetNormalized();
 		const float theta = std::acos(dot) * aPercentage;
 
 		return aCurrent * std::cos(theta) + relativeVec * std::sin(theta);

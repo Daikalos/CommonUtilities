@@ -1,38 +1,40 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <limits>
+#include <numbers>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 
+#include <math.h>
+
 namespace CommonUtilities
 {
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI = static_cast<T>(M_PI);
+	CONSTEXPR T PI_V = std::numbers::pi_v<T>;
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI_2 = static_cast<T>(M_PI_2);
+	CONSTEXPR T PI_2_V = PI_V<T> / T{2};
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI_4 = static_cast<T>(M_PI_4);
+	CONSTEXPR T PI_4_V = PI_2_V<T> / T{2};
 
 	template<IsFloatingPoint T = float> 
-	CONSTEXPR T DEG2RAD = PI<T> / T(180.0);
+	CONSTEXPR T DEG2RAD = PI_V<T> / T{180.0};
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T RAD2DEG = T(180.0) / PI<T>;
+	CONSTEXPR T RAD2DEG = T{180.0} / PI_V<T>;
 
 	template<IsFloatingPoint T>
 	NODISC CONSTEXPR T ToRadians(T aDegrees)
 	{
-		return aDegrees * (PI<T> / T(180.0));
+		return aDegrees * DEG2RAD;
 	}
 
 	template<IsFloatingPoint T>
 	NODISC CONSTEXPR T ToDegrees(T aRadians)
 	{
-		return aRadians * (T(180.0) / PI<T>);
+		return aRadians * RAD2DEG;
 	}
 
 	template<IsArithmetic T>
@@ -51,7 +53,7 @@ namespace CommonUtilities
 	}
 
 	template<IsFloatingPoint T>
-	NODISC CONSTEXPR auto Equal(T aFirst, T aSecond, T aEpsilon = static_cast<T>(DBL_EPSILON))
+	NODISC CONSTEXPR auto Equal(T aFirst, T aSecond, T aEpsilon = std::numeric_limits<T>::epsilon())
 	{
 		return std::abs(aFirst - aSecond) <= aEpsilon;
 	}
@@ -76,11 +78,15 @@ namespace CommonUtilities
 		return std::round(aValue * n) / n;
 	}
 
-	inline constexpr float PI_F = PI<float>;
-	inline constexpr float PI_2_F = PI_2<float>;
-	inline constexpr float PI_4_F = PI_4<float>;
+	inline constexpr float PI				= PI_V<float>;
+	inline constexpr float PI_2				= PI_2_V<float>;
+	inline constexpr float PI_4				= PI_4_V<float>;
 
-	inline constexpr double PI_D = PI<double>;
-	inline constexpr double PI_2_D = PI_2<double>;
-	inline constexpr double PI_4_D = PI_4<double>;
+	inline constexpr double PI_D			= PI_V<double>;
+	inline constexpr double PI_2_D			= PI_2_V<double>;
+	inline constexpr double PI_4_D			= PI_4_V<double>;
+
+	inline constexpr long double PI_LD		= PI_V<long double>;
+	inline constexpr long double PI_2_LD	= PI_2_V<long double>;
+	inline constexpr long double PI_4_LD	= PI_4_V<long double>;
 }

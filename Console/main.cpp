@@ -7,7 +7,7 @@
 
 int main()
 {
-	cu::Mat3f mat = cu::Mat3f::CreateTRS(cu::Vector2f(100.0f, 100.0f), cu::PI_2_F, cu::Vector2f(1.0f, 1.0f));
+	cu::Mat3f mat = cu::Mat3f::CreateTRS(cu::Vector2f(100.0f, 100.0f), cu::PI_2, cu::Vector2f(1.0f, 1.0f));
 	cu::Mat3f mat2;
 
 	mat2.Combine(mat);

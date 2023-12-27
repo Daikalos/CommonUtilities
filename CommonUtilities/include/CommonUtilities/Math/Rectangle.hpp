@@ -33,9 +33,6 @@ namespace CommonUtilities
 		NODISC CONSTEXPR bool Contains(const Rect& aOther) const;
 	};
 
-	using RectInt = Rect<int>;
-	using RectFloat = Rect<float>;
-
 	template<IsArithmetic T>
 	CONSTEXPR Rect<T>::Rect() = default;
 
@@ -232,4 +229,7 @@ namespace CommonUtilities
 	{
 		return !(aLeft == aRight);
 	}
+
+	using RectInt = Rect<int>;
+	using RectFloat = Rect<float>;
 }

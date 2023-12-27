@@ -125,7 +125,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
-		const auto LerpFloat = [](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
+		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
 		return Vector2<T>
 		{
@@ -199,7 +199,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::Reflect(const Vector2& aVector) const
 	{
-		return aVector - 2 * ProjectOnto(aVector);
+		return aVector - T{2} * ProjectOnto(aVector);
 	}
 
 	// GLOBAL OPERATORS

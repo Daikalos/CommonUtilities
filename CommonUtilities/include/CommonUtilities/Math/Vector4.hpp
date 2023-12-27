@@ -111,7 +111,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
-		const auto LerpFloat = [](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
+		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
 		return Vector4<T>
 		{

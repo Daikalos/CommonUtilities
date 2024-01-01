@@ -118,5 +118,6 @@ namespace CommonUtilities::Keyboard
     COMMON_UTILITIES_API NODISC Key ProcessVirtualKey(WPARAM aVirtualKey, LPARAM someFlags);
     COMMON_UTILITIES_API NODISC Key VirtualKeyToCUKey(WPARAM aVirtualKey);
     COMMON_UTILITIES_API NODISC int CUKeyToVirtualKey(Key aKey);
+
     COMMON_UTILITIES_API NODISC bool IsKeyPressed(Key aKey);
 }

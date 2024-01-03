@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Vector2.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Line
+	class Line final : public Shape
 	{
 	public:
 		Line();
@@ -18,6 +19,11 @@ namespace CommonUtilities
 
 		const Vector2<T>& GetDirection() const;
 		Vector2<T> GetNormal() const;
+
+		auto GetType() const noexcept -> Type override;
+
+		void SetOrigin(const Vector2<T>& aOrigin);
+		void SetDirection(const Vector2<T>& aDirection);
 
 		bool IsInside(const Vector2<T>& aPosition) const;
 
@@ -60,6 +66,23 @@ namespace CommonUtilities
 	inline Vector2<T> Line<T>::GetNormal() const
 	{
 		return Vector2<T>(-myDirection.y, myDirection.x);
+	}
+
+	template<typename T>
+	inline auto Line<T>::GetType() const noexcept -> Type
+	{
+		return Type::Line;
+	}
+
+	template<typename T>
+	inline void Line<T>::SetOrigin(const Vector2<T>& aOrigin)
+	{
+		myOrigin = aOrigin;
+	}
+	template<typename T>
+	inline void Line<T>::SetDirection(const Vector2<T>& aDirection)
+	{
+		myDirection = aDirection.GetNormalized();
 	}
 
 	template<typename T>

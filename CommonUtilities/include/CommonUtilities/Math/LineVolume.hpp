@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "Line.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class LineVolume
+	class LineVolume final : public Shape
 	{
 	public:
 		LineVolume();
@@ -20,6 +21,8 @@ namespace CommonUtilities
 
 		const Line<T>& GetLine(std::size_t aIndex) const;
 		Line<T>& GetLine(std::size_t aIndex);
+
+		auto GetType() const noexcept -> Type override;
 
 		template<typename... Args>
 		void EmplaceLine(Args&&... someArgs);
@@ -67,6 +70,12 @@ namespace CommonUtilities
 	inline Line<T>& LineVolume<T>::GetLine(std::size_t aIndex)
 	{
 		return myLines[aIndex];
+	}
+
+	template<typename T>
+	inline auto LineVolume<T>::GetType() const noexcept -> Type
+	{
+		return Type::LineVolume;
 	}
 
 	template<typename T>

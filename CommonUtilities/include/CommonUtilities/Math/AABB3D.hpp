@@ -3,11 +3,12 @@
 #include <cassert>
 
 #include "Vector3.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class AABB3D
+	class AABB3D final : public Shape
 	{
 	public:
 		AABB3D();
@@ -20,7 +21,12 @@ namespace CommonUtilities
 		const Vector3<T>& GetMin() const noexcept;
 		const Vector3<T>& GetMax() const noexcept;
 
+		void SetMin(const Vector3<T>& aMin);
+		void SetMax(const Vector3<T>& aMax);
+
 		bool IsInside(const Vector3<T>& aPosition) const;
+
+		auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T> myMin;
@@ -60,11 +66,30 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline void AABB3D<T>::SetMin(const Vector3<T>& aMin)
+	{
+		assert(myMax.x >= aMin.x && myMax.y >= aMin.y && "Maximum cannot be smaller than minimum");
+		myMin = aMin;
+	}
+	template<typename T>
+	inline void AABB3D<T>::SetMax(const Vector3<T>& aMax)
+	{
+		assert(aMax.x >= myMin.x && aMax.y >= myMin.y && "Maximum cannot be smaller than minimum");
+		myMax = aMax;
+	}
+
+	template<typename T>
 	inline bool AABB3D<T>::IsInside(const Vector3<T>& aPosition) const
 	{
 		return 
 			(aPosition.x >= myMin.x) && (aPosition.x <= myMax.x) && 
 			(aPosition.y >= myMin.y) && (aPosition.y <= myMax.y) && 
 			(aPosition.z >= myMin.z) && (aPosition.z <= myMax.z);
+	}
+
+	template<typename T>
+	inline auto AABB3D<T>::GetType() const noexcept -> Type
+	{
+		return Type::AABB3D;
 	}
 }

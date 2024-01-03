@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Vector3.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Plane
+	class Plane : public Shape
 	{
 	public:
 		Plane();
@@ -19,6 +20,11 @@ namespace CommonUtilities
 
 		const Vector3<T>& GetOrigin() const noexcept;
 		const Vector3<T>& GetNormal() const noexcept;
+
+		void SetOrigin(const Vector3<T>& aOrigin);
+		void SetNormal(const Vector3<T>& aNormal);
+
+		auto GetType() const noexcept -> Type override;
 
 		bool IsInside(const Vector3<T>& aPosition) const;
 
@@ -69,6 +75,23 @@ namespace CommonUtilities
 	inline const Vector3<T>& Plane<T>::GetNormal() const noexcept
 	{
 		return myNormal;
+	}
+
+	template<typename T>
+	inline void Plane<T>::SetOrigin(const Vector3<T>& aOrigin)
+	{
+		myOrigin = aOrigin;
+	}
+	template<typename T>
+	inline void Plane<T>::SetNormal(const Vector3<T>& aNormal)
+	{
+		myNormal = aNormal;
+	}
+
+	template<typename T>
+	inline auto Plane<T>::GetType() const noexcept -> Type
+	{
+		return Type::Plane;
 	}
 
 	template<typename T>

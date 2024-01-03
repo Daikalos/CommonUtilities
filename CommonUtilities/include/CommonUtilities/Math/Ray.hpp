@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Vector3.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Ray
+	class Ray final : public Shape
 	{
 	public:
 		Ray(); 
@@ -18,6 +19,9 @@ namespace CommonUtilities
 
 		const Vector3<T>& GetOrigin() const noexcept;
 		const Vector3<T>& GetDirection() const noexcept;
+
+		void SetOrigin(const Vector3<T>& aOrigin);
+		void SetDirection(const Vector3<T>& aDirection);
 
 	private:
 		Vector3<T> myOrigin;
@@ -60,5 +64,16 @@ namespace CommonUtilities
 	inline const Vector3<T>& Ray<T>::GetDirection() const noexcept
 	{
 		return myDirection;
+	}
+
+	template<typename T>
+	inline void Ray<T>::SetOrigin(const Vector3<T>& aOrigin)
+	{
+		myOrigin = aOrigin;
+	}
+	template<typename T>
+	inline void Ray<T>::SetDirection(const Vector3<T>& aDirection)
+	{
+		myDirection = aDirection;
 	}
 }

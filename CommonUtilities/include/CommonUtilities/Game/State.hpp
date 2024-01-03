@@ -32,13 +32,13 @@ namespace CommonUtilities
 
 		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
 
-		virtual bool Start(Timer& aTimer) = 0;
+		virtual bool Init(Timer& aTimer) = 0;
 		virtual bool PreUpdate(Timer& aTimer)	{ return true; }
 		virtual bool Update(Timer& aTimer) = 0;
 		virtual bool FixedUpdate(Timer& aTimer)	{ return true; }
 		virtual bool PostUpdate(Timer& aTimer)	{ return true; }
 
-		virtual void Draw() const = 0;
+		virtual void Render() const = 0;
 
 	protected:
 		NODISC const StateStack<T>& GetStack() const;

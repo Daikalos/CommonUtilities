@@ -6,6 +6,8 @@
 
 #include <CommonUtilities/System/Event.hpp>
 
+#include <CommonUtilities/Game/StateStack.hpp>
+
 int main()
 {
 	cu::Mat3f mat = cu::Mat3f::CreateTRS(cu::Vector2f(100.0f, 100.0f), cu::PI_2, cu::Vector2f(1.0f, 1.0f));

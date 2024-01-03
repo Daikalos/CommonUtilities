@@ -438,6 +438,17 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC CONSTEXPR Vector2<T> operator*(const Matrix3x3<T>& aLeft, const Vector2<T>& aRight)
+	{
+		return aLeft.TransformPoint(aRight);
+	}
+	template<typename T>
+	NODISC CONSTEXPR Vector2<T> operator*(const Vector2<T>& aLeft, const Matrix3x3<T>& aRight)
+	{
+		return aRight * aLeft;
+	}
+
+	template<typename T>
 	NODISC CONSTEXPR bool operator==(const Matrix3x3<T>& aLeft, const Matrix3x3<T>& aRight)
 	{
 		for (int i = 0; i < Matrix3x3<T>::COUNT; ++i)

@@ -3,6 +3,7 @@
 #include <cfloat>
 #include <cmath>
 #include <array>
+#include <functional>
 
 #include "Plane.hpp"
 #include "Ray.hpp"
@@ -12,6 +13,12 @@
 
 namespace CommonUtilities
 {
+	template<typename T>
+	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint);
+	
+	template<typename T>
+	inline bool IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB, Vector3<T>& outIntersectionPoint);
+
 	template<typename T>
 	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
 
@@ -23,6 +30,39 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+
+	template<typename T>
+	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint)
+	{
+		Vector3<T> normal = Vector3<T>::Direction(aFirstSphere.GetCenter(), aSecondSphere.GetCenter());
+
+		const T distSqr = normal.LengthSqr();
+		const T radius = aFirstSphere.GetRadius() + aSecondSphere.GetRadius();
+
+		if (distSqr >= radius * radius)
+		{
+			return false;
+		}
+
+		if (distSqr > FLT_EPSILON * FLT_EPSILON)
+		{
+			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
+		}
+
+		Vector3<T> firstContact = aFirstSphere.GetCenter() + normal * aFirstSphere.GetRadius();
+		Vector3<T> secondContact = aSecondSphere.GetCenter() - normal * aSecondSphere.GetRadius();
+
+		outIntersectionPoint = 0.5f * (firstContact + secondContact);
+
+		return true;
+	}
+
+	template<typename T>
+	bool IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB, Vector3<T>& outIntersectionPoint)
+	{
+
+		return false;
+	}
 
 	template<typename T>
 	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)

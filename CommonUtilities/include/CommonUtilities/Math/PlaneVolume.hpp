@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "Plane.hpp"
+#include "Shape.h"
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class PlaneVolume
+	class PlaneVolume : public Shape
 	{
 	public:
 		PlaneVolume();
@@ -20,6 +21,8 @@ namespace CommonUtilities
 
 		const Plane<T>& GetPlane(std::size_t aIndex) const;
 		Plane<T>& GetPlane(std::size_t aIndex);
+
+		auto GetType() const noexcept -> Type override;
 
 		template<typename... Args>
 		void EmplacePlane(Args&&... someArgs);
@@ -67,6 +70,12 @@ namespace CommonUtilities
 	inline Plane<T>& PlaneVolume<T>::GetPlane(std::size_t aIndex)
 	{
 		return myPlanes[aIndex];
+	}
+
+	template<typename T>
+	inline auto PlaneVolume<T>::GetType() const noexcept -> Type
+	{
+		return Type::PlaneVolume;
 	}
 
 	template<typename T>

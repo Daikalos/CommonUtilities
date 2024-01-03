@@ -155,6 +155,7 @@
     <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Game\BaseEntity.hpp" />
+    <ClInclude Include="include\CommonUtilities\Game\PostMaster.h" />
     <ClInclude Include="include\CommonUtilities\Game\State.hpp" />
     <ClInclude Include="include\CommonUtilities\Game\StateIdentifiers.h" />
     <ClInclude Include="include\CommonUtilities\Game\StateStack.hpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Plane.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\PlaneVolume.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Ray.hpp" />
+    <ClInclude Include="include\CommonUtilities\Math\Shape.h" />
     <ClInclude Include="include\CommonUtilities\Math\Sphere.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Transform2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Transform.h" />
@@ -215,6 +217,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CommonUtilities\Math\Shape.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\MouseCursor.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\InputHolder.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\MouseInput.cpp" />

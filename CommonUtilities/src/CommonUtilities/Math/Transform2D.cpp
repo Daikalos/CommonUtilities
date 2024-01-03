@@ -2,34 +2,35 @@
 
 using namespace CommonUtilities;
 
-Transform2D::Transform2D() = default;
+Transform2D::Transform2D() : Transform2D(Vector2f(), 0.0f, Vector2f(1.0f, 1.0f))
+{
+
+}
 
 Transform2D::~Transform2D() = default;
 
 Transform2D::Transform2D(const Vector2f& aPosition, float aRotation, const Vector2f& aScale)
 	: myPosition(aPosition)
-	, myRotation(aRotation)
 	, myScale(aScale)
+	, myRotation(aRotation)
 {
 
 }
 
 Transform2D::Transform2D(const Vector2f& aPosition, const Vector2f& aScale)
-	: myPosition(aPosition)
-	, myScale(aScale)
+	: Transform2D(aPosition, 0.0f, aScale)
 {
 
 }
 
 Transform2D::Transform2D(const Vector2f& aPosition, float aRotation)
-	: myPosition(aPosition)
-	, myRotation(aRotation)
+	: Transform2D(aPosition, aRotation, Vector2f(1.0f, 1.0f))
 {
 
 }
 
 Transform2D::Transform2D(const Vector2f& aPosition)
-	: myPosition(aPosition)
+	: Transform2D(aPosition, 0.0f, Vector2f(1.0f, 1.0f))
 {
 
 }
@@ -47,7 +48,7 @@ const Mat3f& Transform2D::GetInverseMatrix() const
 {
 	if (myUpdateInverseMatrix)
 	{
-		myInverseMatrix = myMatrix.FastInverse();
+		myInverseMatrix = GetMatrix().FastInverse();
 		myUpdateInverseMatrix = false;
 	}
 	return myInverseMatrix;

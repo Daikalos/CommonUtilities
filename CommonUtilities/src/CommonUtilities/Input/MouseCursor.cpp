@@ -40,14 +40,17 @@ void MouseCursor::SetHandle(HWND aHandle)
 {
 	assert(aHandle != nullptr && "You provided a nullptr handle...");
 
-	myHandle = aHandle;
+	if (myHandle != aHandle)
+	{
+		myHandle = aHandle;
 
-	RAWINPUTDEVICE rid[1]{};
-	rid[0].usUsagePage	= HID_USAGE_PAGE_GENERIC;
-	rid[0].usUsage		= HID_USAGE_GENERIC_MOUSE;
-	rid[0].dwFlags		= RIDEV_INPUTSINK;
-	rid[0].hwndTarget	= myHandle;
-	RegisterRawInputDevices(rid, 1, sizeof(rid[0]));
+		RAWINPUTDEVICE rid[1]{};
+		rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+		rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+		rid[0].dwFlags = RIDEV_INPUTSINK;
+		rid[0].hwndTarget = myHandle;
+		RegisterRawInputDevices(rid, 1, sizeof(rid[0]));
+	}
 }
 
 void MouseCursor::SetPosition(const Vector2i& aPoint)

@@ -1,5 +1,7 @@
 #include <CommonUtilities/System/EventID.h>
 
+#include <utility>
+
 using namespace CommonUtilities;
 
 EventID::EventID(IEvent& aEvent, evnt::IDType aEventID)
@@ -12,14 +14,15 @@ EventID::EventID(IEvent& aEvent, evnt::IDType aEventID)
 EventID::~EventID()
 {
 	if (IsConnected())
+	{
 		myEvent->RemoveID(myID);
+	}
 }
 
 EventID::EventID(EventID&& aOther) noexcept
-	: myEvent(aOther.myEvent), myID(aOther.myID)
+	: myEvent(std::exchange(aOther.myEvent, nullptr)), myID(std::exchange(aOther.myID, NULL))
 {
-	aOther.myEvent = nullptr;
-	aOther.myID = NULL;
+
 }
 
 EventID& EventID::operator=(EventID&& aOther) noexcept

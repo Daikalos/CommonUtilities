@@ -189,6 +189,15 @@
     <ClInclude Include="include\CommonUtilities\Structures\ResourceLoader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Game\StateStack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Game\State.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Game\StateIdentifiers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">

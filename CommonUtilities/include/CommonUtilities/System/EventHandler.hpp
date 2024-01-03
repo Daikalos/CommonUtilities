@@ -19,7 +19,7 @@ namespace CommonUtilities
 		EventHandler(const EventHandler& aOther);
 		EventHandler(EventHandler&& aOther) noexcept;
 
-		auto operator=(const EventHandler& aOther)->EventHandler&;
+		auto operator=(const EventHandler& aOther) -> EventHandler&;
 		auto operator=(EventHandler&& aOther) noexcept -> EventHandler&;
 
 		void operator()(Args... someParams) const;

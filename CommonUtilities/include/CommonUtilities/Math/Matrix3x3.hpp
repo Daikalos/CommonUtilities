@@ -335,7 +335,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CONSTEXPR auto Matrix3x3<T>::CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale) -> Matrix3x3
+	CONSTEXPR auto Matrix3x3<T>::CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale) -> Matrix3x3
 	{
 		const T c = std::cos(aRotation);
 		const T s = std::sin(aRotation);

@@ -2,27 +2,29 @@
 
 using namespace CommonUtilities;
 
-Transform::Transform() = default;
+Transform::Transform() : Transform(cu::Vector3f(), cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f))
+{
+
+}
 
 Transform::~Transform() = default;
 
 Transform::Transform(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale)
 	: myPosition(aPosition)
-	, myRotation(aRotation)
 	, myScale(aScale)
+	, myRotation(aRotation)
 {
 
 }
 
 Transform::Transform(const Vector3f& aPosition, const Vector3f& aRotation)
-	: myPosition(aPosition)
-	, myRotation(aRotation)
+	: Transform(aPosition, aRotation, cu::Vector3f(1.0f, 1.0f, 1.0f))
 {
 
 }
 
 Transform::Transform(const Vector3f& aPosition)
-	: myPosition(aPosition)
+	: Transform(aPosition, cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f))
 {
 
 }
@@ -40,7 +42,7 @@ const Mat4f& Transform::GetInverseMatrix() const
 {
 	if (myUpdateInverseMatrix)
 	{
-		myInverseMatrix = myMatrix.FastInverse();
+		myInverseMatrix = GetMatrix().FastInverse();
 		myUpdateInverseMatrix = false;
 	}
 	return myInverseMatrix;

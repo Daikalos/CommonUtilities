@@ -8,6 +8,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class Vector3;
+
+	template<typename T>
 	class Vector2
 	{
 	public:
@@ -91,6 +94,18 @@ namespace CommonUtilities
 		/// \returns Reflected vector
 		/// 
 		NODISC CONSTEXPR Vector2 Reflect(const Vector2& aVector) const;
+
+		/// \returns Converts this 2D vector to a 3D one.
+		/// 
+		NODISC CONSTEXPR Vector3<T> XYZ(T aZ = T{}) const;
+
+		/// \returns Converts this 2D vector to a 3D one.
+		/// 
+		NODISC CONSTEXPR Vector3<T> XZY(T aY = T{}) const;
+
+		/// \returns Converts this 2D vector to a 3D one.
+		/// 
+		NODISC CONSTEXPR Vector3<T> YZX(T aX = T{}) const;
 	};
 
 	template<typename T>
@@ -200,6 +215,24 @@ namespace CommonUtilities
 	CONSTEXPR Vector2<T> Vector2<T>::Reflect(const Vector2& aVector) const
 	{
 		return aVector - T{2} * ProjectOnto(aVector);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector2<T>::XYZ(T aZ) const
+	{
+		return Vector3<T>(x, y, aZ);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector2<T>::XZY(T aY) const
+	{
+		return Vector3<T>(x, aY, y);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector2<T>::YZX(T aX) const
+	{
+		return Vector3<T>(aX, x, y);
 	}
 
 	// GLOBAL OPERATORS

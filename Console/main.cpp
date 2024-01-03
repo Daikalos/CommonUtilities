@@ -1,6 +1,7 @@
 #include <CommonUtilities/Config.h>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+#include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Math/Transform2D.h>
 
 #include <CommonUtilities/System/Event.hpp>
@@ -17,6 +18,10 @@ int main()
 	float rotation2 = mat.GetRotation() * cu::RAD2DEG<>;
 
 	mat2.Combine(inv);
+
+	cu::Vector4f vec1, vec2;
+
+	(vec1 + vec2) = cu::Vector4f();
 
 	return 0;
 }

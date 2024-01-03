@@ -11,8 +11,7 @@
 
 namespace CommonUtilities
 {
-	/// Can hold any number of functions that may all be executed manually. No return value since there is no way to determine
-	/// from who to return from.
+	/// Can hold any number of functions that may all be executed manually. 
 	/// 
 	/// Based on article by Shmuel Zang:
 	/// https://www.codeproject.com/Articles/1256352/CppEvent-How-to-Implement-Events-using-Standard-Cp

@@ -24,7 +24,6 @@ namespace CommonUtilities
 		Vector3<T> myDirection;
 	};
 
-
 	template<typename T>
 	inline Ray<T>::Ray() = default;
 

@@ -155,6 +155,9 @@
     <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Game\BaseEntity.hpp" />
+    <ClInclude Include="include\CommonUtilities\Game\State.hpp" />
+    <ClInclude Include="include\CommonUtilities\Game\StateIdentifiers.h" />
+    <ClInclude Include="include\CommonUtilities\Game\StateStack.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Joystick.h" />
     <ClInclude Include="include\CommonUtilities\Input\KeyboardBindable.hpp" />

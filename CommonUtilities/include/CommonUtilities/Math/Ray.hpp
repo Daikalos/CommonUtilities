@@ -23,6 +23,8 @@ namespace CommonUtilities
 		void SetOrigin(const Vector3<T>& aOrigin);
 		void SetDirection(const Vector3<T>& aDirection);
 
+		auto GetType() const noexcept -> Type override;
+
 	private:
 		Vector3<T> myOrigin;
 		Vector3<T> myDirection;
@@ -75,5 +77,11 @@ namespace CommonUtilities
 	inline void Ray<T>::SetDirection(const Vector3<T>& aDirection)
 	{
 		myDirection = aDirection;
+	}
+
+	template<typename T>
+	inline auto Ray<T>::GetType() const noexcept -> Type
+	{
+		return Type::Ray;
 	}
 }

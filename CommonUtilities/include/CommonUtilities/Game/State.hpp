@@ -7,24 +7,22 @@
 #include <CommonUtilities/Config.h>
 #include <CommonUtilities/System/Timer.h>
 
-#include "StateIdentifiers.h"
-
 namespace CommonUtilities
 {
-	template<typename T>
+	template<typename T, typename IDType>
 	class StateStack;
 
-	template<typename T>
+	template<typename T, typename IDType = std::uint32_t>
 	class State
 	{
 	public:
 		using Ptr = std::unique_ptr<State>;
 		using Func = std::function<Ptr()>;
 
-		State(StateID aID, StateStack<T>& aStateStack, T& aContext);
+		State(const IDType& aID, StateStack<T, IDType>& aStateStack, const T& aContext);
 		virtual ~State() = default;
 
-		NODISC StateID GetID() const noexcept;
+		NODISC const IDType& GetID() const noexcept;
 
 		virtual void OnCreate() {}
 		virtual void OnActivate() {}
@@ -41,49 +39,49 @@ namespace CommonUtilities
 		virtual void Render() const = 0;
 
 	protected:
-		NODISC const StateStack<T>& GetStack() const;
-		NODISC StateStack<T>& GetStack();
+		NODISC const StateStack<T, IDType>& GetStack() const;
+		NODISC StateStack<T, IDType>& GetStack();
 
 		NODISC const T& GetContext() const;
 		NODISC T& GetContext();
 
 	private:
-		StateID myID;
-		StateStack<T>* myStateStack;
-		T* myContext;
+		IDType					myID;
+		StateStack<T, IDType>*	myStateStack;
+		T						myContext;
 	};
 
-	template<typename T>
-	inline State<T>::State(StateID aID, StateStack<T>& aStateStack, T& aContext)
+	template<typename T, typename IDType>
+	inline State<T, IDType>::State(const IDType& aID, StateStack<T, IDType>& aStateStack, const T& aContext)
 		: myID(aID), myStateStack(aStateStack), myContext(aContext)
 	{
 
 	}
 
-	template<typename T>
-	inline StateID State<T>::GetID() const noexcept
+	template<typename T, typename IDType>
+	inline const IDType& State<T, IDType>::GetID() const noexcept
 	{
 		return myID;
 	}
 
-	template<typename T>
-	inline const StateStack<T>& State<T>::GetStack() const
+	template<typename T, typename IDType>
+	inline const StateStack<T, IDType>& State<T, IDType>::GetStack() const
 	{
 		return *myStateStack;
 	}
-	template<typename T>
-	inline StateStack<T>& State<T>::GetStack()
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>& State<T, IDType>::GetStack()
 	{
 		return *myStateStack;
 	}
 
-	template<typename T>
-	inline const T& State<T>::GetContext() const
+	template<typename T, typename IDType>
+	inline const T& State<T, IDType>::GetContext() const
 	{
 		return *myContext;
 	}
-	template<typename T>
-	inline T& State<T>::GetContext()
+	template<typename T, typename IDType>
+	inline T& State<T, IDType>::GetContext()
 	{
 		return *myContext;
 	}

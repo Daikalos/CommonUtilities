@@ -11,11 +11,11 @@
 
 namespace CommonUtilities
 {
-	template<typename T>
+	template<typename T, typename IDType = std::uint32_t>
 	class StateStack : private NonCopyable
 	{
 	public:
-		StateStack(T& aContext);
+		StateStack(const T& aContext);
 
 		NODISC bool IsEmpty() const noexcept;
 		NODISC bool IsPaused() const noexcept;
@@ -32,18 +32,18 @@ namespace CommonUtilities
 
 		void Render() const;
 
-		void Push(StateID aStateID);
-		void Erase(StateID aStateID);
+		void Push(const IDType& aStateID);
+		void Erase(const IDType& aStateID);
 		void Pop();
 		void Clear();
 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<T, StateID, StateStack&, T&, Args...>
-		void RegisterState(StateID aStateID, Args&&... someArgs)
+			requires std::constructible_from<T, IDType, StateStack&, T&, Args...>
+		void RegisterState(const IDType& aStateID, Args&&... someArgs)
 		{
-			myFactory[aStateID] = [this, aStateID, ... args = std::forward<Args>(someArgs)]()
+			myFactory[aStateID] = [this, &aStateID, ...args = std::forward<Args>(someArgs)]
 			{
-				return std::make_unique<S>(aStateID, *this, std::forward<Args>(args)...);
+				return std::make_unique<S>(aStateID, *this, args...);
 			};
 		}
 
@@ -58,55 +58,53 @@ namespace CommonUtilities
 
 		struct PendingChange
 		{
-			explicit PendingChange(const Action& aAction, StateID aStateID);
+			explicit PendingChange(const Action& aAction, const IDType& aStateID);
 
 			Action action;
-			StateID stateID;
+			IDType stateID;
 		};
 
-		using StatePtr = typename State<T>::Ptr;
-		using StateFunc = typename State<T>::Func;
+		using StatePtr		= typename State<T, IDType>::Ptr;
+		using StateFunc		= typename State<T, IDType>::Func;
+		using Stack			= std::vector<StatePtr>;
+		using Factory		= std::unordered_map<IDType, StateFunc>;
+		using PendingList	= std::vector<PendingChange>;
 
-		using Stack = std::vector<StatePtr>;
-		using Factory = std::unordered_map<StateID, StateFunc>;
-
-		using PendingList = std::vector<PendingChange>;
-
-		auto CreateState(StateID aStateID) -> StatePtr;
+		auto CreateState(const IDType& aStateID) -> StatePtr;
 		void ApplyPendingChanges();
 
-		T*			myContext;
+		T			myContext;
 		Stack		myStack;
 		Factory		myFactory;
 		PendingList myPendingList;
 		bool		myPaused;
 
-		friend class State<T>;
+		friend class State<T, IDType>;
 	};
 
-	template<typename T>
-	inline StateStack<T>::StateStack(T& aContext)
-		: myContext(&aContext) { }
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>::StateStack(const T& aContext)
+		: myContext(aContext) { }
 
-	template<typename T>
-	inline bool StateStack<T>::IsEmpty() const noexcept
+	template<typename T, typename IDType>
+	inline bool StateStack<T, IDType>::IsEmpty() const noexcept
 	{
 		return myStack.empty();
 	}
-	template<typename T>
-	inline bool StateStack<T>::IsPaused() const noexcept
+	template<typename T, typename IDType>
+	inline bool StateStack<T, IDType>::IsPaused() const noexcept
 	{
 		return myPaused;
 	}
 
-	template<typename T>
-	inline void StateStack<T>::SetPaused(bool flag)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::SetPaused(bool flag)
 	{
 		myPaused = flag;
 	}
 
-	template<typename T>
-	inline bool StateStack<T>::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+	template<typename T, typename IDType>
+	inline bool StateStack<T, IDType>::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 	{
 		if (myPaused) // not sure if should be here
 			return;
@@ -120,8 +118,8 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::Init(Timer& aTimer)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Init(Timer& aTimer)
 	{
 		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
 		{
@@ -132,8 +130,8 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::PreUpdate(Timer& aTimer)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::PreUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -147,8 +145,8 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::Update(Timer& aTimer)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Update(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -162,8 +160,8 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::FixedUpdate(Timer& aTimer)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::FixedUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -177,8 +175,8 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::PostUpdate(Timer& aTimer)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::PostUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -192,53 +190,57 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::Render() const
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Render() const
 	{
 		for (StatePtr& state : myStack)
+		{
 			state->Render();
+		}
 	}
 
-	template<typename T>
-	inline void StateStack<T>::Push(StateID aStateID)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Push(const IDType& aStateID)
 	{
 		myPendingList.emplace_back(Action::Push, aStateID);
 	}
-	template<typename T>
-	inline void StateStack<T>::Erase(StateID aStateID)
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Erase(const IDType& aStateID)
 	{
 		myPendingList.emplace_back(Action::Erase, aStateID);
 	}
-	template<typename T>
-	inline void StateStack<T>::Pop()
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Pop()
 	{
 		myPendingList.emplace_back(Action::Pop, -1);
 	}
-	template<typename T>
-	inline void StateStack<T>::Clear()
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Clear()
 	{
 		myPendingList.emplace_back(Action::Clear, -1);
 	}
 
-	template<typename T>
-	inline StateStack<T>::PendingChange::PendingChange(const Action& aAction, StateID aStateID)
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID)
 		: action(aAction), stateID(aStateID)
 	{
 
 	}
 
-	template<typename T>
-	inline auto StateStack<T>::CreateState(StateID state_id) -> StatePtr
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::CreateState(const IDType& aStateID) -> StatePtr
 	{
-		const auto it = myFactory.find(state_id);
+		const auto it = myFactory.find(aStateID);
 		if (it == myFactory.end())
+		{
 			throw std::runtime_error("State could not be found");
+		}
 
 		return it->second();
 	}
 
-	template<typename T>
-	inline void StateStack<T>::ApplyPendingChanges()
+	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::ApplyPendingChanges()
 	{
 		const auto PopState = [this]()
 		{

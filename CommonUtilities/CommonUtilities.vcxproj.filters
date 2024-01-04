@@ -195,13 +195,10 @@
     <ClInclude Include="include\CommonUtilities\Game\State.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Game\StateIdentifiers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Game\PostMaster.h">
+    <ClInclude Include="include\CommonUtilities\Input\ButtonEvent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

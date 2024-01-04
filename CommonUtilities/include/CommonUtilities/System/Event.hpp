@@ -19,7 +19,7 @@ namespace CommonUtilities
 	/// \param Args: Parameters for function
 	/// 
 	template<typename... Args>
-	class Event : public IEvent
+	class Event final : public IEvent
 	{
 	public:
 		using HandlerType = EventHandler<Args...>;
@@ -39,6 +39,7 @@ namespace CommonUtilities
 
 		evnt::IDType operator+=(const HandlerType& aHandler);
 		evnt::IDType operator+=(const typename HandlerType::FunctionType& aHandler);
+		evnt::IDType operator+=(typename HandlerType::FunctionType&& aHandler);
 
 		evnt::IDType operator-=(const HandlerType& aHandler);
 		evnt::IDType operator-=(evnt::IDType aHandlerID) override;
@@ -51,6 +52,7 @@ namespace CommonUtilities
 
 		evnt::IDType Add(const HandlerType& aHandler);
 		evnt::IDType Add(const typename HandlerType::FunctionType& aHandler);
+		evnt::IDType Add(typename HandlerType::FunctionType&& aHandler);
 
 		bool Remove(const HandlerType& aHandler);
 		bool RemoveID(evnt::IDType aHandlerID) override;
@@ -112,7 +114,7 @@ namespace CommonUtilities
 	}
 
 	template<typename... Args>
-	inline void Event<Args...>::operator()(Args ...someParams) const
+	inline void Event<Args...>::operator()(Args... someParams) const
 	{
 		Call(someParams...);
 	}
@@ -126,6 +128,11 @@ namespace CommonUtilities
 	inline evnt::IDType Event<Args...>::operator+=(const typename HandlerType::FunctionType& aHandler)
 	{
 		return Add(aHandler);
+	}
+	template<typename ...Args>
+	inline evnt::IDType Event<Args...>::operator+=(typename HandlerType::FunctionType&& aHandler)
+	{
+		return Add(std::move(aHandler));
 	}
 
 	template<typename... Args>
@@ -179,6 +186,16 @@ namespace CommonUtilities
 		std::scoped_lock lock(myMutex);
 
 		myHandlers.emplace_back(aHandler);
+
+		return myHandlers.back().GetID();
+	}
+
+	template<typename ...Args>
+	inline evnt::IDType Event<Args...>::Add(typename HandlerType::FunctionType&& aHandler)
+	{
+		std::scoped_lock lock(myMutex);
+
+		myHandlers.emplace_back(std::move(aHandler));
 
 		return myHandlers.back().GetID();
 	}

@@ -2,5 +2,11 @@
 
 namespace CommonUtilities
 {
+	class PostMaster
+	{
+	public:
 
+	private:
+
+	};
 }

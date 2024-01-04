@@ -22,7 +22,7 @@ namespace CommonUtilities
 
 		auto GetType() const noexcept -> Type override;
 
-		void SetCenter(T aCenter);
+		void SetCenter(const Vector3<T>& aCenter);
 		void SetRadius(T aRadius);
 
 		bool IsInside(const Vector3<T>& aPosition) const;
@@ -76,7 +76,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline void Sphere<T>::SetCenter(T aCenter)
+	inline void Sphere<T>::SetCenter(const Vector3<T>& aCenter)
 	{
 		myCenter = aCenter;
 	}
@@ -84,7 +84,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline void Sphere<T>::SetRadius(T aRadius)
 	{
-		myRadius	= aRadius;
+		myRadius = aRadius;
 		myRadiusSqr = aRadius * aRadius;
 	}
 

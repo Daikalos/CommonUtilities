@@ -473,7 +473,7 @@ namespace CommonUtilities
 		return aRight.TransformPoint(aLeft);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator*(const Vector4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC CONSTEXPR Vector4<T> operator*(const Matrix4x4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return aRight * aLeft;
 	}

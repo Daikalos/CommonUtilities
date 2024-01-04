@@ -165,7 +165,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance)
 	{
-		return aCurrent + Vector2::Direction(aCurrent, aTarget).GetNormalized(aDistance);
+		return aCurrent + Vector2::Direction(aCurrent, aTarget).GetNormalized() * aDistance;
 	}
 
 	template<typename T>

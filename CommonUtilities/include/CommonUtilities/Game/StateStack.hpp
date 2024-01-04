@@ -33,6 +33,7 @@ namespace CommonUtilities
 		void Render() const;
 
 		void Push(StateID aStateID);
+		void Erase(StateID aStateID);
 		void Pop();
 		void Clear();
 
@@ -57,7 +58,7 @@ namespace CommonUtilities
 
 		struct PendingChange
 		{
-			explicit PendingChange(const Action& aAction, StateID aStateID = -1);
+			explicit PendingChange(const Action& aAction, StateID aStateID);
 
 			Action action;
 			StateID stateID;
@@ -199,19 +200,24 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline void StateStack<T>::Push(StateID state_id)
+	inline void StateStack<T>::Push(StateID aStateID)
 	{
-		myPendingList.push_back(PendingChange(Action::Push, state_id));
+		myPendingList.emplace_back(Action::Push, aStateID);
+	}
+	template<typename T>
+	inline void StateStack<T>::Erase(StateID aStateID)
+	{
+		myPendingList.emplace_back(Action::Erase, aStateID);
 	}
 	template<typename T>
 	inline void StateStack<T>::Pop()
 	{
-		myPendingList.push_back(PendingChange(Action::Pop));
+		myPendingList.emplace_back(Action::Pop, -1);
 	}
 	template<typename T>
 	inline void StateStack<T>::Clear()
 	{
-		myPendingList.push_back(PendingChange(Action::Clear));
+		myPendingList.emplace_back(Action::Clear, -1);
 	}
 
 	template<typename T>

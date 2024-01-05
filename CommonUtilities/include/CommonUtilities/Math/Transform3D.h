@@ -32,8 +32,8 @@ namespace CommonUtilities
 
 	private:
 		Vector3f		myPosition;
-		Vector3f		myScale;
 		Vector3f		myRotation; // TODO: switch to quaternion in the future
+		Vector3f		myScale;
 		mutable Mat4f	myMatrix;
 		mutable Mat4f	myInverseMatrix;
 		mutable bool	myUpdateMatrix			{true};

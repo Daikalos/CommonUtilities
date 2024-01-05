@@ -33,8 +33,8 @@ namespace CommonUtilities
 
 	private:
 		Vector2f		myPosition;
-		Vector2f		myScale;
 		float			myRotation				{0.0f};
+		Vector2f		myScale;
 		mutable Mat3f	myMatrix;
 		mutable Mat3f	myInverseMatrix;
 		mutable bool	myUpdateMatrix			{true};

@@ -11,8 +11,8 @@ Transform3D::~Transform3D() = default;
 
 Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale)
 	: myPosition(aPosition)
-	, myScale(aScale)
 	, myRotation(aRotation)
+	, myScale(aScale)
 {
 
 }

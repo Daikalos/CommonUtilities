@@ -11,8 +11,8 @@ Transform2D::~Transform2D() = default;
 
 Transform2D::Transform2D(const Vector2f& aPosition, float aRotation, const Vector2f& aScale)
 	: myPosition(aPosition)
-	, myScale(aScale)
 	, myRotation(aRotation)
+	, myScale(aScale)
 {
 
 }

@@ -7,7 +7,7 @@ namespace CommonUtilities
 	class Shape
 	{
 	public:
-		enum Type
+		enum class Type
 		{
 			None = -1,
 			AABB3D,

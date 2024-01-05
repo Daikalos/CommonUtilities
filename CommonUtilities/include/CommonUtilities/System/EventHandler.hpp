@@ -57,33 +57,37 @@ namespace CommonUtilities
 	template<typename ...Args>
 	inline EventHandler<Args...>::EventHandler(const EventHandler& aOther)
 		: myFunc(aOther.myFunc)
-		, myID(aOther.myID)
+		, myID(locIDCounter++) // copying increases the ID to keep this unique
 	{
 
 	}
 	template<typename ...Args>
 	inline EventHandler<Args...>::EventHandler(EventHandler&& aOther) noexcept
 		: myFunc(std::move(aOther.myFunc))
-		, myID(aOther.myID)
+		, myID(std::exchange(aOther.myID, NULL))
 	{
-		aOther.myID = NULL;
+
 	}
 
 	template<typename ...Args>
 	inline auto EventHandler<Args...>::operator=(const EventHandler& aOther) -> EventHandler&
 	{
+		if (*this == aOther)
+			return *this;
+
 		myFunc = aOther.myFunc;
-		myID = aOther.myID;
+		myID = locIDCounter++;
 
 		return *this;
 	}
 	template<typename ...Args>
 	inline auto EventHandler<Args...>::operator=(EventHandler&& aOther) noexcept -> EventHandler&
 	{
-		myFunc = std::move(aOther.myFunc);
+		if (*this == aOther)
+			return *this;
 
-		myID = aOther.myID;
-		aOther.myID = NULL;
+		myFunc = std::move(aOther.myFunc);
+		myID = std::exchange(aOther.myID, NULL);
 
 		return *this;
 	}

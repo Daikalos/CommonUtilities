@@ -63,17 +63,11 @@ namespace CommonUtilities
 
 		/// Computes a normalized vector.
 		/// 
-		/// \returns Normalized vector
-		/// 
-		NODISC CONSTEXPR Vector4<T> GetNormalized() const;
-
-		/// Computes a normalized vector.
-		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector4<T> GetNormalized(T aRadius) const;
+		NODISC CONSTEXPR Vector4<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -83,10 +77,6 @@ namespace CommonUtilities
 		/// \returns Normalized vector
 		/// 
 		NODISC CONSTEXPR Vector4<T> GetNormalized(T aLength, T aRadius) const;
-
-		/// Normalizes this vector
-		/// 
-		CONSTEXPR void Normalize();
 
 		/// Normalizes this vector
 		/// 
@@ -186,12 +176,6 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::GetNormalized() const
-	{
-		assert(LengthSqr() > T{} && "Negative or zero length is an error");
-		return (*this) * (1 / Length());
-	}
-	template<typename T>
 	CONSTEXPR Vector4<T> Vector4<T>::GetNormalized(T aRadius) const
 	{
 		return GetNormalized(Length(), aRadius);
@@ -203,11 +187,6 @@ namespace CommonUtilities
 		return (*this) * (aRadius / aLength);
 	}
 
-	template<typename T>
-	CONSTEXPR void Vector4<T>::Normalize()
-	{
-		*this = GetNormalized();
-	}
 	template<typename T>
 	CONSTEXPR void Vector4<T>::Normalize(T aRadius)
 	{

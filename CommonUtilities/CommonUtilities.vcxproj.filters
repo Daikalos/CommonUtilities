@@ -153,7 +153,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Transform2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Math\Transform.h">
+    <ClInclude Include="include\CommonUtilities\Math\Transform3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\Event.hpp">
@@ -236,7 +236,7 @@
     <ClCompile Include="src\CommonUtilities\Math\Transform2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\Math\Transform.cpp">
+    <ClCompile Include="src\CommonUtilities\Math\Transform3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp">

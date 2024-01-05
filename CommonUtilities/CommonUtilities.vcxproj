@@ -175,7 +175,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Shape.h" />
     <ClInclude Include="include\CommonUtilities\Math\Sphere.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Transform2D.h" />
-    <ClInclude Include="include\CommonUtilities\Math\Transform.h" />
+    <ClInclude Include="include\CommonUtilities\Math\Transform3D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Vector4.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\FreeVector.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputHandler.h" />
@@ -224,7 +224,7 @@
     <ClCompile Include="src\CommonUtilities\Input\Mouse.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\Keyboard.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\InputHandler.cpp" />
-    <ClCompile Include="src\CommonUtilities\Math\Transform.cpp" />
+    <ClCompile Include="src\CommonUtilities\Math\Transform3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Transform2D.cpp" />
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />

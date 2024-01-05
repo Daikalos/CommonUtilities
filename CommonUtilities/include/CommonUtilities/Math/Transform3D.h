@@ -5,15 +5,15 @@
 
 namespace CommonUtilities
 {
-	class Transform
+	class Transform3D
 	{
 	public:
-		Transform();
-		~Transform();
+		Transform3D();
+		~Transform3D();
 
-		Transform(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale);
-		Transform(const Vector3f& aPosition, const Vector3f& aRotation);
-		Transform(const Vector3f& aPosition);
+		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale);
+		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation);
+		Transform3D(const Vector3f& aPosition);
 
 		const Mat4f& GetMatrix() const;
 		const Mat4f& GetInverseMatrix() const;

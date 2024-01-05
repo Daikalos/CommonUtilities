@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <numbers>
+#include <bit>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
@@ -24,6 +25,18 @@ namespace CommonUtilities
 
 	template<IsFloatingPoint T = float>
 	CONSTEXPR T RAD2DEG = T{180.0} / PI_V<T>;
+
+	inline constexpr float PI				= PI_V<float>;
+	inline constexpr float PI_2				= PI_2_V<float>;
+	inline constexpr float PI_4				= PI_4_V<float>;
+
+	inline constexpr double PI_D			= PI_V<double>;
+	inline constexpr double PI_2_D			= PI_2_V<double>;
+	inline constexpr double PI_4_D			= PI_4_V<double>;
+
+	inline constexpr long double PI_LD		= PI_V<long double>;
+	inline constexpr long double PI_2_LD	= PI_2_V<long double>;
+	inline constexpr long double PI_4_LD	= PI_4_V<long double>;
 
 	template<IsFloatingPoint T>
 	NODISC CONSTEXPR T ToRadians(T aDegrees)
@@ -78,15 +91,46 @@ namespace CommonUtilities
 		return std::round(aValue * n) / n;
 	}
 
-	inline constexpr float PI				= PI_V<float>;
-	inline constexpr float PI_2				= PI_2_V<float>;
-	inline constexpr float PI_4				= PI_4_V<float>;
+	NODISC CONSTEXPR float FastInverseSquareRoot(float aNumber)
+	{
+		const float v = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(aNumber) >> 1));
+		return v * (1.5f - (aNumber * 0.5f * v * v));
+	}
 
-	inline constexpr double PI_D			= PI_V<double>;
-	inline constexpr double PI_2_D			= PI_2_V<double>;
-	inline constexpr double PI_4_D			= PI_4_V<double>;
+	NODISC __forceinline float AtanApproximation(float aX)
+	{
+		//static constexpr float a1  =  0.99997726f;
+		//static constexpr float a3  = -0.33262347f;
+		//static constexpr float a5  =  0.19354346f;
+		//static constexpr float a7  = -0.11643287f;
+		//static constexpr float a9  =  0.05265332f;
+		//static constexpr float a11 = -0.01172120f;
 
-	inline constexpr long double PI_LD		= PI_V<long double>;
-	inline constexpr long double PI_2_LD	= PI_2_V<long double>;
-	inline constexpr long double PI_4_LD	= PI_4_V<long double>;
+		//const float xSq = x * x;
+
+		//return x * fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, a11, a9), a7), a5), a3), a1);
+
+		static constexpr float a1 =  0.97239411f;
+		static constexpr float a3 = -0.19194795f;
+
+		return aX * std::fmaf(aX * aX, a3, a1);
+	}
+
+	/// Approximation of atan2 to favor performance while sacrificing accuracy.
+	/// 
+	NODISC __forceinline float Atan2Fast(float aY, float aX)
+	{
+		const float ay = std::abs(aY);
+		const float ax = std::abs(aX);
+
+		const bool swap = ax < ay;
+		const float atanInput = (swap ? ax / ay : ay / ax);
+
+		float res = AtanApproximation(atanInput);
+
+		if (swap)	res = PI_2 - res;
+		if (aX < 0)	res = PI - res;
+
+		return std::copysignf(res, aY);
+	}
 }

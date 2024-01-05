@@ -4,6 +4,7 @@
 #include <cassert>
 #include <bit>
 
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
@@ -203,13 +204,8 @@ namespace CommonUtilities
 		// return this vector length squared multiplied inverse squared root for optimization
 
 		const float lengthSqr = static_cast<float>(LengthSqr());
-
 		assert(lengthSqr > T{} && "Negative or zero length is an error");
-
-		const float v = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(lengthSqr) >> 1));
-		const float invRoot = v * (1.5f - (lengthSqr * 0.5f * v * v));
-
-		return (*this) * static_cast<T>(invRoot);
+		return (*this) * static_cast<T>(FastInverseSquareRoot(lengthSqr));
 	}
 
 	template<typename T>

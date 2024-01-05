@@ -64,11 +64,17 @@ namespace CommonUtilities
 
 		/// Computes a normalized vector.
 		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC CONSTEXPR Vector2<T> GetNormalized() const;
+
+		/// Computes a normalized vector.
+		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector2<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
+		NODISC CONSTEXPR Vector2<T> GetNormalized(T aRadius) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -79,23 +85,15 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR Vector2<T> GetNormalized(T aLength, T aRadius) const;
 
-		/// Computes a normalized vector using the inverse square root optimization. Use this
-		/// when performance matters more than accuracy.
+		/// Normalizes this vector.
 		/// 
-		/// \returns Normalized vector
-		/// 
-		NODISC CONSTEXPR Vector2<T> GetNormalizedFast() const;
+		CONSTEXPR void Normalize();
 
 		/// Normalizes this vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
-		CONSTEXPR void Normalize(T aRadius = static_cast<T>(1));
-
-		/// Normalizes this vector using the inverse square root optimization. Use this
-		/// when performance matters more than accuracy.
-		/// 
-		CONSTEXPR void NormalizeFast();
+		CONSTEXPR void Normalize(T aRadius);
 
 		/// Dot product of two vectors.
 		/// 
@@ -215,6 +213,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	CONSTEXPR Vector2<T> Vector2<T>::GetNormalized() const
+	{
+		assert(LengthSqr() > T{} && "Negative or zero length is an error");
+		return (*this) * (1 / Length());
+	}
+	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::GetNormalized(T aRadius) const
 	{
 		return GetNormalized(Length(), aRadius);
@@ -225,25 +229,16 @@ namespace CommonUtilities
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
 	}
+
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::GetNormalizedFast() const
+	CONSTEXPR void Vector2<T>::Normalize()
 	{
-		// return this vector length squared multiplied inverse squared root for optimization
-
-		const float lengthSqr = static_cast<float>(LengthSqr());
-		assert(lengthSqr > T{} && "Negative or zero length is an error");
-		return (*this) * static_cast<T>(FastInverseSquareRoot(lengthSqr));
+		*this = GetNormalized();
 	}
-
 	template<typename T>
 	CONSTEXPR void Vector2<T>::Normalize(T aRadius)
 	{
 		*this = GetNormalized(aRadius);
-	}
-	template<typename T>
-	CONSTEXPR void Vector2<T>::NormalizeFast()
-	{
-		*this = GetNormalizedFast();
 	}
 
 	template<typename T>

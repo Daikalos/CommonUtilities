@@ -27,7 +27,7 @@ int main()
 	cu::Vector2f test1(-4.0f, 2.5f);
 	cu::Vector2f test2 = test1;
 
-	test1.NormalizeFast();
+	test1.Normalize(1.0f);
 	test2.Normalize();
 
 	mat2.Combine(inv);

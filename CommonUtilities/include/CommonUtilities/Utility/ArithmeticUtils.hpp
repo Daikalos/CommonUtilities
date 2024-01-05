@@ -91,12 +91,6 @@ namespace CommonUtilities
 		return std::round(aValue * n) / n;
 	}
 
-	NODISC CONSTEXPR float FastInverseSquareRoot(float aNumber)
-	{
-		const float v = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(aNumber) >> 1));
-		return v * (1.5f - (aNumber * 0.5f * v * v));
-	}
-
 	NODISC __forceinline float AtanApproximation(float aX)
 	{
 		//static constexpr float a1  =  0.99997726f;

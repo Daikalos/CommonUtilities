@@ -32,7 +32,7 @@ namespace CommonUtilities
 	class ButtonEvent final
 	{
 	public:
-		using ButtonType = typename T::ButtonType;
+		using ButtonType = typename T::ButtonType; // relies on there being a ButtonType defined in input to access its type of button
 
 		struct ButtonCallback
 		{

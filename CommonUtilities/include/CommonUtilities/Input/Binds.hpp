@@ -4,11 +4,12 @@
 #include <stdexcept>
 
 #include <CommonUtilities/Config.h>
+#include <CommonUtilities/Utility/NonCopyable.h>
 
 namespace CommonUtilities
 {
 	template<typename Bind, typename Reg>
-	class Binds
+	class Binds : private NonCopyable
 	{
 	public:
 		CONSTEXPR Binds();
@@ -27,6 +28,10 @@ namespace CommonUtilities
 		///	Remove the existing bind
 		/// 
 		CONSTEXPR void Remove(const Bind& aBind);
+
+		///	\return Whether bind is set
+		/// 
+		CONSTEXPR bool IsSet(const Bind& aBind);
 
 		NODISC CONSTEXPR bool GetEnabled() const noexcept;
 		CONSTEXPR void SetEnabled(bool aFlag) noexcept;
@@ -86,6 +91,13 @@ namespace CommonUtilities
 		}
 
 		myBinds.erase(it);
+	}
+
+	template<typename Bind, typename Reg>
+	CONSTEXPR bool Binds<Bind, Reg>::IsSet(const Bind& aBind)
+	{
+		const auto it = myBinds.find(aBind);
+		return it != myBinds.end();
 	}
 
 	template<typename Bind, typename Reg>

@@ -24,6 +24,12 @@ int main()
 	float rotation = mat2.GetRotation() * cu::RAD2DEG<>;
 	float rotation2 = mat.GetRotation() * cu::RAD2DEG<>;
 
+	cu::Vector2f test1(-4.0f, 2.5f);
+	cu::Vector2f test2 = test1;
+
+	test1.NormalizeFast();
+	test2.Normalize();
+
 	mat2.Combine(inv);
 
 	cu::Vector4f vec1, vec2;

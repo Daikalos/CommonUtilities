@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <bit>
 
 #include <CommonUtilities/Config.h>
 
@@ -78,11 +79,23 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR Vector3<T> GetNormalized(T aLength, T aRadius) const;
 
+		/// Computes a normalized vector using the inverse square root optimization. Use this
+		/// when performance matters more than accuracy.
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC CONSTEXPR Vector3<T> GetNormalizedFast() const;
+
 		/// Normalizes this vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
 		CONSTEXPR void Normalize(T aRadius = static_cast<T>(1));
+
+		/// Normalizes this vector using the inverse square root optimization. Use this
+		/// when performance matters more than accuracy.
+		/// 
+		CONSTEXPR void NormalizeFast();
 
 		/// Dot product of two vectors.
 		/// 
@@ -219,11 +232,30 @@ namespace CommonUtilities
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
 	}
+	template<typename T>
+	CONSTEXPR Vector3<T> Vector3<T>::GetNormalizedFast() const
+	{
+		// return this vector length squared multiplied inverse squared root for optimization
+
+		const float lengthSqr = static_cast<float>(LengthSqr());
+
+		assert(lengthSqr > T{} && "Negative or zero length is an error");
+
+		const float y = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(lengthSqr) >> 1));
+		const float invRoot = y * (1.5f - (lengthSqr * 0.5f * y * y));
+
+		return (*this) * static_cast<T>(invRoot);
+	}
 
 	template<typename T>
 	CONSTEXPR void Vector3<T>::Normalize(T aRadius)
 	{
 		*this = GetNormalized(aRadius);
+	}
+	template<typename T>
+	CONSTEXPR void Vector3<T>::NormalizeFast()
+	{
+		*this = GetNormalizedFast();
 	}
 
 	template<typename T>

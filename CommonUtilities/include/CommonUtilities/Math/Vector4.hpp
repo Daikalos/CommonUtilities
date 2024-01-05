@@ -206,8 +206,8 @@ namespace CommonUtilities
 
 		assert(lengthSqr > T{} && "Negative or zero length is an error");
 
-		const float y = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(lengthSqr) >> 1));
-		const float invRoot = y * (1.5f - (lengthSqr * 0.5f * y * y));
+		const float v = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(lengthSqr) >> 1));
+		const float invRoot = v * (1.5f - (lengthSqr * 0.5f * v * v));
 
 		return (*this) * static_cast<T>(invRoot);
 	}

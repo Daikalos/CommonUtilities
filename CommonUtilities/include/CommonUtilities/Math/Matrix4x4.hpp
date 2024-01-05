@@ -373,21 +373,10 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4
 	{
-		Matrix4x4 trsMatrix = CreateRotationAroundX(aRotation.x).Combine(CreateRotationAroundY(aRotation.y)).Combine(CreateRotationAroundZ(aRotation.z));
-
-		trsMatrix.SetTranslation(aPosition);
-
-		const Matrix4x4 scalingMatrix
-		{
-			aScale.x,	0,			0,			0,
-			0,			aScale.y,	0,			0,
-			0,			0,			aScale.z,	0,
-			0,			0,			0,			1
-		};
-
-		trsMatrix.Combine(scalingMatrix);
-
-		return trsMatrix;
+		return Matrix4x4()
+			.Scale(aScale)
+			.Rotate(aRotation.z, aRotation.y, aRotation.x)
+			.Translate(aPosition);
 	}
 
 	template<typename T>

@@ -20,12 +20,12 @@ namespace CommonUtilities
 		T GetRadius() const noexcept;
 		T GetRadiusSqr() const noexcept;
 
-		auto GetType() const noexcept -> Type override;
-
 		void SetCenter(const Vector3<T>& aCenter);
 		void SetRadius(T aRadius);
 
 		bool IsInside(const Vector3<T>& aPosition) const;
+
+		auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T> myCenter;
@@ -70,12 +70,6 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto Sphere<T>::GetType() const noexcept -> Type
-	{
-		return Type::Sphere;
-	}
-
-	template<typename T>
 	inline void Sphere<T>::SetCenter(const Vector3<T>& aCenter)
 	{
 		myCenter = aCenter;
@@ -93,5 +87,11 @@ namespace CommonUtilities
 	{
 		T distanceSqr = Vector3<T>::Direction(myCenter, aPosition).LengthSqr();
 		return distanceSqr <= myRadiusSqr;
+	}
+
+	template<typename T>
+	inline auto Sphere<T>::GetType() const noexcept -> Type
+	{
+		return Type::Sphere;
 	}
 }

@@ -6,7 +6,7 @@
 namespace CommonUtilities
 {
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	class KeyboardBindable : public Binds<Bind, Keyboard::Key>
+	class KeyboardBindable final : public Binds<Bind, Keyboard::Key>
 	{
 	public:
 		using ButtonType = Bind;

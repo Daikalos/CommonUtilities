@@ -24,13 +24,25 @@ namespace CommonUtilities
 
 		NODISC const IDType& GetID() const noexcept;
 
+		///	OnCreated is called when first constructed
+		/// 
 		virtual void OnCreate() {}
+
+		///	OnActivate is called whenever the state is put as last in the stack
+		/// 
 		virtual void OnActivate() {}
+
+		///	OnDeactivate is called whenever the state is longer the last in the stack
+		/// 
+		virtual void OnDeactivate() {}
+
+		///	OnDestroy is called when the state is removed from the stack
+		/// 
 		virtual void OnDestroy() {}
 
 		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
 
-		virtual bool Init(Timer& aTimer) = 0;
+		virtual bool Init() = 0;
 		virtual bool PreUpdate(Timer& aTimer)	{ return true; }
 		virtual bool Update(Timer& aTimer) = 0;
 		virtual bool FixedUpdate(Timer& aTimer)	{ return true; }

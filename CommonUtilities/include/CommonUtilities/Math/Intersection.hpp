@@ -143,7 +143,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
+	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
 	{
 		if (aAABB3D.IsInside(aRay.GetOrigin()))
 		{
@@ -233,6 +233,8 @@ namespace CommonUtilities
 				break;
 			}
 		}
+
+		outIntersectionPoint = aRay.GetOrigin() + aRay.GetDirection() * maxT;
 
 		return true;
 	}

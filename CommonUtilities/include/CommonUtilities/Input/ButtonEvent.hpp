@@ -84,10 +84,24 @@ namespace CommonUtilities
 			Add(aButton, aTrigger, {}, std::forward<Func>(aFunc), std::forward<InnerArgs>(someInnerArgs)...);
 		}
 
+		/// Removes all callbacks that are associated with the provided button.
+		/// 
+		/// \param aButton: Button type to look for when removing.
+		/// 
 		void Remove(ButtonType aButton);
+
+		/// Removes all callbacks that are associated with the provided trigger.
+		/// 
+		/// \param aTrigger: Trigger type to look for when removing.
+		/// 
 		void Remove(ButtonTrigger aTrigger);
 
+		/// \return Number of added callbacks.
+		/// 
 		NODISC std::size_t Count() const noexcept;
+
+		/// Clears all added callbacks.
+		/// 
 		void Clear();
 
 	private:

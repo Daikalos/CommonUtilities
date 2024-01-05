@@ -11,6 +11,11 @@
 
 namespace CommonUtilities
 {
+	/// StateStack is a simple container for states.
+	/// 
+	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
+	/// \param IDType: Type of the ID used to manage states
+	/// 
 	template<typename T, typename IDType = std::uint32_t>
 	class StateStack : private NonCopyable
 	{
@@ -20,21 +25,37 @@ namespace CommonUtilities
 		NODISC bool IsEmpty() const noexcept;
 		NODISC bool IsPaused() const noexcept;
 
+		/// Determines whether states should be updated, rendering will still run as normal
+		/// 
 		void SetPaused(bool aFlag);
 
 		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
-		void Init(Timer& aTimer);
+		void Init();
 		void PreUpdate(Timer& aTimer);
 		void Update(Timer& aTimer);
 		void FixedUpdate(Timer& aTimer);
 		void PostUpdate(Timer& aTimer);
-
 		void Render() const;
 
+		/// Push a state to the top of the stack.
+		/// 
+		/// \param aStateID: ID of the state to add
+		/// 
 		void Push(const IDType& aStateID);
+
+		/// Erases the first instance of the state with the provided ID.
+		/// 
+		/// \param aStateID: ID of the state to erase
+		/// 
 		void Erase(const IDType& aStateID);
+
+		/// Pops the state currently at the top of the stack.
+		/// 
 		void Pop();
+
+		/// Clears the stack.
+		/// 
 		void Clear();
 
 		template<std::derived_from<State> S, typename... Args>
@@ -119,11 +140,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Init(Timer& aTimer)
+	inline void StateStack<T, IDType>::Init()
 	{
 		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
 		{
-			if (!(*it)->Init(aTimer))
+			if (!(*it)->Init())
 				break;
 		}
 
@@ -248,7 +269,9 @@ namespace CommonUtilities
 			myStack.pop_back();
 
 			if (!myStack.empty())
+			{
 				myStack.back()->OnActivate();
+			}
 		};
 
 		for (const PendingChange& change : myPendingList)
@@ -257,8 +280,15 @@ namespace CommonUtilities
 			{
 				case Action::Push:
 				{
+					if (!myStack.empty())
+					{
+						myStack.back()->OnDeactivate();
+					}
+
 					myStack.emplace_back(CreateState(change.stateID));
 					myStack.back()->OnCreate();
+					myStack.back()->OnActivate();
+
 					break;
 				}
 				case Action::Pop:
@@ -292,7 +322,9 @@ namespace CommonUtilities
 				case Action::Clear:
 				{
 					for (StatePtr& state : myStack)
+					{
 						state->OnDestroy();
+					}
 
 					myStack.clear();
 

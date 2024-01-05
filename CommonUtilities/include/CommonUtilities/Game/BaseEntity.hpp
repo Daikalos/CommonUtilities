@@ -20,8 +20,8 @@ namespace CommonUtilities
 	class BaseEntity
 	{
 	public:
-		using component_ptr = std::unique_ptr<C>;
-		using component_id_type = std::size_t;
+		using ComponentPtr		= std::unique_ptr<C>;
+		using ComponentIDType	= std::size_t;
 
 		CONSTEXPR BaseEntity() = default;
 		CONSTEXPR virtual ~BaseEntity() = 0;
@@ -96,22 +96,22 @@ namespace CommonUtilities
 		CONSTEXPR static void ClearStaticComponents() noexcept;
 
 	protected:
-		std::vector<component_ptr>		myComponents;
-		std::vector<component_id_type>	myComponentIDs;
+		std::vector<ComponentPtr>		myComponents;
+		std::vector<ComponentIDType>	myComponentIDs;
 		std::vector<bool>				myActiveComponents;
 
-		static std::vector<component_ptr> myStaticComponents;
-		static std::vector<component_id_type> myStaticComponentIDs;
+		static std::vector<ComponentPtr> myStaticComponents;
+		static std::vector<ComponentIDType> myStaticComponentIDs;
 	};
 
 	template<class C>
 	CONSTEXPR BaseEntity<C>::~BaseEntity() = default;
 
 	template<class C>
-	inline std::vector<typename BaseEntity<C>::component_ptr> BaseEntity<C>::myStaticComponents;
+	inline std::vector<typename BaseEntity<C>::ComponentPtr> BaseEntity<C>::myStaticComponents;
 
 	template<class C>
-	inline std::vector<typename BaseEntity<C>::component_id_type> BaseEntity<C>::myStaticComponentIDs;
+	inline std::vector<typename BaseEntity<C>::ComponentIDType> BaseEntity<C>::myStaticComponentIDs;
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
@@ -191,14 +191,13 @@ namespace CommonUtilities
 			return nullptr;
 		}
 
-		component_ptr component = std::make_unique<C>(std::forward<Args>(someArgs)...);
-		T* compPtr = component.get();
+		ComponentPtr component = std::make_unique<C>(std::forward<Args>(someArgs)...);
 
 		myComponents.emplace_back(std::move(component));
 		myComponentIDs.emplace_back(componentID);
 		myActiveComponents.emplace_back(true);
 
-		return compPtr;
+		return myComponents.back().get();
 	}
 
 	template<class C>
@@ -214,28 +213,27 @@ namespace CommonUtilities
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
-		const auto it = std::ranges::find(myComponentIDs, componentID);
-		if (it == myComponentIDs.end())
+		if (const auto it = std::ranges::find(myComponentIDs, componentID); it != myComponentIDs.end())
 		{
-			return false;
+			const auto pos = std::distance(it, myComponentIDs.begin());
+
+			if constexpr (MaintainOrder)
+			{
+				myComponents.erase(myComponents.begin() + pos);
+				myComponentIDs.erase(myComponentIDs.begin() + pos);
+				myActiveComponents.erase(myActiveComponents.begin() + pos);
+			}
+			else
+			{
+				ctr::EraseCyclicAt(myComponents, pos);
+				ctr::EraseCyclicAt(myComponentIDs, pos);
+				ctr::EraseCyclicAt(myActiveComponents, pos);
+			}
+
+			return true;
 		}
 
-		const auto pos = std::distance(it, myComponentIDs.begin());
-
-		if constexpr (MaintainOrder)
-		{
-			myComponents.erase(myComponents.begin() + pos);
-			myComponentIDs.erase(myComponentIDs.begin() + pos);
-			myActiveComponents.erase(myActiveComponents.begin() + pos);
-		}
-		else
-		{
-			ctr::EraseCyclicAt(myComponents, pos);
-			ctr::EraseCyclicAt(myComponentIDs, pos);
-			ctr::EraseCyclicAt(myActiveComponents, pos);
-		}
-
-		return true;
+		return false;
 	}
 
 	template<class C>
@@ -301,9 +299,7 @@ namespace CommonUtilities
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
-		const auto it = std::ranges::find(myComponentIDs, componentID);
-
-		if (it != myComponentIDs.end())
+		if (const auto it = std::ranges::find(myComponentIDs, componentID); it != myComponentIDs.end())
 		{
 			const auto pos = std::distance(it, myComponentIDs.begin());
 			myActiveComponents[pos] = aFlag;
@@ -398,13 +394,12 @@ namespace CommonUtilities
 			return nullptr;
 		}
 
-		component_ptr component = std::make_unique<C>(std::forward<Args>(someArgs)...);
-		T* compPtr = component.get();
+		ComponentPtr component = std::make_unique<C>(std::forward<Args>(someArgs)...);
 
 		myStaticComponents.emplace_back(std::move(component));
 		myStaticComponentIDs.emplace_back(componentID);
 
-		return compPtr;
+		return myStaticComponents.back().get();
 	}
 	template<class C>
 	template<typename T, bool MaintainOrder> requires std::derived_from<T, C>
@@ -412,26 +407,25 @@ namespace CommonUtilities
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
-		const auto it = std::ranges::find(myStaticComponentIDs, componentID);
-		if (it == myStaticComponentIDs.end())
+		if (const auto it = std::ranges::find(myStaticComponentIDs, componentID); it == myStaticComponentIDs.end())
 		{
-			return false;
+			const auto pos = std::distance(it, myStaticComponentIDs.begin());
+
+			if constexpr (MaintainOrder)
+			{
+				myStaticComponents.erase(myStaticComponents.begin() + pos);
+				myStaticComponentIDs.erase(myStaticComponentIDs.begin() + pos);
+			}
+			else
+			{
+				ctr::EraseCyclicAt(myStaticComponents, pos);
+				ctr::EraseCyclicAt(myStaticComponentIDs, pos);
+			}
+
+			return true;
 		}
 
-		const auto pos = std::distance(it, myStaticComponentIDs.begin());
-
-		if constexpr (MaintainOrder)
-		{
-			myStaticComponents.erase(myStaticComponents.begin() + pos);
-			myStaticComponentIDs.erase(myStaticComponentIDs.begin() + pos);
-		}
-		else
-		{
-			ctr::EraseCyclicAt(myStaticComponents, pos);
-			ctr::EraseCyclicAt(myStaticComponentIDs, pos);
-		}
-
-		return true;
+		return false;
 	}
 
 	template<class C>

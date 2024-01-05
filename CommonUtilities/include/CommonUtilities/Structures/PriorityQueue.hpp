@@ -42,7 +42,7 @@ namespace CommonUtilities
 
 		PriorityQueue() = default;
 
-		// TODO: implement more constructors
+		// TODO: implement more constructors and assignment operators
 
 		NODISC constexpr auto operator[](size_type aIndex) -> reference;
 		NODISC constexpr auto operator[](size_type aIndex) const -> const_reference;

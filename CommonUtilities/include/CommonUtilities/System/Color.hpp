@@ -2,8 +2,13 @@
 
 #include <cstdint>
 
+#include <CommonUtilities/Config.h>
+#include <CommonUtilities/Math/Vector4.hpp>
+
 namespace CommonUtilities
 {
+	/// Stores color as unsigned 8-bit variables instead of floats for lesser memory usage.
+	/// 
 	class Color
 	{
 	public:
@@ -19,6 +24,9 @@ namespace CommonUtilities
 		constexpr explicit Color(std::uint32_t aColor);
 
 		constexpr std::uint32_t ToInteger() const noexcept;
+
+		template<template<typename> class T, typename U>
+		constexpr T<U> ToFloatingPoint() const;
 
 		static const Color Black;       
 		static const Color White;       
@@ -55,6 +63,17 @@ namespace CommonUtilities
 	constexpr std::uint32_t Color::ToInteger() const noexcept
 	{
 		return static_cast<std::uint32_t>((r << 24) | (g << 16) | (b << 8) | a);
+	}
+	template<template<typename> class T, typename U>
+	constexpr T<U> Color::ToFloatingPoint() const
+	{
+		return T<U>
+		{ 
+			static_cast<U>(r), 
+			static_cast<U>(g), 
+			static_cast<U>(b), 
+			static_cast<U>(a) 
+		} * (1 / U{255.0});
 	}
 
 	// GLOBAL OPERATORS

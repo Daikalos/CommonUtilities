@@ -6,7 +6,7 @@
 namespace CommonUtilities
 {
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	class MouseBindable : public Binds<Bind, Mouse::Button>
+	class MouseBindable final : public Binds<Bind, Mouse::Button>
 	{
 	public:
 		using ButtonType = Bind;

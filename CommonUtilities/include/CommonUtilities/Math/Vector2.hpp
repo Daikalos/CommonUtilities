@@ -32,6 +32,14 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR static Vector2 Direction(const Vector2& aCurrent, const Vector2& aTarget);
 
+		/// \returns Distance from current to target.
+		/// 
+		NODISC CONSTEXPR static Vector2 Distance(const Vector2& aCurrent, const Vector2& aTarget);
+
+		/// \returns Distance squared from current to target.
+		/// 
+		NODISC CONSTEXPR static Vector2 DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget);
+
 		/// \returns Lerped vector between current and target.
 		/// 
 		NODISC CONSTEXPR static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
@@ -138,6 +146,18 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	CONSTEXPR Vector2<T> Vector2<T>::Distance(const Vector2& aCurrent, const Vector2& aTarget)
+	{
+		return Direction(aCurrent, aTarget).Length();
+	}
+
+	template<typename T>
+	CONSTEXPR Vector2<T> Vector2<T>::DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget)
+	{
+		return Direction(aCurrent, aTarget).LengthSqr();
+	}
+
+	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
@@ -165,7 +185,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance)
 	{
-		return aCurrent + Vector2::Direction(aCurrent, aTarget).GetNormalized() * aDistance;
+		return aCurrent + Vector2<T>::Direction(aCurrent, aTarget).GetNormalized() * aDistance;
 	}
 
 	template<typename T>

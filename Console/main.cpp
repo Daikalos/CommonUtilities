@@ -5,10 +5,11 @@
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Math/Transform2D.h>
-
+#include <CommonUtilities/Math/Vector4.hpp>
 #include <CommonUtilities/System/Event.hpp>
 #include <CommonUtilities/Input/ButtonEvent.hpp>
 #include <CommonUtilities/Input/KeyboardInput.h>
+#include <CommonUtilities/System/Color.hpp>
 
 #include <CommonUtilities/Game/StateStack.hpp>
 
@@ -44,6 +45,8 @@ int main()
 		{
 
 		});
+
+	cu::Vector4f floatColor = cu::Color(255, 120, 100).ToFloatingPoint<cu::Vector4, float>();
 
 	return 0;
 }

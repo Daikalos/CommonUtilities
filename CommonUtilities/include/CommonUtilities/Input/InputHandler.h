@@ -31,7 +31,7 @@ namespace CommonUtilities
 		/// 
 		void SetHeldThreshold(float aValue) noexcept;
 
-		///	Put Update after HandleEvent for input to work correctly
+		///	Update which should determine the current and previous state of the input
 		/// 
 		virtual void Update() = 0;
 

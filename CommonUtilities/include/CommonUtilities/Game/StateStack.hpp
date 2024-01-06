@@ -3,15 +3,18 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <functional>
+#include <Windows.h>
 
+#include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
+#include <CommonUtilities/System/Timer.h>
 #include <CommonUtilities/Config.h>
-
-#include "State.hpp"
 
 namespace CommonUtilities
 {
-	/// StateStack is a simple container for states.
+	/// StateStack is a simple container for states managed similarly to a stack. 
+	/// States should be derived like this "class Foo : public StateStack<T, IDType>::State".
 	/// 
 	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
@@ -20,8 +23,65 @@ namespace CommonUtilities
 	class StateStack : private NonCopyable
 	{
 	public:
-		StateStack(const T& aContext);
+		class State
+		{
+		public:
+			using Ptr		= std::unique_ptr<State>;
+			using Func		= std::function<Ptr()>;
+			using Context	= std::remove_const_t<std::remove_reference_t<T>>;
 
+			State(const IDType& aID, StateStack<T, IDType>& aStateStack, const Context& aContext);
+			virtual ~State() = default;
+
+			NODISC const IDType& GetID() const noexcept;
+
+			///	OnCreated is called when first constructed
+			/// 
+			virtual void OnCreate() {}
+
+			///	OnActivate is called whenever the state is put as last in the stack
+			/// 
+			virtual void OnActivate() {}
+
+			///	OnDeactivate is called whenever the state is longer the last in the stack
+			/// 
+			virtual void OnDeactivate() {}
+
+			///	OnDestroy is called when the state is removed from the stack
+			/// 
+			virtual void OnDestroy() {}
+
+			virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
+
+			virtual bool Init() = 0;
+			virtual bool PreUpdate(Timer& aTimer)	{ return true; }
+			virtual bool Update(Timer& aTimer) = 0;
+			virtual bool FixedUpdate(Timer& aTimer) { return true; }
+			virtual bool PostUpdate(Timer& aTimer)	{ return true; }
+			virtual void Render(Timer& aTimer) = 0;
+
+		protected:
+			NODISC const StateStack<T, IDType>& GetStack() const;
+			NODISC StateStack<T, IDType>& GetStack();
+
+			NODISC auto GetContext() const -> const Context&;
+			NODISC auto GetContext() -> Context&;
+
+		private:
+			IDType					myID;
+			StateStack<T, IDType>*	myStateStack;
+			Context					myContext;
+		};
+
+		StateStack(const typename State::Context& aContext);
+
+		NODISC auto operator[](std::size_t aIndex) const -> const State&;
+		NODISC auto operator[](std::size_t aIndex) -> State&;
+
+		NODISC auto GetState(std::size_t aIndex) const -> const State&;
+		NODISC auto GetState(std::size_t aIndex) -> State&;
+
+		NODISC std::size_t Count() const noexcept;
 		NODISC bool IsEmpty() const noexcept;
 		NODISC bool IsPaused() const noexcept;
 
@@ -36,7 +96,7 @@ namespace CommonUtilities
 		void Update(Timer& aTimer);
 		void FixedUpdate(Timer& aTimer);
 		void PostUpdate(Timer& aTimer);
-		void Render() const;
+		void Render(Timer& aTimer);
 
 		/// Push a state to the top of the stack.
 		/// 
@@ -44,11 +104,18 @@ namespace CommonUtilities
 		/// 
 		void Push(const IDType& aStateID);
 
-		/// Erases the first instance of the state with the provided ID.
+		/// Erases the first instance found with the provided ID.
 		/// 
 		/// \param aStateID: ID of the state to erase
 		/// 
 		void Erase(const IDType& aStateID);
+
+		/// Moves the first instance found with the provided ID to the new position.
+		/// 
+		/// \param aStateID: ID of the state to erase
+		/// \param aNewIndex: The new position of the state
+		/// 
+		void Move(const IDType& aStateID, std::size_t aNewIndex);
 
 		/// Pops the state currently at the top of the stack.
 		/// 
@@ -59,12 +126,12 @@ namespace CommonUtilities
 		void Clear();
 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<T, IDType, StateStack&, T&, Args...>
+			requires std::constructible_from<S, const IDType&, StateStack&, const typename State::Context&, Args...>
 		void RegisterState(const IDType& aStateID, Args&&... someArgs)
 		{
 			myFactory[aStateID] = [this, &aStateID, ...args = std::forward<Args>(someArgs)]
 			{
-				return std::make_unique<S>(aStateID, *this, args...);
+				return std::make_unique<S>(aStateID, *this, myContext, args...);
 			};
 		}
 
@@ -74,19 +141,24 @@ namespace CommonUtilities
 			Push,
 			Pop,
 			Erase,
+			Move,
 			Clear
 		};
 
 		struct PendingChange
 		{
+			explicit PendingChange(const Action& aAction, const IDType& aStateID, std::size_t aIndex);
 			explicit PendingChange(const Action& aAction, const IDType& aStateID);
+			explicit PendingChange(const Action& aAction);
 
-			Action action;
-			IDType stateID;
+			Action		action;
+			IDType		stateID;
+			std::size_t index;
 		};
 
-		using StatePtr		= typename State<T, IDType>::Ptr;
-		using StateFunc		= typename State<T, IDType>::Func;
+		using Context		= typename State::Context;
+		using StatePtr		= typename State::Ptr;
+		using StateFunc		= typename State::Func;
 		using Stack			= std::vector<StatePtr>;
 		using Factory		= std::unordered_map<IDType, StateFunc>;
 		using PendingList	= std::vector<PendingChange>;
@@ -94,19 +166,79 @@ namespace CommonUtilities
 		auto CreateState(const IDType& aStateID) -> StatePtr;
 		void ApplyPendingChanges();
 
-		T			myContext;
+		Context		myContext;
 		Stack		myStack;
 		Factory		myFactory;
 		PendingList myPendingList;
 		bool		myPaused;
-
-		friend class State<T, IDType>;
 	};
 
 	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::StateStack(const T& aContext)
+	inline StateStack<T, IDType>::State::State(const IDType& aID, StateStack<T, IDType>& aStateStack, const Context& aContext)
+		: myID(aID), myStateStack(aStateStack), myContext(aContext)
+	{
+
+	}
+
+	template<typename T, typename IDType>
+	inline const IDType& StateStack<T, IDType>::State::GetID() const noexcept
+	{
+		return myID;
+	}
+
+	template<typename T, typename IDType>
+	inline const StateStack<T, IDType>& StateStack<T, IDType>::State::GetStack() const
+	{
+		return *myStateStack;
+	}
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>& StateStack<T, IDType>::State::GetStack()
+	{
+		return *myStateStack;
+	}
+
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::State::GetContext() const -> const Context&
+	{
+		return myContext;
+	}
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::State::GetContext() -> Context&
+	{
+		return myContext;
+	}
+
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>::StateStack(const typename State::Context& aContext)
 		: myContext(aContext) { }
 
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::operator[](std::size_t aIndex) const -> const State&
+	{
+		return GetState(aIndex);
+	}
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::operator[](std::size_t aIndex) -> State&
+	{
+		return GetState(aIndex);
+	}
+
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::GetState(std::size_t aIndex) const -> const State&
+	{
+		return *myStack[aIndex];
+	}
+	template<typename T, typename IDType>
+	inline auto StateStack<T, IDType>::GetState(std::size_t aIndex) -> State&
+	{
+		return *myStack[aIndex];
+	}
+
+	template<typename T, typename IDType>
+	inline std::size_t StateStack<T, IDType>::Count() const noexcept
+	{
+		return myStack.size();
+	}
 	template<typename T, typename IDType>
 	inline bool StateStack<T, IDType>::IsEmpty() const noexcept
 	{
@@ -212,11 +344,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Render() const
+	inline void StateStack<T, IDType>::Render(Timer& aTimer)
 	{
 		for (StatePtr& state : myStack)
 		{
-			state->Render();
+			state->Render(aTimer);
 		}
 	}
 
@@ -231,19 +363,36 @@ namespace CommonUtilities
 		myPendingList.emplace_back(Action::Erase, aStateID);
 	}
 	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::Move(const IDType& aStateID, std::size_t aNewIndex)
+	{
+		myPendingList.emplace_back(Action::Move, aStateID, aNewIndex);
+	}
+	template<typename T, typename IDType>
 	inline void StateStack<T, IDType>::Pop()
 	{
-		myPendingList.emplace_back(Action::Pop, -1);
+		myPendingList.emplace_back(Action::Pop, IDType());
 	}
 	template<typename T, typename IDType>
 	inline void StateStack<T, IDType>::Clear()
 	{
-		myPendingList.emplace_back(Action::Clear, -1);
+		myPendingList.emplace_back(Action::Clear, IDType());
 	}
 
 	template<typename T, typename IDType>
+	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID, std::size_t aIndex)
+		: action(aAction), stateID(aStateID), index(aIndex)
+	{
+
+	}
+	template<typename T, typename IDType>
 	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID)
-		: action(aAction), stateID(aStateID)
+		: PendingChange(aAction, aStateID, 0)
+	{
+
+	}
+	template<typename T, typename IDType>
+	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction)
+		: PendingChange(aAction, IDType, 0)
 	{
 
 	}
@@ -285,9 +434,11 @@ namespace CommonUtilities
 						myStack.back()->OnDeactivate();
 					}
 
-					myStack.emplace_back(CreateState(change.stateID));
-					myStack.back()->OnCreate();
-					myStack.back()->OnActivate();
+					StatePtr newState = CreateState(change.stateID);
+					newState->OnCreate();
+					newState->OnActivate();
+
+					myStack.emplace_back(std::move(newState));
 
 					break;
 				}
@@ -316,6 +467,32 @@ namespace CommonUtilities
 					{
 						PopState(); // if this is the last
 					}
+
+					break;
+				}
+				case Action::Move:
+				{
+					auto it = std::find_if(myStack.begin(), myStack.end(),
+						[&change](const StatePtr& aPtr)
+						{
+							return aPtr->GetID() == change.stateID;
+						});
+
+					if (it == myStack.end())
+						break;
+
+					const auto currentIndex = std::distance(it, myStack.begin());
+
+					if (currentIndex == change.index) // nothing to move anyways
+						break;
+
+					if (change.index == myStack.size() - 1)
+					{
+						myStack.back()->OnDeactivate();
+						(*it)->OnActivate();
+					}
+
+					ctr::MoveTo(myStack, currentIndex, change.index);
 
 					break;
 				}

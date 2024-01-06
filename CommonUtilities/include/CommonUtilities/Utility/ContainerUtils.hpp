@@ -85,6 +85,19 @@ namespace CommonUtilities::ctr
 	}
 
 	template<typename T>
+	inline void MoveTo(std::vector<T>& aVector, std::size_t aOldIndex, std::size_t aNewIndex)
+	{
+		if (aOldIndex > aNewIndex)
+		{
+			std::ranges::rotate(aVector.rend() - aOldIndex - 1, aVector.rend() - aOldIndex, aVector.rend() - aNewIndex);
+		}
+		else
+		{
+			std::ranges::rotate(aVector.begin() + aOldIndex, aVector.begin() + aOldIndex + 1, aVector.begin() + aNewIndex + 1);
+		}
+	}
+
+	template<typename T>
 	inline auto InsertSorted(std::vector<T>& aVector, const T& aItem)
 	{
 		// insert at upper bound since that usually means that less items will have to be moved

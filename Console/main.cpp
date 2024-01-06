@@ -14,6 +14,34 @@
 
 #include <CommonUtilities/Game/StateStack.hpp>
 
+struct Foo
+{
+	int a;
+};
+
+class TestState : public cu::StateStack<Foo, std::string>::State
+{
+public:
+	using cu::StateStack<Foo, std::string>::State::State;
+
+	// Inherited via State
+	bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override
+	{
+		return false;
+	}
+	bool Init() override
+	{
+		return false;
+	}
+	bool Update(cu::Timer& aTimer) override
+	{
+		return false;
+	}
+	void Render(cu::Timer& aTimer) override
+	{
+	}
+};
+
 int main()
 {
 	cu::Vector2f test1(cu::Random(-5000.0f, 5000.0f), 2423.5453253f);
@@ -23,6 +51,9 @@ int main()
 	test2.Normalize();
 
 	std::cout << test1.x << test2.x;
+
+	cu::StateStack<Foo, std::string> stateStack(Foo(5));
+	stateStack.RegisterState<TestState>("hello");
 
 	return 0;
 }

@@ -4,6 +4,9 @@ namespace CommonUtilities
 {
 	class StateMachine
 	{
+	public:
+
+	private:
 
 	};
 }

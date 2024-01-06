@@ -125,6 +125,10 @@ namespace CommonUtilities
 		/// 
 		void Clear();
 
+		/// Applies the currently pending changes, is otherwise done automatically when any update is called.
+		/// 
+		void ApplyPendingChanges();
+
 		template<std::derived_from<State> S, typename... Args>
 			requires std::constructible_from<S, const IDType&, StateStack&, const typename State::Context&, Args...>
 		void RegisterState(const IDType& aStateID, Args&&... someArgs)
@@ -164,7 +168,6 @@ namespace CommonUtilities
 		using PendingList	= std::vector<PendingChange>;
 
 		auto CreateState(const IDType& aStateID) -> StatePtr;
-		void ApplyPendingChanges();
 
 		Context		myContext;
 		Stack		myStack;
@@ -175,7 +178,7 @@ namespace CommonUtilities
 
 	template<typename T, typename IDType>
 	inline StateStack<T, IDType>::State::State(const IDType& aID, StateStack<T, IDType>& aStateStack, const Context& aContext)
-		: myID(aID), myStateStack(aStateStack), myContext(aContext)
+		: myID(aID), myStateStack(&aStateStack), myContext(aContext)
 	{
 
 	}
@@ -379,6 +382,112 @@ namespace CommonUtilities
 	}
 
 	template<typename T, typename IDType>
+	inline void StateStack<T, IDType>::ApplyPendingChanges()
+	{
+		const auto PopState = [this]()
+			{
+				myStack.back()->OnDestroy();
+				myStack.pop_back();
+
+				if (!myStack.empty())
+				{
+					myStack.back()->OnActivate();
+				}
+			};
+
+		for (const PendingChange& change : myPendingList)
+		{
+			switch (change.action)
+			{
+			case Action::Push:
+			{
+				if (!myStack.empty())
+				{
+					myStack.back()->OnDeactivate();
+				}
+
+				StatePtr newState = CreateState(change.stateID);
+				newState->OnCreate();
+				newState->OnActivate();
+
+				myStack.emplace_back(std::move(newState));
+
+				break;
+			}
+			case Action::Pop:
+			{
+				PopState();
+				break;
+			}
+			case Action::Erase:
+			{
+				auto it = std::find_if(myStack.begin(), myStack.end(),
+					[&change](const StatePtr& aPtr)
+					{
+						return aPtr->GetID() == change.stateID;
+					});
+
+				if (it == myStack.end())
+					break;
+
+				if (it != myStack.end() - 1) // if not last
+				{
+					(*it)->OnDestroy();
+					myStack.erase(it);
+				}
+				else
+				{
+					PopState(); // if this is the last
+				}
+
+				break;
+			}
+			case Action::Move:
+			{
+				auto it = std::find_if(myStack.begin(), myStack.end(),
+					[&change](const StatePtr& aPtr)
+					{
+						return aPtr->GetID() == change.stateID;
+					});
+
+				if (it == myStack.end())
+					break;
+
+				const auto currentIndex = std::distance(it, myStack.begin());
+
+				if (currentIndex == change.index) // nothing to move anyways
+					break;
+
+				if (change.index == myStack.size() - 1)
+				{
+					myStack.back()->OnDeactivate();
+					(*it)->OnActivate();
+				}
+
+				ctr::MoveTo(myStack, currentIndex, change.index);
+
+				break;
+			}
+			case Action::Clear:
+			{
+				for (StatePtr& state : myStack)
+				{
+					state->OnDestroy();
+				}
+
+				myStack.clear();
+
+				break;
+			}
+			default:
+				throw std::runtime_error("Invalid action");
+			}
+		}
+
+		myPendingList.clear();
+	}
+
+	template<typename T, typename IDType>
 	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID, std::size_t aIndex)
 		: action(aAction), stateID(aStateID), index(aIndex)
 	{
@@ -407,111 +516,5 @@ namespace CommonUtilities
 		}
 
 		return it->second();
-	}
-
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::ApplyPendingChanges()
-	{
-		const auto PopState = [this]()
-		{
-			myStack.back()->OnDestroy();
-			myStack.pop_back();
-
-			if (!myStack.empty())
-			{
-				myStack.back()->OnActivate();
-			}
-		};
-
-		for (const PendingChange& change : myPendingList)
-		{
-			switch (change.action)
-			{
-				case Action::Push:
-				{
-					if (!myStack.empty())
-					{
-						myStack.back()->OnDeactivate();
-					}
-
-					StatePtr newState = CreateState(change.stateID);
-					newState->OnCreate();
-					newState->OnActivate();
-
-					myStack.emplace_back(std::move(newState));
-
-					break;
-				}
-				case Action::Pop:
-				{
-					PopState();
-					break;
-				}
-				case Action::Erase:
-				{
-					auto it = std::find_if(myStack.begin(), myStack.end(),
-						[&change](const StatePtr& aPtr)
-						{
-							return aPtr->GetID() == change.stateID;
-						});
-
-					if (it == myStack.end())
-						break;
-
-					if (it != myStack.end() - 1) // if not last
-					{
-						(*it)->OnDestroy();
-						myStack.erase(it);
-					}
-					else
-					{
-						PopState(); // if this is the last
-					}
-
-					break;
-				}
-				case Action::Move:
-				{
-					auto it = std::find_if(myStack.begin(), myStack.end(),
-						[&change](const StatePtr& aPtr)
-						{
-							return aPtr->GetID() == change.stateID;
-						});
-
-					if (it == myStack.end())
-						break;
-
-					const auto currentIndex = std::distance(it, myStack.begin());
-
-					if (currentIndex == change.index) // nothing to move anyways
-						break;
-
-					if (change.index == myStack.size() - 1)
-					{
-						myStack.back()->OnDeactivate();
-						(*it)->OnActivate();
-					}
-
-					ctr::MoveTo(myStack, currentIndex, change.index);
-
-					break;
-				}
-				case Action::Clear:
-				{
-					for (StatePtr& state : myStack)
-					{
-						state->OnDestroy();
-					}
-
-					myStack.clear();
-
-					break;
-				}
-				default:
-					throw std::runtime_error("Invalid action");
-			}
-		}
-
-		myPendingList.clear();
 	}
 }

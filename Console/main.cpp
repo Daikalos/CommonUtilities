@@ -39,6 +39,7 @@ public:
 	}
 	void Render(cu::Timer& aTimer) override
 	{
+
 	}
 };
 
@@ -54,6 +55,10 @@ int main()
 
 	cu::StateStack<Foo, std::string> stateStack(Foo(5));
 	stateStack.RegisterState<TestState>("hello");
+	stateStack.Push("hello");
+	stateStack.ApplyPendingChanges();
+
+	stateStack.Init();
 
 	return 0;
 }

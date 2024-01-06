@@ -13,6 +13,7 @@
 #include <CommonUtilities/System/Color.hpp>
 
 #include <CommonUtilities/Game/StateStack.hpp>
+#include <CommonUtilities/Game/StateMachine.hpp>
 
 struct Foo
 {
@@ -24,11 +25,6 @@ class TestState : public cu::StateStack<Foo, std::string>::State
 public:
 	using cu::StateStack<Foo, std::string>::State::State;
 
-	// Inherited via State
-	bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) override
-	{
-		return false;
-	}
 	bool Init() override
 	{
 		return false;
@@ -41,6 +37,26 @@ public:
 	{
 
 	}
+};
+
+class TestState2 : public cu::StateMachine<Foo, std::string>::State
+{
+public:
+	using cu::StateMachine<Foo, std::string>::State::State;
+
+	void Enter() override
+	{
+		std::cout << "enter";
+	}
+
+	void Update(cu::Timer& aTimer) override
+	{
+	}
+
+	void Exit() override
+	{
+	}
+
 };
 
 int main()
@@ -59,6 +75,10 @@ int main()
 	stateStack.ApplyPendingChanges();
 
 	stateStack.Init();
+
+	cu::StateMachine<Foo, std::string> stateMachine(Foo(6));
+	stateMachine.AddState<TestState2>("hey");
+	stateMachine.TransitionTo("hey");
 
 	return 0;
 }

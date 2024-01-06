@@ -36,7 +36,7 @@ namespace CommonUtilities
 			virtual void Enter() = 0;
 			virtual void PreUpdate([[maybe_unused]] Timer& aTimer) {}
 			virtual void Update(Timer& aTimer) = 0;
-			virtual bool FixedUpdate([[maybe_unused]] Timer& aTimer) {}
+			virtual void FixedUpdate([[maybe_unused]] Timer& aTimer) {}
 			virtual void PostUpdate([[maybe_unused]] Timer& aTimer) {}
 			virtual void Exit() = 0;
 
@@ -86,8 +86,8 @@ namespace CommonUtilities
 	};
 
 	template<typename T, typename IDType>
-	inline StateMachine<T, IDType>::State::State(const IDType& aID, StateMachine& aStateStack, const Context& aContext)
-		: myID(aID), myStateStack(&aStateStack), myContext(aContext)
+	inline StateMachine<T, IDType>::State::State(const IDType& aID, StateMachine& aStateMachine, const Context& aContext)
+		: myID(aID), myStateMachine(&aStateMachine), myContext(aContext)
 	{
 
 	}
@@ -101,12 +101,12 @@ namespace CommonUtilities
 	template<typename T, typename IDType>
 	inline auto StateMachine<T, IDType>::State::GetMachine() const -> const StateMachine&
 	{
-		return *myStateStack;
+		return *myStateMachine;
 	}
 	template<typename T, typename IDType>
 	inline auto StateMachine<T, IDType>::State::GetMachine() -> StateMachine&
 	{
-		return *myStateStack;
+		return *myStateMachine;
 	}
 
 	template<typename T, typename IDType>

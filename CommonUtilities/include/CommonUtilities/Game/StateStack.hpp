@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include <functional>
-#include <Windows.h>
 
 #include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
@@ -13,8 +12,8 @@
 
 namespace CommonUtilities
 {
-	/// StateStack is a simple container for states managed similarly to a stack. 
-	/// States should be derived like this "class Foo : public StateStack<T, IDType>::State".
+	/// StateStack is a simple container for states that are managed similarly to a stack. 
+	/// States should be derived like this: "class Foo : public StateStack<T, IDType>::State { }".
 	/// 
 	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
@@ -30,7 +29,7 @@ namespace CommonUtilities
 			using Func		= std::function<Ptr()>;
 			using Context	= std::remove_const_t<std::remove_reference_t<T>>;
 
-			State(const IDType& aID, StateStack<T, IDType>& aStateStack, const Context& aContext);
+			State(const IDType& aID, StateStack& aStateStack, const Context& aContext);
 			virtual ~State() = default;
 
 			NODISC const IDType& GetID() const noexcept;
@@ -51,26 +50,24 @@ namespace CommonUtilities
 			/// 
 			virtual void OnDestroy() {}
 
-			virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
-
 			virtual bool Init() = 0;
-			virtual bool PreUpdate(Timer& aTimer)	{ return true; }
+			virtual bool PreUpdate([[maybe_unused]] Timer& aTimer)		{ return true; }
 			virtual bool Update(Timer& aTimer) = 0;
-			virtual bool FixedUpdate(Timer& aTimer) { return true; }
-			virtual bool PostUpdate(Timer& aTimer)	{ return true; }
+			virtual bool FixedUpdate([[maybe_unused]] Timer& aTimer)	{ return true; }
+			virtual bool PostUpdate([[maybe_unused]] Timer& aTimer)		{ return true; }
 			virtual void Render(Timer& aTimer) = 0;
 
 		protected:
-			NODISC const StateStack<T, IDType>& GetStack() const;
-			NODISC StateStack<T, IDType>& GetStack();
+			NODISC auto GetStack() const -> const StateStack&;
+			NODISC auto GetStack() -> StateStack&;
 
 			NODISC auto GetContext() const -> const Context&;
 			NODISC auto GetContext() -> Context&;
 
 		private:
-			IDType					myID;
-			StateStack<T, IDType>*	myStateStack;
-			Context					myContext;
+			IDType		myID;
+			StateStack*	myStateStack;
+			Context		myContext;
 		};
 
 		StateStack(const typename State::Context& aContext);
@@ -88,8 +85,6 @@ namespace CommonUtilities
 		/// Determines whether states should be updated, rendering will still run as normal
 		/// 
 		void SetPaused(bool aFlag);
-
-		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 		void Init();
 		void PreUpdate(Timer& aTimer);
@@ -177,7 +172,7 @@ namespace CommonUtilities
 	};
 
 	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::State::State(const IDType& aID, StateStack<T, IDType>& aStateStack, const Context& aContext)
+	inline StateStack<T, IDType>::State::State(const IDType& aID, StateStack& aStateStack, const Context& aContext)
 		: myID(aID), myStateStack(&aStateStack), myContext(aContext)
 	{
 
@@ -190,12 +185,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T, typename IDType>
-	inline const StateStack<T, IDType>& StateStack<T, IDType>::State::GetStack() const
+	inline auto StateStack<T, IDType>::State::GetStack() const -> const StateStack&
 	{
 		return *myStateStack;
 	}
 	template<typename T, typename IDType>
-	inline StateStack<T, IDType>& StateStack<T, IDType>::State::GetStack()
+	inline auto StateStack<T, IDType>::State::GetStack() -> StateStack&
 	{
 		return *myStateStack;
 	}
@@ -257,21 +252,6 @@ namespace CommonUtilities
 	inline void StateStack<T, IDType>::SetPaused(bool flag)
 	{
 		myPaused = flag;
-	}
-
-	template<typename T, typename IDType>
-	inline bool StateStack<T, IDType>::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
-	{
-		if (myPaused) // not sure if should be here
-			return;
-
-		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
-		{
-			if (!(*it)->HandleEvent(aMessage, wParam, lParam))
-				break;
-		}
-
-		ApplyPendingChanges();
 	}
 
 	template<typename T, typename IDType>
@@ -453,7 +433,7 @@ namespace CommonUtilities
 				if (it == myStack.end())
 					break;
 
-				const auto currentIndex = std::distance(it, myStack.begin());
+				const std::size_t currentIndex = std::distance(it, myStack.begin());
 
 				if (currentIndex == change.index) // nothing to move anyways
 					break;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <concepts>
-#include <filesystem>
 
 #include <CommonUtilities/Utility/Traits.h>
 #include <CommonUtilities/Config.h>

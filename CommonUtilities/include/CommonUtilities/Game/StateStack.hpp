@@ -15,6 +15,7 @@ namespace CommonUtilities
 {
 	/// StateStack is a simple container for states that are managed similarly to a stack. 
 	/// States should be derived like this: "class Foo : public StateStack<T, IDType, Hash>::State { }".
+	/// StateStack is furthermore virtual so you may specialize it for your needs.
 	/// 
 	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
@@ -52,12 +53,7 @@ namespace CommonUtilities
 			/// 
 			virtual void OnDestroy() {}
 
-			virtual bool Init() = 0;
-			virtual bool PreUpdate([[maybe_unused]] Timer& aTimer)		{ return true; }
 			virtual bool Update(Timer& aTimer) = 0;
-			virtual bool FixedUpdate([[maybe_unused]] Timer& aTimer)	{ return true; }
-			virtual bool PostUpdate([[maybe_unused]] Timer& aTimer)		{ return true; }
-			virtual void Render(Timer& aTimer) = 0;
 
 		protected:
 			NODISC auto GetStack() const -> const StateStack&;
@@ -73,6 +69,7 @@ namespace CommonUtilities
 		};
 
 		StateStack(const T& aContext = T());
+		virtual ~StateStack() = default;
 
 		NODISC auto operator[](std::size_t aIndex) const -> const State&;
 		NODISC auto operator[](std::size_t aIndex) -> State&;
@@ -88,12 +85,7 @@ namespace CommonUtilities
 		/// 
 		void SetPaused(bool aFlag);
 
-		void Init();
-		void PreUpdate(Timer& aTimer);
 		void Update(Timer& aTimer);
-		void FixedUpdate(Timer& aTimer);
-		void PostUpdate(Timer& aTimer);
-		void Render(Timer& aTimer);
 
 		/// Push a state to the top of the stack.
 		/// 
@@ -136,7 +128,7 @@ namespace CommonUtilities
 			};
 		}
 
-	private:
+	protected:
 		enum class Action
 		{
 			Push,
@@ -165,7 +157,7 @@ namespace CommonUtilities
 
 		auto CreateState(const IDType& aStateID) -> StatePtr;
 
-		T		myContext;
+		T			myContext;
 		Stack		myStack;
 		Factory		myFactory;
 		PendingList myPendingList;
@@ -272,35 +264,6 @@ namespace CommonUtilities
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateStack<T, IDType, Hash>::Init()
-	{
-		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
-		{
-			if (!(*it)->Init())
-				break;
-		}
-
-		ApplyPendingChanges();
-	}
-
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateStack<T, IDType, Hash>::PreUpdate(Timer& aTimer)
-	{
-		if (myPaused)
-			return;
-
-		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
-		{
-			if (!(*it)->PreUpdate(aTimer))
-				break;
-		}
-
-		ApplyPendingChanges();
-	}
-
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
 	inline void StateStack<T, IDType, Hash>::Update(Timer& aTimer)
 	{
 		if (myPaused)
@@ -313,48 +276,6 @@ namespace CommonUtilities
 		}
 
 		ApplyPendingChanges();
-	}
-
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateStack<T, IDType, Hash>::FixedUpdate(Timer& aTimer)
-	{
-		if (myPaused)
-			return;
-
-		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
-		{
-			if (!(*it)->FixedUpdate(aTimer))
-				break;
-		}
-
-		ApplyPendingChanges();
-	}
-
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateStack<T, IDType, Hash>::PostUpdate(Timer& aTimer)
-	{
-		if (myPaused)
-			return;
-
-		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
-		{
-			if (!(*it)->PostUpdate(aTimer))
-				break;
-		}
-
-		ApplyPendingChanges();
-	}
-
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateStack<T, IDType, Hash>::Render(Timer& aTimer)
-	{
-		for (StatePtr& state : myStack)
-		{
-			state->Render(aTimer);
-		}
 	}
 
 	template<typename T, typename IDType, typename Hash> 
@@ -393,102 +314,102 @@ namespace CommonUtilities
 	inline void StateStack<T, IDType, Hash>::ApplyPendingChanges()
 	{
 		const auto PopState = [this]()
-			{
-				myStack.back()->OnDestroy();
-				myStack.pop_back();
+		{
+			myStack.back()->OnDestroy();
+			myStack.pop_back();
 
-				if (!myStack.empty())
-				{
-					myStack.back()->OnActivate();
-				}
-			};
+			if (!myStack.empty())
+			{
+				myStack.back()->OnActivate();
+			}
+		};
 
 		for (const PendingChange& change : myPendingList)
 		{
 			switch (change.action)
 			{
-			case Action::Push:
-			{
-				if (!myStack.empty())
+				case Action::Push:
 				{
-					myStack.back()->OnDeactivate();
-				}
-
-				StatePtr newState = CreateState(change.stateID);
-				newState->OnCreate();
-				newState->OnActivate();
-
-				myStack.emplace_back(std::move(newState));
-
-				break;
-			}
-			case Action::Pop:
-			{
-				PopState();
-				break;
-			}
-			case Action::Erase:
-			{
-				auto it = std::find_if(myStack.begin(), myStack.end(),
-					[&change](const StatePtr& aPtr)
+					if (!myStack.empty())
 					{
-						return aPtr->GetID() == change.stateID;
-					});
+						myStack.back()->OnDeactivate();
+					}
 
-				if (it == myStack.end())
+					StatePtr newState = CreateState(change.stateID);
+					newState->OnCreate();
+					newState->OnActivate();
+
+					myStack.emplace_back(std::move(newState));
+
 					break;
-
-				if (it != myStack.end() - 1) // if not last
-				{
-					(*it)->OnDestroy();
-					myStack.erase(it);
 				}
-				else
+				case Action::Pop:
 				{
-					PopState(); // if this is the last
+					PopState();
+					break;
 				}
+				case Action::Erase:
+				{
+					auto it = std::find_if(myStack.begin(), myStack.end(),
+						[&change](const StatePtr& aPtr)
+						{
+							return aPtr->GetID() == change.stateID;
+						});
 
-				break;
-			}
-			case Action::Move:
-			{
-				auto it = std::find_if(myStack.begin(), myStack.end(),
-					[&change](const StatePtr& aPtr)
+					if (it == myStack.end())
+						break;
+
+					if (it != myStack.end() - 1) // if not last
 					{
-						return aPtr->GetID() == change.stateID;
-					});
+						(*it)->OnDestroy();
+						myStack.erase(it);
+					}
+					else
+					{
+						PopState(); // if this is the last
+					}
 
-				if (it == myStack.end())
 					break;
+				}
+				case Action::Move:
+				{
+					auto it = std::find_if(myStack.begin(), myStack.end(),
+						[&change](const StatePtr& aPtr)
+						{
+							return aPtr->GetID() == change.stateID;
+						});
 
-				const std::size_t currentIndex = std::distance(it, myStack.begin());
+					if (it == myStack.end())
+						break;
 
-				if (currentIndex == change.index) // nothing to move anyways
+					const std::size_t currentIndex = std::distance(it, myStack.begin());
+
+					if (currentIndex == change.index) // nothing to move anyways
+						break;
+
+					if (change.index == myStack.size() - 1)
+					{
+						myStack.back()->OnDeactivate();
+						(*it)->OnActivate();
+					}
+
+					ctr::MoveTo(myStack, currentIndex, change.index);
+
 					break;
-
-				if (change.index == myStack.size() - 1)
-				{
-					myStack.back()->OnDeactivate();
-					(*it)->OnActivate();
 				}
-
-				ctr::MoveTo(myStack, currentIndex, change.index);
-
-				break;
-			}
-			case Action::Clear:
-			{
-				for (StatePtr& state : myStack)
+				case Action::Clear:
 				{
-					state->OnDestroy();
+					for (StatePtr& state : myStack)
+					{
+						state->OnDestroy();
+					}
+
+					myStack.clear();
+
+					break;
 				}
-
-				myStack.clear();
-
-				break;
-			}
-			default:
-				throw std::runtime_error("Invalid action");
+				default:
+					throw std::runtime_error("Invalid action");
 			}
 		}
 

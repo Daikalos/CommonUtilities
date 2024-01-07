@@ -13,7 +13,8 @@
 namespace CommonUtilities
 {
 	/// StateMachine is a finite state machine where there can only be one active state at a time. 
-	/// States should be derived like this: "class Foo : public StateMachine<T, IDType, Hash>::State { }".
+	/// States should be derived like this: "class Foo : public StateMachine<T, IDType, Hash>::State { }". 
+	/// StateMachine is furthermore virtual so you may specialize it for your needs.
 	/// 
 	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
@@ -35,10 +36,7 @@ namespace CommonUtilities
 			NODISC const IDType& GetID() const noexcept;
 
 			virtual void Enter() = 0;
-			virtual void PreUpdate([[maybe_unused]] Timer& aTimer) {}
 			virtual void Update(Timer& aTimer) = 0;
-			virtual void FixedUpdate([[maybe_unused]] Timer& aTimer) {}
-			virtual void PostUpdate([[maybe_unused]] Timer& aTimer) {}
 			virtual void Exit() = 0;
 
 		protected:
@@ -72,12 +70,9 @@ namespace CommonUtilities
 			myStates[aStateID] = std::make_unique<S>(aStateID, *this, myContext, std::forward<Args>(someArgs)...);
 		}
 
-		void PreUpdate(Timer& aTimer);
 		void Update(Timer& aTimer);
-		void FixedUpdate(Timer& aTimer);
-		void PostUpdate(Timer& aTimer);
 
-	private:
+	protected:
 		using StatePtr	= typename State::Ptr;
 		using StateMap	= std::unordered_map<IDType, StatePtr, Hash>;
 
@@ -191,15 +186,6 @@ namespace CommonUtilities
 		return true;
 	}
 
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateMachine<T, IDType, Hash>::PreUpdate(Timer& aTimer)
-	{
-		if (myCurrentState != nullptr)
-		{
-			myCurrentState->PreUpdate(aTimer);
-		}
-	}
 	template<typename T, typename IDType, typename Hash>
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
 	inline void StateMachine<T, IDType, Hash>::Update(Timer& aTimer)
@@ -207,24 +193,6 @@ namespace CommonUtilities
 		if (myCurrentState != nullptr)
 		{
 			myCurrentState->Update(aTimer);
-		}
-	}
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateMachine<T, IDType, Hash>::FixedUpdate(Timer& aTimer)
-	{
-		if (myCurrentState != nullptr)
-		{
-			myCurrentState->FixedUpdate(aTimer);
-		}
-	}
-	template<typename T, typename IDType, typename Hash> 
-		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline void StateMachine<T, IDType, Hash>::PostUpdate(Timer& aTimer)
-	{
-		if (myCurrentState != nullptr)
-		{
-			myCurrentState->PostUpdate(aTimer);
 		}
 	}
 }

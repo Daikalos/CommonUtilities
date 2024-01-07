@@ -25,11 +25,11 @@ namespace CommonUtilities
 		/// 
 		CONSTEXPR void Set(const Bind& aBind, const Reg& aButton);
 
-		///	Remove the existing bind
+		///	Remove an existing bind
 		/// 
 		CONSTEXPR void Remove(const Bind& aBind);
 
-		///	\return Whether bind is set
+		///	\return Whether bind is set to some button
 		/// 
 		CONSTEXPR bool IsSet(const Bind& aBind);
 

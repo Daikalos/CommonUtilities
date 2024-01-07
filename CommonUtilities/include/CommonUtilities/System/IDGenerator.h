@@ -9,7 +9,7 @@ namespace CommonUtilities::id
 {
 	/// FNV-1a implementation
 	/// 
-	inline consteval std::size_t HashFunction(const std::string_view aSignature)
+	inline consteval std::size_t FNV1a(const std::string_view aSignature)
 	{
 		std::size_t result = 0xcbf29ce484222325; // FNV offset basis
 
@@ -23,7 +23,8 @@ namespace CommonUtilities::id
 	}
 
 	/// Typical implementation of generating unique ids, does not work however across boundaries 
-	/// (counter will reset to zero in different boundaries, and can therefore collide)
+	/// (counter will reset to zero in different boundaries, and can therefore collide), read more
+	/// about it here: https://skypjack.github.io/2020-03-14-ecs-baf-part-8/
 	/// 
 	struct Generator
 	{
@@ -40,7 +41,7 @@ namespace CommonUtilities::id
 #ifdef COMMON_UTILITIES_PRETTY_FUNCTION
 		static consteval std::size_t ID()
 		{
-			return HashFunction(COMMON_UTILITIES_PRETTY_FUNCTION);
+			return FNV1a(COMMON_UTILITIES_PRETTY_FUNCTION);
 		}
 #else
 		static std::size_t ID()

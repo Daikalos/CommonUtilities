@@ -33,23 +33,23 @@ namespace CommonUtilities
 		FunctionType myFunc;
 		evnt::IDType myID {NULL};
 
-		static evnt::AtomicID locIDCounter;
+		static evnt::AtomicID ourIDCounter;
 	};
 
 	template<typename... Args>
-	inline evnt::AtomicID EventHandler<Args...>::locIDCounter = 1; // 0 reserved for null
+	inline evnt::AtomicID EventHandler<Args...>::ourIDCounter = 1; // 0 reserved for null
 
 	template<typename ...Args>
 	inline EventHandler<Args...>::EventHandler(const FunctionType& aFunc)
 		: myFunc(aFunc)
-		, myID(locIDCounter++)
+		, myID(ourIDCounter++)
 	{
 
 	}
 	template<typename ...Args>
 	inline EventHandler<Args...>::EventHandler(FunctionType&& aFunc)
 		: myFunc(std::move(aFunc))
-		, myID(locIDCounter++)
+		, myID(ourIDCounter++)
 	{
 
 	}
@@ -57,7 +57,7 @@ namespace CommonUtilities
 	template<typename ...Args>
 	inline EventHandler<Args...>::EventHandler(const EventHandler& aOther)
 		: myFunc(aOther.myFunc)
-		, myID(locIDCounter++) // copying increases the ID to keep this unique
+		, myID(ourIDCounter++) // copying increases the ID to keep this unique
 	{
 
 	}
@@ -76,7 +76,7 @@ namespace CommonUtilities
 			return *this;
 
 		myFunc = aOther.myFunc;
-		myID = locIDCounter++;
+		myID = ourIDCounter++;
 
 		return *this;
 	}

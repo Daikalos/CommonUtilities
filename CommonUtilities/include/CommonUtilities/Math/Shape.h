@@ -4,7 +4,7 @@
 
 namespace CommonUtilities
 {
-	class Shape
+	class COMMON_UTILITIES_API Shape
 	{
 	public:
 		enum class Type

@@ -16,7 +16,7 @@ namespace CommonUtilities
 	/// Based on article by Shmuel Zang:
 	/// https://www.codeproject.com/Articles/1256352/CppEvent-How-to-Implement-Events-using-Standard-Cp
 	/// 
-	/// \param Args: Parameters for function
+	/// \param Args: Parameters for function (Specify them how you would normally write parameters, e.g., pass by reference and/or as const)
 	/// 
 	template<typename... Args>
 	class Event final : public IEvent

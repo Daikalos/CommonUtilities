@@ -7,7 +7,7 @@
 
 namespace CommonUtilities
 {
-	/// Stores color as unsigned 8-bit variables instead of floats for lesser memory usage.
+	/// Stores color as unsigned 8-bit variables instead of floats for smaller memory usage.
 	/// 
 	class Color
 	{

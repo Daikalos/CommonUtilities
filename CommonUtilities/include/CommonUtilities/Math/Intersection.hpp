@@ -14,6 +14,15 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	struct CollisionResult // TODO: return this instead for additional data
+	{
+		Vector3<T>	intersectionPoint;
+		Vector3<T>	normal;	
+		float		penetration {0.0f};
+		bool		collided	{false};
+	};
+
+	template<typename T>
 	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint);
 	
 	template<typename T>
@@ -26,10 +35,10 @@ namespace CommonUtilities
 	inline bool IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D, Vector3<T>& outIntersectionPoint);
 
 	template<typename T>
-	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay);
+	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
 
 	template<typename T>
-	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
 
 	template<typename T>
 	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint)
@@ -145,13 +154,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
 	{
-		if (aAABB3D.IsInside(aRay.GetOrigin()))
-		{
-			// for now have this check at start
-			return true;
-		}
-
-		Vector3<T> t;
+		Vector3<T> t; // get vector from best corner to ray's origin
 
 		t.x = ((aRay.GetDirection().x > 0 ? aAABB3D.GetMin().x : aAABB3D.GetMax().x) - aRay.GetOrigin().x);
 		t.y = ((aRay.GetDirection().y > 0 ? aAABB3D.GetMin().y : aAABB3D.GetMax().y) - aRay.GetOrigin().y);
@@ -240,11 +243,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
+	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
 	{
 		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
-		if (dir.LengthSqr() <= aSphere.GetRadiusSqr())
+		if (dir.LengthSqr() <= aSphere.GetRadiusSqr()) // inside sphere
 		{
 			return true;
 		}

@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <vector>
-#include <algorithm>
+#include <ranges>
 
 #include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -59,7 +59,7 @@ namespace CommonUtilities
 		template<typename Func>
 		void Add(ButtonType aButton, ButtonTrigger aTrigger, Func&& aFunc, float aPriority = {})
 		{
-			const auto it = std::upper_bound(myCallbacks.begin(), myCallbacks.end(), aPriority,
+			const auto it = std::ranges::upper_bound(myCallbacks.begin(), myCallbacks.end(), aPriority,
 				[](float aPriority, const ButtonCallback& aCallback)
 				{
 					return aPriority > aCallback.priority;
@@ -185,7 +185,7 @@ namespace CommonUtilities
 	template<class T, typename... Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Remove(ButtonType aButton)
 	{
-		std::erase(std::remove_if(myCallbacks.begin(), myCallbacks.end(), 
+		std::erase(std::ranges::remove_if(myCallbacks.begin(), myCallbacks.end(),
 			[&aButton](const ButtonCallback& aCallback)
 			{
 				return aCallback.button == aButton;
@@ -195,7 +195,7 @@ namespace CommonUtilities
 	template<class T, typename... Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Remove(ButtonTrigger aTrigger)
 	{
-		std::erase(std::remove_if(myCallbacks.begin(), myCallbacks.end(),
+		std::erase(std::ranges::remove_if(myCallbacks.begin(), myCallbacks.end(),
 			[&aTrigger](const ButtonCallback& aCallback)
 			{
 				return aCallback.trigger == aTrigger;

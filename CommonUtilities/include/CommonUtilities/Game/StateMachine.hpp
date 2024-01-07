@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-#include <Windows.h>
 
 #include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
@@ -28,10 +27,9 @@ namespace CommonUtilities
 		class State
 		{
 		public:
-			using Ptr		= std::unique_ptr<State>;
-			using Context	= std::remove_const_t<std::remove_reference_t<T>>;
+			using Ptr = std::unique_ptr<State>;
 
-			State(const IDType& aID, StateMachine& aStateMachine, const Context& aContext);
+			State(const IDType& aID, StateMachine& aStateMachine, const T& aContext);
 			virtual ~State() = default;
 
 			NODISC const IDType& GetID() const noexcept;
@@ -47,16 +45,16 @@ namespace CommonUtilities
 			NODISC auto GetMachine() const -> const StateMachine&;
 			NODISC auto GetMachine() -> StateMachine&;
 
-			NODISC auto GetContext() const -> const Context&;
-			NODISC auto GetContext() -> Context&;
+			NODISC auto GetContext() const -> const T&;
+			NODISC auto GetContext() -> T&;
 
 		private:
 			IDType			myID;
 			StateMachine*	myStateMachine;
-			Context			myContext;
+			T				myContext;
 		};
 
-		StateMachine(const typename State::Context& aContext = typename State::Context());
+		StateMachine(const T& aContext = T());
 		virtual ~StateMachine() = default;
 
 		NODISC auto GetCurrentState() const -> const State&;
@@ -80,18 +78,17 @@ namespace CommonUtilities
 		void PostUpdate(Timer& aTimer);
 
 	private:
-		using Context	= typename State::Context;
 		using StatePtr	= typename State::Ptr;
 		using StateMap	= std::unordered_map<IDType, StatePtr, Hash>;
 
-		Context		myContext;
+		T			myContext;
 		StateMap	myStates;
 		State*		myCurrentState;
 	};
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline StateMachine<T, IDType, Hash>::State::State(const IDType& aID, StateMachine& aStateMachine, const Context& aContext)
+	inline StateMachine<T, IDType, Hash>::State::State(const IDType& aID, StateMachine& aStateMachine, const T& aContext)
 		: myID(aID), myStateMachine(&aStateMachine), myContext(aContext)
 	{
 
@@ -119,20 +116,20 @@ namespace CommonUtilities
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline auto StateMachine<T, IDType, Hash>::State::GetContext() const -> const Context&
+	inline auto StateMachine<T, IDType, Hash>::State::GetContext() const -> const T&
 	{
 		return myContext;
 	}
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline auto StateMachine<T, IDType, Hash>::State::GetContext() -> Context&
+	inline auto StateMachine<T, IDType, Hash>::State::GetContext() -> T&
 	{
 		return myContext;
 	}
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline StateMachine<T, IDType, Hash>::StateMachine(const typename State::Context& aContext)
+	inline StateMachine<T, IDType, Hash>::StateMachine(const T& aContext)
 		: myContext(aContext), myStates(), myCurrentState(nullptr) { }
 
 	template<typename T, typename IDType, typename Hash> 

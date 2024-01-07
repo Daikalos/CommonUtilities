@@ -28,11 +28,10 @@ namespace CommonUtilities
 		class State
 		{
 		public:
-			using Ptr		= std::unique_ptr<State>;
-			using Func		= std::function<Ptr()>;
-			using Context	= std::remove_const_t<std::remove_reference_t<T>>;
+			using Ptr	= std::unique_ptr<State>;
+			using Func	= std::function<Ptr()>;
 
-			State(const IDType& aID, StateStack& aStateStack, const Context& aContext);
+			State(const IDType& aID, StateStack& aStateStack, const T& aContext);
 			virtual ~State() = default;
 
 			NODISC const IDType& GetID() const noexcept;
@@ -64,16 +63,16 @@ namespace CommonUtilities
 			NODISC auto GetStack() const -> const StateStack&;
 			NODISC auto GetStack() -> StateStack&;
 
-			NODISC auto GetContext() const -> const Context&;
-			NODISC auto GetContext() -> Context&;
+			NODISC auto GetContext() const -> const T&;
+			NODISC auto GetContext() -> T&;
 
 		private:
 			IDType		myID;
 			StateStack*	myStateStack;
-			Context		myContext;
+			T			myContext;
 		};
 
-		StateStack(const typename State::Context& aContext = typename State::Context());
+		StateStack(const T& aContext = T());
 
 		NODISC auto operator[](std::size_t aIndex) const -> const State&;
 		NODISC auto operator[](std::size_t aIndex) -> State&;
@@ -158,7 +157,6 @@ namespace CommonUtilities
 			std::size_t index;
 		};
 
-		using Context		= typename State::Context;
 		using StatePtr		= typename State::Ptr;
 		using StateFunc		= typename State::Func;
 		using Stack			= std::vector<StatePtr>;
@@ -167,7 +165,7 @@ namespace CommonUtilities
 
 		auto CreateState(const IDType& aStateID) -> StatePtr;
 
-		Context		myContext;
+		T		myContext;
 		Stack		myStack;
 		Factory		myFactory;
 		PendingList myPendingList;
@@ -176,7 +174,7 @@ namespace CommonUtilities
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline StateStack<T, IDType, Hash>::State::State(const IDType& aID, StateStack& aStateStack, const Context& aContext)
+	inline StateStack<T, IDType, Hash>::State::State(const IDType& aID, StateStack& aStateStack, const T& aContext)
 		: myID(aID), myStateStack(&aStateStack), myContext(aContext)
 	{
 
@@ -204,20 +202,20 @@ namespace CommonUtilities
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline auto StateStack<T, IDType, Hash>::State::GetContext() const -> const Context&
+	inline auto StateStack<T, IDType, Hash>::State::GetContext() const -> const T&
 	{
 		return myContext;
 	}
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline auto StateStack<T, IDType, Hash>::State::GetContext() -> Context&
+	inline auto StateStack<T, IDType, Hash>::State::GetContext() -> T&
 	{
 		return myContext;
 	}
 
 	template<typename T, typename IDType, typename Hash> 
 		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
-	inline StateStack<T, IDType, Hash>::StateStack(const typename State::Context& aContext)
+	inline StateStack<T, IDType, Hash>::StateStack(const T& aContext)
 		: myContext(aContext), myStack(), myFactory(), myPendingList(), myPaused(false) { }
 
 	template<typename T, typename IDType, typename Hash> 

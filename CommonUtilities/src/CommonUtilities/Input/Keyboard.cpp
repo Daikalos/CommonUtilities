@@ -9,7 +9,7 @@ Keyboard::Key Keyboard::ProcessVirtualKey(WPARAM aVirtualKey, LPARAM someFlags)
         case VK_SHIFT:
         {
             static const UINT lShift = MapVirtualKeyW(VK_LSHIFT, MAPVK_VK_TO_VSC);
-            const UINT scancode = static_cast<UINT>((someFlags & (0xFF << 16)) >> 16);
+            const UINT scancode = static_cast<UINT>((static_cast<int>(someFlags) & (0xFF << 16)) >> 16);
             return scancode == lShift ? Keyboard::LShift : Keyboard::RShift;
         }
         case VK_MENU:       return (HIWORD(someFlags) & KF_EXTENDED) ? Keyboard::RAlt : Keyboard::LAlt;

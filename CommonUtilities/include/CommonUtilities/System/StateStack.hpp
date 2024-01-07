@@ -83,7 +83,7 @@ namespace CommonUtilities
 
 		/// Determines whether states should be updated, rendering will still run as normal
 		/// 
-		void SetPaused(bool aFlag);
+		virtual void SetPaused(bool aFlag);
 
 		void Update(Timer& aTimer);
 
@@ -119,7 +119,7 @@ namespace CommonUtilities
 		void ApplyPendingChanges();
 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<S, const IDType&, StateStack&, const typename State::Context&, Args...>
+			requires std::constructible_from<S, const IDType&, StateStack&, const T&, Args...>
 		void RegisterState(const IDType& aStateID, Args&&... someArgs)
 		{
 			myFactory[aStateID] = [this, &aStateID, ...args = std::forward<Args>(someArgs)]

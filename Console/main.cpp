@@ -12,8 +12,8 @@
 #include <CommonUtilities/Input/KeyboardInput.h>
 #include <CommonUtilities/System/Color.hpp>
 
-#include <CommonUtilities/Game/StateStack.hpp>
-#include <CommonUtilities/Game/StateMachine.hpp>
+#include <CommonUtilities/System/StateStack.hpp>
+#include <CommonUtilities/System/StateMachine.hpp>
 
 struct Foo
 {
@@ -25,17 +25,9 @@ class TestState : public cu::StateStack<Foo, std::string>::State
 public:
 	using cu::StateStack<Foo, std::string>::State::State;
 
-	bool Init() override
-	{
-		return false;
-	}
 	bool Update(cu::Timer& aTimer) override
 	{
 		return false;
-	}
-	void Render(cu::Timer& aTimer) override
-	{
-
 	}
 };
 
@@ -73,8 +65,6 @@ int main()
 	stateStack.RegisterState<TestState>("hello");
 	stateStack.Push("hello");
 	stateStack.ApplyPendingChanges();
-
-	stateStack.Init();
 
 	cu::StateMachine<Foo, std::string> stateMachine(Foo(6));
 	stateMachine.AddState<TestState2>("hey");

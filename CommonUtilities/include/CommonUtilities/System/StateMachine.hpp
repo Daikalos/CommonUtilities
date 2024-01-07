@@ -64,7 +64,7 @@ namespace CommonUtilities
 		virtual bool TransitionTo(const IDType& aStateID);
 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<S, const IDType&, StateMachine&, const typename State::Context&, Args...>
+			requires std::constructible_from<S, const IDType&, StateMachine&, const T&, Args...>
 		void AddState(const IDType& aStateID, Args&&... someArgs)
 		{
 			myStates[aStateID] = std::make_unique<S>(aStateID, *this, myContext, std::forward<Args>(someArgs)...);

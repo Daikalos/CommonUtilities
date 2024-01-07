@@ -75,7 +75,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\Random.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Game\BaseEntity.hpp">
+    <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\IDGenerator.h">
@@ -189,7 +189,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\ResourceLoader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Game\StateStack.hpp">
+    <ClInclude Include="include\CommonUtilities\System\StateStack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Shape.h">
@@ -198,7 +198,7 @@
     <ClInclude Include="include\CommonUtilities\Input\ButtonEvent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Game\StateMachine.hpp">
+    <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

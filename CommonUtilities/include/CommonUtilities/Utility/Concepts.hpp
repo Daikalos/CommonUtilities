@@ -1,6 +1,7 @@
 #pragma once
 
 #include <concepts>
+#include <functional>
 
 #include <CommonUtilities/Utility/Traits.h>
 #include <CommonUtilities/Config.h>
@@ -50,6 +51,15 @@ namespace CommonUtilities
 		Traits::NoDuplicates<Ts...>{};
 	};
 
+	template<typename F, typename T>
+	concept IsHashable = std::regular_invocable<F, T> && requires(F f, T t) 
+	{
+		{ std::invoke(f, t) } -> std::convertible_to<size_t>;
+	};
+
+	template<class T, class... Args>
+	concept Contains = std::disjunction_v<std::is_same<T, Args>...>;
+
 	template<class Lambda, typename T, std::size_t... Index>
 	concept SameTypeParamDecay = (std::same_as<T, std::decay_t<typename Traits::FunctionTraits<Lambda>::template arg_type<Index>>> && ...);
 
@@ -61,7 +71,4 @@ namespace CommonUtilities
 
 	template<class Lambda, typename... Ts>
 	concept HasParametersDecay = (std::same_as<std::tuple<std::decay_t<Ts>...>, typename Traits::FunctionTraits<Lambda>::arguments_decay>);
-
-	template<class T, class... Args>
-	concept Contains = std::disjunction_v<std::is_same<T, Args>...>;
 }

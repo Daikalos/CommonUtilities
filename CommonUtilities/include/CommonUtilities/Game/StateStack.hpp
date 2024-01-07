@@ -7,18 +7,21 @@
 
 #include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
+#include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/System/Timer.h>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	/// StateStack is a simple container for states that are managed similarly to a stack. 
-	/// States should be derived like this: "class Foo : public StateStack<T, IDType>::State { }".
+	/// States should be derived like this: "class Foo : public StateStack<T, IDType, Hash>::State { }".
 	/// 
 	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
+	/// \param Hash: Function that generates the hash for IDType
 	/// 
-	template<typename T, typename IDType = std::uint32_t>
+	template<typename T, typename IDType = std::uint32_t, typename Hash = std::hash<IDType>> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
 	class StateStack : private NonCopyable
 	{
 	public:
@@ -34,19 +37,19 @@ namespace CommonUtilities
 
 			NODISC const IDType& GetID() const noexcept;
 
-			///	OnCreated is called when first constructed
+			///	OnCreated is called when first constructed.
 			/// 
 			virtual void OnCreate() {}
 
-			///	OnActivate is called whenever the state is put as last in the stack
+			///	OnActivate is called whenever the state is put as last in the stack.
 			/// 
 			virtual void OnActivate() {}
 
-			///	OnDeactivate is called whenever the state is longer the last in the stack
+			///	OnDeactivate is called whenever the state is longer the last in the stack.
 			/// 
 			virtual void OnDeactivate() {}
 
-			///	OnDestroy is called when the state is removed from the stack
+			///	OnDestroy is called when the state is removed from the stack.
 			/// 
 			virtual void OnDestroy() {}
 
@@ -70,7 +73,7 @@ namespace CommonUtilities
 			Context		myContext;
 		};
 
-		StateStack(const typename State::Context& aContext);
+		StateStack(const typename State::Context& aContext = typename State::Context());
 
 		NODISC auto operator[](std::size_t aIndex) const -> const State&;
 		NODISC auto operator[](std::size_t aIndex) -> State&;
@@ -159,7 +162,7 @@ namespace CommonUtilities
 		using StatePtr		= typename State::Ptr;
 		using StateFunc		= typename State::Func;
 		using Stack			= std::vector<StatePtr>;
-		using Factory		= std::unordered_map<IDType, StateFunc>;
+		using Factory		= std::unordered_map<IDType, StateFunc, Hash>;
 		using PendingList	= std::vector<PendingChange>;
 
 		auto CreateState(const IDType& aStateID) -> StatePtr;
@@ -171,91 +174,107 @@ namespace CommonUtilities
 		bool		myPaused;
 	};
 
-	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::State::State(const IDType& aID, StateStack& aStateStack, const Context& aContext)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline StateStack<T, IDType, Hash>::State::State(const IDType& aID, StateStack& aStateStack, const Context& aContext)
 		: myID(aID), myStateStack(&aStateStack), myContext(aContext)
 	{
 
 	}
 
-	template<typename T, typename IDType>
-	inline const IDType& StateStack<T, IDType>::State::GetID() const noexcept
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline const IDType& StateStack<T, IDType, Hash>::State::GetID() const noexcept
 	{
 		return myID;
 	}
 
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::State::GetStack() const -> const StateStack&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::State::GetStack() const -> const StateStack&
 	{
 		return *myStateStack;
 	}
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::State::GetStack() -> StateStack&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::State::GetStack() -> StateStack&
 	{
 		return *myStateStack;
 	}
 
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::State::GetContext() const -> const Context&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::State::GetContext() const -> const Context&
 	{
 		return myContext;
 	}
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::State::GetContext() -> Context&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::State::GetContext() -> Context&
 	{
 		return myContext;
 	}
 
-	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::StateStack(const typename State::Context& aContext)
-		: myContext(aContext) { }
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline StateStack<T, IDType, Hash>::StateStack(const typename State::Context& aContext)
+		: myContext(aContext), myStack(), myFactory(), myPendingList(), myPaused(false) { }
 
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::operator[](std::size_t aIndex) const -> const State&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::operator[](std::size_t aIndex) const -> const State&
 	{
 		return GetState(aIndex);
 	}
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::operator[](std::size_t aIndex) -> State&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::operator[](std::size_t aIndex) -> State&
 	{
 		return GetState(aIndex);
 	}
 
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::GetState(std::size_t aIndex) const -> const State&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetState(std::size_t aIndex) const -> const State&
 	{
 		return *myStack[aIndex];
 	}
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::GetState(std::size_t aIndex) -> State&
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetState(std::size_t aIndex) -> State&
 	{
 		return *myStack[aIndex];
 	}
 
-	template<typename T, typename IDType>
-	inline std::size_t StateStack<T, IDType>::Count() const noexcept
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline std::size_t StateStack<T, IDType, Hash>::Count() const noexcept
 	{
 		return myStack.size();
 	}
-	template<typename T, typename IDType>
-	inline bool StateStack<T, IDType>::IsEmpty() const noexcept
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline bool StateStack<T, IDType, Hash>::IsEmpty() const noexcept
 	{
 		return myStack.empty();
 	}
-	template<typename T, typename IDType>
-	inline bool StateStack<T, IDType>::IsPaused() const noexcept
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline bool StateStack<T, IDType, Hash>::IsPaused() const noexcept
 	{
 		return myPaused;
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::SetPaused(bool flag)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::SetPaused(bool flag)
 	{
 		myPaused = flag;
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Init()
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Init()
 	{
 		for (auto it = myStack.rbegin(); it != myStack.rend(); ++it)
 		{
@@ -266,8 +285,9 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::PreUpdate(Timer& aTimer)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::PreUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -281,8 +301,9 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Update(Timer& aTimer)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Update(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -296,8 +317,9 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::FixedUpdate(Timer& aTimer)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::FixedUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -311,8 +333,9 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::PostUpdate(Timer& aTimer)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::PostUpdate(Timer& aTimer)
 	{
 		if (myPaused)
 			return;
@@ -326,8 +349,9 @@ namespace CommonUtilities
 		ApplyPendingChanges();
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Render(Timer& aTimer)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Render(Timer& aTimer)
 	{
 		for (StatePtr& state : myStack)
 		{
@@ -335,34 +359,40 @@ namespace CommonUtilities
 		}
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Push(const IDType& aStateID)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Push(const IDType& aStateID)
 	{
 		myPendingList.emplace_back(Action::Push, aStateID);
 	}
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Erase(const IDType& aStateID)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Erase(const IDType& aStateID)
 	{
 		myPendingList.emplace_back(Action::Erase, aStateID);
 	}
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Move(const IDType& aStateID, std::size_t aNewIndex)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Move(const IDType& aStateID, std::size_t aNewIndex)
 	{
 		myPendingList.emplace_back(Action::Move, aStateID, aNewIndex);
 	}
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Pop()
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Pop()
 	{
 		myPendingList.emplace_back(Action::Pop, IDType());
 	}
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::Clear()
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::Clear()
 	{
 		myPendingList.emplace_back(Action::Clear, IDType());
 	}
 
-	template<typename T, typename IDType>
-	inline void StateStack<T, IDType>::ApplyPendingChanges()
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline void StateStack<T, IDType, Hash>::ApplyPendingChanges()
 	{
 		const auto PopState = [this]()
 			{
@@ -467,27 +497,31 @@ namespace CommonUtilities
 		myPendingList.clear();
 	}
 
-	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID, std::size_t aIndex)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline StateStack<T, IDType, Hash>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID, std::size_t aIndex)
 		: action(aAction), stateID(aStateID), index(aIndex)
 	{
 
 	}
-	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline StateStack<T, IDType, Hash>::PendingChange::PendingChange(const Action& aAction, const IDType& aStateID)
 		: PendingChange(aAction, aStateID, 0)
 	{
 
 	}
-	template<typename T, typename IDType>
-	inline StateStack<T, IDType>::PendingChange::PendingChange(const Action& aAction)
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline StateStack<T, IDType, Hash>::PendingChange::PendingChange(const Action& aAction)
 		: PendingChange(aAction, IDType, 0)
 	{
 
 	}
 
-	template<typename T, typename IDType>
-	inline auto StateStack<T, IDType>::CreateState(const IDType& aStateID) -> StatePtr
+	template<typename T, typename IDType, typename Hash> 
+		requires std::is_default_constructible_v<T> && IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::CreateState(const IDType& aStateID) -> StatePtr
 	{
 		const auto it = myFactory.find(aStateID);
 		if (it == myFactory.end())

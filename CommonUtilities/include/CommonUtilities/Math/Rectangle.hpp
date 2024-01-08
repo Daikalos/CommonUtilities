@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 

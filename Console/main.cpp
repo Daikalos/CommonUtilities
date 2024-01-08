@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include <CommonUtilities/Utility/Random.hpp>
 #include <CommonUtilities/Config.h>
@@ -6,6 +7,7 @@
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Math/Transform2D.h>
+#include <CommonUtilities/Math/Relation2D.hpp>
 #include <CommonUtilities/Math/Vector4.hpp>
 #include <CommonUtilities/System/Event.hpp>
 #include <CommonUtilities/Input/ButtonEvent.hpp>
@@ -69,6 +71,12 @@ int main()
 	cu::StateMachine<Foo, std::string> stateMachine(Foo(6));
 	stateMachine.AddState<TestState2>("hey");
 	stateMachine.TransitionTo("hey");
+
+	std::shared_ptr<cu::Relation2D<>> relation1 = std::make_shared<cu::Relation2D<>>();
+	std::shared_ptr<cu::Relation2D<>> relation2 = std::make_shared<cu::Relation2D<>>();
+	std::shared_ptr<cu::Relation2D<>> relation3 = std::make_shared<cu::Relation2D<>>();
+
+	cu::Relation2D<>::Attach(3, relation2, 5, relation1);
 
 	return 0;
 }

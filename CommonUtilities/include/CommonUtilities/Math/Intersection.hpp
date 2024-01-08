@@ -16,10 +16,15 @@ namespace CommonUtilities
 	template<typename T>
 	struct CollisionResult // TODO: return this instead for additional data
 	{
-		Vector3<T>	intersectionPoint;
+		Vector3<T>	intersection;
 		Vector3<T>	normal;	
 		float		penetration {0.0f};
 		bool		collided	{false};
+
+		operator bool() const noexcept
+		{
+			return collided;
+		}
 	};
 
 	template<typename T>

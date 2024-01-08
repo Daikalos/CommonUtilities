@@ -71,27 +71,27 @@ void Transform2D::SetPosition(const Vector2f& aPosition)
 {
 	if (myPosition != aPosition)
 	{
-		myPosition = aPosition;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myPosition				= aPosition;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 void Transform2D::SetRotation(float aRotation)
 {
 	if (myRotation != aRotation)
 	{
-		myRotation = aRotation;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myRotation				= aRotation;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 void Transform2D::SetScale(const Vector2f& aScale)
 {
 	if (myScale != aScale)
 	{
-		myScale = aScale;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myScale					= aScale;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 

@@ -276,7 +276,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::Rotate(T aRoll, T aYaw, T aPitch) -> Matrix4x4&
 	{
-		return Combine(CreateRotationAroundZ(aRoll) * CreateRotationAroundY(aYaw) * CreateRotationAroundX(aPitch));
+		return Combine(CreateRotationAroundZ(aRoll) * CreateRotationAroundX(aPitch) * CreateRotationAroundY(aYaw));
 	}
 
 	template<typename T>

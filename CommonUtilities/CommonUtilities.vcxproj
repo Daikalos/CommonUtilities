@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
+    <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CommonUtilities\Math\Relation2D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Shape.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\MouseCursor.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\InputHolder.cpp" />

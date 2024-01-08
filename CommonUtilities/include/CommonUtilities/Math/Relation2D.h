@@ -10,6 +10,10 @@
 
 namespace CommonUtilities
 {
+	class Relation2D;
+
+	using Relation2DPtr = std::shared_ptr<Relation2D>;
+
 	/// Relation2D is a way of modelling hierarchies. Most getters and setters works in local space while GetGlobalMatrix 
 	/// retrieves the global representation for the current transform. You will have to store Relation2D somewhere outside as
 	/// shared pointers for this to work (Relation2D uses weak pointers). Furthermore, do note that when hierarchies start to 
@@ -29,17 +33,17 @@ namespace CommonUtilities
 		/// \param someArgs: Additional constructor arguments (look at Transform2D for possible options)
 		/// 
 		template<typename... Args>
-		NODISC static std::shared_ptr<Relation2D> Create(Args&&... someArgs);
+		NODISC static Relation2DPtr Create(Args&&... someArgs);
 
 		NODISC bool HasParent() const noexcept;
 		NODISC bool HasChildren() const noexcept;
 
 		NODISC auto GetRoot() const -> const Ref&;
 
-		NODISC auto GetParent() const -> const Parent&;
-		NODISC auto GetChildren() const -> const Children&;
+		NODISC auto GetParent() const noexcept -> const Parent&;
+		NODISC auto GetChildren() const noexcept -> const Children&;
 
-		NODISC bool IsDescendant(const std::shared_ptr<Relation2D>& aRelation);
+		NODISC bool IsDescendant(const Relation2DPtr& aRelation);
 
 		NODISC const Mat3f& GetGlobalMatrix() const;
 		NODISC const Mat3f& GetInverseGlobalMatrix() const;
@@ -54,8 +58,21 @@ namespace CommonUtilities
 
 		void SetGlobalPosition(const Vector2f& aPosition);
 
-		static void Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
-		static bool Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
+		/// Attaches child to parent.
+		/// 
+		/// \param aParent: Parent to attach child to
+		/// \param aChild: child to attach to parent
+		/// 
+		static void Attach(Relation2DPtr aParent, Relation2DPtr aChild);
+
+		/// Detaches child from parent.
+		/// 
+		/// \param aParent: Parent to detach child from
+		/// \param aChild: child to detach from parent
+		/// 
+		/// \returns Whether detachment was successful
+		/// 
+		static bool Detach(Relation2DPtr aParent, Relation2DPtr aChild);
 
 		void RemoveAllExpired();
 
@@ -63,6 +80,7 @@ namespace CommonUtilities
 		using Transform2D::Transform2D; // bring its constructors into scope
 
 		Relation2D(); // constructor is hidden to prevent wrong usage
+		Relation2D(const Transform2D& aTransform);
 
 		void UpdateTransform() const;
 		void UpdateToLocal() const;
@@ -73,11 +91,14 @@ namespace CommonUtilities
 
 		Parent					myParent;
 		Children				myChildren;
+
 		mutable Mat3f			myGlobalMatrix;
 		mutable Mat3f			myInverseGlobalMatrix;
+
 		mutable cu::Vector2f	myGlobalPosition;
 		mutable float			myGlobalRotation			{0.0f};
 		mutable cu::Vector2f	myGlobalScale;
+
 		mutable bool			myUpdateGlobalMatrix		{true};
 		mutable bool			myUpdateGlobalInverseMatrix	{true};
 		mutable bool			myUpdateGlobalRotation		{true};
@@ -85,10 +106,8 @@ namespace CommonUtilities
 	};
 
 	template<typename... Args>
-	std::shared_ptr<Relation2D> Relation2D::Create(Args&&... someArgs)
+	Relation2DPtr Relation2D::Create(Args&&... someArgs)
 	{
-		return std::shared_ptr<Relation2D>(new Relation2D(std::forward<Args>(someArgs)...));
-	}
-
-	using Relation2DPtr = std::shared_ptr<Relation2D>;
+		return Relation2DPtr(new Relation2D(std::forward<Args>(someArgs)...));
+	};
 }

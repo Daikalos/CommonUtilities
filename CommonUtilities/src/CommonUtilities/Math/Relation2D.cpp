@@ -4,6 +4,11 @@
 
 using namespace CommonUtilities;
 
+Relation2D::Relation2D(const Transform2D& aTransform) : Transform2D(aTransform)
+{
+
+}
+
 Relation2D::Relation2D() = default;
 
 Relation2D::~Relation2D() = default;
@@ -27,22 +32,22 @@ auto Relation2D::GetRoot() const -> const Ref&
 	return myParent;
 }
 
-auto Relation2D::GetParent() const -> const Parent&
+auto Relation2D::GetParent() const noexcept -> const Parent&
 {
 	return myParent;
 }
-auto Relation2D::GetChildren() const -> const Children&
+auto Relation2D::GetChildren() const noexcept -> const Children&
 {
 	return myChildren;
 }
 
-bool Relation2D::IsDescendant(const std::shared_ptr<Relation2D>& aRelation)
+bool Relation2D::IsDescendant(const Relation2DPtr& aRelation)
 {
 	for (const Ref& child : myChildren)
 	{
 		if (!child.expired())
 		{
-			std::shared_ptr<Relation2D> childPtr = child.lock();
+			Relation2DPtr childPtr = child.lock();
 			if (childPtr == aRelation || childPtr->IsDescendant(aRelation))
 			{
 				return true;
@@ -144,7 +149,7 @@ void Relation2D::SetGlobalPosition(const Vector2f& aPosition)
 	}
 }
 
-void Relation2D::Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild)
+void Relation2D::Attach(Relation2DPtr aParent, Relation2DPtr aChild)
 {
 	if (aParent == nullptr || aChild == nullptr)
 		return;
@@ -168,7 +173,7 @@ void Relation2D::Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Rel
 
 	if (aChild->HasParent()) // if child already has an attached parent we need to detach it
 	{
-		Detach(aChild->myParent.lock(), aChild);
+		Detach(aChild->GetParent().lock(), aChild);
 	}
 
 	aChild->myParent = aParent;
@@ -177,7 +182,7 @@ void Relation2D::Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Rel
 	aChild->DirtyDescendants();
 }
 
-bool Relation2D::Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild)
+bool Relation2D::Detach(Relation2DPtr aParent, Relation2DPtr aChild)
 {
 	if (aParent == nullptr || aChild == nullptr)
 		return false;
@@ -269,7 +274,7 @@ void Relation2D::DirtyDescendants()
 			{
 				if (!child.expired())
 				{
-					std::shared_ptr<Relation2D> childPtr = child.lock();
+					Relation2DPtr childPtr = child.lock();
 					if (!childPtr->myUpdateGlobalMatrix)
 					{
 						aRecursiveRef(*childPtr, aRecursiveRef);

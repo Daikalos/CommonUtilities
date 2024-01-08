@@ -72,9 +72,9 @@ int main()
 	stateMachine.AddState<TestState2>("hey");
 	stateMachine.TransitionTo("hey");
 
-	std::shared_ptr<cu::Relation2D> relation1 = std::make_shared<cu::Relation2D>();
-	std::shared_ptr<cu::Relation2D> relation2 = std::make_shared<cu::Relation2D>();
-	std::shared_ptr<cu::Relation2D> relation3 = std::make_shared<cu::Relation2D>();
+	cu::Relation2DPtr relation1 = cu::Relation2D::Create();
+	cu::Relation2DPtr relation2 = cu::Relation2D::Create();
+	cu::Relation2DPtr relation3 = cu::Relation2D::Create();
 
 	cu::Relation2D::Attach(relation2, relation1);
 	relation2->Move(cu::Vector2f(5.0f, 5.0f));

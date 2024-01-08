@@ -73,6 +73,31 @@ const Mat3f& Relation2D::GetInverseGlobalMatrix() const
 	return myInverseGlobalMatrix;
 }
 
+const Vector2f& Relation2D::GetGlobalPosition() const
+{
+	return myGlobalPosition;
+}
+float Relation2D::GetGlobalRotation() const
+{
+	if (myUpdateGlobalRotation)
+	{
+		myGlobalRotation = GetGlobalMatrix().GetRotation();
+		myUpdateGlobalRotation = false;
+	}
+
+	return myGlobalRotation;
+}
+const Vector2f& Relation2D::GetGlobalScale() const
+{
+	if (myUpdateGlobalScale)
+	{
+		myGlobalScale = GetGlobalMatrix().GetScale();
+		myUpdateGlobalScale = false;
+	}
+
+	return myGlobalScale;
+}
+
 void Relation2D::SetPosition(const Vector2f& aPosition)
 {
 	if (myPosition != aPosition)
@@ -104,6 +129,18 @@ void Relation2D::SetScale(const Vector2f& aScale)
 		myUpdateInverseMatrix	= true;
 
 		DirtyDescendants();
+	}
+}
+
+void Relation2D::SetGlobalPosition(const Vector2f& aPosition)
+{
+	if (!HasParent())
+	{
+		SetPosition(aPosition);
+	}
+	else
+	{
+		SetPosition(GetParent().lock()->GetInverseGlobalMatrix() * aPosition); // to parent-space
 	}
 }
 
@@ -177,19 +214,41 @@ void Relation2D::UpdateTransform() const
 		return;
 	}
 
-	std::shared_ptr<Relation2D> parentPtr = myParent.lock();
+	Relation2DPtr parentPtr = myParent.lock();
 
 	if (parentPtr->myUpdateGlobalMatrix)
 	{
 		parentPtr->UpdateTransform();
 	}
 
-	myGlobalMatrix = parentPtr->myGlobalMatrix * GetMatrix();
+	Mat3f combinedMatrix = parentPtr->myGlobalMatrix * GetMatrix();
+	if (combinedMatrix != myGlobalMatrix)
+	{
+		myGlobalMatrix			= combinedMatrix;
+		myGlobalPosition		= myGlobalMatrix.GetTranslation();
+
+		myUpdateGlobalRotation	= true; // we delay updating rotation and scale since they are quite expensive
+		myUpdateGlobalScale		= true;
+	}
+
 	myUpdateGlobalMatrix = false;
 }
 void Relation2D::UpdateToLocal() const
 {
-	myGlobalMatrix = GetMatrix();
+	const Mat3f localMatrix = GetMatrix();
+	if (myGlobalMatrix != localMatrix)
+	{ 
+		myGlobalMatrix			= GetMatrix();
+
+		myGlobalPosition		= myPosition;
+		myGlobalRotation		= myRotation;
+		myGlobalScale			= myScale;
+
+		myUpdateGlobalRotation	= false;
+		myUpdateGlobalScale		= false;
+	}
+
+	myUpdateGlobalMatrix = false;
 }
 
 void Relation2D::DirtyDescendants()

@@ -44,9 +44,15 @@ namespace CommonUtilities
 		NODISC const Mat3f& GetGlobalMatrix() const;
 		NODISC const Mat3f& GetInverseGlobalMatrix() const;
 
+		NODISC const Vector2f& GetGlobalPosition() const;
+		NODISC float GetGlobalRotation() const;
+		NODISC const Vector2f& GetGlobalScale() const;
+
 		void SetPosition(const Vector2f& aPosition) override;
 		void SetRotation(float aRotation) override;
 		void SetScale(const Vector2f& aScale) override;
+
+		void SetGlobalPosition(const Vector2f& aPosition);
 
 		static void Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
 		static bool Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
@@ -65,12 +71,17 @@ namespace CommonUtilities
 
 		static void RemoveAllExpiredImpl(Relation2D& aCurrentRelation);
 
-		Parent			myParent;
-		Children		myChildren;
-		mutable Mat3f	myGlobalMatrix;
-		mutable Mat3f	myInverseGlobalMatrix;
-		mutable bool	myUpdateGlobalMatrix		{true};
-		mutable bool	myUpdateGlobalInverseMatrix	{true};
+		Parent					myParent;
+		Children				myChildren;
+		mutable Mat3f			myGlobalMatrix;
+		mutable Mat3f			myInverseGlobalMatrix;
+		mutable cu::Vector2f	myGlobalPosition;
+		mutable float			myGlobalRotation;
+		mutable cu::Vector2f	myGlobalScale;
+		mutable bool			myUpdateGlobalMatrix		{true};
+		mutable bool			myUpdateGlobalInverseMatrix	{true};
+		mutable bool			myUpdateGlobalRotation		{true};
+		mutable bool			myUpdateGlobalScale			{true};
 	};
 
 	template<typename... Args>

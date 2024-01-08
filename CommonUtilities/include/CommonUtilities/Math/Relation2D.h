@@ -13,7 +13,7 @@ namespace CommonUtilities
 	/// Relation2D is a way of modelling hierarchies. Most getters and setters works in local space while GetGlobalMatrix 
 	/// retrieves the global representation for the current transform. You will have to store Relation2D somewhere outside as
 	/// shared pointers for this to work (Relation2D uses weak pointers). Furthermore, do note that when hierarchies start to 
-	/// grow this solution will be insufficient due to performance issues in trade-off for an intuitive interface. 
+	/// grow this solution will be insufficient due to performance issues because of trade-off for an intuitive interface. 
 	/// 
 	class COMMON_UTILITIES_API Relation2D : public Transform2D
 	{
@@ -22,8 +22,10 @@ namespace CommonUtilities
 		using Parent	= Ref;
 		using Children	= std::vector<Ref>;
 
-		Relation2D();
 		~Relation2D();
+
+		template<typename... Args>
+		NODISC static std::shared_ptr<Relation2D> Create(Args&&... someArgs);
 
 		NODISC bool HasParent() const noexcept;
 		NODISC bool HasChildren() const noexcept;
@@ -48,6 +50,10 @@ namespace CommonUtilities
 		void RemoveAllExpired();
 
 	private:
+		using Transform2D::Transform2D; // bring its constructors into scope
+
+		Relation2D(); // constructor is hidden to prevent wrong usage
+
 		void UpdateTransform() const;
 		void UpdateToLocal() const;
 
@@ -62,4 +68,12 @@ namespace CommonUtilities
 		mutable bool	myUpdateGlobalMatrix		{true};
 		mutable bool	myUpdateGlobalInverseMatrix	{true};
 	};
+
+	template<typename... Args>
+	std::shared_ptr<Relation2D> Relation2D::Create(Args&&... someArgs)
+	{
+		return std::shared_ptr<Relation2D>(new Relation2D(std::forward<Args>(someArgs)...));
+	}
+
+	using Relation2DPtr = std::shared_ptr<Relation2D>;
 }

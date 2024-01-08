@@ -76,7 +76,7 @@ namespace CommonUtilities
 		mutable Mat3f			myGlobalMatrix;
 		mutable Mat3f			myInverseGlobalMatrix;
 		mutable cu::Vector2f	myGlobalPosition;
-		mutable float			myGlobalRotation;
+		mutable float			myGlobalRotation			{0.0f};
 		mutable cu::Vector2f	myGlobalScale;
 		mutable bool			myUpdateGlobalMatrix		{true};
 		mutable bool			myUpdateGlobalInverseMatrix	{true};

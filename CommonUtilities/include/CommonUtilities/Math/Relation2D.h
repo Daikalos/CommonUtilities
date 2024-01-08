@@ -14,7 +14,7 @@ namespace CommonUtilities
 
 	using Relation2DPtr = std::shared_ptr<Relation2D>;
 
-	/// Relation2D is a way of modelling hierarchies. Most getters and setters works in local space while GetGlobalMatrix 
+	/// Relation2D is a way of modeling hierarchies. Most getters and setters works in local space while GetGlobalMatrix 
 	/// retrieves the global representation for the current transform. You will have to store Relation2D somewhere outside as
 	/// shared pointers for this to work (Relation2D uses weak pointers). Furthermore, do note that when hierarchies start to 
 	/// grow this solution will be insufficient due to performance issues because of trade-off for an intuitive interface. 

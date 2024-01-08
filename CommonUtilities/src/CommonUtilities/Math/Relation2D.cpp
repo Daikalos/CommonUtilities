@@ -36,14 +36,17 @@ auto Relation2D::GetChildren() const -> const Children&
 	return myChildren;
 }
 
-bool Relation2D::IsDescendant(const Relation2D& aRelation)
+bool Relation2D::IsDescendant(const std::shared_ptr<Relation2D>& aRelation)
 {
-	for (const Ref& ref : myChildren)
+	for (const Ref& child : myChildren)
 	{
-		std::shared_ptr<Relation2D> relation = ref.lock();
-		if (relation.get() == &aRelation || relation->IsDescendant(aRelation))
+		if (!child.expired())
 		{
-			return true;
+			std::shared_ptr<Relation2D> childPtr = child.lock();
+			if (childPtr == aRelation || childPtr->IsDescendant(aRelation))
+			{
+				return true;
+			}
 		}
 	}
 
@@ -116,17 +119,17 @@ void Relation2D::Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Rel
 		return;
 
 #if _DEBUG
-	if (aParent->IsDescendant(*aChild))
+	if (aParent->IsDescendant(aChild))
 		throw std::runtime_error("The new parent cannot be a descendant of the child");
 #endif
 
-	if (aParent->HasParent() && aParent->GetParent().lock() == aChild) // special case
+	if (aParent->HasParent() && aParent->GetParent().lock() == aChild) // special weird case
 	{
-		Detach(aParent->myParent.lock(), aParent);
+		Detach(aParent->GetParent().lock(), aParent);
 		return;
 	}
 
-	if (aChild->HasParent()) // if aChild already has an attached aParent we need to detach it
+	if (aChild->HasParent()) // if child already has an attached parent we need to detach it
 	{
 		Detach(aChild->myParent.lock(), aChild);
 	}
@@ -145,7 +148,7 @@ bool Relation2D::Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Rel
 	auto it = std::find_if(aParent->myChildren.begin(), aParent->myChildren.end(),
 		[&aChild](const Relation2D::Ref& child)
 		{
-			return aChild == child.lock();
+			return !child.expired() && aChild == child.lock();
 		});
 
 	if (it == aParent->myChildren.end()) // none found
@@ -154,16 +157,16 @@ bool Relation2D::Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Rel
 	aChild->myParent.reset();
 	aChild->DirtyDescendants();
 
-	*it = aParent->myChildren.back();
+	*it = aParent->myChildren.back(); // erase cyclic
 	aParent->myChildren.pop_back();
 
 	return true;
 }
 
-void Relation2D::CheckForNull()
+void Relation2D::RemoveAllExpired()
 {
 	const Ref& root = GetRoot();
-	CheckForNullImpl(root.expired() ? *this : *root.lock());
+	RemoveAllExpiredImpl(root.expired() ? *this : *root.lock());
 }
 
 void Relation2D::UpdateTransform() const
@@ -225,7 +228,7 @@ void Relation2D::DirtyDescendants()
 
 	RecursiveDirty(*this);
 }
-void Relation2D::CheckForNullImpl(Relation2D& aCurrentRelation)
+void Relation2D::RemoveAllExpiredImpl(Relation2D& aCurrentRelation)
 {
 	const auto size = std::ssize(aCurrentRelation.myChildren);
 	for (auto index = size - 1; index >= 0; --index)
@@ -238,7 +241,7 @@ void Relation2D::CheckForNullImpl(Relation2D& aCurrentRelation)
 		}
 		else
 		{
-			Relation2D::CheckForNullImpl(*child.lock());
+			RemoveAllExpiredImpl(*child.lock());
 		}
 	}
 }

@@ -211,14 +211,10 @@ void Relation2D::DirtyDescendants()
 				if (!child.expired())
 				{
 					std::shared_ptr<Relation2D> childPtr = child.lock();
-					if (!childPtr->myUpdateMatrix)
+					if (!childPtr->myUpdateGlobalMatrix)
 					{
 						aRecursiveRef(*childPtr, aRecursiveRef);
 					}
-				}
-				else
-				{
-					// erase here instead?
 				}
 			}
 		};

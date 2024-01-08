@@ -15,7 +15,7 @@ namespace CommonUtilities
 	/// shared pointers for this to work (Relation2D uses weak pointers). Furthermore, do note that when hierarchies start to 
 	/// grow this solution will be insufficient due to performance issues in trade-off for an intuitive interface. 
 	/// 
-	class Relation2D : public Transform2D
+	class COMMON_UTILITIES_API Relation2D : public Transform2D
 	{
 	public:
 		using Ref		= std::weak_ptr<Relation2D>;

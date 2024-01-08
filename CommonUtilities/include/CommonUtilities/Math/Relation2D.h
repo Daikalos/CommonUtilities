@@ -24,6 +24,10 @@ namespace CommonUtilities
 
 		~Relation2D();
 
+		/// Creates a shared pointer of Relation2D.
+		/// 
+		/// \param someArgs: Additional constructor arguments (look at Transform2D for possible options)
+		/// 
 		template<typename... Args>
 		NODISC static std::shared_ptr<Relation2D> Create(Args&&... someArgs);
 

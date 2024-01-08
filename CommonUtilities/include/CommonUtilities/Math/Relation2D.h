@@ -19,9 +19,9 @@ namespace CommonUtilities
 	class Relation2D : public Transform2D
 	{
 	public:
-		using Ref		= std::shared_ptr<Relation2D>;
+		using Ref		= std::weak_ptr<Relation2D>;
 		using Parent	= Ref;
-		using Children	= std::vector<std::shared_ptr<Relation2D>>;
+		using Children	= std::vector<Ref>;
 
 		Relation2D();
 		~Relation2D();
@@ -34,7 +34,7 @@ namespace CommonUtilities
 		NODISC auto GetParent() const -> const Parent&;
 		NODISC auto GetChildren() const -> const Children&;
 
-		NODISC bool IsDescendant(const Ref& aRelation);
+		NODISC bool IsDescendant(const Relation2D& aRelation);
 
 		NODISC const Mat3f& GetGlobalMatrix() const;
 		NODISC const Mat3f& GetInverseGlobalMatrix() const;
@@ -43,8 +43,8 @@ namespace CommonUtilities
 		void SetRotation(float aRotation) override;
 		void SetScale(const Vector2f& aScale) override;
 
-		static void Attach(Ref aParent, Ref aChild);
-		static bool Detach(Ref aParent, Ref aChild);
+		static void Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
+		static bool Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild);
 
 		void CheckForNull();
 
@@ -60,7 +60,7 @@ namespace CommonUtilities
 		Children		myChildren;
 		mutable Mat3f	myGlobalMatrix;
 		mutable Mat3f	myInverseGlobalMatrix;
-		mutable bool	myUpdateGlobalMatrix;
-		mutable bool	myUpdateGlobalInverseMatrix;
+		mutable bool	myUpdateGlobalMatrix		{true};
+		mutable bool	myUpdateGlobalInverseMatrix	{true};
 	};
 }

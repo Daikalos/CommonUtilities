@@ -1,26 +1,16 @@
 #include <CommonUtilities/Math/Relation2D.h>
 
-#include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <stdexcept>
 
 using namespace CommonUtilities;
 
-Relation2D::Relation2D()
-	: myParent()
-	, myChildren()
-	, myGlobalMatrix()
-	, myInverseGlobalMatrix()
-	, myUpdateGlobalMatrix(true)
-	, myUpdateGlobalInverseMatrix(true)
-{
-
-}
+Relation2D::Relation2D() = default;
 
 Relation2D::~Relation2D() = default;
 
 bool Relation2D::HasParent() const noexcept
 {
-	return myParent != nullptr;
+	return !myParent.expired();
 }
 bool Relation2D::HasChildren() const noexcept
 {
@@ -29,9 +19,9 @@ bool Relation2D::HasChildren() const noexcept
 
 auto Relation2D::GetRoot() const -> const Ref&
 {
-	if (myParent != nullptr)
+	if (HasParent())
 	{
-		return myParent->GetRoot();
+		return myParent.lock()->GetRoot();
 	}
 
 	return myParent;
@@ -46,11 +36,12 @@ auto Relation2D::GetChildren() const -> const Children&
 	return myChildren;
 }
 
-bool Relation2D::IsDescendant(const Ref& aRelation)
+bool Relation2D::IsDescendant(const Relation2D& aRelation)
 {
 	for (const Ref& ref : myChildren)
 	{
-		if (ref == aRelation || ref->IsDescendant(aRelation))
+		std::shared_ptr<Relation2D> relation = ref.lock();
+		if (relation.get() == &aRelation || relation->IsDescendant(aRelation))
 		{
 			return true;
 		}
@@ -64,12 +55,10 @@ const Mat3f& Relation2D::GetGlobalMatrix() const
 	if (myUpdateGlobalMatrix)
 	{
 		UpdateTransform();
-		myUpdateGlobalMatrix = false;
 	}
 
 	return myGlobalMatrix;
 }
-
 const Mat3f& Relation2D::GetInverseGlobalMatrix() const
 {
 	if (myUpdateGlobalInverseMatrix)
@@ -115,40 +104,40 @@ void Relation2D::SetScale(const Vector2f& aScale)
 	}
 }
 
-void Relation2D::Attach(Ref aParent, Ref aChild)
+void Relation2D::Attach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild)
 {
 	if (aParent == nullptr || aChild == nullptr)
 		return;
 
-	if (aChild->HasParent() && aChild->GetParent() == aParent) // child is already correctly parented
+	if (aChild->HasParent() && aChild->GetParent().lock() == aParent) // child is already correctly parented
 		return;
 
 	if (aParent == aChild) // cant attach to itself
 		return;
 
 #if _DEBUG
-	if (aParent->IsDescendant(aChild))
-		throw std::runtime_error("The new aParent cannot be a descendant of the aChild");
+	if (aParent->IsDescendant(*aChild))
+		throw std::runtime_error("The new parent cannot be a descendant of the child");
 #endif
 
-	if (aParent->HasParent() && aParent->GetParent() == aChild) // special case
+	if (aParent->HasParent() && aParent->GetParent().lock() == aChild) // special case
 	{
-		Detach(aParent->myParent, aParent);
+		Detach(aParent->myParent.lock(), aParent);
 		return;
 	}
 
 	if (aChild->HasParent()) // if aChild already has an attached aParent we need to detach it
 	{
-		Detach(aChild->myParent, aChild);
+		Detach(aChild->myParent.lock(), aChild);
 	}
 
 	aChild->myParent = aParent;
-	aChild->DirtyDescendants();
-
 	aParent->myChildren.emplace_back(aChild);
+
+	aChild->DirtyDescendants();
 }
 
-bool Relation2D::Detach(Ref aParent, Ref aChild)
+bool Relation2D::Detach(std::shared_ptr<Relation2D> aParent, std::shared_ptr<Relation2D> aChild)
 {
 	if (aParent == nullptr || aChild == nullptr)
 		return false;
@@ -156,13 +145,14 @@ bool Relation2D::Detach(Ref aParent, Ref aChild)
 	auto it = std::find_if(aParent->myChildren.begin(), aParent->myChildren.end(),
 		[&aChild](const Relation2D::Ref& child)
 		{
-			return aChild == child;
+			return aChild == child.lock();
 		});
 
 	if (it == aParent->myChildren.end()) // none found
 		return false;
 
 	aChild->myParent.reset();
+	aChild->DirtyDescendants();
 
 	*it = aParent->myChildren.back();
 	aParent->myChildren.pop_back();
@@ -173,26 +163,30 @@ bool Relation2D::Detach(Ref aParent, Ref aChild)
 void Relation2D::CheckForNull()
 {
 	const Ref& root = GetRoot();
-	CheckForNullImpl(root == nullptr ? *this : *root);
+	CheckForNullImpl(root.expired() ? *this : *root.lock());
 }
 
 void Relation2D::UpdateTransform() const
 {
-	if (myParent == nullptr)
+	if (myParent.expired())
 	{
 		UpdateToLocal();
+		return;
 	}
 
-	if (myParent->myUpdateGlobalMatrix)
+	std::shared_ptr<Relation2D> parentPtr = myParent.lock();
+
+	if (parentPtr->myUpdateGlobalMatrix)
 	{
-		myParent->UpdateTransform();
+		parentPtr->UpdateTransform();
 	}
 
-	myGlobalMatrix = myParent->myGlobalMatrix * myMatrix;
+	myGlobalMatrix = parentPtr->myGlobalMatrix * GetMatrix();
+	myUpdateGlobalMatrix = false;
 }
 void Relation2D::UpdateToLocal() const
 {
-	myGlobalMatrix = myMatrix;
+	myGlobalMatrix = GetMatrix();
 }
 
 void Relation2D::DirtyDescendants()
@@ -211,9 +205,17 @@ void Relation2D::DirtyDescendants()
 
 			for (const Ref& child : aRelation.GetChildren())
 			{
-				if (child != nullptr && !child->myUpdateMatrix)
+				if (!child.expired())
 				{
-					aRecursiveRef(*child, aRecursiveRef);
+					std::shared_ptr<Relation2D> childPtr = child.lock();
+					if (!childPtr->myUpdateMatrix)
+					{
+						aRecursiveRef(*childPtr, aRecursiveRef);
+					}
+				}
+				else
+				{
+					// erase here instead?
 				}
 			}
 		};
@@ -230,13 +232,13 @@ void Relation2D::CheckForNullImpl(Relation2D& aCurrentRelation)
 	{
 		const Ref& child = aCurrentRelation.myChildren[index];
 
-		if (child == nullptr)
+		if (child.expired())
 		{
 			aCurrentRelation.myChildren.erase(aCurrentRelation.myChildren.begin() + index);
 		}
 		else
 		{
-			Relation2D::CheckForNullImpl(*child);
+			Relation2D::CheckForNullImpl(*child.lock());
 		}
 	}
 }

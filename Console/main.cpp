@@ -7,7 +7,7 @@
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Math/Transform2D.h>
-#include <CommonUtilities/Math/Relation2D.hpp>
+#include <CommonUtilities/Math/Relation2D.h>
 #include <CommonUtilities/Math/Vector4.hpp>
 #include <CommonUtilities/System/Event.hpp>
 #include <CommonUtilities/Input/ButtonEvent.hpp>
@@ -72,11 +72,14 @@ int main()
 	stateMachine.AddState<TestState2>("hey");
 	stateMachine.TransitionTo("hey");
 
-	std::shared_ptr<cu::Relation2D<>> relation1 = std::make_shared<cu::Relation2D<>>();
-	std::shared_ptr<cu::Relation2D<>> relation2 = std::make_shared<cu::Relation2D<>>();
-	std::shared_ptr<cu::Relation2D<>> relation3 = std::make_shared<cu::Relation2D<>>();
+	std::shared_ptr<cu::Relation2D> relation1 = std::make_shared<cu::Relation2D>();
+	std::shared_ptr<cu::Relation2D> relation2 = std::make_shared<cu::Relation2D>();
+	std::shared_ptr<cu::Relation2D> relation3 = std::make_shared<cu::Relation2D>();
 
-	cu::Relation2D<>::Attach(3, relation2, 5, relation1);
+	cu::Relation2D::Attach(relation2, relation1);
+	relation2->Move(cu::Vector2f(5.0f, 5.0f));
+
+	const cu::Mat3f& globalMatrix = relation1->GetGlobalMatrix();
 
 	return 0;
 }

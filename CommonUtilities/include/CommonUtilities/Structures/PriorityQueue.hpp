@@ -16,7 +16,7 @@ namespace CommonUtilities
 		};
 	}
 
-	/// Custom container to allow modifying the elements while still maintaing order due to separating the priority from the item itself.
+	/// Custom container to allow modifying the elements while still maintaining order due to separating the priority from the item itself.
 	/// 
 	template<typename T, pq::Comparison C = pq::Comparison::Less>
 	class PriorityQueue

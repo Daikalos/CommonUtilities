@@ -43,7 +43,7 @@ namespace CommonUtilities
 		NODISC auto GetParent() const noexcept -> const Parent&;
 		NODISC auto GetChildren() const noexcept -> const Children&;
 
-		NODISC bool IsDescendant(const Relation2DPtr& aRelation);
+		NODISC bool IsDescendant(const Relation2DPtr& aRelation) const;
 
 		NODISC const Mat3f& GetGlobalMatrix() const;
 		NODISC const Mat3f& GetInverseGlobalMatrix() const;

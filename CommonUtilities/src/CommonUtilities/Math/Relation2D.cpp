@@ -41,7 +41,7 @@ auto Relation2D::GetChildren() const noexcept -> const Children&
 	return myChildren;
 }
 
-bool Relation2D::IsDescendant(const Relation2DPtr& aRelation)
+bool Relation2D::IsDescendant(const Relation2DPtr& aRelation) const
 {
 	for (const Ref& child : myChildren)
 	{

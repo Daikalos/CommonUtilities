@@ -4,9 +4,9 @@
 #include <memory>
 #include <cassert>
 
-#include "Transform2D.h"
-
 #include <CommonUtilities/Config.h>
+
+#include "Transform2D.h"
 
 namespace CommonUtilities
 {
@@ -97,7 +97,7 @@ namespace CommonUtilities
 
 		mutable cu::Vector2f	myGlobalPosition;
 		mutable float			myGlobalRotation			{0.0f};
-		mutable cu::Vector2f	myGlobalScale;
+		mutable cu::Vector2f	myGlobalScale				{1.0f, 1.0f};
 
 		mutable bool			myUpdateGlobalMatrix		{true};
 		mutable bool			myUpdateGlobalInverseMatrix	{true};
@@ -109,5 +109,5 @@ namespace CommonUtilities
 	Relation2DPtr Relation2D::Create(Args&&... someArgs)
 	{
 		return Relation2DPtr(new Relation2D(std::forward<Args>(someArgs)...));
-	};
+	}
 }

@@ -261,7 +261,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix3x3<T>::Scale(const Vector2<T>& someFactors) -> Matrix3x3&
 	{
-		const Matrix4x4<T> scaling
+		const Matrix3x3<T> scaling
 		{
 			someFactors.x,	0,				0,
 			0,				someFactors.y,	0,

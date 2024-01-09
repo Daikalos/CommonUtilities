@@ -5,6 +5,8 @@
 #include <array>
 #include <functional>
 
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+
 #include "Plane.hpp"
 #include "Ray.hpp"
 #include "Sphere.hpp"
@@ -69,6 +71,8 @@ namespace CommonUtilities
 		Vector3<T> secondContact = aSecondSphere.GetCenter() - normal * aSecondSphere.GetRadius();
 
 		result.intersection = 0.5f * (firstContact + secondContact);
+		result.normal		= normal;
+		result.penetration	= -Vector3<T>::Direction(firstContact, secondContact).Dot(normal);
 
 		return result;
 	}
@@ -103,7 +107,9 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.collided = true;
+		result.normal		= aPlane.GetNormal() * -Sign(denom);
+		result.penetration	= 0.0f; 
+		result.collided		= true;
 
 		return result;
 	}
@@ -125,9 +131,13 @@ namespace CommonUtilities
 			Clamp(aSphere.GetCenter().z, aAABB3D.GetMin().z, aAABB3D.GetMax().z)
 		};
 
+		bool inside = false;
+
 		if (pointOnEdge == aSphere.GetCenter())
 		{
 			// sphere center is inside aabb
+
+			inside = true;
 
 			const T x = static_cast<T>(std::abs(dir.x));
 			const T y = static_cast<T>(std::abs(dir.y));
@@ -145,23 +155,21 @@ namespace CommonUtilities
 			{
 				pointOnEdge.z = (pointOnEdge.z > 0) ? aAABB3D.GetMax().z : aAABB3D.GetMin().z;
 			}
-
-			result.intersection = pointOnEdge;
-			result.collided = true;
-
-			return result;
 		}
 
 		Vector3<T> normal = Vector3<T>::Direction(pointOnEdge, aSphere.GetCenter());
 		T distance = normal.LengthSqr();
 
-		if (distance <= aSphere.GetRadiusSqr())
-		{
-			result.intersection = pointOnEdge;
-			result.collided = true;
-
+		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
-		}
+
+		distance	= std::sqrt(distance);
+		normal		= normal.GetNormalized(distance, 1.0f);
+
+		result.normal		= (inside ? -normal : normal);
+		result.penetration	= aSphere.GetRadius() - distance;
+		result.intersection = pointOnEdge;
+		result.collided		= true;
 
 		return result;
 	}
@@ -170,6 +178,8 @@ namespace CommonUtilities
 	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
 	{
 		CollisionResult result{};
+
+		// TODO: handle case when inside
 
 		Vector3<T> t; // get vector from best corner to ray's origin
 
@@ -218,6 +228,8 @@ namespace CommonUtilities
 					return result;
 				}
 
+				result.normal = Vector3<T>(Sign(maxT), 0, 0);
+
 				break;
 			}
 			case Plane::XZ:
@@ -233,6 +245,8 @@ namespace CommonUtilities
 				{
 					return result;
 				}
+
+				result.normal = Vector3<T>(0, Sign(maxT), 0);
 
 				break;
 			}
@@ -250,12 +264,15 @@ namespace CommonUtilities
 					return result;
 				}
 
+				result.normal = Vector3<T>(0, 0, Sign(maxT));
+
 				break;
 			}
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * maxT;
-		result.collided = true;
+		result.penetration	= 0.0f;
+		result.collided		= true;
 
 		return result;
 	}
@@ -267,18 +284,36 @@ namespace CommonUtilities
 
 		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
-		if (dir.LengthSqr() <= aSphere.GetRadiusSqr()) // inside sphere
+		T distSqr = dir.LengthSqr() - aSphere.GetRadiusSqr();
+
+		if (distSqr > 0) // outside sphere
 		{
 			return result;
 		}
 
-		T projScalar = dir.Dot(aRay.GetDirection());
+		T projScalar =  dir.Dot(aRay.GetDirection());
 
 		if (projScalar < 0) // pointing away
 		{
 			return result;
 		}
 
-		return aSphere.IsInside(aRay.GetOrigin() + (aRay.GetDirection() * projScalar));
+		T discr = projScalar * projScalar - distSqr;
+
+		if (discr < 0) // closest point is outside
+		{
+			return result;
+		}
+
+		T t = -distSqr - std::sqrt(discr);
+
+		if (t < 0) t = 0; // clamp t to zero if inside sphere
+
+		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
+		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection)).GetNormalized();
+		result.penetration	= 0.0f;
+		result.collided		= true;
+
+		return result;
 	}
 }

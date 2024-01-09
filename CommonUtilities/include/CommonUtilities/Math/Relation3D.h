@@ -33,7 +33,7 @@ namespace CommonUtilities
 		/// \param someArgs: Additional constructor arguments (look at Transform2D for possible options)
 		/// 
 		template<typename... Args>
-		NODISC static Relation3DPtr Create(Args&&... someArgs);
+		NODISC static Relation3DPtr Instantiate(Args&&... someArgs);
 
 		NODISC bool HasParent() const noexcept;
 		NODISC bool HasChildren() const noexcept;
@@ -106,7 +106,7 @@ namespace CommonUtilities
 	};
 
 	template<typename... Args>
-	Relation3DPtr Relation3D::Create(Args&&... someArgs)
+	Relation3DPtr Relation3D::Instantiate(Args&&... someArgs)
 	{
 		return Relation3DPtr(new Relation3D(std::forward<Args>(someArgs)...));
 	}

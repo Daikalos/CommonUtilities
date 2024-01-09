@@ -85,8 +85,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline bool Sphere<T>::IsInside(const Vector3<T>& aPosition) const
 	{
-		T distanceSqr = Vector3<T>::Direction(myCenter, aPosition).LengthSqr();
-		return distanceSqr <= myRadiusSqr;
+		return Vector3<T>::DistanceSqr(myCenter, aPosition) <= myRadiusSqr;
 	}
 
 	template<typename T>

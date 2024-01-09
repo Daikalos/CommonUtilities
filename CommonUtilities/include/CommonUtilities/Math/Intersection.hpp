@@ -17,9 +17,9 @@ namespace CommonUtilities
 	struct CollisionResult // TODO: return this instead for additional data
 	{
 		Vector3<T>	intersection;
-		Vector3<T>	normal;	
-		float		penetration {0.0f};
-		bool		collided	{false};
+		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal
+		float		penetration		{0.0f};
+		bool		collided		{false};
 
 		operator bool() const noexcept
 		{
@@ -28,26 +28,28 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
 	
 	template<typename T>
-	inline bool IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB);
 
 	template<typename T>
-	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
 
 	template<typename T>
-	inline bool IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D);
 
 	template<typename T>
-	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay);
 
 	template<typename T>
-	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint);
+	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
 
 	template<typename T>
-	inline bool IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere, Vector3<T>& outIntersectionPoint)
+	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
 	{
+		CollisionResult result{};
+
 		Vector3<T> normal = Vector3<T>::Direction(aFirstSphere.GetCenter(), aSecondSphere.GetCenter());
 
 		const T distSqr = normal.LengthSqr();
@@ -55,7 +57,7 @@ namespace CommonUtilities
 
 		if (distSqr >= radius * radius)
 		{
-			return false;
+			return result;
 		}
 
 		if (distSqr > FLT_EPSILON * FLT_EPSILON)
@@ -66,21 +68,23 @@ namespace CommonUtilities
 		Vector3<T> firstContact = aFirstSphere.GetCenter() + normal * aFirstSphere.GetRadius();
 		Vector3<T> secondContact = aSecondSphere.GetCenter() - normal * aSecondSphere.GetRadius();
 
-		outIntersectionPoint = 0.5f * (firstContact + secondContact);
+		result.intersection = 0.5f * (firstContact + secondContact);
 
-		return true;
+		return result;
 	}
 
 	template<typename T>
-	bool IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB, Vector3<T>& outIntersectionPoint)
+	CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB)
 	{
 
 		return false;
 	}
 
 	template<typename T>
-	inline bool IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
+	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
 	{
+		CollisionResult result{};
+
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
 		T denom = aPlane.GetNormal().Dot(aRay.GetDirection());
 
@@ -95,17 +99,20 @@ namespace CommonUtilities
 		if (t < 0)
 		{
 			// ray points away from plane
-			return false;
+			return result;
 		}
 
-		outIntersectionPoint = aRay.GetOrigin() + aRay.GetDirection() * t;
+		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
+		result.collided = true;
 
-		return true;
+		return result;
 	}
 
 	template<typename T>
-	inline bool IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D, Vector3<T>& outIntersectionPoint)
+	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D)
 	{
+		CollisionResult result{};
+
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
 		Vector3<T> aabbCenter = aAABB3D.GetMin() + (aAABB3D.GetMax() / T{2});
@@ -139,9 +146,10 @@ namespace CommonUtilities
 				pointOnEdge.z = (pointOnEdge.z > 0) ? aAABB3D.GetMax().z : aAABB3D.GetMin().z;
 			}
 
-			outIntersectionPoint = pointOnEdge;
+			result.intersection = pointOnEdge;
+			result.collided = true;
 
-			return true;
+			return result;
 		}
 
 		Vector3<T> normal = Vector3<T>::Direction(pointOnEdge, aSphere.GetCenter());
@@ -149,16 +157,20 @@ namespace CommonUtilities
 
 		if (distance <= aSphere.GetRadiusSqr())
 		{
-			outIntersectionPoint = pointOnEdge;
-			return true;
+			result.intersection = pointOnEdge;
+			result.collided = true;
+
+			return result;
 		}
 
-		return false;
+		return result;
 	}
 
 	template<typename T>
-	inline bool IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
+	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
 	{
+		CollisionResult result{};
+
 		Vector3<T> t; // get vector from best corner to ray's origin
 
 		t.x = ((aRay.GetDirection().x > 0 ? aAABB3D.GetMin().x : aAABB3D.GetMax().x) - aRay.GetOrigin().x);
@@ -197,13 +209,13 @@ namespace CommonUtilities
 				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
 				if (y < aAABB3D.GetMin().y || y > aAABB3D.GetMax().y)
 				{
-					return false;
+					return result;
 				}
 
 				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
 				if (z < aAABB3D.GetMin().z || z > aAABB3D.GetMax().z)
 				{
-					return false;
+					return result;
 				}
 
 				break;
@@ -213,13 +225,13 @@ namespace CommonUtilities
 				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
 				if (x < aAABB3D.GetMin().x || x > aAABB3D.GetMax().x)
 				{
-					return false;
+					return result;
 				}
 
 				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
 				if (z < aAABB3D.GetMin().z || z > aAABB3D.GetMax().z)
 				{
-					return false;
+					return result;
 				}
 
 				break;
@@ -229,39 +241,42 @@ namespace CommonUtilities
 				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
 				if (x < aAABB3D.GetMin().x || x > aAABB3D.GetMax().x)
 				{
-					return false;
+					return result;
 				}
 
 				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
 				if (y < aAABB3D.GetMin().y || y > aAABB3D.GetMax().y)
 				{
-					return false;
+					return result;
 				}
 
 				break;
 			}
 		}
 
-		outIntersectionPoint = aRay.GetOrigin() + aRay.GetDirection() * maxT;
+		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * maxT;
+		result.collided = true;
 
-		return true;
+		return result;
 	}
 
 	template<typename T>
-	inline bool IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay, Vector3<T>& outIntersectionPoint)
+	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
 	{
+		CollisionResult result{};
+
 		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
 		if (dir.LengthSqr() <= aSphere.GetRadiusSqr()) // inside sphere
 		{
-			return true;
+			return result;
 		}
 
 		T projScalar = dir.Dot(aRay.GetDirection());
 
 		if (projScalar < 0) // pointing away
 		{
-			return false;
+			return result;
 		}
 
 		return aSphere.IsInside(aRay.GetOrigin() + (aRay.GetDirection() * projScalar));

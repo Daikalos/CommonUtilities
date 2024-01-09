@@ -39,7 +39,7 @@ const Mat3f& Transform2D::GetMatrix() const
 {
 	if (myUpdateMatrix)
 	{
-		myMatrix = Mat3f::CreateTRS(myPosition, myRotation, myScale);
+		myMatrix = Mat3f::CreateTRS(myPosition, myRotation, myScale, myOrigin);
 		myUpdateMatrix = false;
 	}
 	return myMatrix;
@@ -58,6 +58,10 @@ const Vector2f& Transform2D::GetPosition() const noexcept
 {
 	return myPosition;
 }
+const Vector2f& Transform2D::GetOrigin() const noexcept
+{
+	return myOrigin;
+}
 float Transform2D::GetRotation() const noexcept
 {
 	return myRotation;
@@ -72,6 +76,15 @@ void Transform2D::SetPosition(const Vector2f& aPosition)
 	if (myPosition != aPosition)
 	{
 		myPosition				= aPosition;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
+	}
+}
+void Transform2D::SetOrigin(const Vector2f& aOrigin)
+{
+	if (myOrigin != aOrigin)
+	{
+		myOrigin				= aOrigin;
 		myUpdateMatrix			= true;
 		myUpdateInverseMatrix	= true;
 	}

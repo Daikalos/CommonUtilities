@@ -22,10 +22,12 @@ namespace CommonUtilities
 		NODISC const Mat3f& GetInverseMatrix() const;
 
 		NODISC const Vector2f& GetPosition() const noexcept;
+		NODISC const Vector2f& GetOrigin() const noexcept;
 		NODISC float GetRotation() const noexcept;
 		NODISC const Vector2f& GetScale() const noexcept;
 
 		virtual void SetPosition(const Vector2f& aPosition);
+		virtual void SetOrigin(const Vector2f& aOrigin);
 		virtual void SetRotation(float aRotation);
 		virtual void SetScale(const Vector2f& aScale);
 
@@ -35,6 +37,7 @@ namespace CommonUtilities
 
 	protected:
 		Vector2f		myPosition;
+		Vector2f		myOrigin;
 		float			myRotation				{0.0f};
 		Vector2f		myScale;
 		mutable Mat3f	myMatrix;

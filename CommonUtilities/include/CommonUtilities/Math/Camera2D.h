@@ -14,24 +14,23 @@ namespace CommonUtilities
 	{
 	public:
 		Camera2D();
-		virtual ~Camera2D();
+		virtual ~Camera2D() = 0;
 
 		NODISC const Vector2f& GetPosition() const noexcept;
 		NODISC const Vector2f& GetScale() const noexcept;
 		NODISC const Vector2f& GetSize() const noexcept;
 		NODISC const float GetRotation() const noexcept;
 
-		NODISC const Mat3f& GetViewMatrix() const noexcept;
-		NODISC const Mat3f& GetWorldMatrix() const noexcept;
+		NODISC virtual const Mat3f& GetWorldMatrix() const;
+		NODISC virtual const Mat3f& GetViewMatrix() const;
 
-		NODISC Vector2f ViewToWorld(const Vector2f& aPosition);
+		NODISC Vector2f ViewToWorld(const Vector2f& aPosition) const;
 
 		virtual void SetPosition(const Vector2f& aPosition);
 		virtual void SetScale(const Vector2f& aScale);
 		virtual void SetSize(const Vector2f& aSize);
 		virtual void SetRotation(float aRotation);
 
-		virtual void Update(Timer& aTimer) = 0;
 		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:	

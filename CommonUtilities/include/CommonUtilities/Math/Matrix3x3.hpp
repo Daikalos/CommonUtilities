@@ -63,7 +63,7 @@ namespace CommonUtilities
 		CONSTEXPR auto Subtract(const Matrix3x3& aRight) -> Matrix3x3&;
 		CONSTEXPR auto Combine(const Matrix3x3& aRight) -> Matrix3x3&;
 
-		NODISC CONSTEXPR static auto CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale) -> Matrix3x3;
+		NODISC CONSTEXPR static auto CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale, const Vector2<T>& aOrigin = Vector2<T>()) -> Matrix3x3;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix3x3;
 		NODISC CONSTEXPR static auto CreateRotationAroundY(T aRadians) -> Matrix3x3;
@@ -335,20 +335,22 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR auto Matrix3x3<T>::CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale) -> Matrix3x3
+	CONSTEXPR auto Matrix3x3<T>::CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale, const Vector2<T>& aOrigin) -> Matrix3x3
 	{
-		const T c = std::cos(aRotation);
-		const T s = std::sin(aRotation);
+		const T c	= std::cos(aRotation);
+		const T s	= std::sin(aRotation);
 		const T sxc = aScale.x * c;
 		const T syc = aScale.y * c;
 		const T sxs = aScale.x * s;
 		const T sys = aScale.y * s;
+		const T tx	= -aOrigin.x * sxc - aOrigin.y * sys + aPosition.x;
+		const T ty	= aOrigin.x * sxs - aOrigin.y * syc + aPosition.y;
 
 		return Matrix3x3
 		{
-			 sxc,			sxs,			0,
-			-sys,			syc,			0,
-			 aPosition.x,	aPosition.y,	1
+			 sxc,	sxs,	0,
+			-sys,	syc,	0,
+			 tx,	ty,		1
 		};
 	}
 

@@ -39,7 +39,7 @@ namespace CommonUtilities
 		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
-		int Insert(const RectFloat& rect, Args&&... args);
+		int Insert(const RectFloat& aRect, Args&&... someArgs);
 
 		/// Attempts to erase element from tree.
 		/// 
@@ -47,7 +47,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns True if successfully removed the element, otherwise false.
 		/// 
-		bool Erase(SizeType elt_idx);
+		bool Erase(SizeType aEltIndex);
 
 		/// Updates the given element with new data.
 		/// 
@@ -57,25 +57,25 @@ namespace CommonUtilities
 		/// \returns True if successfully updated the element, otherwise false.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
-		bool Update(SizeType idx, Args&&... args);
+		bool Update(SizeType aIndex, Args&&... someArgs);
 
 		/// Retrieves an element.
 		/// 
 		/// \param Index: index to element.
 		/// 
-		NODISC auto Get(SizeType idx) -> ValueType&;
+		NODISC auto Get(SizeType aIndex) -> ValueType&;
 
 		/// Retrieves an element.
 		/// 
 		/// \param Index: index to element.
 		/// 
-		NODISC auto Get(SizeType idx) const -> const ValueType&;
+		NODISC auto Get(SizeType aIndex) const -> const ValueType&;
 
 		/// Retrieves the rectangle encompassing item.
 		/// 
 		/// \param Index: index to item.
 		/// 
-		NODISC auto GetRect(SizeType idx) const -> const RectFloat&;
+		NODISC auto GetRect(SizeType aIndex) const -> const RectFloat&;
 
 		/// Queries the tree for elements.
 		/// 
@@ -83,7 +83,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns List of entities contained within the bounding rectangle.
 		/// 
-		NODISC auto Query(const RectFloat& rect) const -> std::vector<SizeType>;
+		NODISC auto Query(const RectFloat& aRect) const -> std::vector<SizeType>;
 
 		/// Queries the tree for elements.
 		/// 
@@ -91,7 +91,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns List of entities contained at the point.
 		/// 
-		NODISC auto Query(const Vector2f& point) const-> std::vector<SizeType>;
+		NODISC auto Query(const Vector2f& aPoint) const-> std::vector<SizeType>;
 
 		/// Performs a lazy cleanup of the tree; can only be called if erase has been used.
 		/// 
@@ -104,7 +104,7 @@ namespace CommonUtilities
 	private:
 		struct Node
 		{
-			SizeType firstChild {-1};	// points to first sub-branch or first element index
+			SizeType firstChild	 {-1};	// points to first sub-branch or first element index
 			SizeType count		 {0};	// -1 for branch or it's a leaf and count means number of elements
 		};
 
@@ -121,13 +121,13 @@ namespace CommonUtilities
 			SizeType next	 {-1};	// points to next elt ptr, or -1 means end of items
 		};
 
-		void NodeInsert(const NodeReg& node, SizeType elt_idx);
-		void LeafInsert(const NodeReg& node, SizeType elt_idx);
+		void NodeInsert(const NodeReg& aNode, SizeType aEltIndex);
+		void LeafInsert(const NodeReg& aNode, SizeType aEltIndex);
 
-		auto FindLeaves(const NodeReg& node, const RectFloat& rect) const -> std::vector<NodeReg>;
+		auto FindLeaves(const NodeReg& aNode, const RectFloat& aRect) const -> std::vector<NodeReg>;
 
-		static bool IsLeaf(const Node& node);
-		static bool IsBranch(const Node& node);
+		static bool IsLeaf(const Node& aNode);
+		static bool IsBranch(const Node& aNode);
 
 		FreeVector<Element>		myElements;		// all the elements
 		FreeVector<ElementPtr>	myElementsPtr;	// all the element ptrs
@@ -152,25 +152,25 @@ namespace CommonUtilities
 
 	template<std::equality_comparable T>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	inline int QuadTree<T>::Insert(const RectFloat& rect, Args&&... args)
+	inline int QuadTree<T>::Insert(const RectFloat& aRect, Args&&... someArgs)
 	{
 		std::unique_lock lock(myMutex);
 
-		if (!myRootRect.Overlaps(rect)) // dont attempt to add if outside boundary
+		if (!myRootRect.Overlaps(aRect)) // dont attempt to add if outside boundary
 			return -1;
 
-		const auto idx = static_cast<SizeType>(myElements.emplace(rect, std::forward<Args>(args)...));
-		NodeInsert({ myRootRect, 0, 0 }, idx);
+		const auto aIndex = static_cast<SizeType>(myElements.emplace(aRect, std::forward<Args>(someArgs)...));
+		NodeInsert({ myRootRect, 0, 0 }, aIndex);
 
-		return idx;
+		return aIndex;
 	}
 
 	template<std::equality_comparable T>
-	inline bool QuadTree<T>::Erase(SizeType elt_idx)
+	inline bool QuadTree<T>::Erase(SizeType aEltIndex)
 	{
 		std::unique_lock lock(myMutex);
 
-		const RectFloat& rect = myElements[elt_idx].rect;
+		const RectFloat& rect = myElements[aEltIndex].rect;
 		const auto& leaves = FindLeaves({ myRootRect, 0, 0 }, rect);
 
 		if (leaves.empty())
@@ -183,7 +183,7 @@ namespace CommonUtilities
 			auto ptr_idx = node.firstChild;
 			auto prv_idx = -1;
 
-			while (ptr_idx != -1 && myElementsPtr[ptr_idx].element != elt_idx)
+			while (ptr_idx != -1 && myElementsPtr[ptr_idx].element != aEltIndex)
 			{
 				prv_idx = ptr_idx;
 				ptr_idx = myElementsPtr[ptr_idx].next;
@@ -191,15 +191,15 @@ namespace CommonUtilities
 
 			if (ptr_idx != -1)
 			{
-				const auto next_index = myElementsPtr[ptr_idx].next;
+				const auto nextIndex = myElementsPtr[ptr_idx].next;
 
 				if (prv_idx == -1)
 				{
-					node.firstChild = next_index;
+					node.firstChild = nextIndex;
 				}
 				else
 				{
-					myElementsPtr[prv_idx].next = next_index;
+					myElementsPtr[prv_idx].next = nextIndex;
 				}
 
 				myElementsPtr.erase(ptr_idx);
@@ -210,45 +210,45 @@ namespace CommonUtilities
 			}
 		}
 
-		myElements.erase(elt_idx);
+		myElements.erase(aEltIndex);
 
 		return true;
 	}
 
 	template<std::equality_comparable T>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	inline bool QuadTree<T>::Update(SizeType idx, Args&&... args)
+	inline bool QuadTree<T>::Update(SizeType aIndex, Args&&... someArgs)
 	{
 		std::unique_lock lock(myMutex);
 
-		if (idx >= myElements.size() || !myElements.valid(idx))
+		if (aIndex >= myElements.size() || !myElements.valid(aIndex))
 			return false;
 
-		myElements[idx].item = T{std::forward<Args>(args)...};
+		myElements[aIndex].item = T{std::forward<Args>(someArgs)...};
 
 		return true;
 	}
 
 	template<std::equality_comparable T>
-	auto QuadTree<T>::Get(SizeType idx) -> ValueType&
+	auto QuadTree<T>::Get(SizeType aIndex) -> ValueType&
 	{
-		return myElements[idx].item;
+		return myElements[aIndex].item;
 	}
 
 	template<std::equality_comparable T>
-	auto QuadTree<T>::Get(SizeType idx) const -> const ValueType&
+	auto QuadTree<T>::Get(SizeType aIndex) const -> const ValueType&
 	{
-		return myElements[idx].item;
+		return myElements[aIndex].item;
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::GetRect(SizeType idx) const -> const RectFloat&
+	inline auto QuadTree<T>::GetRect(SizeType aIndex) const -> const RectFloat&
 	{
-		return myElements[idx].rect;
+		return myElements[aIndex].rect;
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::Query(const RectFloat& rect) const -> std::vector<SizeType>
+	inline auto QuadTree<T>::Query(const RectFloat& aRect) const -> std::vector<SizeType>
 	{
 		std::shared_lock lock(myMutex);
 
@@ -256,37 +256,37 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const NodeReg& leaf : FindLeaves({ myRootRect, 0, 0 }, rect))
+		for (const NodeReg& leaf : FindLeaves({ myRootRect, 0, 0 }, aRect))
 		{
 			const auto nd_index = leaf.index;
 			
 			for (auto child = myNodes[nd_index].firstChild; child != -1;)
 			{
-				const auto elt_idx	= myElementsPtr[child].element;
-				const auto& elt		= myElements[elt_idx];
+				const auto eltIndex	= myElementsPtr[child].element;
+				const auto& elt		= myElements[eltIndex];
 
-				if (!myVisited[elt_idx] && elt.rect.Overlaps(rect))
+				if (!myVisited[eltIndex] && elt.rect.Overlaps(aRect))
 				{
-					result.emplace_back(elt_idx);
-					myVisited[elt_idx] = true;
+					result.emplace_back(eltIndex);
+					myVisited[eltIndex] = true;
 				}
 
 				child = myElementsPtr[child].next;
 			}
 		}
 
-		for (const auto elt_idx : result)
+		for (const auto eltIndex : result)
 		{
-			myVisited[elt_idx] = false;
+			myVisited[eltIndex] = false;
 		}
 
 		return result;
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::Query(const Vector2f& point) const -> std::vector<SizeType>
+	inline auto QuadTree<T>::Query(const Vector2f& aPoint) const -> std::vector<SizeType>
 	{
-		return Query(RectFloat(point.x, point.y, 0.f, 0.f));
+		return Query(RectFloat(aPoint.x, aPoint.y, 0.f, 0.f));
 	}
 
 	template<std::equality_comparable T>
@@ -296,14 +296,16 @@ namespace CommonUtilities
 
 		assert(!myNodes.empty());
 
-		std::vector<int> to_process;
+		std::vector<int> toProcess;
 		if (myNodes[0].count == -1)
-			to_process.emplace_back(0); // push root
-
-		while (!to_process.empty())
 		{
-			Node& node = myNodes[to_process.back()];
-			to_process.pop_back();
+			toProcess.emplace_back(0); // push root
+		}
+
+		while (!toProcess.empty())
+		{
+			Node& node = myNodes[toProcess.back()];
+			toProcess.pop_back();
 
 			int num_empty = 0;
 			for (int i = 0; i < ourChildCount; ++i)
@@ -312,9 +314,13 @@ namespace CommonUtilities
 				const Node& child		= myNodes[child_index];
 
 				if (child.count == -1)
-					to_process.emplace_back(child_index);
+				{
+					toProcess.emplace_back(child_index);
+				}
 				else if (child.count == 0)
+				{
 					++num_empty;
+				}
 			}
 
 			if (num_empty == ourChildCount)
@@ -340,22 +346,22 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline void QuadTree<T>::NodeInsert(const NodeReg& nr, SizeType elt_idx)
+	inline void QuadTree<T>::NodeInsert(const NodeReg& aNode, SizeType aEltIndex)
 	{
-		const RectFloat& rect = myElements[elt_idx].rect;
-		for (const auto& leaf : FindLeaves(nr, rect))
+		const RectFloat& rect = myElements[aEltIndex].rect;
+		for (const auto& leaf : FindLeaves(aNode, rect))
 		{
-			LeafInsert(leaf, elt_idx);
+			LeafInsert(leaf, aEltIndex);
 		}
 	}
 
 	template<std::equality_comparable T>
-	inline void QuadTree<T>::LeafInsert(const NodeReg& nr, SizeType elt_idx)
+	inline void QuadTree<T>::LeafInsert(const NodeReg& aNode, SizeType aEltIndex)
 	{
-		Node& node = myNodes[nr.index];
-		node.firstChild = myElementsPtr.emplace(elt_idx, node.firstChild);
+		Node& node = myNodes[aNode.index];
+		node.firstChild = myElementsPtr.emplace(aEltIndex, node.firstChild);
 
-		if (node.count == myMaxElements && nr.depth < myMaxDepth)
+		if (node.count == myMaxElements && aNode.depth < myMaxDepth)
 		{
 			std::vector<SizeType> elements;
 			while (node.firstChild != -1)
@@ -381,7 +387,7 @@ namespace CommonUtilities
 
 			for (const auto elt : elements)
 			{
-				NodeInsert(nr, elt);
+				NodeInsert(aNode, elt);
 			}
 		}
 		else
@@ -389,17 +395,17 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::FindLeaves(const NodeReg& nr, const RectFloat& rect) const -> std::vector<NodeReg>
+	inline auto QuadTree<T>::FindLeaves(const NodeReg& aNode, const RectFloat& aRect) const -> std::vector<NodeReg>
 	{
 		std::vector<NodeReg> leaves;
-		std::vector<NodeReg> to_process;
+		std::vector<NodeReg> toProcess;
 
-		to_process.emplace_back(nr);
+		toProcess.emplace_back(aNode);
 
-		while (!to_process.empty())
+		while (!toProcess.empty())
 		{
-			const NodeReg nd = to_process.back();
-			to_process.pop_back();
+			const NodeReg nd = toProcess.back();
+			toProcess.pop_back();
 
 			if (IsLeaf(myNodes[nd.index]))
 			{
@@ -415,19 +421,19 @@ namespace CommonUtilities
 				const auto r	= nd.rect.left + hx;
 				const auto b	= nd.rect.top + hy;
 
-				if (rect.top <= nd.rect.top)
+				if (aRect.top <= nd.rect.top)
 				{
-					if (rect.left <= nd.rect.left)
-						to_process.emplace_back(RectFloat(l, t, hx, hy), fc + 0, nd.depth + 1);
-					if (rect.Right() > nd.rect.left)
-						to_process.emplace_back(RectFloat(r, t, hx, hy), fc + 1, nd.depth + 1);
+					if (aRect.left <= nd.rect.left)
+						toProcess.emplace_back(RectFloat(l, t, hx, hy), fc + 0, nd.depth + 1);
+					if (aRect.Right() > nd.rect.left)
+						toProcess.emplace_back(RectFloat(r, t, hx, hy), fc + 1, nd.depth + 1);
 				}
-				if (rect.Bottom() > nd.rect.top)
+				if (aRect.Bottom() > nd.rect.top)
 				{
-					if (rect.left <= nd.rect.left)
-						to_process.emplace_back(RectFloat(l, b, hx, hy), fc + 2, nd.depth + 1);
-					if (rect.Right() > nd.rect.left)
-						to_process.emplace_back(RectFloat(r, b, hx, hy), fc + 3, nd.depth + 1);
+					if (aRect.left <= nd.rect.left)
+						toProcess.emplace_back(RectFloat(l, b, hx, hy), fc + 2, nd.depth + 1);
+					if (aRect.Right() > nd.rect.left)
+						toProcess.emplace_back(RectFloat(r, b, hx, hy), fc + 3, nd.depth + 1);
 				}
 			}
 		}
@@ -436,14 +442,13 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline bool QuadTree<T>::IsLeaf(const Node& node)
+	inline bool QuadTree<T>::IsLeaf(const Node& aNode)
 	{
-		return node.count != -1;
+		return aNode.count != -1;
 	}
-
 	template<std::equality_comparable T>
-	inline bool QuadTree<T>::IsBranch(const Node& node)
+	inline bool QuadTree<T>::IsBranch(const Node& aNode)
 	{
-		return node.count == -1;
+		return aNode.count == -1;
 	}
 }

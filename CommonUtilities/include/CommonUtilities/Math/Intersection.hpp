@@ -28,7 +28,7 @@ namespace CommonUtilities
 		float		penetration		{0.0f};
 		bool		collided		{false};
 
-		operator bool() const noexcept // implicitly castable to boolean
+		operator bool() const noexcept // implicitly convertable to boolean
 		{
 			return collided;
 		}

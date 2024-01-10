@@ -16,7 +16,7 @@ namespace CommonUtilities
 		};
 	}
 
-	/// Custom container to allow modifying the elements while still maintaining order due to separating the priority from the item itself.
+	/// Custom container_type to allow modifying the elements while still maintaining order due to separating the priority from the item itself.
 	/// 
 	template<typename T, pq::Comparison C = pq::Comparison::Less>
 	class PriorityQueue
@@ -30,19 +30,17 @@ namespace CommonUtilities
 		struct Node
 		{
 			value_type	item;
-			float		priority{ 0.0f };
+			float		priority {0.0f};
 		};
 
-		using container = std::vector<Node>;
+		using container_type = std::vector<Node>;
 
-		using iterator					= typename container::iterator;
-		using const_iterator			= typename container::const_iterator;
-		using reverse_iterator			= typename container::reverse_iterator;
-		using const_reverse_iterator	= typename container::const_reverse_iterator;
+		using iterator					= typename container_type::iterator;
+		using const_iterator			= typename container_type::const_iterator;
+		using reverse_iterator			= typename container_type::reverse_iterator;
+		using const_reverse_iterator	= typename container_type::const_reverse_iterator;
 
 		PriorityQueue() = default;
-
-		// TODO: implement more constructors and assignment operators
 
 		NODISC constexpr auto operator[](size_type aIndex) -> reference;
 		NODISC constexpr auto operator[](size_type aIndex) const -> const_reference;
@@ -106,8 +104,8 @@ namespace CommonUtilities
 			}
 		};
 
-		container	myNodes;
-		Comp<C>		myComp;
+		container_type	myNodes;
+		Comp<C>			myComp;
 	};
 
 	template<typename T, pq::Comparison C>

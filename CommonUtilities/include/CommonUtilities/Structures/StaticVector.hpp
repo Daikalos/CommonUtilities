@@ -26,7 +26,6 @@ namespace CommonUtilities
 
 		static constexpr int DIR = Reverse ? -1 : 1;
 
-	public:
 		StaticIterator() noexcept = default;
 		explicit StaticIterator(pointer aPtr) noexcept : myPtr(aPtr) {}
 
@@ -36,7 +35,6 @@ namespace CommonUtilities
 		template<bool OtherReverse>
 		StaticIterator& operator=(const StaticIterator<value_type, OtherReverse>& aRight) noexcept { myPtr = aRight.myPtr; };
 
-	public:
 		reference operator*() const noexcept { return *myPtr; }
 		pointer operator->() const noexcept { return myPtr; }
 

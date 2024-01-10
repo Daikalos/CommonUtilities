@@ -22,7 +22,6 @@ namespace CommonUtilities
 
 		static constexpr int DIR = Reverse ? -1 : 1;
 
-	public:
 		SmallIterator() noexcept = default;
 		explicit SmallIterator(pointer aPtr) noexcept : myPtr(aPtr) {}
 
@@ -32,7 +31,6 @@ namespace CommonUtilities
 		template<bool OtherReverse>
 		SmallIterator& operator=(const SmallIterator<value_type, OtherReverse>& aRhs) noexcept { myPtr = aRhs.myPtr; };
 
-	public:
 		reference operator*() const noexcept	{ return *myPtr; }
 		pointer operator->() const noexcept		{ return myPtr; }
 

@@ -132,14 +132,15 @@ namespace CommonUtilities
 			return SphereRay<T>(aS2, aS1);
 		}
 
-		///					   aabb	  sphere   line	  line volume   plane   plane volume   ray 
-		/// aabb			#		#		 #		#			  #		  #				 #	   #
-		/// sphere			#		#		 #		#			  #		  #				 #	   #
-		/// line			#		#		 #		#			  #		  #				 #	   #
-		/// line volume		#		#		 #		#			  #		  #				 #	   #
-		/// plane			#		#		 #		#			  #		  #				 #	   #
-		/// plane volume	#		#		 #		#			  #		  #				 #	   #
-		/// ray				#		#		 #		#			  #		  #				 #	   #
+		///		ab	sh	li	lv	pl	pv	ry 
+		/// ab	-X-|-X-|---|---|---|---|-X-|
+		/// sh	-X-|-X-|---|---|---|---|-X-|
+		/// li	---|---|---|---|---|---|---|
+		/// lv	---|---|---|---|---|---|---|
+		/// pl	---|---|---|---|---|---|-X-|
+		/// pv	---|---|---|---|---|---|---|
+		/// ry	-X-|-X-|---|---|-X-|---|---|
+		/// 
 		template<typename T>
 		inline static std::array<std::function<CollisionResult<T>(const Shape&, const Shape&)>,
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix

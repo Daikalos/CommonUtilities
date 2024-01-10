@@ -72,7 +72,7 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR int Sign(T aValue)
+	NODISC CONSTEXPR T Sign(T aValue)
 	{
 		return (aValue < T{}) ? -1 : 1;
 	}

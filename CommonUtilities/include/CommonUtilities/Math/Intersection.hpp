@@ -4,6 +4,7 @@
 #include <cmath>
 #include <array>
 #include <functional>
+#include <cassert>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
@@ -16,14 +17,14 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	struct CollisionResult // TODO: return this instead for additional data
+	struct CollisionResult 
 	{
 		Vector3<T>	intersection;
-		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal
+		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal points right
 		float		penetration		{0.0f};
 		bool		collided		{false};
 
-		operator bool() const noexcept
+		operator bool() const noexcept // implicitly castable to boolean
 		{
 			return collided;
 		}
@@ -31,7 +32,7 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
-	
+
 	template<typename T>
 	inline CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB);
 
@@ -46,6 +47,116 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+
+	namespace details // hide this from client
+	{
+		template<typename T>
+		inline const T& UpCastTo(const Shape& aShape, Shape::Type aExpectedType)
+		{
+			assert(aShape.GetType() == aExpectedType);
+			return reinterpret_cast<const T&>(aShape); // should only crash if enum has incorrect setup
+		}
+
+		template<typename T>
+		inline CollisionResult<T> AABBAABB(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionAABBAABB<T>(
+				UpCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D), 
+				UpCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+		}
+
+		template<typename T>
+		inline CollisionResult<T> SphereSphere(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSphereSphere<T>(
+				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere), 
+				UpCastTo<Sphere<T>>(aS2, Shape::Type::Sphere));
+		}
+
+		template<typename T>
+		inline CollisionResult<T> PlaneRay(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionPlaneRay<T>(
+				UpCastTo<Plane<T>>(aS1, Shape::Type::Plane),
+				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+		}
+		template<typename T>
+		inline CollisionResult<T> RayPlane(const Shape& aS1, const Shape& aS2)
+		{
+			return PlaneRay<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline CollisionResult<T> SphereAABB(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSphereAABB<T>(
+				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				UpCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+		}
+		template<typename T>
+		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
+		{
+			CollisionResult<T> result = SphereAABB<T>(aS2, aS1);
+			result.normal = -result.normal; // flip normal
+
+			return result;
+		}
+
+		template<typename T>
+		inline CollisionResult<T> AABBRay(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionAABBRay<T>(
+				UpCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D),
+				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+		}
+		template<typename T>
+		inline CollisionResult<T> RayAABB(const Shape& aS1, const Shape& aS2)
+		{
+			return AABBRay<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline CollisionResult<T> SphereRay(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSphereRay<T>(
+				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+		}
+		template<typename T>
+		inline CollisionResult<T> RaySphere(const Shape& aS1, const Shape& aS2)
+		{
+			return SphereRay<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline static std::array<std::function<CollisionResult<T>(const Shape&, const Shape&)>,
+			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
+		{
+			AABBAABB<T>,		AABBSphere<T>,		nullptr,			nullptr,			nullptr,			nullptr,			AABBRay<T>,
+			SphereAABB<T>,		SphereSphere<T>,	nullptr,			nullptr,			nullptr,			nullptr,			SphereRay<T>,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			PlaneRay<T>,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
+			RayAABB<T>,			RaySphere<T>,		nullptr,			nullptr,			RayPlane<T>,		nullptr,			nullptr
+		};
+	}
+
+	/// Collide a shape against another shape. If you know both types already, you should prefer
+	/// calling the corresponding collision detection algorithm directly instead.
+	/// 
+	/// \return Result from collision
+	/// 
+	template<typename T>
+	inline CollisionResult<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
+	{
+		const auto collisionFuncPtr = details::globalCollisionMatrix<T>[static_cast<int>(aSecondShape.GetType()) +
+			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count)];
+
+		assert(collisionFuncPtr != nullptr && "No collision is defined for these two shapes!");
+
+		return collisionFuncPtr(aFirstShape, aSecondShape);
+	}
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
@@ -81,8 +192,11 @@ namespace CommonUtilities
 	template<typename T>
 	CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB)
 	{
+		CollisionResult<T> result{};
 
-		return false;
+
+
+		return result;
 	}
 
 	template<typename T>
@@ -96,7 +210,17 @@ namespace CommonUtilities
 		if (static_cast<T>(std::abs(denom)) <= static_cast<T>(FLT_EPSILON))
 		{
 			// if the numenator is zero then the origin of the ray lies on plane, which it must if parallel to the plane and allow intersection
-			return numen == 0;
+			if (numen == 0)
+			{
+				result.intersection = aRay.GetOrigin();
+				result.normal		= aPlane.GetNormal();
+				result.penetration	= 0.0f;
+				result.collided		= true;
+
+				return result;
+			}
+
+			return result;
 		}
 
 		T t = numen / denom;
@@ -108,7 +232,7 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.normal		= aPlane.GetNormal() * -Sign(denom);
+		result.normal		= aPlane.GetNormal() * -Sign<T>(denom);
 		result.penetration	= 0.0f; 
 		result.collided		= true;
 
@@ -229,7 +353,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(Sign(aRay.GetDirection().x), 0, 0);
+				result.normal = Vector3<T>(Sign<T>(aRay.GetDirection().x), 0, 0);
 
 				break;
 			}
@@ -247,7 +371,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, Sign(aRay.GetDirection().y), 0);
+				result.normal = Vector3<T>(0, Sign<T>(aRay.GetDirection().y), 0);
 
 				break;
 			}
@@ -265,7 +389,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, 0, Sign(aRay.GetDirection().z));
+				result.normal = Vector3<T>(0, 0, Sign<T>(aRay.GetDirection().z));
 
 				break;
 			}
@@ -311,4 +435,8 @@ namespace CommonUtilities
 
 		return result;
 	}
+
+	using CollisionResultFloat	= CollisionResult<float>;
+	using CollisionResultInt	= CollisionResult<int>;
+	using CollisionResultDouble = CollisionResult<double>;
 }

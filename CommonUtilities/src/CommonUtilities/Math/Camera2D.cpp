@@ -25,10 +25,16 @@ const Mat3f& Camera2D::GetViewMatrix() const
 {
 	if (myUpdateView)
 	{
+		//myViewMatrix = Mat3f()
+		//	.Translate(mySize / (2.0f * myScale))
+		//	.Rotate(myRotation)
+		//	.Translate(-myPosition)
+		//	.Scale(myScale);
+
 		myViewMatrix = Mat3f()
-			.Translate(mySize / (2.0f * myScale))
-			.Rotate(myRotation)
 			.Translate(-myPosition)
+			.Rotate(myRotation)
+			.Translate(mySize / (2.0f * myScale))
 			.Scale(myScale);
 
 		myUpdateView = false;
@@ -83,12 +89,29 @@ void Camera2D::SetRotation(float aRotation)
 	}
 }
 
+void Camera2D::Move(const Vector2f& aPosition)
+{
+	SetPosition(GetPosition() + aPosition);
+}
+void Camera2D::Scale(const Vector2f& aScale)
+{
+	SetScale(GetScale() + aScale);
+}
+void Camera2D::Rotate(float aRotation)
+{
+	SetRotation(GetRotation() + aRotation);
+}
+
 bool Camera2D::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
 		case WM_SIZE:
 		{
+			UINT width	= LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+
+			SetSize(cu::Vector2f((float)width, (float)height)); // update size of camera when window is resized
 
 			break;
 		}

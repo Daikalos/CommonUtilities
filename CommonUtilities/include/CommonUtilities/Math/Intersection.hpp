@@ -158,8 +158,8 @@ namespace CommonUtilities
 
 	/// Collide a generic shape against another generic shape. If you know both types already, you should
 	/// call the corresponding collision detection algorithm directly instead. Furthermore, make sure that
-	/// the shapes arithmetic template type is the same when compared with each other, and also the the type
-	/// provided to this function. Otherwise, undefined behaviour will occur.
+	/// the shapes arithmetic template type is the same when compared with each other, and also the type
+	/// provided to this function. Otherwise, undefined behaviour WILL happen.
 	/// 
 	/// \param aFirstShape: First shape to collide against
 	/// \param aSecondShape: Second shape to collide against

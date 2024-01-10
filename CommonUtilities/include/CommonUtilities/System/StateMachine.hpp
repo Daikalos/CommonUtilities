@@ -14,9 +14,8 @@ namespace CommonUtilities
 {
 	/// StateMachine is a finite state machine where there can only be one active state at a time. 
 	/// States should be derived like this: "class Foo : public StateMachine<IDType, Hash>::State { }". 
-	/// StateMachine is furthermore virtual so you may specialize it for your needs.
+	/// StateMachine is furthermore virtual so you may specialize it for your environment.
 	/// 
-	/// \param T: Application context which usually contains pointers to important objects (e.g., input)
 	/// \param IDType: Type of the ID used to manage states
 	/// \param Hash: Function that generates the hash for IDType
 	/// 

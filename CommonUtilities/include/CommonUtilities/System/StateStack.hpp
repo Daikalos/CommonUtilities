@@ -15,7 +15,7 @@ namespace CommonUtilities
 {
 	/// StateStack is a simple container for states that are managed similarly to a stack. 
 	/// States should be derived like this: "class Foo : public StateStack<IDType, Hash>::State { }".
-	/// StateStack is furthermore virtual so you may specialize it for your needs.
+	/// StateStack is furthermore virtual so you may specialize it for your environment.
 	/// 
 	/// \param IDType: Type of the ID used to manage states
 	/// \param Hash: Function that generates the hash for IDType

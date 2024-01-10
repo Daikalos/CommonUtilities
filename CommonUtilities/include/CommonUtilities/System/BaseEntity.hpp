@@ -14,8 +14,12 @@
 
 namespace CommonUtilities
 {
-	// TOOD: add docs
-
+	/// BaseEntity is an attempt to model a similar system to Unity's GameObjects. Each entity simply contains
+	/// a list of components that you may easily access through various operations. You will have to specialize
+	/// this class for your environment, BaseEntity tries to be as generic and simple as possible.
+	/// 
+	/// \param C: Base component of BaseEntity that other components derive from
+	/// 
 	template<class C>
 	class BaseEntity
 	{
@@ -26,73 +30,165 @@ namespace CommonUtilities
 		CONSTEXPR BaseEntity() = default;
 		CONSTEXPR virtual ~BaseEntity() = 0;
 
+		/// Retrieves a component from entity.
+		/// 
+		/// \return Const reference to component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC const T& GetComponent() const;
 
+		/// Retrieves a component from entity.
+		/// 
+		/// \return Reference to component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC T& GetComponent();
 
+		/// Tries to retrieve a component from entity.
+		/// 
+		/// \return Const pointer to component, nullptr if not found
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC const T* TryGetComponent() const;
 
+		/// Tries to retrieve a component from entity.
+		/// 
+		/// \return Pointer to component, nullptr if not found
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC T* TryGetComponent();
 
+		/// \return Whether specified component is active
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC bool IsComponentActive() const;
 
+		/// \return Whether current entity has specified component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC bool HasComponent() const;
 
+		/// Attempts to add a component to entity.
+		/// 
+		/// \param someArgs: Optional constructor parameters for component
+		/// 
+		/// \return Pointer to component, nullptr if it already has the component
+		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
 		CONSTEXPR T* AddComponent(Args&&... someArgs);
 
+		/// Attempts to add multiple components to entity.
+		/// 
 		template<typename... Ts> requires (std::derived_from<Ts, C> && ...)
 		CONSTEXPR void AddComponents();
 
+		/// Attempts to remove a component from entity.
+		/// 
+		/// \param MaintainOrder: Maintain order in the component list after removal, false does a cyclic erasure
+		/// 
+		/// \return Whether removal was succesful
+		/// 
 		template<typename T, bool MaintainOrder = false> requires std::derived_from<T, C>
 		CONSTEXPR bool RemoveComponent();
 
+		/// Attempts to remove multiple components from entity.
+		/// 
 		template<typename... Ts, bool MaintainOrder = false> requires (std::derived_from<Ts, C> && ...)
 		CONSTEXPR void RemoveComponents();
 
+		/// Sets the specified component to a different value.
+		/// 
+		/// \param someArgs: Optional constructor parameters for new component
+		/// 
+		/// \return Reference to new component
+		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
 		CONSTEXPR T& SetComponent(Args&&... someArgs);
 
+		/// Attempts to set the specified component to a different value.
+		/// 
+		/// \param someArgs: Optional constructor parameters for new component
+		/// 
+		/// \return Pointer to new component, nullptr if not found
+		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
 		CONSTEXPR T* TrySetComponent(Args&&... someArgs);
 
+		/// Sorts the components in the entity.
+		/// 
+		/// \param Comp: Function used to compare components
+		/// 
 		template<typename Comp>
 		CONSTEXPR void SortComponents(Comp&& aComparison);
 
+		/// Pre-allocates memory for the components.
+		/// 
+		/// \param aCapacity: Number of components to pre-allocate memory for.
+		/// 
 		CONSTEXPR void ReserveComponents(std::size_t aCapacity);
 
+		/// Removes all components from entity.
+		/// 
 		CONSTEXPR void ClearComponents() noexcept;
 
 		CONSTEXPR bool IsComponentsEmpty() const noexcept;
 		CONSTEXPR std::size_t ComponentsSize() const noexcept;
 
+		/// Sets the component to be active or not. Will only affect the component based on how you choose 
+		/// to use the flag. The only thing it does now is prevent a particular component being refered to 
+		/// when ForEach() is called.
+		/// 
+		/// \param aFlag: New active state
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR void SetComponentActive(bool aFlag);
 
+		/// Runs a function for every component in the entity.
+		/// 
+		/// \param aFunc: Function to run
+		/// 
 		template<typename Func> requires HasParametersDecay<Func, C>
 		CONSTEXPR void ForEachComponent(Func&& aFunc) const;
 
+		/// Retrieves a component from a static list of components.
+		/// 
+		/// \return Reference to component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC static T& GetStaticComponent();
 
+		/// Retrieves a component from a static list of components.
+		/// 
+		/// \return Const reference to component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC static T* TryGetStaticComponent();
 
+		/// \return Whether the static list of components contain the specified component
+		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR NODISC static bool HasStaticComponent();
 
+		/// Attempts to add a component to the static list of components.
+		/// 
+		/// \param someArgs: Optional constructor parameters for component
+		/// 
+		/// \return Pointer to component, nullptr if it already has the component
+		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
 		CONSTEXPR static T* AddStaticComponent(Args&&... someArgs);
 
+		/// Attempts to remove a component from the static list of components.
+		/// 
+		/// \param MaintainOrder: Maintain order in the component list after removal, false does a cyclic erasure
+		/// 
+		/// \return Whether removal was succesful
+		/// 
 		template<typename T, bool MaintainOrder = false> requires std::derived_from<T, C>
 		CONSTEXPR static bool RemoveStaticComponent();
 
+		/// Removes all static components.
+		/// 
 		CONSTEXPR static void ClearStaticComponents() noexcept;
 
 	protected:

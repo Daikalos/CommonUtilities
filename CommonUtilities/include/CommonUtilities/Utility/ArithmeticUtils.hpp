@@ -74,7 +74,7 @@ namespace CommonUtilities
 	template<IsArithmetic T>
 	NODISC CONSTEXPR T Sign(T aValue)
 	{
-		return (aValue < T{}) ? -1 : 1;
+		return static_cast<T>((aValue < T{}) ? -1 : 1);
 	}
 
 	template<IsArithmetic T>

@@ -1,11 +1,14 @@
 #pragma once
 
+#define NOMINMAX
+
 #include <cfloat>
 #include <cmath>
 #include <array>
 #include <functional>
 #include <cassert>
 #include <stdexcept>
+#include <numeric>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
@@ -129,10 +132,19 @@ namespace CommonUtilities
 			return SphereRay<T>(aS2, aS1);
 		}
 
+		///					   aabb	  sphere   line	  line volume   plane   plane volume   ray 
+		/// aabb			#		#		 #		#			  #		  #				 #	   #
+		/// sphere			#		#		 #		#			  #		  #				 #	   #
+		/// line			#		#		 #		#			  #		  #				 #	   #
+		/// line volume		#		#		 #		#			  #		  #				 #	   #
+		/// plane			#		#		 #		#			  #		  #				 #	   #
+		/// plane volume	#		#		 #		#			  #		  #				 #	   #
+		/// ray				#		#		 #		#			  #		  #				 #	   #
 		template<typename T>
 		inline static std::array<std::function<CollisionResult<T>(const Shape&, const Shape&)>,
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
 		{
+			// # aabb			# sphere			# line				# line volume		# plane				# plane volume		# ray
 			AABBAABB<T>,		AABBSphere<T>,		nullptr,			nullptr,			nullptr,			nullptr,			AABBRay<T>,
 			SphereAABB<T>,		SphereSphere<T>,	nullptr,			nullptr,			nullptr,			nullptr,			SphereRay<T>,
 			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
@@ -203,6 +215,29 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
+		T aXMin = aFirstAABB.GetMin().x; T bXMin = aSecondAABB.GetMin().x;
+		T aYMin = aFirstAABB.GetMin().y; T bYMin = aSecondAABB.GetMin().y;
+		T aZMin = aFirstAABB.GetMin().z; T bZMin = aSecondAABB.GetMin().z;
+		T aXMax = aFirstAABB.GetMax().x; T bXMax = aSecondAABB.GetMax().x;
+		T aYMax = aFirstAABB.GetMax().y; T bYMax = aSecondAABB.GetMax().y;
+		T aZMax = aFirstAABB.GetMax().z; T bZMax = aSecondAABB.GetMax().z;
+
+		// exit early if any min is larger than max
+
+		if (aXMin > bXMax) return result;
+		if (bXMin > aXMax) return result;
+
+		if (aYMin > bYMax) return result;
+		if (bYMin > aYMax) return result;
+
+		if (aZMin > bZMax) return result;
+		if (bZMin > aZMax) return result;
+
+		// there is a collision
+
+		result.penetration	= (std::numeric_limits<T>::max)(); // stupid f***ing min max macros from windows.h
+		result.collided		= true;
+
 
 
 		return result;
@@ -241,7 +276,7 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.normal		= aPlane.GetNormal() * -Sign<T>(denom);
+		result.normal		= aPlane.GetNormal() * -Sign<T>(denom); // flip normal based on what side we are approaching from
 		result.penetration	= 0.0f; 
 		result.collided		= true;
 
@@ -313,7 +348,10 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
-		// TODO: handle case when inside
+		if (aAABB3D.IsInside(aRay.GetOrigin()))
+		{
+			// TODO: handle case when inside
+		}
 
 		Vector3<T> t; // get vector from best corner to ray's origin
 

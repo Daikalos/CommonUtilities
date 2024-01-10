@@ -13,19 +13,15 @@
 #include <CommonUtilities/Input/ButtonEvent.hpp>
 #include <CommonUtilities/Input/KeyboardInput.h>
 #include <CommonUtilities/System/Color.hpp>
+#include <CommonUtilities/Math/Sphere.hpp>
 
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>
 
-struct Foo
-{
-	int a;
-};
-
-class TestState : public cu::StateStack<Foo, std::string>::State
+class TestState : public cu::StateStack<std::string>::State
 {
 public:
-	using cu::StateStack<Foo, std::string>::State::State;
+	using cu::StateStack<std::string>::State::State;
 
 	bool Update(cu::Timer& aTimer) override
 	{
@@ -33,10 +29,10 @@ public:
 	}
 };
 
-class TestState2 : public cu::StateMachine<Foo, std::string>::State
+class TestState2 : public cu::StateMachine<std::string>::State
 {
 public:
-	using cu::StateMachine<Foo, std::string>::State::State;
+	using cu::StateMachine<std::string>::State::State;
 
 	void Enter() override
 	{
@@ -63,23 +59,26 @@ int main()
 
 	std::cout << test1.x << test2.x;
 
-	cu::StateStack<Foo, std::string> stateStack(Foo(5));
+	cu::StateStack<std::string> stateStack;
 	stateStack.RegisterState<TestState>("hello");
 	stateStack.Push("hello");
 	stateStack.ApplyPendingChanges();
 
-	cu::StateMachine<Foo, std::string> stateMachine(Foo(6));
+	cu::StateMachine<std::string> stateMachine;
 	stateMachine.AddState<TestState2>("hey");
 	stateMachine.TransitionTo("hey");
 
-	cu::Relation2DPtr relation1 = cu::Relation2D::Create();
-	cu::Relation2DPtr relation2 = cu::Relation2D::Create();
-	cu::Relation2DPtr relation3 = cu::Relation2D::Create();
+	cu::Relation2DPtr relation1 = cu::Relation2D::Instantiate();
+	cu::Relation2DPtr relation2 = cu::Relation2D::Instantiate();
+	cu::Relation2DPtr relation3 = cu::Relation2D::Instantiate();
 
 	cu::Relation2D::Attach(relation2, relation1);
 	relation2->Move(cu::Vector2f(5.0f, 5.0f));
 
 	const cu::Mat3f& globalMatrix = relation1->GetGlobalMatrix();
+
+	constexpr cu::Sphere<float> sphere(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
+	constexpr float radiusSqr = sphere.GetRadiusSqr();
 
 	return 0;
 }

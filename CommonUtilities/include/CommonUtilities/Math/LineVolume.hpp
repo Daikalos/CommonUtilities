@@ -5,99 +5,118 @@
 #include "Line.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Config.h>
+
 namespace CommonUtilities
 {
 	template<typename T>
 	class LineVolume final : public Shape
 	{
 	public:
-		LineVolume();
-		~LineVolume();
+		CONSTEXPR LineVolume();
+		CONSTEXPR ~LineVolume();
 
-		LineVolume(const std::vector<Line<T>>& someLines);
+		CONSTEXPR LineVolume(const std::vector<Line<T>>& someLines);
+		CONSTEXPR LineVolume(std::vector<Line<T>>&& someLines);
 
-		const Line<T>& operator[](std::size_t aIndex) const;
-		Line<T>& operator[](std::size_t aIndex);
+		CONSTEXPR const Line<T>& operator[](std::size_t aIndex) const;
+		CONSTEXPR Line<T>& operator[](std::size_t aIndex);
 
-		const Line<T>& GetLine(std::size_t aIndex) const;
-		Line<T>& GetLine(std::size_t aIndex);
+		CONSTEXPR const Line<T>& Get(std::size_t aIndex) const;
+		CONSTEXPR Line<T>& Get(std::size_t aIndex);
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR std::size_t Count() const noexcept;
+		CONSTEXPR bool IsEmpty() const noexcept;
 
 		template<typename... Args>
-		void EmplaceLine(Args&&... someArgs);
+		CONSTEXPR void Emplace(Args&&... someArgs);
 
-		void AddLine(const Line<T>& aLine);
-		void RemoveLine(std::size_t aIndex);
+		CONSTEXPR void Add(const Line<T>& aLine);
+		CONSTEXPR void Remove(std::size_t aIndex);
 
-		bool IsInside(const Vector2<T>& aPosition) const;
+		CONSTEXPR bool IsInside(const Vector2<T>& aPosition) const;
 
-		void Clear();
+		CONSTEXPR void Clear();
+
+		auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Line<T>> myLines;
 	};
 
 	template<typename T>
-	inline LineVolume<T>::LineVolume() = default;
+	CONSTEXPR LineVolume<T>::LineVolume() = default;
 
 	template<typename T>
-	inline LineVolume<T>::~LineVolume() = default;
+	CONSTEXPR LineVolume<T>::~LineVolume() = default;
 
 	template<typename T>
-	inline LineVolume<T>::LineVolume(const std::vector<Line<T>>& someLines) : myLines(someLines)
+	CONSTEXPR LineVolume<T>::LineVolume(const std::vector<Line<T>>& someLines) 
+		: myLines(someLines)
 	{
 
 	}
 
 	template<typename T>
-	inline const Line<T>& LineVolume<T>::operator[](std::size_t aIndex) const
+	CONSTEXPR LineVolume<T>::LineVolume(std::vector<Line<T>>&& someLines) 
+		: myLines(std::move(someLines))
+	{
+
+	}
+
+	template<typename T>
+	CONSTEXPR const Line<T>& LineVolume<T>::operator[](std::size_t aIndex) const
 	{
 		return GetLine(aIndex);
 	}
 	template<typename T>
-	inline Line<T>& LineVolume<T>::operator[](std::size_t aIndex)
+	CONSTEXPR Line<T>& LineVolume<T>::operator[](std::size_t aIndex)
 	{
 		return GetLine(aIndex);
 	}
 
 	template<typename T>
-	inline const Line<T>& LineVolume<T>::GetLine(std::size_t aIndex) const
+	CONSTEXPR const Line<T>& LineVolume<T>::Get(std::size_t aIndex) const
 	{
 		return myLines[aIndex];
 	}
 	template<typename T>
-	inline Line<T>& LineVolume<T>::GetLine(std::size_t aIndex)
+	CONSTEXPR Line<T>& LineVolume<T>::Get(std::size_t aIndex)
 	{
 		return myLines[aIndex];
 	}
 
 	template<typename T>
-	inline auto LineVolume<T>::GetType() const noexcept -> Type
+	CONSTEXPR std::size_t LineVolume<T>::Count() const noexcept
 	{
-		return Type::LineVolume;
+		return myLines.size();
+	}
+	template<typename T>
+	CONSTEXPR bool LineVolume<T>::IsEmpty() const noexcept
+	{
+		return myLines.empty();
 	}
 
 	template<typename T>
 	template<typename...Args>
-	inline void LineVolume<T>::EmplaceLine(Args&&... someArgs)
+	CONSTEXPR void LineVolume<T>::Emplace(Args&&... someArgs)
 	{
 		myLines.emplace_back(std::forward<Args>(someArgs)...);
 	}
 
 	template<typename T>
-	inline void LineVolume<T>::AddLine(const Line<T>& aLine)
+	CONSTEXPR void LineVolume<T>::Add(const Line<T>& aLine)
 	{
 		EmplaceLine(aLine);
 	}
 	template<typename T>
-	inline void LineVolume<T>::RemoveLine(std::size_t aIndex)
+	CONSTEXPR void LineVolume<T>::Remove(std::size_t aIndex)
 	{
 		myLines.erase(myLines.begin() + aIndex);
 	}
 
 	template<typename T>
-	inline bool LineVolume<T>::IsInside(const Vector2<T>& aPosition) const
+	CONSTEXPR bool LineVolume<T>::IsInside(const Vector2<T>& aPosition) const
 	{
 		for (const Line<T>& line : myLines)
 		{
@@ -111,8 +130,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline void LineVolume<T>::Clear()
+	CONSTEXPR void LineVolume<T>::Clear()
 	{
 		myLines.clear();
+	}
+
+	template<typename T>
+	inline auto LineVolume<T>::GetType() const noexcept -> Type
+	{
+		return Type::LineVolume;
 	}
 }

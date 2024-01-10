@@ -5,99 +5,118 @@
 #include "Plane.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Config.h>
+
 namespace CommonUtilities
 {
 	template<typename T>
 	class PlaneVolume : public Shape
 	{
 	public:
-		PlaneVolume();
-		~PlaneVolume();
+		CONSTEXPR PlaneVolume();
+		CONSTEXPR ~PlaneVolume();
 
-		PlaneVolume(const std::vector<Plane<T>>& somePlanes);
+		CONSTEXPR PlaneVolume(const std::vector<Plane<T>>& somePlanes);
+		CONSTEXPR PlaneVolume(std::vector<Plane<T>>&& somePlanes);
 
-		const Plane<T>& operator[](std::size_t aIndex) const;
-		Plane<T>& operator[](std::size_t aIndex);
+		CONSTEXPR const Plane<T>& operator[](std::size_t aIndex) const;
+		CONSTEXPR Plane<T>& operator[](std::size_t aIndex);
 
-		const Plane<T>& GetPlane(std::size_t aIndex) const;
-		Plane<T>& GetPlane(std::size_t aIndex);
+		CONSTEXPR const Plane<T>& Get(std::size_t aIndex) const;
+		CONSTEXPR Plane<T>& Get(std::size_t aIndex);
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR std::size_t Count() const noexcept;
+		CONSTEXPR bool IsEmpty() const noexcept;
 
 		template<typename... Args>
-		void EmplacePlane(Args&&... someArgs);
+		CONSTEXPR void Emplace(Args&&... someArgs);
 
-		void AddPlane(const Plane<T>& aPlane);
-		void RemovePlane(std::size_t aIndex);
+		CONSTEXPR void Add(const Plane<T>& aPlane);
+		CONSTEXPR void Remove(std::size_t aIndex);
 
-		bool IsInside(const Vector3<T>& aPosition) const;
+		CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
 
-		void Clear();
+		CONSTEXPR void Clear();
+
+		auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Plane<T>> myPlanes;
 	};
 
 	template<typename T>
-	inline PlaneVolume<T>::PlaneVolume() = default;
+	CONSTEXPR PlaneVolume<T>::PlaneVolume() = default;
 
 	template<typename T>
-	inline PlaneVolume<T>::~PlaneVolume() = default;
+	CONSTEXPR PlaneVolume<T>::~PlaneVolume() = default;
 
 	template<typename T>
-	inline PlaneVolume<T>::PlaneVolume(const std::vector<Plane<T>>& somePlanes) : myPlanes(somePlanes)
+	CONSTEXPR PlaneVolume<T>::PlaneVolume(const std::vector<Plane<T>>& somePlanes) 
+		: myPlanes(somePlanes)
 	{
 
 	}
 
 	template<typename T>
-	inline const Plane<T>& PlaneVolume<T>::operator[](std::size_t aIndex) const
+	CONSTEXPR PlaneVolume<T>::PlaneVolume(std::vector<Plane<T>>&& somePlanes)
+		: myPlanes(std::move(somePlanes))
+	{
+
+	}
+
+	template<typename T>
+	CONSTEXPR const Plane<T>& PlaneVolume<T>::operator[](std::size_t aIndex) const
 	{
 		return GetPlane(aIndex);
 	}
 	template<typename T>
-	inline Plane<T>& PlaneVolume<T>::operator[](std::size_t aIndex)
+	CONSTEXPR Plane<T>& PlaneVolume<T>::operator[](std::size_t aIndex)
 	{
 		return GetPlane(aIndex);
 	}
 
 	template<typename T>
-	inline const Plane<T>& PlaneVolume<T>::GetPlane(std::size_t aIndex) const
+	CONSTEXPR const Plane<T>& PlaneVolume<T>::Get(std::size_t aIndex) const
 	{
 		return myPlanes[aIndex];
 	}
 	template<typename T>
-	inline Plane<T>& PlaneVolume<T>::GetPlane(std::size_t aIndex)
+	CONSTEXPR Plane<T>& PlaneVolume<T>::Get(std::size_t aIndex)
 	{
 		return myPlanes[aIndex];
 	}
 
 	template<typename T>
-	inline auto PlaneVolume<T>::GetType() const noexcept -> Type
+	CONSTEXPR std::size_t PlaneVolume<T>::Count() const noexcept
 	{
-		return Type::PlaneVolume;
+		return myPlanes.size();
+	}
+	template<typename T>
+	CONSTEXPR bool PlaneVolume<T>::IsEmpty() const noexcept
+	{
+		return myPlanes.empty();
 	}
 
 	template<typename T>
 	template<typename... Args>
-	inline void PlaneVolume<T>::EmplacePlane(Args&&... someArgs)
+	CONSTEXPR void PlaneVolume<T>::Emplace(Args&&... someArgs)
 	{
 		myPlanes.emplace_back(std::forward<Args>(someArgs)...);
 	}
 
 	template<typename T>
-	inline void PlaneVolume<T>::AddPlane(const Plane<T>& aPlane)
+	CONSTEXPR void PlaneVolume<T>::Add(const Plane<T>& aPlane)
 	{
 		EmplacePlane(aPlane);
 	}
 	template<typename T>
-	inline void PlaneVolume<T>::RemovePlane(std::size_t aIndex)
+	CONSTEXPR void PlaneVolume<T>::Remove(std::size_t aIndex)
 	{
 		myPlanes.erase(myPlanes.begin() + aIndex);
 	}
 
 	template<typename T>
-	inline bool PlaneVolume<T>::IsInside(const Vector3<T>& aPosition) const
+	CONSTEXPR bool PlaneVolume<T>::IsInside(const Vector3<T>& aPosition) const
 	{
 		for (const Plane<T>& plane : myPlanes)
 		{
@@ -111,8 +130,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline void PlaneVolume<T>::Clear()
+	CONSTEXPR void PlaneVolume<T>::Clear()
 	{
 		myPlanes.clear();
+	}
+
+	template<typename T>
+	inline auto PlaneVolume<T>::GetType() const noexcept -> Type
+	{
+		return Type::PlaneVolume;
 	}
 }

@@ -55,7 +55,7 @@ namespace CommonUtilities
 	namespace details // hide this from client
 	{
 		template<typename T>
-		inline const T& UpCastTo(const Shape& aShape, Shape::Type aExpectedType)
+		inline const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
 		{
 			assert(aShape.GetType() == aExpectedType);
 			return reinterpret_cast<const T&>(aShape); // should only crash if enum has incorrect setup
@@ -65,24 +65,24 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBAABB<T>(
-				UpCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D), 
-				UpCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+				DownCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D), 
+				DownCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
 		}
 
 		template<typename T>
 		inline CollisionResult<T> SphereSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereSphere<T>(
-				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere), 
-				UpCastTo<Sphere<T>>(aS2, Shape::Type::Sphere));
+				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere), 
+				DownCastTo<Sphere<T>>(aS2, Shape::Type::Sphere));
 		}
 
 		template<typename T>
 		inline CollisionResult<T> PlaneRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionPlaneRay<T>(
-				UpCastTo<Plane<T>>(aS1, Shape::Type::Plane),
-				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+				DownCastTo<Plane<T>>(aS1, Shape::Type::Plane),
+				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
 		inline CollisionResult<T> RayPlane(const Shape& aS1, const Shape& aS2)
@@ -94,8 +94,8 @@ namespace CommonUtilities
 		inline CollisionResult<T> SphereAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereAABB<T>(
-				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
-				UpCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				DownCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
 		}
 		template<typename T>
 		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
@@ -110,8 +110,8 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBRay<T>(
-				UpCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D),
-				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+				DownCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D),
+				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
 		inline CollisionResult<T> RayAABB(const Shape& aS1, const Shape& aS2)
@@ -123,8 +123,8 @@ namespace CommonUtilities
 		inline CollisionResult<T> SphereRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereRay<T>(
-				UpCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
-				UpCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
 		inline CollisionResult<T> RaySphere(const Shape& aS1, const Shape& aS2)
@@ -133,13 +133,13 @@ namespace CommonUtilities
 		}
 
 		///		ab	sh	li	lv	pl	pv	ry 
-		/// ab	-X-|-X-|---|---|---|---|-X-|
-		/// sh	-X-|-X-|---|---|---|---|-X-|
-		/// li	---|---|---|---|---|---|---|
-		/// lv	---|---|---|---|---|---|---|
-		/// pl	---|---|---|---|---|---|-X-|
-		/// pv	---|---|---|---|---|---|---|
-		/// ry	-X-|-X-|---|---|-X-|---|---|
+		/// ab |-X-|-X-|---|---|---|---|-X-|
+		/// sh |-X-|-X-|---|---|---|---|-X-|
+		/// li |---|---|---|---|---|---|---|
+		/// lv |---|---|---|---|---|---|---|
+		/// pl |---|---|---|---|---|---|-X-|
+		/// pv |---|---|---|---|---|---|---|
+		/// ry |-X-|-X-|---|---|-X-|---|---|
 		/// 
 		template<typename T>
 		inline static std::array<std::function<CollisionResult<T>(const Shape&, const Shape&)>,

@@ -57,7 +57,7 @@ namespace CommonUtilities
 		template<typename T>
 		inline const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
 		{
-			assert(aShape.GetType() == aExpectedType);
+			assert(aShape.GetType() == aExpectedType && "This shape's type is incorrectly set");
 			return reinterpret_cast<const T&>(aShape); // should only crash if enum has incorrect setup
 		}
 

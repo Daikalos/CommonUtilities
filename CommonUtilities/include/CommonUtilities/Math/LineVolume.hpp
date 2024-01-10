@@ -19,14 +19,14 @@ namespace CommonUtilities
 		CONSTEXPR LineVolume(const std::vector<Line<T>>& someLines);
 		CONSTEXPR LineVolume(std::vector<Line<T>>&& someLines);
 
-		CONSTEXPR const Line<T>& operator[](std::size_t aIndex) const;
-		CONSTEXPR Line<T>& operator[](std::size_t aIndex);
+		CONSTEXPR NODISC const Line<T>& operator[](std::size_t aIndex) const;
+		CONSTEXPR NODISC Line<T>& operator[](std::size_t aIndex);
 
-		CONSTEXPR const Line<T>& Get(std::size_t aIndex) const;
-		CONSTEXPR Line<T>& Get(std::size_t aIndex);
+		CONSTEXPR NODISC const Line<T>& Get(std::size_t aIndex) const;
+		CONSTEXPR NODISC Line<T>& Get(std::size_t aIndex);
 
-		CONSTEXPR std::size_t Count() const noexcept;
-		CONSTEXPR bool IsEmpty() const noexcept;
+		CONSTEXPR NODISC std::size_t Count() const noexcept;
+		CONSTEXPR NODISC bool IsEmpty() const noexcept;
 
 		template<typename... Args>
 		CONSTEXPR void Emplace(Args&&... someArgs);
@@ -34,7 +34,7 @@ namespace CommonUtilities
 		CONSTEXPR void Add(const Line<T>& aLine);
 		CONSTEXPR void Remove(std::size_t aIndex);
 
-		CONSTEXPR bool IsInside(const Vector2<T>& aPosition) const;
+		CONSTEXPR NODISC bool IsInside(const Vector2<T>& aPosition) const;
 
 		CONSTEXPR void Clear();
 

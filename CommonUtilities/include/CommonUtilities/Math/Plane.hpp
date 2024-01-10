@@ -20,13 +20,13 @@ namespace CommonUtilities
 		CONSTEXPR void InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 		CONSTEXPR void InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
 
-		CONSTEXPR const Vector3<T>& GetOrigin() const noexcept;
-		CONSTEXPR const Vector3<T>& GetNormal() const noexcept;
+		CONSTEXPR NODISC const Vector3<T>& GetOrigin() const noexcept;
+		CONSTEXPR NODISC const Vector3<T>& GetNormal() const noexcept;
 
 		CONSTEXPR void SetOrigin(const Vector3<T>& aOrigin);
 		CONSTEXPR void SetNormal(const Vector3<T>& aNormal);
 
-		CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
+		CONSTEXPR NODISC bool IsInside(const Vector3<T>& aPosition) const;
 
 		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 

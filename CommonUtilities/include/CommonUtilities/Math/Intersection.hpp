@@ -50,7 +50,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
 	{
-		CollisionResult result{};
+		CollisionResult<T> result{};
 
 		Vector3<T> normal = Vector3<T>::Direction(aFirstSphere.GetCenter(), aSecondSphere.GetCenter());
 
@@ -73,6 +73,7 @@ namespace CommonUtilities
 		result.intersection = 0.5f * (firstContact + secondContact);
 		result.normal		= normal;
 		result.penetration	= -Vector3<T>::Direction(firstContact, secondContact).Dot(normal);
+		result.collided		= true;
 
 		return result;
 	}
@@ -87,7 +88,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
 	{
-		CollisionResult result{};
+		CollisionResult<T> result{};
 
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
 		T denom = aPlane.GetNormal().Dot(aRay.GetDirection());
@@ -117,7 +118,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D)
 	{
-		CollisionResult result{};
+		CollisionResult<T> result{};
 
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
@@ -177,7 +178,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
 	{
-		CollisionResult result{};
+		CollisionResult<T> result{};
 
 		// TODO: handle case when inside
 
@@ -280,20 +281,14 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
 	{
-		CollisionResult result{};
+		CollisionResult<T> result{};
 
-		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
+		Vector3<T> dir = Vector3<T>::Direction(aSphere.GetCenter(), aRay.GetOrigin());
 
 		T distSqr = dir.LengthSqr() - aSphere.GetRadiusSqr();
+		T projScalar = dir.Dot(aRay.GetDirection());
 
-		if (distSqr > 0) // outside sphere
-		{
-			return result;
-		}
-
-		T projScalar =  dir.Dot(aRay.GetDirection());
-
-		if (projScalar < 0) // pointing away
+		if (distSqr > 0 && projScalar > 0) // outside sphere and pointing away
 		{
 			return result;
 		}
@@ -305,12 +300,12 @@ namespace CommonUtilities
 			return result;
 		}
 
-		T t = -distSqr - std::sqrt(discr);
+		T t = -projScalar - std::sqrt(discr);
 
 		if (t < 0) t = 0; // clamp t to zero if inside sphere
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection)).GetNormalized();
+		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
 		result.penetration	= 0.0f;
 		result.collided		= true;
 

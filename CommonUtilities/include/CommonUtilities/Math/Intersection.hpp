@@ -232,21 +232,18 @@ namespace CommonUtilities
 					// find axis of least penetration
 					if (xOverlap < yOverlap && xOverlap < zOverlap) // x-axis
 					{
-						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.x;
 						result.normal		= (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
 						result.penetration	= xOverlap;
 						result.collided		= true;
 					}
 					else if (yOverlap < xOverlap && yOverlap < zOverlap) // y-axis
 					{
-						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.y;
 						result.normal		= (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
 						result.penetration	= yOverlap;
 						result.collided		= true;
 					}
 					else // z-axis
 					{
-						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.z;
 						result.normal		= (dir.z < 0) ? Vector3<T>(0, 0, 1) : Vector3<T>(0, 0, -1);
 						result.penetration	= zOverlap;
 						result.collided		= true;
@@ -256,14 +253,12 @@ namespace CommonUtilities
 				{
 					if (xOverlap < yOverlap) // x-axis
 					{
-						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.x;
 						result.normal = (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
 						result.penetration = xOverlap;
 						result.collided = true;
 					}
 					else  // y-axis
 					{
-						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.y;
 						result.normal = (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
 						result.penetration = yOverlap;
 						result.collided = true;

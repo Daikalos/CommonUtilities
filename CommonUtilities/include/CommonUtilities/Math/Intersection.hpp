@@ -228,7 +228,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(Sign(maxT), 0, 0);
+				result.normal = Vector3<T>(Sign(aRay.GetDirection().x), 0, 0);
 
 				break;
 			}
@@ -246,7 +246,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, Sign(maxT), 0);
+				result.normal = Vector3<T>(0, Sign(aRay.GetDirection().y), 0);
 
 				break;
 			}
@@ -264,7 +264,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, 0, Sign(maxT));
+				result.normal = Vector3<T>(0, 0, Sign(aRay.GetDirection().z));
 
 				break;
 			}

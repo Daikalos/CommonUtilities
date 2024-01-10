@@ -215,30 +215,61 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
-		T aXMin = aFirstAABB.GetMin().x; T bXMin = aSecondAABB.GetMin().x;
-		T aYMin = aFirstAABB.GetMin().y; T bYMin = aSecondAABB.GetMin().y;
-		T aZMin = aFirstAABB.GetMin().z; T bZMin = aSecondAABB.GetMin().z;
-		T aXMax = aFirstAABB.GetMax().x; T bXMax = aSecondAABB.GetMax().x;
-		T aYMax = aFirstAABB.GetMax().y; T bYMax = aSecondAABB.GetMax().y;
-		T aZMax = aFirstAABB.GetMax().z; T bZMax = aSecondAABB.GetMax().z;
+		Vector3<T> dir = Vector3<T>::Direction(aFirstAABB.GetCenter(), aSecondAABB.GetCenter());
 
-		// exit early if any min is larger than max
+		Vector3<T> aExtends = aFirstAABB.GetSize() / 2.0f;
+		Vector3<T> bExtends = aSecondAABB.GetSize() / 2.0f;
 
-		if (aXMin > bXMax) return result;
-		if (bXMin > aXMax) return result;
+		// we use a simplified SAT test
 
-		if (aYMin > bYMax) return result;
-		if (bYMin > aYMax) return result;
-
-		if (aZMin > bZMax) return result;
-		if (bZMin > aZMax) return result;
-
-		// there is a collision
-
-		result.penetration	= (std::numeric_limits<T>::max)(); // stupid f***ing min max macros from windows.h
-		result.collided		= true;
-
-
+		if (T xOverlap = (aExtends.x + bExtends.x - std::abs(dir.x)); xOverlap > 0)
+		{
+			if (T yOverlap = (aExtends.y + bExtends.y - std::abs(dir.y)); yOverlap > 0)
+			{
+				if (T zOverlap = (aExtends.z + bExtends.z - std::abs(dir.z)); zOverlap > 0)
+				{
+					// find axis of least penetration
+					if (xOverlap < yOverlap && xOverlap < zOverlap) // x-axis
+					{
+						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.x;
+						result.normal		= (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
+						result.penetration	= xOverlap;
+						result.collided		= true;
+					}
+					else if (yOverlap < xOverlap && yOverlap < zOverlap) // y-axis
+					{
+						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.y;
+						result.normal		= (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
+						result.penetration	= yOverlap;
+						result.collided		= true;
+					}
+					else // z-axis
+					{
+						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.z;
+						result.normal		= (dir.z < 0) ? Vector3<T>(0, 0, 1) : Vector3<T>(0, 0, -1);
+						result.penetration	= zOverlap;
+						result.collided		= true;
+					}
+				}
+				else // 2D collision
+				{
+					if (xOverlap < yOverlap) // x-axis
+					{
+						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.x;
+						result.normal = (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
+						result.penetration = xOverlap;
+						result.collided = true;
+					}
+					else  // y-axis
+					{
+						result.intersection = aFirstAABB.GetCenter() + dir.GetNormalized() * aExtends.y;
+						result.normal = (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
+						result.penetration = yOverlap;
+						result.collided = true;
+					}
+				}
+			}
+		}
 
 		return result;
 	}

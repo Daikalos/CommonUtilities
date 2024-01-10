@@ -21,8 +21,13 @@ namespace CommonUtilities
 		const Vector3<T>& GetMin() const noexcept;
 		const Vector3<T>& GetMax() const noexcept;
 
+		Vector3<T> GetSize() const;
+		Vector3<T> GetCenter() const;
+
 		void SetMin(const Vector3<T>& aMin);
 		void SetMax(const Vector3<T>& aMax);
+		void SetSize(const Vector3<T>& aSize);
+		void SetCenter(const Vector3<T>& aCenter);
 
 		bool IsInside(const Vector3<T>& aPosition) const;
 
@@ -66,6 +71,17 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline Vector3<T> AABB3D<T>::GetSize() const
+	{
+		return (myMax - myMin);
+	}
+	template<typename T>
+	inline Vector3<T> AABB3D<T>::GetCenter() const
+	{
+		return GetSize() / 2.0f + myMin;
+	}
+
+	template<typename T>
 	inline void AABB3D<T>::SetMin(const Vector3<T>& aMin)
 	{
 		assert(myMax.x >= aMin.x && myMax.y >= aMin.y && "Maximum cannot be smaller than minimum");
@@ -76,6 +92,23 @@ namespace CommonUtilities
 	{
 		assert(aMax.x >= myMin.x && aMax.y >= myMin.y && "Maximum cannot be smaller than minimum");
 		myMax = aMax;
+	}
+	template<typename T>
+	inline void AABB3D<T>::SetSize(const Vector3<T>& aSize)
+	{
+		const Vector3<T> center = GetCenter();
+		const Vector3<T> extends = aSize / 2.0f;
+
+		myMax = center + extends;
+		myMin = center - extends;
+	}
+	template<typename T>
+	inline void AABB3D<T>::SetCenter(const Vector3<T>& aCenter)
+	{
+		const Vector3<T> halfExtends = (myMax - myMin) / 2.0f;
+
+		myMax = aCenter + halfExtends;
+		myMin = aCenter - halfExtends;
 	}
 
 	template<typename T>

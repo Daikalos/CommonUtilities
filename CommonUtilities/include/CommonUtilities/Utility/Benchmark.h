@@ -25,13 +25,13 @@ namespace CommonUtilities::bm
 	COMMON_UTILITIES_API void End();
 
 	template<std::size_t N = 1, class Func, typename... Args>
-	void Run(const Func& aFunc, Args&&... someArgs)
+	void Run(const Func& aFunc, const Args&... someArgs)
 	{
 		Begin();
 
 		for (std::size_t i = 0; i < N; ++i)
 		{
-			aFunc(std::forward<Args>(someArgs)...);
+			aFunc(someArgs...);
 		}
 
 		End();

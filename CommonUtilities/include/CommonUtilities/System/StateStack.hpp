@@ -74,7 +74,7 @@ namespace CommonUtilities
 		NODISC std::size_t Count() const noexcept;
 		NODISC bool IsEmpty() const noexcept;
 
-		void Update(Timer& aTimer);
+		virtual void Update(Timer& aTimer);
 
 		/// Push a state to the top of the stack.
 		/// 

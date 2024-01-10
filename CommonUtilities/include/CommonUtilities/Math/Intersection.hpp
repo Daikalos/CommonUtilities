@@ -5,6 +5,7 @@
 #include <array>
 #include <functional>
 #include <cassert>
+#include <stdexcept>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
@@ -142,8 +143,13 @@ namespace CommonUtilities
 		};
 	}
 
-	/// Collide a shape against another shape. If you know both types already, you should prefer
-	/// calling the corresponding collision detection algorithm directly instead.
+	/// Collide a generic shape against another generic shape. If you know both types already, you should
+	/// call the corresponding collision detection algorithm directly instead. Furthermore, make sure that
+	/// the shapes arithmetic template type is the same when compared with each other, and also the the type
+	/// provided to this function. Otherwise, undefined behaviour will occur.
+	/// 
+	/// \param aFirstShape: First shape to collide against
+	/// \param aSecondShape: Second shape to collide against
 	/// 
 	/// \return Result from collision
 	/// 
@@ -153,7 +159,10 @@ namespace CommonUtilities
 		const auto collisionFuncPtr = details::globalCollisionMatrix<T>[static_cast<int>(aSecondShape.GetType()) +
 			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count)];
 
-		assert(collisionFuncPtr != nullptr && "No collision is defined for these two shapes!");
+		if (collisionFuncPtr == nullptr)
+		{
+			throw std::out_of_range("No collision algorithm is defined for these two shapes!");
+		}
 
 		return collisionFuncPtr(aFirstShape, aSecondShape);
 	}

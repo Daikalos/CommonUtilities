@@ -180,18 +180,18 @@ namespace CommonUtilities
 		{
 			Node& node = myNodes[leaf.index];
 
-			auto ptr_idx = node.firstChild;
+			auto ptrIndex = node.firstChild;
 			auto prv_idx = -1;
 
-			while (ptr_idx != -1 && myElementsPtr[ptr_idx].element != aEltIndex)
+			while (ptrIndex != -1 && myElementsPtr[ptrIndex].element != aEltIndex)
 			{
-				prv_idx = ptr_idx;
-				ptr_idx = myElementsPtr[ptr_idx].next;
+				prv_idx = ptrIndex;
+				ptrIndex = myElementsPtr[ptrIndex].next;
 			}
 
-			if (ptr_idx != -1)
+			if (ptrIndex != -1)
 			{
-				const auto nextIndex = myElementsPtr[ptr_idx].next;
+				const auto nextIndex = myElementsPtr[ptrIndex].next;
 
 				if (prv_idx == -1)
 				{
@@ -202,7 +202,7 @@ namespace CommonUtilities
 					myElementsPtr[prv_idx].next = nextIndex;
 				}
 
-				myElementsPtr.erase(ptr_idx);
+				myElementsPtr.erase(ptrIndex);
 
 				--node.count;
 
@@ -310,12 +310,12 @@ namespace CommonUtilities
 			int num_empty = 0;
 			for (int i = 0; i < ourChildCount; ++i)
 			{
-				const int child_index	= node.firstChild + i;
-				const Node& child		= myNodes[child_index];
+				const int childIndex	= node.firstChild + i;
+				const Node& child		= myNodes[childIndex];
 
 				if (child.count == -1)
 				{
-					toProcess.emplace_back(child_index);
+					toProcess.emplace_back(childIndex);
 				}
 				else if (child.count == 0)
 				{

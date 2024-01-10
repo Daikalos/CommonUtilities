@@ -38,7 +38,7 @@ namespace CommonUtilities
 
 		CONSTEXPR void Clear();
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Line<T>> myLines;
@@ -136,7 +136,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto LineVolume<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto LineVolume<T>::GetType() const noexcept -> Type
 	{
 		return Type::LineVolume;
 	}

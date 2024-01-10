@@ -27,7 +27,7 @@ namespace CommonUtilities
 
 		CONSTEXPR bool IsInside(const Vector2<T>& aPosition) const;
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector2<T> myOrigin;
@@ -88,7 +88,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto Line<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto Line<T>::GetType() const noexcept -> Type
 	{
 		return Type::Line;
 	}

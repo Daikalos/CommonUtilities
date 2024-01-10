@@ -34,7 +34,7 @@ namespace CommonUtilities
 
 		CONSTEXPR NODISC bool IsInside(const Vector3<T>& aPosition) const;
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T> myMin;
@@ -133,7 +133,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto AABB3D<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto AABB3D<T>::GetType() const noexcept -> Type
 	{
 		return Type::AABB3D;
 	}

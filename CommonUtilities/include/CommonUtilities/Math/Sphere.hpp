@@ -27,7 +27,7 @@ namespace CommonUtilities
 
 		CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T>	myCenter;
@@ -91,7 +91,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto Sphere<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto Sphere<T>::GetType() const noexcept -> Type
 	{
 		return Type::Sphere;
 	}

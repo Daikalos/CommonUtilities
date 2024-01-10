@@ -38,7 +38,7 @@ namespace CommonUtilities
 
 		CONSTEXPR void Clear();
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Plane<T>> myPlanes;
@@ -136,7 +136,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto PlaneVolume<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto PlaneVolume<T>::GetType() const noexcept -> Type
 	{
 		return Type::PlaneVolume;
 	}

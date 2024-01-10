@@ -25,7 +25,7 @@ namespace CommonUtilities
 		CONSTEXPR void SetOrigin(const Vector3<T>& aOrigin);
 		CONSTEXPR void SetDirection(const Vector3<T>& aDirection);
 
-		auto GetType() const noexcept -> Type override;
+		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T> myOrigin;
@@ -80,7 +80,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto Ray<T>::GetType() const noexcept -> Type
+	CONSTEXPR auto Ray<T>::GetType() const noexcept -> Type
 	{
 		return Type::Ray;
 	}

@@ -78,7 +78,7 @@ int main()
 	const cu::Mat3f& globalMatrix = relation1->GetGlobalMatrix();
 
 	constexpr cu::Sphere<float> sphere(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
-	constexpr float radiusSqr = sphere.GetRadiusSqr();
+	constexpr cu::Shape::Type type = sphere.GetType();
 
 	return 0;
 }

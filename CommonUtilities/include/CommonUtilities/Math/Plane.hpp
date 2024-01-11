@@ -87,7 +87,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR void Plane<T>::SetNormal(const Vector3<T>& aNormal)
 	{
-		myNormal = aNormal;
+		myNormal = aNormal.GetNormalized();
 	}
 
 	template<typename T>

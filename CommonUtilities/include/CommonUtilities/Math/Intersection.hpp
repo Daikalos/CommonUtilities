@@ -101,7 +101,7 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
 		{
 			CollisionResult<T> result = SphereAABB<T>(aS2, aS1);
-			result.normal = -result.normal; // flip normal
+			//result.normal = -result.normal; // flip normal ??
 
 			return result;
 		}

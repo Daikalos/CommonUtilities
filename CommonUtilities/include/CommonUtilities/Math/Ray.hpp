@@ -76,7 +76,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR void Ray<T>::SetDirection(const Vector3<T>& aDirection)
 	{
-		myDirection = aDirection;
+		myDirection = aDirection.GetNormalized();
 	}
 
 	template<typename T>

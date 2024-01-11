@@ -45,10 +45,32 @@ namespace CommonUtilities::Traits
         constexpr operator bool() const { return true; }
     };
 
-    namespace priv
+    /// Allows for you to, e.g., visit the item in a variant through its active type.
+    /// 
+    template<typename... Ts>
+    struct Overload : Ts...
+    {
+        using Ts::operator() ...;
+    };
+
+#ifndef C20_SUPPORT
+    /// Deduction guide for compiler on how to specify argument template parameters.
+    /// 
+    template<class... Ts> Overload(Ts...) -> Overload<Ts...>;
+#endif
+
+    /// Returns in compile-time the index to where in tuple the type is located at.
+    /// 
+    template<typename T, typename Tuple>
+    struct IndexInTuple
+    {
+        static constexpr std::size_t value = details::IndexInTupleImpl<0, T, Tuple>();
+    };
+
+    namespace details
     {
         template<std::size_t Index, typename T, typename Tuple> requires (Index < std::tuple_size_v<Tuple>)
-        static constexpr std::size_t IndexInTupleFn()
+        static constexpr std::size_t IndexInTupleImpl()
         {
             if constexpr (std::is_same_v<T, std::tuple_element_t<Index, Tuple>>)
             {
@@ -56,16 +78,8 @@ namespace CommonUtilities::Traits
             }
             else
             {
-                return IndexInTupleFn<Index + 1, T, Tuple>();
+                return IndexInTupleImpl<Index + 1, T, Tuple>();
             }
         }
     }
-
-    /// Returns in compile-time the index to where in tuple the type is located at
-    /// 
-    template<typename T, typename Tuple>
-    struct IndexInTuple
-    {
-        static constexpr std::size_t value = priv::IndexInTupleFn<0, T, Tuple>();
-    };
 }

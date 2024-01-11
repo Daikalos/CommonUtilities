@@ -1,13 +1,12 @@
 #pragma once
 
+#include <math.h>
 #include <limits>
 #include <numbers>
 #include <bit>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
-
-#include <math.h>
 
 namespace CommonUtilities
 {
@@ -89,6 +88,12 @@ namespace CommonUtilities
 	{
 		double n = Pow(10.0, aPlaces);
 		return std::round(aValue * n) / n;
+	}
+
+	template<IsFloatingPoint T>
+	NODISC CONSTEXPR T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
+	{
+		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), PI_V<T> * 2) - PI_V<T>);
 	}
 
 	NODISC __forceinline float AtanApproximation(float aX)

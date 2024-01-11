@@ -26,7 +26,7 @@ namespace CommonUtilities
 
 		struct Element
 		{		
-			RectFloat rect;			// rectangle encompassing the item
+			RectFloat rect;	// rectangle encompassing the item
 			ValueType item;
 		};
 
@@ -34,66 +34,67 @@ namespace CommonUtilities
 
 		/// Inserts given element into the quadtree.
 		/// 
-		/// \param Element: Element to insert containing the item and bounding rectangle.
+		/// \param aRect: Rectangle encompassing item
+		/// \param someArgs: Constructor parameters for item
 		/// 
-		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree.
+		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		int Insert(const RectFloat& aRect, Args&&... someArgs);
 
 		/// Attempts to erase element from tree.
 		/// 
-		/// \param EltIdx: Index to element to erase.
+		/// \param aIndex: Index to element to erase
 		/// 
-		/// \returns True if successfully removed the element, otherwise false.
+		/// \returns True if successfully removed the element, otherwise false
 		/// 
-		bool Erase(SizeType aEltIndex);
+		bool Erase(SizeType aIndex);
 
 		/// Updates the given element with new data.
 		/// 
-		/// \param Index: index to element.
-		/// \param Args: Data to update the current element.
+		/// \param aIndex: index to element
+		/// \param someArgs: Data to update the current element
 		/// 
-		/// \returns True if successfully updated the element, otherwise false.
+		/// \returns True if successfully updated the element, otherwise false
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		bool Update(SizeType aIndex, Args&&... someArgs);
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element.
+		/// \param aIndex: index to element
 		/// 
 		NODISC auto Get(SizeType aIndex) -> ValueType&;
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element.
+		/// \param aIndex: index to element
 		/// 
 		NODISC auto Get(SizeType aIndex) const -> const ValueType&;
 
-		/// Retrieves the rectangle encompassing item.
+		/// Retrieves the rectangle encompassing item
 		/// 
-		/// \param Index: index to item.
+		/// \param aIndex: index to item.
 		/// 
 		NODISC auto GetRect(SizeType aIndex) const -> const RectFloat&;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Rect: Bounding rectangle where all the elements are contained.
+		/// \param aRect: Bounding rectangle where all the elements are contained
 		/// 
-		/// \returns List of entities contained within the bounding rectangle.
+		/// \returns List of entities contained within the bounding rectangle
 		/// 
 		NODISC auto Query(const RectFloat& aRect) const -> std::vector<SizeType>;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Point: Point to search for overlapping elements.
+		/// \param Point: Point to search for overlapping elements
 		/// 
-		/// \returns List of entities contained at the point.
+		/// \returns List of entities contained at the point
 		/// 
 		NODISC auto Query(const Vector2f& aPoint) const-> std::vector<SizeType>;
 
-		/// Performs a lazy cleanup of the tree; can only be called if erase has been used.
+		/// Performs a lazy cleanup of the tree, should be called after items have been erased.
 		/// 
 		void Cleanup();
 
@@ -166,11 +167,11 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline bool QuadTree<T>::Erase(SizeType aEltIndex)
+	inline bool QuadTree<T>::Erase(SizeType aIndex)
 	{
 		std::unique_lock lock(myMutex);
 
-		const RectFloat& rect = myElements[aEltIndex].rect;
+		const RectFloat& rect = myElements[aIndex].rect;
 		const auto& leaves = FindLeaves({ myRootRect, 0, 0 }, rect);
 
 		if (leaves.empty())
@@ -181,11 +182,11 @@ namespace CommonUtilities
 			Node& node = myNodes[leaf.index];
 
 			auto ptrIndex = node.firstChild;
-			auto prv_idx = -1;
+			auto prvIdx = -1;
 
-			while (ptrIndex != -1 && myElementsPtr[ptrIndex].element != aEltIndex)
+			while (ptrIndex != -1 && myElementsPtr[ptrIndex].element != aIndex)
 			{
-				prv_idx = ptrIndex;
+				prvIdx = ptrIndex;
 				ptrIndex = myElementsPtr[ptrIndex].next;
 			}
 
@@ -193,13 +194,13 @@ namespace CommonUtilities
 			{
 				const auto nextIndex = myElementsPtr[ptrIndex].next;
 
-				if (prv_idx == -1)
+				if (prvIdx == -1)
 				{
 					node.firstChild = nextIndex;
 				}
 				else
 				{
-					myElementsPtr[prv_idx].next = nextIndex;
+					myElementsPtr[prvIdx].next = nextIndex;
 				}
 
 				myElementsPtr.erase(ptrIndex);

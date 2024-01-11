@@ -1,27 +1,23 @@
 #pragma once
 
-template<typename T, template<typename> class CRTPType>
+template<class T>
 class CRTP
 {
 public:
 	T& Underlying();
 	const T& Underlaying() const;
-
-private:
-	CRTP(); // force derived to inherit from the correct CRTP
-	friend CRTPType<T>;
 };
 
-template<typename T, template<typename> class CRTPType>
-inline CRTP<T, CRTPType>::CRTP() = default;
+template<class T, template<class> class... Ts>
+struct CRTPSet : public CRTP<Ts<T>>... {};
 
-template<typename T, template<typename> class CRTPType>
-inline T& CRTP<T, CRTPType>::Underlying()
+template<class T>
+inline T& CRTP<T>::Underlying()
 {
 	return static_cast<T&>(*this);
 }
-template<typename T, template<typename> class CRTPType>
-inline const T& CRTP<T, CRTPType>::Underlaying() const
+template<class T>
+inline const T& CRTP<T>::Underlaying() const
 {
 	return static_cast<const T&>(*this);
 }

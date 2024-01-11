@@ -19,14 +19,14 @@ namespace CommonUtilities
 		CONSTEXPR PlaneVolume(const std::vector<Plane<T>>& somePlanes);
 		CONSTEXPR PlaneVolume(std::vector<Plane<T>>&& somePlanes);
 
-		CONSTEXPR NODISC const Plane<T>& operator[](std::size_t aIndex) const;
-		CONSTEXPR NODISC Plane<T>& operator[](std::size_t aIndex);
+		NODISC CONSTEXPR const Plane<T>& operator[](std::size_t aIndex) const;
+		NODISC CONSTEXPR Plane<T>& operator[](std::size_t aIndex);
 
-		CONSTEXPR NODISC const Plane<T>& Get(std::size_t aIndex) const;
-		CONSTEXPR NODISC Plane<T>& Get(std::size_t aIndex);
+		NODISC CONSTEXPR const Plane<T>& Get(std::size_t aIndex) const;
+		NODISC CONSTEXPR Plane<T>& Get(std::size_t aIndex);
 
-		CONSTEXPR NODISC std::size_t Count() const noexcept;
-		CONSTEXPR NODISC bool IsEmpty() const noexcept;
+		NODISC CONSTEXPR std::size_t Count() const noexcept;
+		NODISC CONSTEXPR bool IsEmpty() const noexcept;
 
 		template<typename... Args>
 		CONSTEXPR void Emplace(Args&&... someArgs);
@@ -34,11 +34,11 @@ namespace CommonUtilities
 		CONSTEXPR void Add(const Plane<T>& aPlane);
 		CONSTEXPR void Remove(std::size_t aIndex);
 
-		CONSTEXPR NODISC bool IsInside(const Vector3<T>& aPosition) const;
+		NODISC CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
 
 		CONSTEXPR void Clear();
 
-		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
+		NODISC CONSTEXPR auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Plane<T>> myPlanes;

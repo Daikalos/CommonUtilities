@@ -21,20 +21,20 @@ namespace CommonUtilities
 		CONSTEXPR void InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
 		CONSTEXPR void InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
 
-		CONSTEXPR NODISC const Vector3<T>& GetMin() const noexcept;
-		CONSTEXPR NODISC const Vector3<T>& GetMax() const noexcept;
+		NODISC CONSTEXPR const Vector3<T>& GetMin() const noexcept;
+		NODISC CONSTEXPR const Vector3<T>& GetMax() const noexcept;
 
-		CONSTEXPR NODISC Vector3<T> GetSize() const;
-		CONSTEXPR NODISC Vector3<T> GetCenter() const;
+		NODISC CONSTEXPR Vector3<T> GetSize() const;
+		NODISC CONSTEXPR Vector3<T> GetCenter() const;
 
 		CONSTEXPR void SetMin(const Vector3<T>& aMin);
 		CONSTEXPR void SetMax(const Vector3<T>& aMax);
 		CONSTEXPR void SetSize(const Vector3<T>& aSize);
 		CONSTEXPR void SetCenter(const Vector3<T>& aCenter);
 
-		CONSTEXPR NODISC bool IsInside(const Vector3<T>& aPosition) const;
+		NODISC CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
 
-		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
+		NODISC CONSTEXPR auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T> myMin;

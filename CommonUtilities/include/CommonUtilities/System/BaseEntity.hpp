@@ -35,38 +35,38 @@ namespace CommonUtilities
 		/// \return Const reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC const T& GetComponent() const;
+		NODISC CONSTEXPR const T& GetComponent() const;
 
 		/// Retrieves a component from entity.
 		/// 
 		/// \return Reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC T& GetComponent();
+		NODISC CONSTEXPR T& GetComponent();
 
 		/// Tries to retrieve a component from entity.
 		/// 
 		/// \return Const pointer to component, nullptr if not found
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC const T* TryGetComponent() const;
+		NODISC CONSTEXPR const T* TryGetComponent() const;
 
 		/// Tries to retrieve a component from entity.
 		/// 
 		/// \return Pointer to component, nullptr if not found
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC T* TryGetComponent();
+		NODISC CONSTEXPR T* TryGetComponent();
 
 		/// \return Whether specified component is active
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC bool IsComponentActive() const;
+		NODISC CONSTEXPR bool IsComponentActive() const;
 
 		/// \return Whether current entity has specified component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC bool HasComponent() const;
+		NODISC CONSTEXPR bool HasComponent() const;
 
 		/// Attempts to add a component to entity.
 		/// 
@@ -155,19 +155,19 @@ namespace CommonUtilities
 		/// \return Reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC static T& GetStaticComponent();
+		NODISC CONSTEXPR static T& GetStaticComponent();
 
 		/// Retrieves a component from a static list of components.
 		/// 
 		/// \return Const reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC static T* TryGetStaticComponent();
+		NODISC CONSTEXPR static T* TryGetStaticComponent();
 
 		/// \return Whether the static list of components contain the specified component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR NODISC static bool HasStaticComponent();
+		NODISC CONSTEXPR static bool HasStaticComponent();
 
 		/// Attempts to add a component to the static list of components.
 		/// 

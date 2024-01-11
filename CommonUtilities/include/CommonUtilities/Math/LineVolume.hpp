@@ -19,14 +19,14 @@ namespace CommonUtilities
 		CONSTEXPR LineVolume(const std::vector<Line<T>>& someLines);
 		CONSTEXPR LineVolume(std::vector<Line<T>>&& someLines);
 
-		CONSTEXPR NODISC const Line<T>& operator[](std::size_t aIndex) const;
-		CONSTEXPR NODISC Line<T>& operator[](std::size_t aIndex);
+		NODISC CONSTEXPR const Line<T>& operator[](std::size_t aIndex) const;
+		NODISC CONSTEXPR Line<T>& operator[](std::size_t aIndex);
 
-		CONSTEXPR NODISC const Line<T>& Get(std::size_t aIndex) const;
-		CONSTEXPR NODISC Line<T>& Get(std::size_t aIndex);
+		NODISC CONSTEXPR const Line<T>& Get(std::size_t aIndex) const;
+		NODISC CONSTEXPR Line<T>& Get(std::size_t aIndex);
 
-		CONSTEXPR NODISC std::size_t Count() const noexcept;
-		CONSTEXPR NODISC bool IsEmpty() const noexcept;
+		NODISC CONSTEXPR std::size_t Count() const noexcept;
+		NODISC CONSTEXPR bool IsEmpty() const noexcept;
 
 		template<typename... Args>
 		CONSTEXPR void Emplace(Args&&... someArgs);
@@ -34,11 +34,11 @@ namespace CommonUtilities
 		CONSTEXPR void Add(const Line<T>& aLine);
 		CONSTEXPR void Remove(std::size_t aIndex);
 
-		CONSTEXPR NODISC bool IsInside(const Vector2<T>& aPosition) const;
+		NODISC CONSTEXPR bool IsInside(const Vector2<T>& aPosition) const;
 
 		CONSTEXPR void Clear();
 
-		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
+		NODISC CONSTEXPR auto GetType() const noexcept -> Type override;
 
 	private:
 		std::vector<Line<T>> myLines;

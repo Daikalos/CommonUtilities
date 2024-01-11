@@ -19,15 +19,15 @@ namespace CommonUtilities
 		CONSTEXPR void InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
 		CONSTEXPR void InitWithPointAndDirection(const Vector2<T>& aPoint, const Vector2<T>& aDirection);
 
-		CONSTEXPR NODISC const Vector2<T>& GetDirection() const;
-		CONSTEXPR NODISC Vector2<T> GetNormal() const;
+		NODISC CONSTEXPR const Vector2<T>& GetDirection() const;
+		NODISC CONSTEXPR Vector2<T> GetNormal() const;
 
 		CONSTEXPR void SetOrigin(const Vector2<T>& aOrigin);
 		CONSTEXPR void SetDirection(const Vector2<T>& aDirection);
 
-		CONSTEXPR NODISC bool IsInside(const Vector2<T>& aPosition) const;
+		NODISC CONSTEXPR bool IsInside(const Vector2<T>& aPosition) const;
 
-		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
+		NODISC CONSTEXPR auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector2<T> myOrigin;

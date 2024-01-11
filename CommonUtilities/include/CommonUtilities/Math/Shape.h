@@ -23,6 +23,6 @@ namespace CommonUtilities
 		CONSTEXPR Shape() = default;
 		CONSTEXPR virtual ~Shape() = default;
 
-		CONSTEXPR NODISC virtual auto GetType() const noexcept -> Type = 0;
+		NODISC CONSTEXPR virtual auto GetType() const noexcept -> Type = 0;
 	};
 }

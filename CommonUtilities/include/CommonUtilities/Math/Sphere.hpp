@@ -18,16 +18,16 @@ namespace CommonUtilities
 
 		CONSTEXPR void InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius);
 
-		CONSTEXPR NODISC const Vector3<T>& GetCenter() const noexcept;
-		CONSTEXPR NODISC T GetRadius() const noexcept;
-		CONSTEXPR NODISC T GetRadiusSqr() const noexcept;
+		NODISC CONSTEXPR const Vector3<T>& GetCenter() const noexcept;
+		NODISC CONSTEXPR T GetRadius() const noexcept;
+		NODISC CONSTEXPR T GetRadiusSqr() const noexcept;
 
 		CONSTEXPR void SetCenter(const Vector3<T>& aCenter);
 		CONSTEXPR void SetRadius(T aRadius);
 
-		CONSTEXPR NODISC bool IsInside(const Vector3<T>& aPosition) const;
+		NODISC CONSTEXPR bool IsInside(const Vector3<T>& aPosition) const;
 
-		CONSTEXPR NODISC auto GetType() const noexcept -> Type override;
+		NODISC CONSTEXPR auto GetType() const noexcept -> Type override;
 
 	private:
 		Vector3<T>	myCenter;

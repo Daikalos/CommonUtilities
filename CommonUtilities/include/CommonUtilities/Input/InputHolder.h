@@ -27,7 +27,7 @@ namespace CommonUtilities
 		void SetEnabled(bool aFlag);
 
 		void Update();
-		NODISC bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
+		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:
 		KeyboardInput	myKeyboard;

@@ -27,10 +27,6 @@ namespace CommonUtilities
 		/// 
 		void SetFocusAffectInput(bool aFlag) noexcept;
 
-		///	Determine the threshold before the button/key is considered held
-		/// 
-		void SetHeldThreshold(float aValue) noexcept;
-
 		///	Update which should determine the current and previous state of the input
 		/// 
 		virtual void Update() = 0;
@@ -44,10 +40,9 @@ namespace CommonUtilities
 		bool	myEnabled			{true};		// is always enabled initially
 		bool	myInFocus			{true};
 		bool	myFocusInput		{true};		// focus affects input at start
-		float	myHeldThreshold		{0.1f};		// threshold before button/key is considered held
 	};
 
-	namespace old
+	namespace deprecated
 	{
 		class COMMON_UTILITIES_API InputHandler
 		{

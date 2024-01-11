@@ -12,9 +12,6 @@ namespace CommonUtilities
 	class Binds : private NonCopyable
 	{
 	public:
-		CONSTEXPR Binds();
-		CONSTEXPR ~Binds();
-
 		NODISC CONSTEXPR Reg& operator[](const Bind& aBind);
 		NODISC CONSTEXPR const Reg& operator[](const Bind& aBind) const;
 
@@ -37,6 +34,9 @@ namespace CommonUtilities
 		CONSTEXPR void SetEnabled(bool aFlag) noexcept;
 
 	protected:
+		CONSTEXPR Binds(); // only allow derived classes to construct bind
+		CONSTEXPR ~Binds();
+
 		std::unordered_map<Bind, Reg> myBinds;
 		bool myEnabled {true};
 	};

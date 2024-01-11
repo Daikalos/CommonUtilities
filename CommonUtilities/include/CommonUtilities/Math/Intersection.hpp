@@ -510,7 +510,7 @@ namespace CommonUtilities
 		return result;
 	}
 
-	using CollisionResultFloat	= CollisionResult<float>;
-	using CollisionResultInt	= CollisionResult<int>;
-	using CollisionResultDouble = CollisionResult<double>;
+	using CollResFloat	= CollisionResult<float>;
+	using CollResInt	= CollisionResult<int>;
+	using CollResDouble = CollisionResult<double>;
 }

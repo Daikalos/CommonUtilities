@@ -23,10 +23,6 @@ void InputHandler::SetFocusAffectInput(bool aFlag) noexcept
 {
 	myFocusInput = aFlag;
 }
-void InputHandler::SetHeldThreshold(float aValue) noexcept
-{
-	myHeldThreshold = aValue;
-}
 
 bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -51,7 +47,7 @@ bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 	return GetInFocus() ? HandleEventImpl(aMessage, wParam, lParam) : false;
 }
 
-namespace CommonUtilities::old
+namespace CommonUtilities::deprecated
 {
 	InputHandler::InputHandler()
 		: myCurrentState()

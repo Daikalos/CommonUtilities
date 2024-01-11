@@ -11,6 +11,7 @@
 #include <numeric>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+#include <CommonUtilities/Utility/UtilityFunctions.hpp>
 
 #include "Plane.hpp"
 #include "Ray.hpp"
@@ -58,7 +59,7 @@ namespace CommonUtilities
 		inline const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
 		{
 			assert(aShape.GetType() == aExpectedType && "This shape's type is incorrectly set");
-			return reinterpret_cast<const T&>(aShape); // should only crash if enum has incorrect setup
+			return reinterpret_cast<const T&>(aShape); // should only "crash" if shape has incorrectly set its enum type
 		}
 
 		template<typename T>
@@ -378,6 +379,13 @@ namespace CommonUtilities
 		if (aAABB3D.IsInside(aRay.GetOrigin()))
 		{
 			// TODO: handle case when inside
+
+			result.intersection = aRay.GetOrigin();
+			result.normal		= -Sign(Max(aRay.GetDirection().x, aRay.GetDirection().y, aRay.GetDirection().z));
+			result.penetration	= 0.0f;
+			result.collided		= true;
+
+			return result;
 		}
 
 		Vector3<T> t; // get vector from best corner to ray's origin

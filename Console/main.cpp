@@ -4,6 +4,7 @@
 #include <CommonUtilities/Utility/Random.hpp>
 #include <CommonUtilities/Config.h>
 
+#include <CommonUtilities/Math/Intersection.hpp>
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Math/Transform2D.h>
@@ -79,6 +80,10 @@ int main()
 
 	constexpr cu::Sphere<float> sphere(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
 	constexpr cu::Shape::Type type = sphere.GetType();
+
+	constexpr cu::Sphere<float> sphere2(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
+
+	auto result = cu::Collide<float>(sphere, sphere2);
 
 	return 0;
 }

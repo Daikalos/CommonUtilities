@@ -10,6 +10,22 @@
 
 namespace CommonUtilities::Traits
 {
+    namespace details
+    {
+        template<std::size_t Index, typename T, typename Tuple> requires (Index < std::tuple_size_v<Tuple>)
+        static constexpr std::size_t IndexInTupleImpl()
+        {
+            if constexpr (std::is_same_v<T, std::tuple_element_t<Index, Tuple>>)
+            {
+                return Index;
+            }
+            else
+            {
+                return IndexInTupleImpl<Index + 1, T, Tuple>();
+            }
+        }
+    }
+
     template <typename T>
     struct FunctionTraits : public FunctionTraits<decltype(&std::remove_reference_t<T>::operator())> {};
 
@@ -66,20 +82,4 @@ namespace CommonUtilities::Traits
     {
         static constexpr std::size_t value = details::IndexInTupleImpl<0, T, Tuple>();
     };
-
-    namespace details
-    {
-        template<std::size_t Index, typename T, typename Tuple> requires (Index < std::tuple_size_v<Tuple>)
-        static constexpr std::size_t IndexInTupleImpl()
-        {
-            if constexpr (std::is_same_v<T, std::tuple_element_t<Index, Tuple>>)
-            {
-                return Index;
-            }
-            else
-            {
-                return IndexInTupleImpl<Index + 1, T, Tuple>();
-            }
-        }
-    }
 }

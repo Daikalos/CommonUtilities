@@ -143,7 +143,7 @@ namespace CommonUtilities
 		/// ry |-X-|-X-|---|---|-X-|---|---|
 		/// 
 		template<typename T>
-		inline static std::array<std::function<CollisionResult<T>(const Shape&, const Shape&)>,
+		inline static std::array<CollisionResult<T>(*)(const Shape&, const Shape&),
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
 		{
 			// # aabb			# sphere			# line				# line volume		# plane				# plane volume		# ray
@@ -205,7 +205,7 @@ namespace CommonUtilities
 		Vector3<T> secondContact = aSecondSphere.GetCenter() - normal * aSecondSphere.GetRadius();
 
 		result.intersection = 0.5f * (firstContact + secondContact);
-		result.normal		= normal;
+		result.normal		= (normal == Vector3<T>()) ? Vector3<T>(1, 0, 0) : normal;
 		result.penetration	= -Vector3<T>::Direction(firstContact, secondContact).Dot(normal);
 		result.collided		= true;
 
@@ -378,12 +378,27 @@ namespace CommonUtilities
 
 		if (aAABB3D.IsInside(aRay.GetOrigin()))
 		{
-			// TODO: handle case when inside
+			const T x = static_cast<T>(std::abs(aRay.GetDirection().x));
+			const T y = static_cast<T>(std::abs(aRay.GetDirection().y));
+			const T z = static_cast<T>(std::abs(aRay.GetDirection().z));
+
+			if (x > y && x > z)
+			{
+				result.normal = Vector3<T>(-Sign(x), 0, 0);
+			}
+			else if (y > x && y > z)
+			{
+				result.normal = Vector3<T>(0, -Sign(y), 0);
+			}
+			else
+			{
+				result.normal = Vector3<T>(0, 0, -Sign(z));
+			}
+
 
 			result.intersection = aRay.GetOrigin();
-			result.normal		= -Sign(Max(aRay.GetDirection().x, aRay.GetDirection().y, aRay.GetDirection().z));
-			result.penetration	= 0.0f;
-			result.collided		= true;
+			result.penetration = 0.0f;
+			result.collided = true;
 
 			return result;
 		}

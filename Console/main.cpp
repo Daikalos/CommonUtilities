@@ -64,6 +64,7 @@ int main()
 	stateStack.RegisterState<TestState>("hello");
 	stateStack.Push("hello");
 	stateStack.ApplyPendingChanges();
+	const std::string& id = stateStack.GetStateByID("hello")->GetID();
 
 	cu::StateMachine<std::string> stateMachine;
 	stateMachine.AddState<TestState2>("hey");

@@ -71,6 +71,9 @@ namespace CommonUtilities
 		NODISC virtual auto GetState(std::size_t aIndex) const -> const State&;
 		NODISC virtual auto GetState(std::size_t aIndex) -> State&;
 
+		NODISC virtual auto GetStateByID(const IDType& aStateID) const -> const State*;
+		NODISC virtual auto GetStateByID(const IDType& aStateID) -> State*;
+
 		NODISC std::size_t Count() const noexcept;
 		NODISC bool IsEmpty() const noexcept;
 
@@ -111,7 +114,8 @@ namespace CommonUtilities
 			requires std::constructible_from<S, const IDType&, StateStack&, Args...>
 		void RegisterState(const IDType& aStateID, Args&&... someArgs)
 		{
-			myFactory[aStateID] = [this, &aStateID, ...args = std::forward<Args>(someArgs)]
+			// we must copy state id, in the case that it may be destroyed later
+			myFactory[aStateID] = [this, aStateID, ...args = std::forward<Args>(someArgs)]
 			{
 				return std::make_unique<S>(aStateID, *this, args...);
 			};
@@ -204,6 +208,28 @@ namespace CommonUtilities
 	inline auto StateStack<IDType, Hash>::GetState(std::size_t aIndex) -> State&
 	{
 		return *myStack[aIndex];
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<IDType, Hash>::GetStateByID(const IDType& aStateID) const -> const State*
+	{
+		auto it = std::find_if(myStack.begin(), myStack.end(),
+			[&aStateID](const StatePtr& aPtr)
+			{
+				return aPtr->GetID() == aStateID;
+			});
+
+		if (it == myStack.end())
+		{
+			return nullptr;
+		}
+
+		return it->get();
+	}
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<IDType, Hash>::GetStateByID(const IDType& aStateID) -> State*
+	{
+		return const_cast<State*>(std::as_const(*this).GetStateByID(aStateID));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

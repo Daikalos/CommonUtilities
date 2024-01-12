@@ -2,6 +2,7 @@
 
 #include <random>
 #include <type_traits>
+#include <numeric>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>

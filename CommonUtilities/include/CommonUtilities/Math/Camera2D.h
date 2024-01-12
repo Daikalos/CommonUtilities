@@ -14,7 +14,7 @@ namespace CommonUtilities
 	{
 	public:
 		Camera2D();
-		virtual ~Camera2D() = 0; // camera must be specialized
+		virtual ~Camera2D() = default; 
 
 		NODISC const Vector2f& GetPosition() const noexcept;
 		NODISC const Vector2f& GetScale() const noexcept;

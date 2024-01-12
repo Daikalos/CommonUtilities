@@ -9,6 +9,7 @@
 #include "Vector4.hpp"
 
 #include <CommonUtilities/Config.h>
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
 namespace CommonUtilities
 {
@@ -67,7 +68,7 @@ namespace CommonUtilities
 
 		NODISC CONSTEXPR static auto CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
-		NODISC CONSTEXPR static auto CreatePerspective(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreatePerspective(T aFOVRadians, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -388,17 +389,27 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	CONSTEXPR auto Matrix4x4<T>::CreatePerspective(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreatePerspective(T aHorizontalFOV, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
 	{
-		float xScale = 1.0f / std::tan((float)aFov / 2.0f);
-		float yScale = xScale * aAspectRatio;
+		assert((float)aNearClip < (float)aFarClip);
+		assert((float)aNearClip >= 0.00000000000001f);
+
+		const float hFOVRad = (float)aHorizontalFOV * DEG2RAD;
+		const float hFOVTan = std::tan(hFOVRad / 2.0f);
+
+		const float vFOVRad = 2.0f * std::atan(hFOVTan * (float)aAspectRatio);
+
+		const float xScale = 1.0f / hFOVTan;
+		const float yScale = 1.0f / std::tan(vFoVRad / 2.0f);
+
+		const float Q = aFarClip / (aFarClip - aNearClip);
 
 		return Matrix4x4
 		{
-			xScale, 0,		0,													0,
-			0,		yScale,	0,													0,
-			0,		0,		aFarClip / (aFarClip - aNearClip),					1,
-			0,		0,		(-aNearClip * aFarClip) / (aFarClip - aNearClip),	0
+			xScale, 0,		0,				0,
+			0,		yScale,	0,				0,
+			0,		0,		Q,				1.0f / Q,
+			0,		0,		-Q * aNearClip,	0
 		};
 	}
 

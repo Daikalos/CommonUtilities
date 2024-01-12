@@ -155,6 +155,7 @@
     <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Math\Camera2D.h" />
+    <ClInclude Include="include\CommonUtilities\Math\Camera3D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
@@ -222,6 +223,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\Math\Camera2D.cpp" />
+    <ClCompile Include="src\CommonUtilities\Math\Camera3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Relation2D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Relation3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Shape.cpp" />

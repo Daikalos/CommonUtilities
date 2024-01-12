@@ -65,7 +65,9 @@ namespace CommonUtilities
 		CONSTEXPR auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
 		CONSTEXPR auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
 
-		NODISC CONSTEXPR static auto CreateProjection(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreatePerspective(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -360,9 +362,35 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR auto Matrix4x4<T>::CreateProjection(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4
 	{
-		float xScale = T(1) / std::tan(aFov / T(2));
+		return Matrix4x4
+		{
+			T(2) / aWidth,	0,				0,				0,
+			0,				T(2) / aHeight, 0,				0,
+			0,				0,				T(1) / aDepth,	0,
+			0,				0,				0,				1
+		};
+	}
+	template<typename T>
+	CONSTEXPR auto Matrix4x4<T>::CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4
+	{
+		const T width	= (aRight - aLeft);
+		const T height	= (aBottom - aTop);
+		const T depth	= (aFar - aNear);
+
+		return Matrix4x4
+		{
+			T(2) / width,				0,							0,							0,
+			0,							T(2) / height,				0,							0,
+			0,							0,							T(1) / depth,				0,
+			-(aRight + aLeft) / width,	-(aBottom + aTop) / height, -aNear / depth,				1
+		};
+	}
+	template<typename T>
+	CONSTEXPR auto Matrix4x4<T>::CreatePerspective(T aFov, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
+	{
+		float xScale = 1.0f / std::tan((float)aFov / 2.0f);
 		float yScale = xScale * aAspectRatio;
 
 		return Matrix4x4
@@ -373,6 +401,7 @@ namespace CommonUtilities
 			0,		0,		(-aNearClip * aFarClip) / (aFarClip - aNearClip),	0
 		};
 	}
+
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4
 	{

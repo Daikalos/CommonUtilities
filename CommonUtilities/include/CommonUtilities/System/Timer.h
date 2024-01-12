@@ -3,16 +3,21 @@
 #include <chrono>
 #include <type_traits>
 
-#include <CommonUtilities/Utility/NonCopyable.h>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
-	class COMMON_UTILITIES_API Timer : private NonCopyable
+	class COMMON_UTILITIES_API Timer
 	{
 	public:
 		Timer();
 		~Timer();
+
+		Timer(const Timer&);
+		Timer(Timer&&);
+
+		Timer& operator=(const Timer&);
+		Timer& operator=(Timer&&);
 
 		NODISC float GetDT() const noexcept;
 		NODISC float GetRealDT() const noexcept;

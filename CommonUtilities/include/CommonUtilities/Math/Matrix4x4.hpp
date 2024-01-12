@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cmath>
+#include <cassert>
+#include <stdexcept>
 
 #include "Vector3.hpp"
 #include "Vector4.hpp"
@@ -219,6 +221,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix4x4<T>::Inverse() const -> Matrix4x4
 	{
+		throw std::runtime_error("Not yet implemented");
 		return Matrix4x4();
 	}
 	template<typename T>

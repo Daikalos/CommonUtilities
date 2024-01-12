@@ -4,9 +4,8 @@
 
 namespace CommonUtilities
 {
-	/// <summary>
-	/// Wrapper around event id to better manage events lifetime
-	/// </summary>
+	/// Wrapper around event id to better manage the events lifetime
+	/// 
 	class EventID
 	{
 	public:

@@ -133,9 +133,9 @@ namespace CommonUtilities
 			return SphereRay<T>(aS2, aS1);
 		}
 
-		///		ab	sh	li	lv	pl	pv	ry 
+		///		ab	sp	li	lv	pl	pv	ry 
 		/// ab |-X-|-X-|---|---|---|---|-X-|
-		/// sh |-X-|-X-|---|---|---|---|-X-|
+		/// sp |-X-|-X-|---|---|---|---|-X-|
 		/// li |---|---|---|---|---|---|---|
 		/// lv |---|---|---|---|---|---|---|
 		/// pl |---|---|---|---|---|---|-X-|
@@ -170,8 +170,15 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
 	{
-		const auto collisionFuncPtr = details::globalCollisionMatrix<T>[static_cast<int>(aSecondShape.GetType()) +
-			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count)];
+		const int collisionIndex = static_cast<int>(aSecondShape.GetType()) +
+			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count);
+
+		if (collisionIndex < 0 || collisionIndex >= details::globalCollisionMatrix<T>.size())
+		{
+			throw std::out_of_range("Collision for these two shapes is out of range of the matrix!");
+		}
+
+		const auto collisionFuncPtr = details::globalCollisionMatrix<T>[collisionIndex];
 
 		if (collisionFuncPtr == nullptr)
 		{
@@ -384,15 +391,15 @@ namespace CommonUtilities
 
 			if (x > y && x > z)
 			{
-				result.normal = Vector3<T>(-Sign(x), 0, 0);
+				result.normal = Vector3<T>(-Sign<T>(x), 0, 0);
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = Vector3<T>(0, -Sign(y), 0);
+				result.normal = Vector3<T>(0, -Sign<T>(y), 0);
 			}
 			else
 			{
-				result.normal = Vector3<T>(0, 0, -Sign(z));
+				result.normal = Vector3<T>(0, 0, -Sign<T>(z));
 			}
 
 

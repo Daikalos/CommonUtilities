@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <cassert>
+#include <stdexcept>
 
 #include "Vector2.hpp"
 #include "Vector3.hpp"
@@ -220,6 +221,7 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR auto Matrix3x3<T>::Inverse() const -> Matrix3x3
 	{
+		throw std::runtime_error("Not yet implemented");
 		return Matrix3x3();
 	}
 	template<typename T>

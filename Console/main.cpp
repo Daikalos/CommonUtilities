@@ -19,10 +19,53 @@
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>
 
-class TestState : public cu::StateStack<std::string>::State
+class MenuState : public cu::StateStack<std::string>::State
 {
 public:
 	using cu::StateStack<std::string>::State::State;
+
+private:
+
+};
+
+class MenuStack : public cu::StateStack<std::string>
+{
+public:
+	NODISC auto operator[](std::size_t aIndex) const -> const MenuState& override
+	{
+		return static_cast<const MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+	}
+	NODISC auto operator[](std::size_t aIndex) -> MenuState& override 
+	{
+		return static_cast<MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+	}
+
+	NODISC auto GetState(std::size_t aIndex) const -> const MenuState& override 
+	{
+		return static_cast<const MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+	}
+	NODISC auto GetState(std::size_t aIndex) -> MenuState& override 
+	{
+		return static_cast<MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+	}
+
+	NODISC auto GetStateByID(const std::string& aStateID) const -> const MenuState* override 
+	{
+		return static_cast<const MenuState*>(cu::StateStack<std::string>::GetStateByID(aStateID));
+	}
+	NODISC auto GetStateByID(const std::string& aStateID) -> MenuState* override 
+	{ 
+		return static_cast<MenuState*>(cu::StateStack<std::string>::GetStateByID(aStateID)); 
+	}
+
+private:
+
+};
+
+class TestState : public MenuState
+{
+public:
+	using MenuState::MenuState;
 
 	bool Update(cu::Timer& aTimer) override
 	{
@@ -60,11 +103,11 @@ int main()
 
 	std::cout << test1.x << test2.x;
 
-	cu::StateStack<std::string> stateStack;
+	MenuStack stateStack;
 	stateStack.RegisterState<TestState>("hello");
 	stateStack.Push("hello");
 	stateStack.ApplyPendingChanges();
-	const std::string& id = stateStack.GetStateByID("hello")->GetID();
+	MenuState* menuState = stateStack.GetStateByID("hello");
 
 	cu::StateMachine<std::string> stateMachine;
 	stateMachine.AddState<TestState2>("hey");

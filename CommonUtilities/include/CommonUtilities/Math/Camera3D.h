@@ -20,10 +20,9 @@ namespace CommonUtilities
 		virtual ~Camera3D() = default;
 
 		NODISC const Transform3D& GetTransform() const noexcept;
+		NODISC const Mat4f& GetProjection() const noexcept;
 		NODISC const Vector3f& GetPosition() const noexcept;
 		NODISC const Vector3f& GetRotation() const noexcept;
-
-		NODISC virtual const Mat4f& GetProjection() const;
 
 		NODISC std::tuple<float, float> GetProjectionPlanes() const;
 

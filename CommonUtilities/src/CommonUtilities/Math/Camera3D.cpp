@@ -9,9 +9,9 @@ Camera3D::Camera3D() = default;
 Camera3D::~Camera3D() = default;
 
 const Transform3D& Camera3D::GetTransform() const noexcept	{ return myTransform; }
+const Mat4f& Camera3D::GetProjection() const				{ return myProjectionMatrix; }
 const Vector3f& Camera3D::GetPosition() const noexcept		{ return myTransform.GetPosition(); }
 const Vector3f& Camera3D::GetRotation() const noexcept		{ return myTransform.GetRotation(); }
-const Mat4f& Camera3D::GetProjection() const				{ return myProjectionMatrix; }
 
 std::tuple<float, float> Camera3D::GetProjectionPlanes() const
 {

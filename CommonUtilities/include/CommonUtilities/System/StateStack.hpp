@@ -54,8 +54,8 @@ namespace CommonUtilities
 			virtual bool Update(Timer& aTimer) = 0;
 
 		protected:
-			NODISC auto GetStack() const -> const StateStack&;
-			NODISC auto GetStack() -> StateStack&;
+			NODISC virtual auto GetStack() const -> const StateStack&;
+			NODISC virtual auto GetStack() -> StateStack&;
 
 		private:
 			IDType		myID;
@@ -65,11 +65,11 @@ namespace CommonUtilities
 		StateStack();
 		virtual ~StateStack() = default;
 
-		NODISC auto operator[](std::size_t aIndex) const -> const State&;
-		NODISC auto operator[](std::size_t aIndex) -> State&;
+		NODISC virtual auto operator[](std::size_t aIndex) const -> const State&;
+		NODISC virtual auto operator[](std::size_t aIndex) -> State&;
 
-		NODISC auto GetState(std::size_t aIndex) const -> const State&;
-		NODISC auto GetState(std::size_t aIndex) -> State&;
+		NODISC virtual auto GetState(std::size_t aIndex) const -> const State&;
+		NODISC virtual auto GetState(std::size_t aIndex) -> State&;
 
 		NODISC std::size_t Count() const noexcept;
 		NODISC bool IsEmpty() const noexcept;

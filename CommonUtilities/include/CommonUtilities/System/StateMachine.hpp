@@ -38,8 +38,8 @@ namespace CommonUtilities
 			virtual void Exit() = 0;
 
 		protected:
-			NODISC auto GetMachine() const -> const StateMachine&;
-			NODISC auto GetMachine() -> StateMachine&;
+			NODISC virtual auto GetMachine() const -> const StateMachine&;
+			NODISC virtual auto GetMachine() -> StateMachine&;
 
 		private:
 			IDType			myID;
@@ -49,11 +49,11 @@ namespace CommonUtilities
 		StateMachine();
 		virtual ~StateMachine() = default;
 
-		NODISC auto GetCurrentState() const -> const State&;
-		NODISC auto GetCurrentState() -> State&;
+		NODISC virtual auto GetCurrentState() const -> const State&;
+		NODISC virtual auto GetCurrentState() -> State&;
 
-		NODISC auto GetState(const IDType& aStateID) const -> const State&;
-		NODISC auto GetState(const IDType& aStateID) -> State&;
+		NODISC virtual auto GetState(const IDType& aStateID) const -> const State&;
+		NODISC virtual auto GetState(const IDType& aStateID) -> State&;
 
 		virtual bool TransitionTo(const IDType& aStateID);
 
@@ -64,7 +64,7 @@ namespace CommonUtilities
 			myStates[aStateID] = std::make_unique<S>(aStateID, *this, std::forward<Args>(someArgs)...);
 		}
 
-		void Update(Timer& aTimer);
+		virtual void Update(Timer& aTimer);
 
 	protected:
 		using StatePtr	= typename State::Ptr;

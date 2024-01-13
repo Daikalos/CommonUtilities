@@ -34,19 +34,12 @@ namespace CommonUtilities
 		CONSTEXPR void SetEnabled(bool aFlag) noexcept;
 
 	protected:
-		CONSTEXPR Binds(); // only allow derived classes to construct bind
-		CONSTEXPR ~Binds();
+		CONSTEXPR Binds() = default; // only allow derived classes to construct bind
+		CONSTEXPR ~Binds() = default;
 
 		std::unordered_map<Bind, Reg> myBinds;
 		bool myEnabled {true};
 	};
-
-	template<typename Bind, typename Reg>
-	CONSTEXPR Binds<Bind, Reg>::Binds() = default;
-
-	template<typename Bind, typename Reg>
-	CONSTEXPR Binds<Bind, Reg>::~Binds() = default;
-
 	template<typename Bind, typename Reg>
 	CONSTEXPR Reg& Binds<Bind, Reg>::operator[](const Bind& aBind)
 	{

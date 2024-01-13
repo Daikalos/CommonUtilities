@@ -22,13 +22,14 @@ namespace CommonUtilities
 		using const_pointer		= const T*;
 		using size_type			= std::size_t;
 
-		CONSTEXPR FreeVector();
-		CONSTEXPR ~FreeVector();
-		CONSTEXPR FreeVector(const FreeVector&);
-		CONSTEXPR FreeVector(FreeVector&&) noexcept;
+		CONSTEXPR FreeVector() = default;
+		CONSTEXPR ~FreeVector() = default;
 
-		CONSTEXPR auto operator=(const FreeVector&) -> FreeVector&;
-		CONSTEXPR auto operator=(FreeVector&&) noexcept -> FreeVector&;
+		CONSTEXPR FreeVector(const FreeVector&) = default;
+		CONSTEXPR FreeVector(FreeVector&&) noexcept = default;
+
+		CONSTEXPR auto operator=(const FreeVector&) -> FreeVector& = default;
+		CONSTEXPR auto operator=(FreeVector&&) noexcept -> FreeVector& = default;
 
 		NODISC CONSTEXPR auto operator[](size_type anIndex) -> reference;
 		NODISC CONSTEXPR auto operator[](size_type anIndex) const -> const_reference;
@@ -66,24 +67,6 @@ namespace CommonUtilities
 		std::int64_t	myFirstFree {-1};
 		size_type		myCount		{0};
 	};
-
-	template<class T>
-	CONSTEXPR FreeVector<T>::FreeVector() = default;
-
-	template<class T>
-	CONSTEXPR FreeVector<T>::~FreeVector() = default;
-
-	template<class T>
-	CONSTEXPR FreeVector<T>::FreeVector(const FreeVector&) = default;
-
-	template<class T>
-	CONSTEXPR FreeVector<T>::FreeVector(FreeVector&&) noexcept = default;
-
-	template<class T>
-	CONSTEXPR auto FreeVector<T>::operator=(const FreeVector&) -> FreeVector& = default;
-
-	template<class T>
-	CONSTEXPR auto FreeVector<T>::operator=(FreeVector&&) noexcept -> FreeVector& = default;
 
 	template<class T>
 	CONSTEXPR auto FreeVector<T>::operator[](size_type anIndex) -> reference

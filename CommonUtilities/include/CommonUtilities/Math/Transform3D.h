@@ -10,8 +10,8 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API Transform3D
 	{
 	public:
-		Transform3D();
-		virtual ~Transform3D();
+		Transform3D() = default;
+		virtual ~Transform3D() = default;
 
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale);
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation);
@@ -35,7 +35,7 @@ namespace CommonUtilities
 	protected:
 		Vector3f		myPosition;
 		Vector3f		myRotation; // TODO: switch to quaternion in the future
-		Vector3f		myScale;
+		Vector3f		myScale					{1.0f, 1.0f, 1.0f};
 		mutable Mat4f	myMatrix;
 		mutable Mat4f	myInverseMatrix;
 		mutable bool	myUpdateMatrix			{true};

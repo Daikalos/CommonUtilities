@@ -11,12 +11,12 @@ namespace CommonUtilities
 	class Sphere final : public Shape
 	{
 	public:
-		CONSTEXPR Sphere();
-		CONSTEXPR ~Sphere();
+		CONSTEXPR Sphere() = default;
+		CONSTEXPR ~Sphere() = default;
 
 		CONSTEXPR Sphere(const Vector3<T>& aCenter, T aRadius);
 
-		CONSTEXPR void InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius);
+		CONSTEXPR static Sphere<T> InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius);
 
 		NODISC CONSTEXPR const Vector3<T>& GetCenter() const noexcept;
 		NODISC CONSTEXPR T GetRadius() const noexcept;
@@ -36,12 +36,6 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	CONSTEXPR Sphere<T>::Sphere() = default;
-
-	template<typename T>
-	CONSTEXPR Sphere<T>::~Sphere() = default;
-
-	template<typename T>
 	CONSTEXPR Sphere<T>::Sphere(const Vector3<T>& aCenter, T aRadius)
 		: myCenter(aCenter), myRadius(aRadius), myRadiusSqr(aRadius * aRadius)
 	{
@@ -49,11 +43,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR void Sphere<T>::InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius)
+	CONSTEXPR Sphere<T> Sphere<T>::InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius)
 	{
-		myCenter	= aCenter;
-		myRadius	= aRadius;
-		myRadiusSqr = aRadius * aRadius;
+		return Sphere<T>(aCenter, aRadius);
 	}
 
 	template<typename T>

@@ -11,13 +11,13 @@ namespace CommonUtilities
 	class Ray final : public Shape
 	{
 	public:
-		CONSTEXPR Ray(); 
-		CONSTEXPR ~Ray();
+		CONSTEXPR Ray() = default;
+		CONSTEXPR ~Ray() = default;
 
 		CONSTEXPR Ray(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
 
-		CONSTEXPR void InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint);
-		CONSTEXPR void InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
+		CONSTEXPR static Ray<T> InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint);
+		CONSTEXPR static Ray<T> InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
 
 		NODISC CONSTEXPR const Vector3<T>& GetOrigin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetDirection() const noexcept;
@@ -33,28 +33,22 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	CONSTEXPR Ray<T>::Ray() = default;
-
-	template<typename T>
-	CONSTEXPR Ray<T>::~Ray() = default;
-
-	template<typename T>
 	CONSTEXPR Ray<T>::Ray(const Vector3<T>& aOrigin, const Vector3<T>& aDirection)
+		: myOrigin(aOrigin)
+		, myDirection(aDirection.GetNormalized()) // make sure it is normalized
 	{
-		InitWithOriginAndDirection(aOrigin, aDirection);
+
 	}
 
 	template<typename T>
-	CONSTEXPR void Ray<T>::InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint)
+	CONSTEXPR Ray<T> Ray<T>::InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint)
 	{
-		myOrigin = aOrigin;
-		myDirection = Vector3<T>::Direction(aOrigin, aPoint).GetNormalized();
+		return Ray<T>(aOrigin, Vector3<T>::Direction(aOrigin, aPoint));
 	}
 	template<typename T>
-	CONSTEXPR void Ray<T>::InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection)
+	CONSTEXPR Ray<T> Ray<T>::InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection)
 	{
-		myOrigin = aOrigin;
-		myDirection = aDirection.GetNormalized(); // make sure it is normalized
+		return Ray<T>(aOrigin, aDirection);
 	}
 
 	template<typename T>

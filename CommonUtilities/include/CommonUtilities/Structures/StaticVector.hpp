@@ -113,7 +113,7 @@ namespace CommonUtilities
 		static constexpr bool NoThrowMoveAssignment = (std::is_nothrow_destructible_v<T> && NoThrowMoveConstructableAndMoveAssignable) ||
 			((!NoThrowMoveConstructableAndMoveAssignable || !MoveConstructableAndMoveAssignable) && NoThrowCopyConstructableAndCopyAssignable);
 
-		constexpr StaticVector();
+		constexpr StaticVector() = default;
 		constexpr ~StaticVector() noexcept(std::is_nothrow_destructible_v<T>);
 
 		constexpr StaticVector(std::size_t aSize) requires(std::is_default_constructible_v<T>);
@@ -234,9 +234,6 @@ namespace CommonUtilities
 		alignas(T) std::byte myData[sizeof(T) * Capacity]{};
 		size_type mySize {0};
 	};
-
-	template<typename T, std::size_t Capacity>
-	constexpr StaticVector<T, Capacity>::StaticVector() = default;
 
 	template<typename T, std::size_t Capacity>
 	constexpr StaticVector<T, Capacity>::~StaticVector() noexcept(std::is_nothrow_destructible_v<T>)

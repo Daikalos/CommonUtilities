@@ -17,8 +17,8 @@ namespace CommonUtilities
 	class Matrix4x4
 	{
 	public:
-		CONSTEXPR Matrix4x4();
-		CONSTEXPR ~Matrix4x4();
+		CONSTEXPR Matrix4x4() = default;
+		CONSTEXPR ~Matrix4x4() = default;
 
 		CONSTEXPR Matrix4x4(
 			T a00, T a10, T a20, T a30,
@@ -90,12 +90,6 @@ namespace CommonUtilities
 			0, 0, 0, 1
 		};
 	};
-
-	template<typename T>
-	CONSTEXPR Matrix4x4<T>::Matrix4x4() = default;
-
-	template<typename T>
-	CONSTEXPR Matrix4x4<T>::~Matrix4x4() = default;
 
 	template<typename T>
 	CONSTEXPR Matrix4x4<T>::Matrix4x4(

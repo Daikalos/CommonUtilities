@@ -2,10 +2,6 @@
 
 using namespace CommonUtilities;
 
-Camera2D::Camera2D() = default;
-
-Camera2D::~Camera2D() = default;
-
 const Vector2f& Camera2D::GetPosition() const noexcept	{ return myPosition; }
 const Vector2f& Camera2D::GetScale() const noexcept		{ return myScale; }
 const Vector2f& Camera2D::GetSize() const noexcept		{ return mySize; }

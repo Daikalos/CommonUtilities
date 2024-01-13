@@ -9,10 +9,6 @@ Relation3D::Relation3D(const Transform3D& aTransform) : Transform3D(aTransform)
 
 }
 
-Relation3D::Relation3D() = default;
-
-Relation3D::~Relation3D() = default;
-
 bool Relation3D::HasParent() const noexcept
 {
 	return !myParent.expired();

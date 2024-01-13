@@ -13,13 +13,13 @@ namespace CommonUtilities
 	class Vector4
 	{
 	public:
-		T x;
-		T y;
-		T z;
-		T w;
+		T x{};
+		T y{};
+		T z{};
+		T w{};
 
-		CONSTEXPR Vector4();
-		CONSTEXPR ~Vector4();
+		CONSTEXPR Vector4() = default;
+		CONSTEXPR ~Vector4() = default;
 
 		CONSTEXPR Vector4(T aX, T aY, T aZ, T aW);
 
@@ -88,13 +88,6 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR T Dot(const Vector4& aVector) const;
 	};
-
-	template<typename T>
-	CONSTEXPR Vector4<T>::Vector4()
-		: x(), y(), z(), w() {}
-
-	template<typename T>
-	CONSTEXPR Vector4<T>::~Vector4() = default;
 
 	template<typename T>
 	CONSTEXPR Vector4<T>::Vector4(T aX, T aY, T aZ, T aW)

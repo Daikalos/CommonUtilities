@@ -28,6 +28,9 @@ namespace CommonUtilities
 	///	ButtonEvent is small container class for mapping functions to individual key events. This was created to 
 	/// have the same lifetime as the provided functions have in order to prevent easy-to-miss UB.
 	/// 
+	/// \param T: Type of input to read (e.g., keyboard, mouse)
+	/// \param Args: Optional arguments that are passed to function when called
+	/// 
 	template<class T, typename... Args> requires HasButtonInput<T>
 	class ButtonEvent final
 	{
@@ -43,6 +46,8 @@ namespace CommonUtilities
 		};
 
 		ButtonEvent() = default;
+		~ButtonEvent() = default;
+
 		ButtonEvent(const T& input);
 
 		ButtonEvent(const ButtonEvent& aOther);

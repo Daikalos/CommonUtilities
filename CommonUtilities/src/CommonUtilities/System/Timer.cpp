@@ -9,14 +9,6 @@ Timer::Timer() : myReferencePoint(ClockImpl::now())
 
 }
 
-Timer::~Timer() = default;
-
-Timer::Timer(const Timer&) = default;
-Timer::Timer(Timer&&) = default;
-
-Timer& Timer::operator=(const Timer&) = default;
-Timer& Timer::operator=(Timer&&) = default;
-
 float Timer::GetDT() const noexcept					{ return myDeltaTime; }
 float Timer::GetRealDT() const noexcept				{ return myRealDeltaTime; }
 float Timer::GetFixedDT() const noexcept			{ return myFixedDeltaTime; }

@@ -2,13 +2,6 @@
 
 using namespace CommonUtilities;
 
-Transform2D::Transform2D() : Transform2D(Vector2f(), 0.0f, Vector2f(1.0f, 1.0f))
-{
-
-}
-
-Transform2D::~Transform2D() = default;
-
 Transform2D::Transform2D(const Vector2f& aPosition, float aRotation, const Vector2f& aScale)
 	: myPosition(aPosition)
 	, myRotation(aRotation)

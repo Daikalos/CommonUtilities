@@ -24,8 +24,8 @@ namespace CommonUtilities
 	public:
 		using HandlerType = EventHandler<Args...>;
 
-		Event();
-		~Event();
+		Event() = default;
+		~Event() = default;
 
 		Event(const Event& aOther);
 		Event(Event&& aOther);
@@ -66,12 +66,6 @@ namespace CommonUtilities
 		HandlerList	myHandlers;
 		mutable std::shared_mutex myMutex;
 	};
-
-	template<typename... Args>
-	inline Event<Args...>::Event() = default;
-
-	template<typename... Args>
-	inline Event<Args...>::~Event() = default;
 
 	template<typename... Args>
 	inline Event<Args...>::Event(const Event& aOther)

@@ -11,8 +11,10 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
+		MouseBindable() = default;
+		~MouseBindable() = default;
+
 		explicit MouseBindable(const MouseInput& aMouse);
-		~MouseBindable();
 
 		NODISC const MouseInput& GetMouse() const;
 		NODISC MouseInput& GetMouse();
@@ -28,9 +30,6 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline MouseBindable<Bind>::MouseBindable(const MouseInput& aMouse)
 		: myMouse(&aMouse) { }
-
-	template<typename Bind>
-	inline MouseBindable<Bind>::~MouseBindable() = default;
 
 	template<typename Bind>
 	inline const MouseInput& MouseBindable<Bind>::GetMouse() const

@@ -26,7 +26,10 @@ namespace CommonUtilities
 		using Parent	= Ref;
 		using Children	= std::vector<Ref>;
 
-		~Relation3D();
+		~Relation3D() = default;
+
+		Relation3D& operator=(const Relation3D&) = default;
+		Relation3D& operator=(Relation3D&&) noexcept = default;
 
 		/// Creates a shared pointer of Relation3D.
 		/// 
@@ -79,7 +82,11 @@ namespace CommonUtilities
 	private:
 		using Transform3D::Transform3D; // bring its constructors into scope
 
-		Relation3D(); // constructor is hidden to prevent wrong usage
+		Relation3D() = default; // constructor is hidden to prevent wrong usage
+		
+		Relation3D(const Relation3D&) = default;
+		Relation3D(Relation3D&&) noexcept = default;
+
 		Relation3D(const Transform3D& aTransform);
 
 		void UpdateTransform() const;

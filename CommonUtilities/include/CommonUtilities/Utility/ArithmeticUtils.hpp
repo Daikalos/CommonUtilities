@@ -25,25 +25,25 @@ namespace CommonUtilities
 	template<IsFloatingPoint T = float>
 	CONSTEXPR T RAD2DEG_V = T{180.0} / PI_V<T>;
 
-	inline constexpr float PI				= PI_V<float>;
-	inline constexpr float PI_2				= PI_2_V<float>;
-	inline constexpr float PI_4				= PI_4_V<float>;
+	inline constexpr float			PI			= PI_V<float>;
+	inline constexpr float			PI_2		= PI_2_V<float>;
+	inline constexpr float			PI_4		= PI_4_V<float>;
 
-	inline constexpr double PI_D			= PI_V<double>;
-	inline constexpr double PI_2_D			= PI_2_V<double>;
-	inline constexpr double PI_4_D			= PI_4_V<double>;
+	inline constexpr double			PI_D		= PI_V<double>;
+	inline constexpr double			PI_2_D		= PI_2_V<double>;
+	inline constexpr double			PI_4_D		= PI_4_V<double>;
 
-	inline constexpr long double PI_LD		= PI_V<long double>;
-	inline constexpr long double PI_2_LD	= PI_2_V<long double>;
-	inline constexpr long double PI_4_LD	= PI_4_V<long double>;
+	inline constexpr long double	PI_LD		= PI_V<long double>;
+	inline constexpr long double	PI_2_LD		= PI_2_V<long double>;
+	inline constexpr long double	PI_4_LD		= PI_4_V<long double>;
 
-	inline constexpr float DEG2RAD			= DEG2RAD_V<float>;
-	inline constexpr float DEG2RAD_D		= DEG2RAD_V<double>;
-	inline constexpr float DEG2RAD_LD		= DEG2RAD_V<long double>;
+	inline constexpr float			DEG2RAD		= DEG2RAD_V<float>;
+	inline constexpr double			DEG2RAD_D	= DEG2RAD_V<double>;
+	inline constexpr long double	DEG2RAD_LD	= DEG2RAD_V<long double>;
 
-	inline constexpr float RAD2DEG			= RAD2DEG_V<float>;
-	inline constexpr float RAD2DEG_D		= RAD2DEG_V<double>;
-	inline constexpr float RAD2DEG_LD		= RAD2DEG_V<long double>;
+	inline constexpr float			RAD2DEG		= RAD2DEG_V<float>;
+	inline constexpr double			RAD2DEG_D	= RAD2DEG_V<double>;
+	inline constexpr long double	RAD2DEG_LD	= RAD2DEG_V<long double>;
 
 	template<IsFloatingPoint T>
 	NODISC CONSTEXPR T ToRadians(T aDegrees)

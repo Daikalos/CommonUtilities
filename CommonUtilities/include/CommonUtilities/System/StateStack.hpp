@@ -62,7 +62,7 @@ namespace CommonUtilities
 			StateStack*	myStateStack;
 		};
 
-		StateStack();
+		StateStack() = default;
 		virtual ~StateStack() = default;
 
 		NODISC virtual auto operator[](std::size_t aIndex) const -> const State&;
@@ -177,15 +177,6 @@ namespace CommonUtilities
 	inline auto StateStack<IDType, Hash>::State::GetStack() -> StateStack&
 	{
 		return *myStateStack;
-	}
-
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
-	inline StateStack<IDType, Hash>::StateStack()
-		: myStack()
-		, myFactory()
-		, myPendingList()
-	{
-
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

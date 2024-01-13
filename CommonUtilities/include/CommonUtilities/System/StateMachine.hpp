@@ -46,7 +46,7 @@ namespace CommonUtilities
 			StateMachine*	myStateMachine;
 		};
 
-		StateMachine();
+		StateMachine() = default;
 		virtual ~StateMachine() = default;
 
 		NODISC virtual auto GetCurrentState() const -> const State&;
@@ -71,7 +71,7 @@ namespace CommonUtilities
 		using StateMap	= std::unordered_map<IDType, StatePtr, Hash>;
 
 		StateMap	myStates;
-		State*		myCurrentState;
+		State*		myCurrentState {nullptr};
 	};
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
@@ -97,10 +97,6 @@ namespace CommonUtilities
 	{
 		return *myStateMachine;
 	}
-
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
-	inline StateMachine<IDType, Hash>::StateMachine()
-		: myStates(), myCurrentState(nullptr) { }
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetCurrentState() const -> const State&

@@ -2,10 +2,6 @@
 
 using namespace CommonUtilities;
 
-KeyboardInput::KeyboardInput() = default;
-
-KeyboardInput::~KeyboardInput() = default;
-
 bool KeyboardInput::IsHeld(ButtonType aKey) const
 {
 	return GetEnabled() && myCurrentState[aKey];

@@ -9,10 +9,6 @@
 
 using namespace CommonUtilities;
 
-MouseCursor::MouseCursor() = default;
-
-MouseCursor::~MouseCursor() = default;
-
 MouseCursor::MouseCursor(HWND aHandle)
 {
 	SetHandle(aHandle);

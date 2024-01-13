@@ -13,7 +13,7 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API Camera2D
 	{
 	public:
-		Camera2D();
+		Camera2D() = default;
 		virtual ~Camera2D() = default; 
 
 		NODISC const Vector2f& GetPosition() const noexcept;

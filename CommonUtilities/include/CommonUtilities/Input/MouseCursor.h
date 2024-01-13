@@ -9,8 +9,8 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API MouseCursor final : public InputHandler
 	{
 	public:
-		MouseCursor();
-		~MouseCursor();
+		MouseCursor() = default;
+		~MouseCursor() = default;
 
 		MouseCursor(HWND aHandle);
 

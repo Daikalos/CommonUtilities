@@ -13,8 +13,8 @@ namespace CommonUtilities
 	class LineVolume final : public Shape
 	{
 	public:
-		CONSTEXPR LineVolume();
-		CONSTEXPR ~LineVolume();
+		CONSTEXPR LineVolume() = default;
+		CONSTEXPR ~LineVolume() = default;
 
 		CONSTEXPR LineVolume(const std::vector<Line<T>>& someLines);
 		CONSTEXPR LineVolume(std::vector<Line<T>>&& someLines);
@@ -43,12 +43,6 @@ namespace CommonUtilities
 	private:
 		std::vector<Line<T>> myLines;
 	};
-
-	template<typename T>
-	CONSTEXPR LineVolume<T>::LineVolume() = default;
-
-	template<typename T>
-	CONSTEXPR LineVolume<T>::~LineVolume() = default;
 
 	template<typename T>
 	CONSTEXPR LineVolume<T>::LineVolume(const std::vector<Line<T>>& someLines) 

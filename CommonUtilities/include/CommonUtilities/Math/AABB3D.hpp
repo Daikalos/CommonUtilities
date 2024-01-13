@@ -13,13 +13,13 @@ namespace CommonUtilities
 	class AABB3D final : public Shape
 	{
 	public:
-		CONSTEXPR AABB3D();
-		CONSTEXPR ~AABB3D();
+		CONSTEXPR AABB3D() = default;
+		CONSTEXPR ~AABB3D() = default;
 
 		CONSTEXPR AABB3D(const Vector3<T>& aMin, const Vector3<T>& aMax);
 
-		CONSTEXPR void InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
-		CONSTEXPR void InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
+		CONSTEXPR static AABB3D InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
+		CONSTEXPR static AABB3D InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
 
 		NODISC CONSTEXPR const Vector3<T>& GetMin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetMax() const noexcept;
@@ -41,33 +41,24 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	CONSTEXPR AABB3D<T>::AABB3D() = default;
-
-	template<typename T>
-	CONSTEXPR AABB3D<T>::~AABB3D() = default;
-
-	template<typename T>
 	CONSTEXPR AABB3D<T>::AABB3D(const Vector3<T>& aMin, const Vector3<T>& aMax)
+		: myMin((assert(aMin.x >= aMin.x && aMax.y >= aMin.y && "Maximum cannot be smaller than minimum"), aMin))
+		, myMax(aMax)
 	{
-		InitWithMinAndMax(aMin, aMax);
+
 	}
 
 	template<typename T>
-	CONSTEXPR void AABB3D<T>::InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax)
+	CONSTEXPR AABB3D<T> AABB3D<T>::InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax)
 	{
-		assert(myMax.x >= myMin.x && myMax.y >= myMin.y && "Maximum cannot be smaller than minimum");
-
-		myMin = aMin;
-		myMax = aMax;
+		return AABB3D<T>(aMin, aMax);
 	}
 
 	template<typename T>
-	CONSTEXPR void AABB3D<T>::InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize)
+	CONSTEXPR AABB3D<T> AABB3D<T>::InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize)
 	{
 		const Vector3<T> extends = aSize / 2.0f;
-
-		myMax = aCenter + extends;
-		myMin = aCenter - extends;
+		return AABB3D<T>(aCenter - extends, aCenter + extends);
 	}
 
 	template<typename T>

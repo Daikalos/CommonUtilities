@@ -10,6 +10,7 @@
 #include <CommonUtilities/Math/Transform2D.h>
 #include <CommonUtilities/Math/Relation2D.h>
 #include <CommonUtilities/Math/Vector4.hpp>
+#include <CommonUtilities/Math/AABB3D.hpp>
 #include <CommonUtilities/System/Event.hpp>
 #include <CommonUtilities/Input/ButtonEvent.hpp>
 #include <CommonUtilities/Input/KeyboardInput.h>
@@ -95,6 +96,8 @@ public:
 
 int main()
 {
+	cu::AABB3D<float> aabb = cu::AABB3D<float>::InitWithCenterAndSize(cu::Vector3f::Zero, cu::Vector3f(1.0f, 1.0f, 1.0f));
+
 	cu::Vector2f test1(cu::Random(-5000.0f, 5000.0f), 2423.5453253f);
 	cu::Vector2f test2(cu::Random(-5000.0f, 5000.0f), 21331.423025f);
 
@@ -128,6 +131,8 @@ int main()
 	constexpr cu::Sphere<float> sphere2(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
 
 	auto result = cu::Collide<float>(sphere, sphere2);
+
+	cu::Vector2f test = cu::Vector2f::Up;
 
 	return 0;
 }

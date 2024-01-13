@@ -9,10 +9,6 @@ Relation2D::Relation2D(const Transform2D& aTransform) : Transform2D(aTransform)
 
 }
 
-Relation2D::Relation2D() = default;
-
-Relation2D::~Relation2D() = default;
-
 bool Relation2D::HasParent() const noexcept
 {
 	return !myParent.expired();

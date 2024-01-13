@@ -26,7 +26,10 @@ namespace CommonUtilities
 		using Parent	= Ref;
 		using Children	= std::vector<Ref>;
 
-		~Relation2D();
+		~Relation2D() = default;
+
+		Relation2D& operator=(const Relation2D&) = default;
+		Relation2D& operator=(Relation2D&&) noexcept = default;
 
 		/// Creates a shared pointer of Relation2D.
 		/// 
@@ -79,7 +82,11 @@ namespace CommonUtilities
 	private:
 		using Transform2D::Transform2D; // bring its constructors into scope
 
-		Relation2D(); // constructor is hidden to prevent wrong usage
+		Relation2D() = default; // constructor is hidden to prevent wrong usage
+
+		Relation2D(const Relation2D&) = default;
+		Relation2D(Relation2D&&) noexcept = default;
+
 		Relation2D(const Transform2D& aTransform);
 
 		void UpdateTransform() const;

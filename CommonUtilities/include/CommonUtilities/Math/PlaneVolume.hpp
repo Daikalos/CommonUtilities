@@ -13,8 +13,8 @@ namespace CommonUtilities
 	class PlaneVolume : public Shape
 	{
 	public:
-		CONSTEXPR PlaneVolume();
-		CONSTEXPR ~PlaneVolume();
+		CONSTEXPR PlaneVolume() = default;
+		CONSTEXPR ~PlaneVolume() = default;
 
 		CONSTEXPR PlaneVolume(const std::vector<Plane<T>>& somePlanes);
 		CONSTEXPR PlaneVolume(std::vector<Plane<T>>&& somePlanes);
@@ -43,12 +43,6 @@ namespace CommonUtilities
 	private:
 		std::vector<Plane<T>> myPlanes;
 	};
-
-	template<typename T>
-	CONSTEXPR PlaneVolume<T>::PlaneVolume() = default;
-
-	template<typename T>
-	CONSTEXPR PlaneVolume<T>::~PlaneVolume() = default;
 
 	template<typename T>
 	CONSTEXPR PlaneVolume<T>::PlaneVolume(const std::vector<Plane<T>>& somePlanes) 

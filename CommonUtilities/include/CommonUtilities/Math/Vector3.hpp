@@ -16,12 +16,12 @@ namespace CommonUtilities
 	class Vector3
 	{
 	public:
-		T x;
-		T y;
-		T z;
+		T x{};
+		T y{};
+		T z{};
 
-		CONSTEXPR Vector3();
-		CONSTEXPR ~Vector3();
+		CONSTEXPR Vector3() = default;
+		CONSTEXPR ~Vector3() = default;
 
 		CONSTEXPR Vector3(T aX, T aY, T aZ);
 
@@ -153,13 +153,6 @@ namespace CommonUtilities
 
 	template <typename T>
 	const Vector3<T> Vector3<T>::Back(static_cast<T>(0), static_cast<T>(0), static_cast<T>(-1));
-
-	template<typename T>
-	CONSTEXPR Vector3<T>::Vector3()
-		: x(), y(), z() {}
-
-	template<typename T>
-	CONSTEXPR Vector3<T>::~Vector3() = default;
 
 	template<typename T>
 	CONSTEXPR Vector3<T>::Vector3(T aX, T aY, T aZ)

@@ -13,8 +13,8 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Mouse::Button;
 
-		MouseInput();
-		~MouseInput();
+		MouseInput() = default;
+		~MouseInput() = default;
 
 		NODISC bool ScrollUp() const noexcept;
 		NODISC bool ScrollDown() const noexcept;

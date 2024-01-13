@@ -10,8 +10,8 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API Transform2D
 	{
 	public:
-		Transform2D();
-		virtual ~Transform2D();
+		Transform2D() = default;
+		virtual ~Transform2D() = default;
 
 		Transform2D(const Vector2f& aPosition, float aRotation, const Vector2f& aScale);
 		Transform2D(const Vector2f& aPosition, const Vector2f& aScale);
@@ -39,7 +39,7 @@ namespace CommonUtilities
 		Vector2f		myPosition;
 		Vector2f		myOrigin;
 		float			myRotation				{0.0f};
-		Vector2f		myScale;
+		Vector2f		myScale					{1.0f, 1.0f};
 		mutable Mat3f	myMatrix;
 		mutable Mat3f	myInverseMatrix;
 		mutable bool	myUpdateMatrix			{true};

@@ -25,11 +25,12 @@ namespace CommonUtilities
 		using reverse_iterator			= typename array_type::reverse_iterator;
 		using const_reverse_iterator	= typename array_type::const_reverse_iterator;
 
-		CONSTEXPR StackVector(); 
+		CONSTEXPR StackVector() = default;
+		CONSTEXPR ~StackVector() = default;
+
 		CONSTEXPR StackVector(const StackVector& aOther);
 		CONSTEXPR StackVector(StackVector&& aOther) noexcept;
 		CONSTEXPR StackVector(std::initializer_list<T> aInitList);
-		CONSTEXPR ~StackVector();
 
 		CONSTEXPR auto operator=(const StackVector& aOther) -> StackVector&;
 		CONSTEXPR auto operator=(StackVector&& aOther) noexcept -> StackVector&;
@@ -74,20 +75,12 @@ namespace CommonUtilities
 	private:
 		typedef std::make_signed_t<size_type> SignedType;
 
-		std::array<T, SIZE> myArray;
-		size_type mySize;
+		std::array<T, SIZE> myArray{};
+		size_type mySize {0};
 	};
 
 	template<typename T, std::size_t SIZE>
-	CONSTEXPR StackVector<T, SIZE>::StackVector()
-		: myArray(), mySize()
-	{
-
-	}
-
-	template<typename T, std::size_t SIZE>
 	CONSTEXPR StackVector<T, SIZE>::StackVector(const StackVector& aOther)
-		: StackVector()
 	{
 		for (; mySize < aOther.size(); ++mySize)
 		{
@@ -97,7 +90,6 @@ namespace CommonUtilities
 
 	template<typename T, std::size_t SIZE>
 	CONSTEXPR StackVector<T, SIZE>::StackVector(StackVector&& aOther) noexcept
-		: StackVector()
 	{
 		std::move(aOther.begin(), aOther.end(), begin());
 		mySize = aOther.mySize;
@@ -105,7 +97,6 @@ namespace CommonUtilities
 
 	template<typename T, std::size_t SIZE>
 	CONSTEXPR StackVector<T, SIZE>::StackVector(std::initializer_list<T> aInitList)
-		: StackVector()
 	{
 		assert(aInitList.size() <= SIZE && "Initializer list must be smaller than the maximum capacity!");
 
@@ -114,9 +105,6 @@ namespace CommonUtilities
 			myArray[mySize] = *(aInitList.begin() + mySize);
 		}
 	}
-
-	template<typename T, std::size_t SIZE>
-	CONSTEXPR StackVector<T, SIZE>::~StackVector() = default;
 
 	template<typename T, std::size_t SIZE>
 	CONSTEXPR auto StackVector<T, SIZE>::operator=(const StackVector& aOther) -> StackVector&

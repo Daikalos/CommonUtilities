@@ -11,14 +11,14 @@ namespace CommonUtilities
 	class Plane : public Shape
 	{
 	public:
-		CONSTEXPR Plane();
-		CONSTEXPR ~Plane();
+		CONSTEXPR Plane() = default;
+		CONSTEXPR ~Plane() = default;
 
-		CONSTEXPR Plane(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 		CONSTEXPR Plane(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
+		CONSTEXPR Plane(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 
-		CONSTEXPR void InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
-		CONSTEXPR void InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
+		CONSTEXPR static Plane<T> InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
+		CONSTEXPR static Plane<T> InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 
 		NODISC CONSTEXPR const Vector3<T>& GetOrigin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetNormal() const noexcept;
@@ -36,36 +36,28 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	CONSTEXPR Plane<T>::Plane() = default;
-	template<typename T>
-	CONSTEXPR Plane<T>::~Plane() = default;
+	CONSTEXPR Plane<T>::Plane(const Vector3<T>& aPoint, const Vector3<T>& aNormal)
+		: myOrigin(aPoint)
+		, myNormal(aNormal.GetNormalized()) // make sure is normalized
+	{
 
+	}
 	template<typename T>
 	CONSTEXPR Plane<T>::Plane(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2)
+		: Plane<T>(aPoint0, (aPoint1 - aPoint0).Cross(aPoint2 - aPoint0))
 	{
-		InitWith3Points(aPoint0, aPoint1, aPoint2);
-	}
-	template<typename T>
-	CONSTEXPR Plane<T>::Plane(const Vector3<T>& aPoint, const Vector3<T>& aNormal)
-	{
-		InitWithPointAndNormal(aPoint, aNormal);
+
 	}
 
 	template<typename T>
-	CONSTEXPR void Plane<T>::InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2)
+	CONSTEXPR Plane<T> Plane<T>::InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal)
 	{
-		myOrigin = aPoint0;
-
-		Vector3<T> originToPoint1 = Vector3<T>::Direction(myOrigin, aPoint1);
-		Vector3<T> originToPoint2 = Vector3<T>::Direction(myOrigin, aPoint2);
-
-		myNormal = originToPoint1.Cross(originToPoint2).GetNormalized();
+		return Plane<T>(aPoint, aNormal);
 	}
 	template<typename T>
-	CONSTEXPR void Plane<T>::InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal)
+	CONSTEXPR Plane<T> Plane<T>::InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2)
 	{
-		myOrigin = aPoint;
-		myNormal = aNormal.GetNormalized(); // make sure is normalized
+		return Plane<T>(aPoint0, aPoint1, aPoint2);
 	}
 
 	template<typename T>

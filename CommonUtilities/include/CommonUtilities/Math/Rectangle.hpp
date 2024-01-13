@@ -11,10 +11,10 @@ namespace CommonUtilities
 	class Rect
 	{
 	public:
-		T left, top, width, height;
+		T left{}, top{}, width{}, height{};
 
-		CONSTEXPR Rect();
-		CONSTEXPR ~Rect();
+		CONSTEXPR Rect() = default;
+		CONSTEXPR ~Rect() = default;
 
 		CONSTEXPR Rect(T aLeft, T aTop, T aWidth, T aHeight);
 
@@ -34,12 +34,6 @@ namespace CommonUtilities
 		NODISC CONSTEXPR bool Contains(T aX, T aY) const;
 		NODISC CONSTEXPR bool Contains(const Rect& aOther) const;
 	};
-
-	template<IsArithmetic T>
-	CONSTEXPR Rect<T>::Rect() = default;
-
-	template<IsArithmetic T>
-	CONSTEXPR Rect<T>::~Rect() = default;
 
 	template<IsArithmetic T>
 	CONSTEXPR Rect<T>::Rect(T aLeft, T aTop, T aWidth, T aHeight)

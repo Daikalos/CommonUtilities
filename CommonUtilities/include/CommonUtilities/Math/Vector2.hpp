@@ -16,11 +16,11 @@ namespace CommonUtilities
 	class Vector2
 	{
 	public:
-		T x;
-		T y;
+		T x{};
+		T y{};
 
-		CONSTEXPR Vector2();
-		CONSTEXPR ~Vector2();
+		CONSTEXPR Vector2() = default;
+		CONSTEXPR ~Vector2() = default;
 
 		CONSTEXPR Vector2(T aX, T aY);
 
@@ -138,13 +138,6 @@ namespace CommonUtilities
 
 	template <typename T>
 	const Vector2<T> Vector2<T>::Down(static_cast<T>(0), static_cast<T>(-1));
-
-	template<typename T>
-	CONSTEXPR Vector2<T>::Vector2()
-		: x(), y() {}
-
-	template<typename T>
-	CONSTEXPR Vector2<T>::~Vector2() = default;
 
 	template<typename T>
 	CONSTEXPR Vector2<T>::Vector2(T aX, T aY)

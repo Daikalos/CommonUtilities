@@ -19,8 +19,8 @@ namespace CommonUtilities
 	class Matrix3x3
 	{
 	public:
-		CONSTEXPR Matrix3x3();
-		CONSTEXPR ~Matrix3x3();
+		CONSTEXPR Matrix3x3() = default;
+		CONSTEXPR ~Matrix3x3() = default;
 
 		CONSTEXPR Matrix3x3(
 			T a00, T a10, T a20,
@@ -84,13 +84,6 @@ namespace CommonUtilities
 			0, 0, 1 
 		};
 	};
-
-
-	template<typename T>
-	CONSTEXPR Matrix3x3<T>::Matrix3x3() = default;
-
-	template<typename T>
-	CONSTEXPR Matrix3x3<T>::~Matrix3x3() = default;
 
 	template<typename T>
 	CONSTEXPR Matrix3x3<T>::Matrix3x3(

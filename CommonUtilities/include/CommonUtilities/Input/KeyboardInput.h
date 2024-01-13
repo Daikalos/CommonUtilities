@@ -13,8 +13,8 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Keyboard::Key;
 
-		KeyboardInput();
-		~KeyboardInput();
+		KeyboardInput() = default;
+		~KeyboardInput() = default;
 
 		NODISC bool IsHeld(ButtonType aKey) const;
 		NODISC bool IsPressed(ButtonType aKey) const;

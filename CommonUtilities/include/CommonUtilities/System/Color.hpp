@@ -17,8 +17,8 @@ namespace CommonUtilities
 		std::uint8_t b{0};
 		std::uint8_t a{255};
 
-		constexpr Color();
-		constexpr ~Color();
+		constexpr Color() = default;
+		constexpr ~Color() = default;
 
 		constexpr Color(std::uint8_t aRed, std::uint8_t aGreen, std::uint8_t aBlue, std::uint8_t aAlpha = 255);
 		constexpr explicit Color(std::uint32_t aColor);
@@ -38,10 +38,6 @@ namespace CommonUtilities
 		static const Color Cyan;        
 		static const Color Transparent; 
 	};
-
-	constexpr Color::Color() = default;
-
-	constexpr Color::~Color() = default;
 
 	constexpr Color::Color(std::uint8_t aRed, std::uint8_t aGreen, std::uint8_t aBlue, std::uint8_t aAlpha)
 		: r(aRed)

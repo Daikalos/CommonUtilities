@@ -16,7 +16,7 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API Camera3D
 	{
 	public:
-		Camera3D();
+		Camera3D() = default;
 		virtual ~Camera3D() = default;
 
 		NODISC const Transform3D& GetTransform() const noexcept;

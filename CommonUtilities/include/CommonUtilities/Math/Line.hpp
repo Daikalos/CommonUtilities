@@ -11,15 +11,16 @@ namespace CommonUtilities
 	class Line final : public Shape
 	{
 	public:
-		CONSTEXPR Line();
-		CONSTEXPR ~Line();
+		CONSTEXPR Line() = default;
+		CONSTEXPR ~Line() = default;
 
-		CONSTEXPR Line(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
+		CONSTEXPR Line(const Vector2<T>& aOrigin, const Vector2<T>& aDirection);
 
-		CONSTEXPR void InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
-		CONSTEXPR void InitWithPointAndDirection(const Vector2<T>& aPoint, const Vector2<T>& aDirection);
+		CONSTEXPR static Line InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
+		CONSTEXPR static Line InitWithPointAndDirection(const Vector2<T>& aOrigin, const Vector2<T>& aDirection);
 
-		NODISC CONSTEXPR const Vector2<T>& GetDirection() const;
+		NODISC CONSTEXPR const Vector2<T>& GetOrigin() const noexcept;
+		NODISC CONSTEXPR const Vector2<T>& GetDirection() const noexcept;
 		NODISC CONSTEXPR Vector2<T> GetNormal() const;
 
 		CONSTEXPR void SetOrigin(const Vector2<T>& aOrigin);
@@ -35,32 +36,31 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	CONSTEXPR Line<T>::Line() = default;
-
-	template<typename T>
-	CONSTEXPR Line<T>::~Line() = default;
-
-	template<typename T>
-	CONSTEXPR Line<T>::Line(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1)
+	CONSTEXPR Line<T>::Line(const Vector2<T>& aOrigin, const Vector2<T>& aDirection)
+		: myOrigin(aPoint0)
+		, myDirection(aDirection.GetNormalized()) // make sure it is normalized
 	{
-		InitWith2Points(aPoint0, aPoint1);
+
 	}
 
 	template<typename T>
-	CONSTEXPR void Line<T>::InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1)
+	CONSTEXPR Line<T> Line<T>::InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1)
 	{
-		myOrigin = aPoint0;
-		myDirection = Vector2<T>::Direction(aPoint0, aPoint1).GetNormalized();
+		return Line<T>(aPoint0, Vector2<T>::Direction(aPoint0, aPoint1));
 	}
 	template<typename T>
-	CONSTEXPR void Line<T>::InitWithPointAndDirection(const Vector2<T>& aPoint, const Vector2<T>& aDirection)
+	CONSTEXPR Line<T> Line<T>::InitWithPointAndDirection(const Vector2<T>& aOrigin, const Vector2<T>& aDirection)
 	{
-		myOrigin = aPoint;
-		myDirection = aDirection.GetNormalized(); // make sure it is normalized
+		return Line<T>(aOrigin, aDirection);
 	}
 
 	template<typename T>
-	CONSTEXPR const Vector2<T>& Line<T>::GetDirection() const
+	CONSTEXPR const Vector2<T>& Line<T>::GetOrigin() const noexcept
+	{
+		return myOrigin;
+	}
+	template<typename T>
+	CONSTEXPR const Vector2<T>& Line<T>::GetDirection() const noexcept
 	{
 		return myDirection;
 	}

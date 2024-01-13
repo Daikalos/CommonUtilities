@@ -34,8 +34,8 @@ namespace CommonUtilities
 		using ReturnType = R&;
 		using ConstReturnType = const R&;
 
-		ResourceHolder();
-		~ResourceHolder();
+		ResourceHolder() = default;
+		~ResourceHolder() = default;
 
 		auto operator[](const I& aID) -> ReturnType;
 		auto operator[](const I& aID) const -> ConstReturnType;
@@ -58,12 +58,6 @@ namespace CommonUtilities
 		std::unordered_map<I, ResourcePtr> myResources;
 		mutable std::shared_mutex myMutex;
 	};
-
-	template<class R, typename I>
-	inline ResourceHolder<R, I>::ResourceHolder() = default;
-
-	template<class R, typename I>
-	inline ResourceHolder<R, I>::~ResourceHolder() = default;
 
 	template<class R, typename I>
 	inline auto ResourceHolder<R, I>::operator[](const I& aID) -> ReturnType

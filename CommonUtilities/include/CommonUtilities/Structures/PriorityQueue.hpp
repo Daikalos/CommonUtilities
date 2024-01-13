@@ -41,6 +41,7 @@ namespace CommonUtilities
 		using const_reverse_iterator	= typename container_type::const_reverse_iterator;
 
 		PriorityQueue() = default;
+		~PriorityQueue() = default;
 
 		NODISC constexpr auto operator[](size_type aIndex) -> reference;
 		NODISC constexpr auto operator[](size_type aIndex) const -> const_reference;

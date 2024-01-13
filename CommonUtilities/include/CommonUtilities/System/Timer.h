@@ -11,13 +11,13 @@ namespace CommonUtilities
 	{
 	public:
 		Timer();
-		~Timer();
+		~Timer() = default;
 
-		Timer(const Timer&);
-		Timer(Timer&&);
+		Timer(const Timer&) = default;
+		Timer(Timer&&) = default;
 
-		Timer& operator=(const Timer&);
-		Timer& operator=(Timer&&);
+		Timer& operator=(const Timer&) = default;
+		Timer& operator=(Timer&&) = default;
 
 		NODISC float GetDT() const noexcept;
 		NODISC float GetRealDT() const noexcept;

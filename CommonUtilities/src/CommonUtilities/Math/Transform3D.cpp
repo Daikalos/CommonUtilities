@@ -2,13 +2,6 @@
 
 using namespace CommonUtilities;
 
-Transform3D::Transform3D() : Transform3D(cu::Vector3f(), cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f))
-{
-
-}
-
-Transform3D::~Transform3D() = default;
-
 Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale)
 	: myPosition(aPosition)
 	, myRotation(aRotation)

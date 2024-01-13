@@ -2,10 +2,6 @@
 
 using namespace CommonUtilities;
 
-MouseInput::MouseInput() = default;
-
-MouseInput::~MouseInput() = default;
-
 bool MouseInput::ScrollUp() const noexcept
 {
     return GetEnabled() && myScrollDelta > myScrollThreshold;

@@ -2,23 +2,22 @@
 
 #include "IEvent.h"
 
+#include <CommonUtilities/Utility/NonCopyable.h>
+
 namespace CommonUtilities
 {
 	/// Wrapper around event id to better manage the events lifetime
 	/// 
-	class EventID
+	class EventID : public NonCopyable
 	{
 	public:
 		EventID() = default;
-
-		explicit EventID(IEvent& aEvent, evnt::IDType aEventID);
 		~EventID();
 
-		EventID(EventID&& aOther) noexcept;
-		EventID(const EventID&) = delete;
+		explicit EventID(IEvent& aEvent, evnt::IDType aEventID);
 
+		EventID(EventID&& aOther) noexcept;
 		EventID& operator=(EventID&& aOther) noexcept;
-		EventID& operator=(const EventID&) = delete;
 
 		bool IsConnected() const noexcept;
 

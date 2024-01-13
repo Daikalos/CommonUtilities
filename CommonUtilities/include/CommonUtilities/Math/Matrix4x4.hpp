@@ -68,7 +68,7 @@ namespace CommonUtilities
 
 		NODISC CONSTEXPR static auto CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
-		NODISC CONSTEXPR static auto CreatePerspective(T aFOVRadians, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreatePerspective(T aHorizontalFOV, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -400,7 +400,7 @@ namespace CommonUtilities
 		const float vFOVRad = 2.0f * std::atan(hFOVTan * (float)aAspectRatio);
 
 		const float xScale = 1.0f / hFOVTan;
-		const float yScale = 1.0f / std::tan(vFoVRad / 2.0f);
+		const float yScale = 1.0f / std::tan(vFOVRad / 2.0f);
 
 		const float Q = aFarClip / (aFarClip - aNearClip);
 

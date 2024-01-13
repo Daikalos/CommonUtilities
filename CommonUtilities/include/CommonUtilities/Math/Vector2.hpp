@@ -116,7 +116,28 @@ namespace CommonUtilities
 		/// \returns Converts this 2D vector to a 3D one.
 		/// 
 		NODISC CONSTEXPR Vector3<T> YZX(T aX = T{}) const;
+
+		static const Vector2 Zero;
+		static const Vector2 Right;
+		static const Vector2 Left;
+		static const Vector2 Up;
+		static const Vector2 Down;
 	};
+
+	template <typename T>
+	const Vector2<T> Vector2<T>::Zero(static_cast<T>(0), static_cast<T>(0));
+
+	template <typename T>
+	const Vector2<T> Vector2<T>::Right(static_cast<T>(1), static_cast<T>(0));
+
+	template <typename T>
+	const Vector2<T> Vector2<T>::Left(static_cast<T>(-1), static_cast<T>(0));
+
+	template <typename T>
+	const Vector2<T> Vector2<T>::Up(static_cast<T>(0), static_cast<T>(1));
+
+	template <typename T>
+	const Vector2<T> Vector2<T>::Down(static_cast<T>(0), static_cast<T>(-1));
 
 	template<typename T>
 	CONSTEXPR Vector2<T>::Vector2()

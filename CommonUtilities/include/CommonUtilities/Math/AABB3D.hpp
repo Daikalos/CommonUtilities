@@ -23,7 +23,6 @@ namespace CommonUtilities
 
 		NODISC CONSTEXPR const Vector3<T>& GetMin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetMax() const noexcept;
-
 		NODISC CONSTEXPR Vector3<T> GetSize() const;
 		NODISC CONSTEXPR Vector3<T> GetCenter() const;
 
@@ -81,7 +80,6 @@ namespace CommonUtilities
 	{
 		return myMax;
 	}
-
 	template<typename T>
 	CONSTEXPR Vector3<T> AABB3D<T>::GetSize() const
 	{

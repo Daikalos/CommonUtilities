@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\CommonUtilities\CommonUtilities.h" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Math\Camera2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Camera3D.h" />

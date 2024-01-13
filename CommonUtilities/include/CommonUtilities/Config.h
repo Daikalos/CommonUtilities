@@ -1,8 +1,8 @@
 #pragma once
 
-#if !defined(COMMON_UTILITIES_STATIC)
+#ifndef COMMON_UTILITIES_STATIC
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #	define COMMON_UTILITIES_SYSTEM_WIN
 
 #	define COMMON_UTILITIES_API_EXPORT __declspec(dllexport)
@@ -25,8 +25,8 @@
 
 #endif
 
-#if !defined(COMMON_UTILITIES_API)
-#	if defined(DLL_EXPORT)
+#ifndef COMMON_UTILITIES_API
+#	ifdef DLL_EXPORT
 #		define COMMON_UTILITIES_API COMMON_UTILITIES_API_EXPORT
 #	else
 #		define COMMON_UTILITIES_API COMMON_UTILITIES_API_IMPORT

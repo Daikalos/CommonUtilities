@@ -27,9 +27,6 @@
     <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\CommonUtilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CommonUtilities\Input\InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>

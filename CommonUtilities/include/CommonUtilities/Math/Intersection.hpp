@@ -304,9 +304,8 @@ namespace CommonUtilities
 
 		T t = numen / denom;
 
-		if (t < 0)
+		if (t < 0) // ray points away from plane
 		{
-			// ray points away from plane
 			return result;
 		}
 
@@ -370,9 +369,9 @@ namespace CommonUtilities
 		distance	= std::sqrt(distance);
 		normal		= normal.GetNormalized(distance, 1.0f);
 
+		result.intersection = pointOnEdge;
 		result.normal		= (inside ? -normal : normal);
 		result.penetration	= aSphere.GetRadius() - distance;
-		result.intersection = pointOnEdge;
 		result.collided		= true;
 
 		return result;
@@ -391,21 +390,21 @@ namespace CommonUtilities
 
 			if (x > y && x > z)
 			{
-				result.normal = Vector3<T>(-Sign<T>(x), 0, 0);
+				result.normal = Vector3<T>(-Sign<T>(aRay.GetDirection().x), 0, 0);
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = Vector3<T>(0, -Sign<T>(y), 0);
+				result.normal = Vector3<T>(0, -Sign<T>(aRay.GetDirection().y), 0);
 			}
 			else
 			{
-				result.normal = Vector3<T>(0, 0, -Sign<T>(z));
+				result.normal = Vector3<T>(0, 0, -Sign<T>(aRay.GetDirection().z));
 			}
 
 
 			result.intersection = aRay.GetOrigin();
-			result.penetration = 0.0f;
-			result.collided = true;
+			result.penetration	= 0.0f;
+			result.collided		= true;
 
 			return result;
 		}

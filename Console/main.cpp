@@ -141,7 +141,7 @@ int main()
 
 	cu::bm::End();
 
-	std::string text = cu::st::ToLower("hEkLoSNb");
+	std::string val = cu::st::TrimLeftCopy("     53");
 
 	return 0;
 }

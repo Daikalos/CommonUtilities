@@ -12,7 +12,7 @@ namespace CommonUtilities::st
 	NODISC std::string ToString(const T& aValue);
 
 	template<typename T>
-	NODISC T ParseString(const std::string& aString);
+	NODISC T ParseString(std::string_view aString);
 
 	NODISC COMMON_UTILITIES_API std::string ToLower(std::string_view aString);
 	NODISC COMMON_UTILITIES_API std::string ToUpper(std::string_view aString);
@@ -53,10 +53,10 @@ namespace CommonUtilities::st
 	}
 
 	template<typename T>
-	inline T ParseString(const std::string& aString)
+	inline T ParseString(std::string_view aString)
 	{
 		T result{};
-		std::istringstream(aString) >> result;
+		std::istringstream(std::string(aString)) >> result;
 
 		return result;
 	}

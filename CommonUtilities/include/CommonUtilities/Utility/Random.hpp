@@ -39,10 +39,10 @@ namespace CommonUtilities::rn
 		return arr[Random<std::size_t>(0LLU, size - 1)];
 	}
 
-	///	Creates a numerically increasing list of values up to size that are then shuffled and returned
+	///	Creates a numerically increasing list of values up to size that are then shuffled and returned.
 	/// 
 	template<typename T>
-	NODISC inline auto Vector(T size)
+	NODISC inline auto RandomVector(T size)
 	{
 		std::vector<T> result;
 		result.resize(size);
@@ -53,10 +53,10 @@ namespace CommonUtilities::rn
 		return result;
 	}
 
-	///	Creates a numerically increasing list of values up to size that are then shuffled and returned
+	///	Creates a numerically increasing list of values up to size that are then shuffled and returned.
 	/// 
 	template<typename T, std::size_t N>
-	NODISC inline auto Array()
+	NODISC inline auto RandomArray()
 	{
 		std::array<T, N> result;
 

@@ -132,7 +132,7 @@ namespace CommonUtilities
 		CONSTEXPR void ClearComponents() noexcept;
 
 		CONSTEXPR bool IsComponentsEmpty() const noexcept;
-		CONSTEXPR std::size_t ComponentsSize() const noexcept;
+		CONSTEXPR std::size_t ComponentsCount() const noexcept;
 
 		/// Sets the component to be active or not. Will only affect the component based on how you choose 
 		/// to use the flag. The only thing it does now is prevent a particular component being refered to 
@@ -425,7 +425,7 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	CONSTEXPR std::size_t BaseEntity<C>::ComponentsSize() const noexcept
+	CONSTEXPR std::size_t BaseEntity<C>::ComponentsCount() const noexcept
 	{
 		return myComponents.size();
 	}

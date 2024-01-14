@@ -17,6 +17,7 @@
 #include <CommonUtilities/System/Color.hpp>
 #include <CommonUtilities/Math/Sphere.hpp>
 #include <CommonUtilities/Utility/Benchmark.h>
+#include <CommonUtilities/Utility/PrintUtils.hpp>
 
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>

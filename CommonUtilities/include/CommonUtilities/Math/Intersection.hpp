@@ -11,7 +11,6 @@
 #include <numeric>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
-#include <CommonUtilities/Utility/UtilityFunctions.hpp>
 
 #include "Plane.hpp"
 #include "Ray.hpp"
@@ -310,7 +309,7 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.normal		= aPlane.GetNormal() * -Sign<T>(denom); // flip normal based on what side we are approaching from
+		result.normal		= aPlane.GetNormal() * -au::Sign<T>(denom); // flip normal based on what side we are approaching from
 		result.penetration	= 0.0f; 
 		result.collided		= true;
 
@@ -390,15 +389,15 @@ namespace CommonUtilities
 
 			if (x > y && x > z)
 			{
-				result.normal = Vector3<T>(-Sign<T>(aRay.GetDirection().x), 0, 0);
+				result.normal = Vector3<T>(-au::Sign<T>(aRay.GetDirection().x), 0, 0);
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = Vector3<T>(0, -Sign<T>(aRay.GetDirection().y), 0);
+				result.normal = Vector3<T>(0, -au::Sign<T>(aRay.GetDirection().y), 0);
 			}
 			else
 			{
-				result.normal = Vector3<T>(0, 0, -Sign<T>(aRay.GetDirection().z));
+				result.normal = Vector3<T>(0, 0, -au::Sign<T>(aRay.GetDirection().z));
 			}
 
 
@@ -456,7 +455,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(Sign<T>(aRay.GetDirection().x), 0, 0);
+				result.normal = Vector3<T>(au::Sign<T>(aRay.GetDirection().x), 0, 0);
 
 				break;
 			}
@@ -474,7 +473,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, Sign<T>(aRay.GetDirection().y), 0);
+				result.normal = Vector3<T>(0, au::Sign<T>(aRay.GetDirection().y), 0);
 
 				break;
 			}
@@ -492,7 +491,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, 0, Sign<T>(aRay.GetDirection().z));
+				result.normal = Vector3<T>(0, 0, au::Sign<T>(aRay.GetDirection().z));
 
 				break;
 			}

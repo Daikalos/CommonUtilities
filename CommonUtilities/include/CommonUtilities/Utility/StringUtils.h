@@ -6,7 +6,7 @@
 
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities
+namespace CommonUtilities::st
 {
 	template<typename T>
 	NODISC std::string ToString(const T& aValue);
@@ -55,7 +55,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline T ParseString(const std::string& aString)
 	{
-		T result;
+		T result{};
 		std::istringstream(aString) >> result;
 
 		return result;

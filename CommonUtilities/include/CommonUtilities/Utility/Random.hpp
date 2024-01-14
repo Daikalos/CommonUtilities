@@ -7,7 +7,7 @@
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities
+namespace CommonUtilities::rn
 {
 	inline thread_local std::mt19937_64 dre(std::random_device{}());
 

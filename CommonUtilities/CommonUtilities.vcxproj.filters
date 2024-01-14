@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\CommonUtilities\Utility\UtilityFunctions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -17,13 +17,16 @@ namespace CommonUtilities
 		{ input.IsHeld(typename I::ButtonType()) } -> std::same_as<bool>;
 	};
 
-	enum ButtonTrigger
+	namespace bt
 	{
-		BT_None = -1,
-		BT_Pressed,
-		BT_Released,
-		BT_Held,
-	};
+		enum ButtonTrigger
+		{
+			None = -1,
+			Pressed,
+			Released,
+			Held,
+		};
+	}
 
 	///	ButtonEvent is small container class for mapping functions to individual key events. This was created to 
 	/// have the same lifetime as the provided functions have in order to prevent easy-to-miss UB.
@@ -41,7 +44,7 @@ namespace CommonUtilities
 		{
 			std::function<void(Args...)>	func;
 			ButtonType						button		{};			// button type to listen for
-			ButtonTrigger					trigger		{BT_None};	// button trigger to listen for
+			bt::ButtonTrigger				trigger		{bt::None};	// button trigger to listen for
 			float							priority	{0.0f};		// determines position in callbacks
 		};
 
@@ -62,7 +65,7 @@ namespace CommonUtilities
 		void SetInput(const T* aInput);
 	
 		template<typename Func>
-		void Add(ButtonType aButton, ButtonTrigger aTrigger, Func&& aFunc, float aPriority = {})
+		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, Func&& aFunc, float aPriority = {})
 		{
 			const auto it = std::ranges::upper_bound(myCallbacks.begin(), myCallbacks.end(), aPriority,
 				[](float aPriority, const ButtonCallback& aCallback)
@@ -74,7 +77,7 @@ namespace CommonUtilities
 		}
 
 		template<typename Func, typename... InnerArgs>
-		void Add(ButtonType aButton, ButtonTrigger aTrigger, float aPriority, Func&& aFunc, InnerArgs&&... someInnerArgs)
+		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, float aPriority, Func&& aFunc, InnerArgs&&... someInnerArgs)
 		{
 			Add(aButton, aTrigger,
 				[aFunc = std::forward<Func>(aFunc), ...someInnerArgs = std::forward<InnerArgs>(someInnerArgs)](Args... someArgs)
@@ -84,7 +87,7 @@ namespace CommonUtilities
 		}
 
 		template<typename Func, typename... InnerArgs>
-		void Add(ButtonType aButton, ButtonTrigger aTrigger, Func&& aFunc, InnerArgs&&... someInnerArgs)
+		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, Func&& aFunc, InnerArgs&&... someInnerArgs)
 		{
 			Add(aButton, aTrigger, {}, std::forward<Func>(aFunc), std::forward<InnerArgs>(someInnerArgs)...);
 		}
@@ -99,7 +102,7 @@ namespace CommonUtilities
 		/// 
 		/// \param aTrigger: Trigger type to look for when removing.
 		/// 
-		void Remove(ButtonTrigger aTrigger);
+		void Remove(bt::ButtonTrigger aTrigger);
 
 		/// \return Number of added callbacks.
 		/// 
@@ -160,9 +163,9 @@ namespace CommonUtilities
 		{
 			switch (aCallback.trigger)
 			{
-				case BT_Pressed:	return myInput->IsPressed(aCallback.button);
-				case BT_Released:	return myInput->IsReleased(aCallback.button);
-				case BT_Held:		return myInput->IsHeld(aCallback.button);
+				case bt::Pressed:	return myInput->IsPressed(aCallback.button);
+				case bt::Released:	return myInput->IsReleased(aCallback.button);
+				case bt::Held:		return myInput->IsHeld(aCallback.button);
 			}
 
 			return false;
@@ -198,7 +201,7 @@ namespace CommonUtilities
 	}
 
 	template<class T, typename... Args> requires HasButtonInput<T>
-	inline void ButtonEvent<T, Args...>::Remove(ButtonTrigger aTrigger)
+	inline void ButtonEvent<T, Args...>::Remove(bt::ButtonTrigger aTrigger)
 	{
 		std::erase(std::ranges::remove_if(myCallbacks.begin(), myCallbacks.end(),
 			[&aTrigger](const ButtonCallback& aCallback)

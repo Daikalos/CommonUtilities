@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace CommonUtilities
+namespace CommonUtilities::st
 { 
 	std::string ToLower(std::string_view aString)
 	{

@@ -100,8 +100,8 @@ int main()
 	cu::bm::Begin();
 	cu::AABB3D<float> aabb = cu::AABB3D<float>::InitWithCenterAndSize(cu::Vector3f::Zero, cu::Vector3f(1.0f, 1.0f, 1.0f));
 
-	cu::Vector2f test1(cu::Random(-5000.0f, 5000.0f), 2423.5453253f);
-	cu::Vector2f test2(cu::Random(-5000.0f, 5000.0f), 21331.423025f);
+	cu::Vector2f test1(cu::rn::Random(-5000.0f, 5000.0f), 2423.5453253f);
+	cu::Vector2f test2(cu::rn::Random(-5000.0f, 5000.0f), 21331.423025f);
 
 	test1.Normalize(1.0f);
 	test2.Normalize();
@@ -140,6 +140,8 @@ int main()
 	cu::Vector2f test = cu::Vector2f::Up;
 
 	cu::bm::End();
+
+	std::string text = cu::st::ToLower("hEkLoSNb");
 
 	return 0;
 }

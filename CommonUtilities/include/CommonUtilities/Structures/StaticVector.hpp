@@ -321,7 +321,7 @@ namespace CommonUtilities
 			if (aOther.size() > Capacity)
 			{
 				mySize = 0;
-				throw std::runtime_error("Vector can't store that many elements!");
+				throw std::runtime_error("StaticVector can't store that many elements!");
 			}
 		}
 
@@ -357,7 +357,7 @@ namespace CommonUtilities
 			if (aOther.size() > Capacity)
 			{
 				mySize = 0;
-				throw std::runtime_error("Vector can't store that many elements!");
+				throw std::runtime_error("StaticVector can't store that many elements!");
 			}
 		}
 
@@ -418,7 +418,7 @@ namespace CommonUtilities
 		{
 			if (aOther.size() > Capacity)
 			{
-				throw std::runtime_error("Vector can't store that many elements!");
+				throw std::runtime_error("StaticVector can't store that many elements!");
 			}
 		}
 
@@ -511,7 +511,7 @@ namespace CommonUtilities
 			{
 				if (aOther.size() > Capacity)
 				{
-					throw std::runtime_error("Vector can't store that many elements!");
+					throw std::runtime_error("StaticVector can't store that many elements!");
 				}
 			}
 
@@ -555,7 +555,7 @@ namespace CommonUtilities
 	{
 		if (aCount > Capacity)
 		{
-			throw std::runtime_error("Vector can't store that many elements!");
+			throw std::runtime_error("StaticVector can't store that many elements!");
 		}
 
 		if constexpr (std::is_trivially_copyable_v<T>)
@@ -590,7 +590,7 @@ namespace CommonUtilities
 
 		if (newSize > Capacity)
 		{
-			throw std::runtime_error("Vector can't store that many elements!");
+			throw std::runtime_error("StaticVector can't store that many elements!");
 		}
 
 		if constexpr (std::is_trivially_copyable_v<T>)
@@ -850,7 +850,7 @@ namespace CommonUtilities
 
 		if (newSize > Capacity)
 		{
-			throw std::runtime_error("Vector can't store that many elements!");
+			throw std::runtime_error("StaticVector can't store that many elements!");
 		}
 
 		const auto insertIter = begin() + std::distance(cbegin(), aPosition);
@@ -879,7 +879,7 @@ namespace CommonUtilities
 	{
 		if (aNewSize > Capacity)
 		{
-			throw std::runtime_error("Vector can't store that many elements!");
+			throw std::runtime_error("StaticVector can't store that many elements!");
 		}
 
 		if (aNewSize > mySize)
@@ -899,7 +899,7 @@ namespace CommonUtilities
 	{
 		if (aNewSize > Capacity)
 		{
-			throw std::runtime_error("Vector can't store that many elements!");
+			throw std::runtime_error("StaticVector can't store that many elements!");
 		}
 
 		if (aNewSize > mySize)

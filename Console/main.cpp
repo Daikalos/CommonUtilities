@@ -16,6 +16,7 @@
 #include <CommonUtilities/Input/KeyboardInput.h>
 #include <CommonUtilities/System/Color.hpp>
 #include <CommonUtilities/Math/Sphere.hpp>
+#include <CommonUtilities/Utility/Benchmark.h>
 
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>
@@ -96,6 +97,7 @@ public:
 
 int main()
 {
+	cu::bm::Begin();
 	cu::AABB3D<float> aabb = cu::AABB3D<float>::InitWithCenterAndSize(cu::Vector3f::Zero, cu::Vector3f(1.0f, 1.0f, 1.0f));
 
 	cu::Vector2f test1(cu::Random(-5000.0f, 5000.0f), 2423.5453253f);
@@ -130,9 +132,14 @@ int main()
 
 	constexpr cu::Sphere<float> sphere2(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
 
-	auto result = cu::Collide<float>(sphere, sphere2);
+	for (int i = 0; i < 1000000; ++i)
+	{
+		auto result = cu::Collide<float>(sphere, sphere2);
+	}
 
 	cu::Vector2f test = cu::Vector2f::Up;
+
+	cu::bm::End();
 
 	return 0;
 }

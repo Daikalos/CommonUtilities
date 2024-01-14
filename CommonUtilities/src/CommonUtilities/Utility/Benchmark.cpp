@@ -92,11 +92,8 @@ namespace CommonUtilities::bm
 				totalRAMUsage += ram;
 				totalCPUUsage += cpu;
 
-				if (ram > LDBL_EPSILON)
-					++totalRAMSamples;
-
-				if (cpu > LDBL_EPSILON)
-					++totalCPUSamples;
+				if (ram > LDBL_EPSILON) ++totalRAMSamples;
+				if (cpu > LDBL_EPSILON) ++totalCPUSamples;
 			}
 
 			std::chrono::high_resolution_clock::time_point timeEnd = std::chrono::high_resolution_clock::now();

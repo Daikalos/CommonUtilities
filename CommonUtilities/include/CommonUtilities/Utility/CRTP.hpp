@@ -5,7 +5,7 @@ class CRTP
 {
 public:
 	T& Underlying();
-	const T& Underlaying() const;
+	const T& Underlying() const;
 };
 
 template<class T, template<class> class... Ts>
@@ -17,7 +17,7 @@ inline T& CRTP<T>::Underlying()
 	return static_cast<T&>(*this);
 }
 template<class T>
-inline const T& CRTP<T>::Underlaying() const
+inline const T& CRTP<T>::Underlying() const
 {
 	return static_cast<const T&>(*this);
 }

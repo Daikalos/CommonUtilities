@@ -15,7 +15,7 @@
 namespace CommonUtilities
 {
 	/// BaseEntity is an attempt to model a similar system to Unity's GameObjects. Each entity simply contains
-	/// a list of components that you may easily access through various operations. You will have to specialize
+	/// a list of components that you may access and modify through various operations. You will have to specialize
 	/// this class for your environment, BaseEntity tries to be as generic and simple as possible.
 	/// 
 	/// \param C: Base component of BaseEntity that other components derive from

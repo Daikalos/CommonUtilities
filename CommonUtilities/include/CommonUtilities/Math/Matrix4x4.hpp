@@ -388,7 +388,7 @@ namespace CommonUtilities
 		assert((float)aNearClip < (float)aFarClip);
 		assert((float)aNearClip >= 0.00000000000001f);
 
-		const float hFOVRad = (float)aHorizontalFOV * DEG2RAD;
+		const float hFOVRad = (float)aHorizontalFOV * au::DEG2RAD;
 		const float hFOVTan = std::tan(hFOVRad / 2.0f);
 
 		const float vFOVRad = 2.0f * std::atan(hFOVTan * (float)aAspectRatio);

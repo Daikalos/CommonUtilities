@@ -54,31 +54,40 @@ const Vector3f& Transform3D::GetScale() const noexcept
 	return myScale;
 }
 
+Vector3f Transform3D::ModelToWorld(const Vector3f& aModelPosition) const
+{
+	return GetMatrix() * aModelPosition;
+}
+Vector3f Transform3D::WorldToModel(const Vector3f& aWorldPosition) const
+{
+	return GetInverseMatrix() * aWorldPosition;
+}
+
 void Transform3D::SetPosition(const Vector3f& aPosition)
 {
 	if (myPosition != aPosition)
 	{
-		myPosition = aPosition;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myPosition				= aPosition;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 void Transform3D::SetRotation(const Vector3f& aRotation)
 {
 	if (myRotation != aRotation)
 	{
-		myRotation = aRotation;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myRotation				= aRotation;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 void Transform3D::SetScale(const Vector3f& aScale)
 {
 	if (myScale != aScale)
 	{
-		myScale = aScale;
-		myUpdateMatrix = true;
-		myUpdateInverseMatrix = true;
+		myScale					= aScale;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
 	}
 }
 

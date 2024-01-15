@@ -26,6 +26,9 @@ namespace CommonUtilities
 		NODISC float GetRotation() const noexcept;
 		NODISC const Vector2f& GetScale() const noexcept;
 
+		NODISC Vector2f ModelToWorld(const Vector2f& aModelPosition) const;
+		NODISC Vector2f WorldToModel(const Vector2f& aWorldPosition) const;
+
 		virtual void SetPosition(const Vector2f& aPosition);
 		virtual void SetOrigin(const Vector2f& aOrigin);
 		virtual void SetRotation(float aRotation);

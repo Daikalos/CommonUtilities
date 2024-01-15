@@ -9,6 +9,38 @@ Relation3D::Relation3D(const Transform3D& aTransform) : Transform3D(aTransform)
 
 }
 
+Relation3D::~Relation3D()
+{
+	if (HasParent()) // detach itself from parent
+	{
+		auto parentPtr = myParent.lock();
+
+		auto it = std::find_if(parentPtr->myChildren.begin(), parentPtr->myChildren.end(),
+			[this](const typename Relation3D::Ref& child)
+			{
+				return !child.expired() && this == child.lock().get();
+			});
+
+		assert(it != parentPtr->myChildren.end()); // this should exist in parent
+
+		*it = parentPtr->myChildren.back(); // erase cyclic
+		parentPtr->myChildren.pop_back();
+	}
+
+	for (const typename Relation3D::Ref& child : myChildren) // detach itself from all children
+	{
+		if (child.expired())
+		{
+			continue;
+		}
+
+		const Relation3DPtr childPtr = child.lock();
+
+		childPtr->myParent.reset();
+		childPtr->DirtyDescendants();
+	}
+}
+
 bool Relation3D::HasParent() const noexcept
 {
 	return !myParent.expired();
@@ -76,6 +108,12 @@ const Mat4f& Relation3D::GetInverseGlobalMatrix() const
 
 const Vector3f& Relation3D::GetGlobalPosition() const
 {
+	if (myUpdateGlobalPosition)
+	{
+		myGlobalPosition = GetGlobalMatrix().GetTranslation();
+		myUpdateGlobalPosition = false;
+	}
+
 	return myGlobalPosition;
 }
 const Vector3f& Relation3D::GetGlobalRotation() const
@@ -97,6 +135,11 @@ const Vector3f& Relation3D::GetGlobalScale() const
 	}
 
 	return myGlobalScale;
+}
+
+Vector3f Relation3D::LocalToWorld(const Vector3f& aLocal) const
+{
+	return !HasParent() ? aLocal : GetParent().lock()->GetGlobalMatrix() * aLocal;
 }
 
 void Relation3D::SetPosition(const Vector3f& aPosition)
@@ -222,13 +265,13 @@ void Relation3D::UpdateTransform() const
 		parentPtr->UpdateTransform();
 	}
 
-	Mat4f combinedMatrix = parentPtr->myGlobalMatrix * GetMatrix();
+	Mat4f combinedMatrix = parentPtr->GetGlobalMatrix() * GetMatrix();
 	if (combinedMatrix != myGlobalMatrix)
 	{
 		myGlobalMatrix			= combinedMatrix;
-		myGlobalPosition		= myGlobalMatrix.GetTranslation();
 
-		myUpdateGlobalRotation	= true; // we delay updating rotation and scale since they are quite expensive
+		myUpdateGlobalPosition	= true; // we delay updating rotation and scale since they may be quite expensive
+		myUpdateGlobalRotation	= true;
 		myUpdateGlobalScale		= true;
 	}
 
@@ -245,6 +288,7 @@ void Relation3D::UpdateToLocal() const
 		myGlobalRotation		= myRotation;
 		myGlobalScale			= myScale;
 
+		myUpdateGlobalPosition	= false;
 		myUpdateGlobalRotation	= false;
 		myUpdateGlobalScale		= false;
 	}

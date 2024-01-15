@@ -128,6 +128,9 @@ int main()
 
 	const cu::Mat3f& globalMatrix = relation1->GetGlobalMatrix();
 
+	constexpr cu::Vector3f vec1(1.0f, 2.0f, -6.0f);
+	constexpr cu::Vector4f vec2 = vec1.XYZW(1.0f);
+
 	constexpr cu::Sphere<float> sphere(cu::Vector3f(5.0f, 2.0f, -7.0f), 2.0f);
 	constexpr cu::Shape::Type type = sphere.GetType();
 

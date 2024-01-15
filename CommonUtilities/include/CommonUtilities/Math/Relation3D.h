@@ -26,7 +26,7 @@ namespace CommonUtilities
 		using Parent	= Ref;
 		using Children	= std::vector<Ref>;
 
-		~Relation3D() = default;
+		~Relation3D();
 
 		Relation3D& operator=(const Relation3D&) = default;
 		Relation3D& operator=(Relation3D&&) noexcept = default;
@@ -54,6 +54,8 @@ namespace CommonUtilities
 		NODISC const Vector3f& GetGlobalPosition() const;
 		NODISC const Vector3f& GetGlobalRotation() const;
 		NODISC const Vector3f& GetGlobalScale() const;
+
+		NODISC Vector3f LocalToWorld(const Vector3f& aPosition) const;
 
 		void SetPosition(const Vector3f& aPosition) override;
 		void SetRotation(const Vector3f& aRotation) override;
@@ -108,6 +110,7 @@ namespace CommonUtilities
 
 		mutable bool			myUpdateGlobalMatrix		{true};
 		mutable bool			myUpdateGlobalInverseMatrix	{true};
+		mutable bool			myUpdateGlobalPosition		{true};
 		mutable bool			myUpdateGlobalRotation		{true};
 		mutable bool			myUpdateGlobalScale			{true};
 	};

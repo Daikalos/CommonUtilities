@@ -13,6 +13,9 @@ namespace CommonUtilities
 	class Vector2;
 
 	template<typename T>
+	class Vector4;
+
+	template<typename T>
 	class Vector3
 	{
 	public:
@@ -135,6 +138,10 @@ namespace CommonUtilities
 		/// \returns Converts this 3D vector to a 2D one.
 		/// 
 		NODISC CONSTEXPR Vector2<T> YZ() const;
+
+		/// \returns Converts this 2D vector to a 3D one.
+		/// 
+		NODISC CONSTEXPR Vector4<T> XYZW(T aW = T{}) const;
 
 		static const Vector3 Zero;
 		static const Vector3 Up;
@@ -306,6 +313,12 @@ namespace CommonUtilities
 	CONSTEXPR Vector2<T> Vector3<T>::YZ() const
 	{
 		return Vector2<T>(y, z);
+	}
+
+	template<typename T>
+	CONSTEXPR Vector4<T> Vector3<T>::XYZW(T aW) const
+	{
+		return Vector4<T>(x, y, z, aW);
 	}
 
 	// GLOBAL OPERATORS

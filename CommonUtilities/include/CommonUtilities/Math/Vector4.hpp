@@ -10,6 +10,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class Vector3;
+
+	template<typename T>
 	class Vector4
 	{
 	public:
@@ -38,6 +41,7 @@ namespace CommonUtilities
 		CONSTEXPR ~Vector4() = default;
 
 		CONSTEXPR Vector4(T aX, T aY, T aZ, T aW);
+		CONSTEXPR Vector4(const Vector3<T>& aVector, T aW = static_cast<T>(1));
 
 		template <typename U>
 		NODISC CONSTEXPR explicit Vector4(const Vector4<U>& aVector);
@@ -108,6 +112,10 @@ namespace CommonUtilities
 	template<typename T>
 	CONSTEXPR Vector4<T>::Vector4(T aX, T aY, T aZ, T aW)
 		: x(aX), y(aY), z(aZ), w(aW) {}
+
+	template<typename T>
+	CONSTEXPR Vector4<T>::Vector4(const Vector3<T>& aVector, T aW)
+		: Vector4(aVector.x, aVector.y, aVector.z, aW) {}
 
 	template<typename T>
 	template<typename U>

@@ -14,6 +14,9 @@ namespace CommonUtilities
 
 	using Relation2DPtr = std::shared_ptr<Relation2D>;
 
+	// TODO: right now Relation2D and Relation3D contain a lot of duplicate code, 
+	// try to find a way to make them use the same code (without template specialization since its messy?)
+
 	/// Relation2D is a way of modeling hierarchies. Most getters and setters works in local space while GetGlobalMatrix 
 	/// retrieves the global representation for the current transform. You will have to store Relation2D somewhere outside as
 	/// shared pointers for this to work (Relation2D uses weak pointers). Furthermore, do note that when hierarchies start to 
@@ -26,7 +29,7 @@ namespace CommonUtilities
 		using Parent	= Ref;
 		using Children	= std::vector<Ref>;
 
-		~Relation2D() = default;
+		~Relation2D();
 
 		Relation2D& operator=(const Relation2D&) = default;
 		Relation2D& operator=(Relation2D&&) noexcept = default;
@@ -54,6 +57,8 @@ namespace CommonUtilities
 		NODISC const Vector2f& GetGlobalPosition() const;
 		NODISC float GetGlobalRotation() const;
 		NODISC const Vector2f& GetGlobalScale() const;
+
+		NODISC Vector2f LocalToWorld(const Vector2f& aPosition) const;
 
 		void SetPosition(const Vector2f& aPosition) override;
 		void SetRotation(float aRotation) override;
@@ -108,6 +113,7 @@ namespace CommonUtilities
 
 		mutable bool			myUpdateGlobalMatrix		{true};
 		mutable bool			myUpdateGlobalInverseMatrix	{true};
+		mutable bool			myUpdateGlobalPosition		{true};
 		mutable bool			myUpdateGlobalRotation		{true};
 		mutable bool			myUpdateGlobalScale			{true};
 	};

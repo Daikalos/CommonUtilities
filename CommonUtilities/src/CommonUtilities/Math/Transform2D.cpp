@@ -64,6 +64,15 @@ const Vector2f& Transform2D::GetScale() const noexcept
 	return myScale;
 }
 
+Vector2f Transform2D::ModelToWorld(const Vector2f& aModelPosition) const
+{
+	return GetMatrix() * aModelPosition;
+}
+Vector2f Transform2D::WorldToModel(const Vector2f& aWorldPosition) const
+{
+	return GetInverseMatrix() * aWorldPosition;
+}
+
 void Transform2D::SetPosition(const Vector2f& aPosition)
 {
 	if (myPosition != aPosition)

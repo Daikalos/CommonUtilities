@@ -24,6 +24,9 @@ namespace CommonUtilities
 		NODISC const Vector3f& GetRotation() const noexcept;
 		NODISC const Vector3f& GetScale() const noexcept;
 
+		NODISC Vector3f ModelToWorld(const Vector3f& aModelPosition) const;
+		NODISC Vector3f WorldToModel(const Vector3f& aWorldPosition) const;
+
 		virtual void SetPosition(const Vector3f& aPosition);
 		virtual void SetRotation(const Vector3f& aRotation);
 		virtual void SetScale(const Vector3f& aScale);

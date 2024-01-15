@@ -9,6 +9,38 @@ Relation2D::Relation2D(const Transform2D& aTransform) : Transform2D(aTransform)
 
 }
 
+Relation2D::~Relation2D()
+{
+	if (HasParent()) // detach itself from parent
+	{
+		auto parentPtr = myParent.lock();
+
+		auto it = std::find_if(parentPtr->myChildren.begin(), parentPtr->myChildren.end(),
+			[this](const typename Relation2D::Ref& child)
+			{
+				return !child.expired() && this == child.lock().get();
+			});
+
+		assert(it != parentPtr->myChildren.end()); // this should exist in parent
+
+		*it = parentPtr->myChildren.back(); // erase cyclic
+		parentPtr->myChildren.pop_back();
+	}
+
+	for (const typename Relation2D::Ref& child : myChildren) // detach itself from all children
+	{
+		if (child.expired())
+		{
+			continue;
+		}
+
+		const Relation2DPtr childPtr = child.lock();
+
+		childPtr->myParent.reset();
+		childPtr->DirtyDescendants();
+	}
+}
+
 bool Relation2D::HasParent() const noexcept
 {
 	return !myParent.expired();
@@ -76,6 +108,12 @@ const Mat3f& Relation2D::GetInverseGlobalMatrix() const
 
 const Vector2f& Relation2D::GetGlobalPosition() const
 {
+	if (myUpdateGlobalPosition)
+	{
+		myGlobalPosition = GetGlobalMatrix().GetTranslation();
+		myUpdateGlobalPosition = false;
+	}
+
 	return myGlobalPosition;
 }
 float Relation2D::GetGlobalRotation() const
@@ -97,6 +135,11 @@ const Vector2f& Relation2D::GetGlobalScale() const
 	}
 
 	return myGlobalScale;
+}
+
+Vector2f Relation2D::LocalToWorld(const Vector2f& aLocal) const
+{
+	return !HasParent() ? aLocal : GetParent().lock()->GetGlobalMatrix() * aLocal;
 }
 
 void Relation2D::SetPosition(const Vector2f& aPosition)
@@ -184,7 +227,7 @@ bool Relation2D::Detach(Relation2DPtr aParent, Relation2DPtr aChild)
 		return false;
 
 	auto it = std::find_if(aParent->myChildren.begin(), aParent->myChildren.end(),
-		[&aChild](const Relation2D::Ref& child)
+		[&aChild](const typename Relation2D::Ref& child)
 		{
 			return !child.expired() && aChild == child.lock();
 		});
@@ -222,13 +265,13 @@ void Relation2D::UpdateTransform() const
 		parentPtr->UpdateTransform();
 	}
 
-	Mat3f combinedMatrix = parentPtr->myGlobalMatrix * GetMatrix();
+	Mat3f combinedMatrix = parentPtr->GetGlobalMatrix() * GetMatrix();
 	if (combinedMatrix != myGlobalMatrix)
 	{
 		myGlobalMatrix			= combinedMatrix;
-		myGlobalPosition		= myGlobalMatrix.GetTranslation();
 
-		myUpdateGlobalRotation	= true; // we delay updating rotation and scale since they are quite expensive
+		myUpdateGlobalPosition	= true; // we delay updating rotation and scale since they may be quite expensive
+		myUpdateGlobalRotation	= true;
 		myUpdateGlobalScale		= true;
 	}
 
@@ -245,6 +288,7 @@ void Relation2D::UpdateToLocal() const
 		myGlobalRotation		= myRotation;
 		myGlobalScale			= myScale;
 
+		myUpdateGlobalPosition	= false;
 		myUpdateGlobalRotation	= false;
 		myUpdateGlobalScale		= false;
 	}

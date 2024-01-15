@@ -23,12 +23,13 @@ namespace CommonUtilities
 		NODISC const Mat4f& GetProjection() const noexcept;
 		NODISC const Vector3f& GetPosition() const noexcept;
 		NODISC const Vector3f& GetRotation() const noexcept;
-
+		NODISC const float GetNearClip() const noexcept;
+		NODISC const float GetFarClip() const noexcept;
 		NODISC std::tuple<float, float> GetProjectionPlanes() const;
 
 		virtual void SetOrtographicProjection(float aWidth, float aHeight, float aDepth);
 		virtual void SetOrtographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar);
-		virtual void SetPerspectiveProjection(float aHorizontalFoV, const Vector2f& aResolution, float aNearPlane, float aFarPlane);
+		virtual void SetPerspectiveProjection(float aHorizontalFoV, const Vector2f& aResolution, float aNearClip, float aFarClip);
 
 		virtual void SetTransform(const Transform3D& aTransform);
 		virtual void SetPosition(const Vector3f& aPosition);
@@ -40,7 +41,7 @@ namespace CommonUtilities
 	private:
 		Transform3D myTransform;
 		Mat4f		myProjectionMatrix;
-		float		myFarPlane	{1500.0f};
-		float		myNearPlane	{0.1f};
+		float		myFarClip	{1500.0f};
+		float		myNearClip	{0.1f};
 	};
 }

@@ -23,7 +23,7 @@ Vector3f Camera3D::WorldToView(const Vector3f& aWorldPosition) const
 }
 Vector4f Camera3D::ViewToClip(const Vector3f& aViewPosition) const
 {
-	return myProjectionMatrix * aViewPosition;
+	return myProjectionMatrix * aViewPosition.XYZW(1.0f);
 }
 Vector4f Camera3D::WorldToClip(const Vector3f& aWorldPosition) const
 {

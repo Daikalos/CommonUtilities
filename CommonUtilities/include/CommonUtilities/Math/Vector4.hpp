@@ -10,32 +10,13 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	class Vector3;
-
-	template<typename T>
 	class Vector4
 	{
 	public:
-		union
-		{
-			T x{};
-			T X;
-		};
-		union
-		{
-			T y{};
-			T Y;
-		};
-		union
-		{
-			T z{};
-			T Z;
-		};
-		union
-		{
-			T w{};
-			T W;
-		};
+		T x{};
+		T y{};
+		T z{};
+		T w{};
 
 		CONSTEXPR Vector4() = default;
 		CONSTEXPR ~Vector4() = default;

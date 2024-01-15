@@ -19,21 +19,9 @@ namespace CommonUtilities
 	class Vector3
 	{
 	public:
-		union
-		{
-			T x{};
-			T X;
-		};
-		union
-		{
-			T y{};
-			T Y;
-		};
-		union
-		{
-			T z{};
-			T Z;
-		};
+		T x{};
+		T y{};
+		T z{};
 
 		CONSTEXPR Vector3() = default;
 		CONSTEXPR ~Vector3() = default;
@@ -139,7 +127,7 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR Vector2<T> YZ() const;
 
-		/// \returns Converts this 2D vector to a 3D one.
+		/// \returns Converts this 3D vector to a 4D one.
 		/// 
 		NODISC CONSTEXPR Vector4<T> XYZW(T aW = T{}) const;
 

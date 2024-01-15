@@ -134,4 +134,8 @@ namespace CommonUtilities
 	{
 		return Type::LineVolume;
 	}
+
+	using LineVolumeFloat	= LineVolume<float>;
+	using LineVolumeDouble	= LineVolume<double>;
+	using LineVolumeInt		= LineVolume<int>;
 }

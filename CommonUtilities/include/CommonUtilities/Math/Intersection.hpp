@@ -365,8 +365,11 @@ namespace CommonUtilities
 		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
 
-		distance	= std::sqrt(distance);
-		normal		= normal.GetNormalized(distance, 1.0f);
+		if (distance > FLT_EPSILON * FLT_EPSILON)
+		{ 
+			distance	= std::sqrt(distance);
+			normal		= normal.GetNormalized(distance, 1.0f);
+		}
 
 		result.intersection = pointOnEdge;
 		result.normal		= (inside ? -normal : normal);

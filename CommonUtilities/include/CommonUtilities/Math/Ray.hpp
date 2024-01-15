@@ -78,4 +78,8 @@ namespace CommonUtilities
 	{
 		return Type::Ray;
 	}
+
+	using RayFloat	= Ray<float>;
+	using RayDouble	= Ray<double>;
+	using RayInt	= Ray<int>;
 }

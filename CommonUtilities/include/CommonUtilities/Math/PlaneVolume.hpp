@@ -134,4 +134,8 @@ namespace CommonUtilities
 	{
 		return Type::PlaneVolume;
 	}
+
+	using PlaneVolumeFloat	= PlaneVolume<float>;
+	using PlaneVolumeDouble	= PlaneVolume<double>;
+	using PlaneVolumeInt	= PlaneVolume<int>;
 }

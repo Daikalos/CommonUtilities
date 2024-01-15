@@ -16,8 +16,16 @@ namespace CommonUtilities
 	class Vector2
 	{
 	public:
-		T x{};
-		T y{};
+		union
+		{
+			T x{};
+			T X;
+		};
+		union
+		{
+			T y{};
+			T Y;
+		};
 
 		CONSTEXPR Vector2() = default;
 		CONSTEXPR ~Vector2() = default;

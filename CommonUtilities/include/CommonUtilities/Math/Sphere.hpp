@@ -87,4 +87,8 @@ namespace CommonUtilities
 	{
 		return Type::Sphere;
 	}
+
+	using SphereFloat	= Sphere<float>;
+	using SphereDouble	= Sphere<double>;
+	using SphereInt		= Sphere<int>;
 }

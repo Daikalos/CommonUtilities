@@ -13,10 +13,26 @@ namespace CommonUtilities
 	class Vector4
 	{
 	public:
-		T x{};
-		T y{};
-		T z{};
-		T w{};
+		union
+		{
+			T x{};
+			T X;
+		};
+		union
+		{
+			T y{};
+			T Y;
+		};
+		union
+		{
+			T z{};
+			T Z;
+		};
+		union
+		{
+			T w{};
+			T W;
+		};
 
 		CONSTEXPR Vector4() = default;
 		CONSTEXPR ~Vector4() = default;

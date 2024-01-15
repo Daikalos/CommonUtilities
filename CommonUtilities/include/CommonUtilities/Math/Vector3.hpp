@@ -16,9 +16,21 @@ namespace CommonUtilities
 	class Vector3
 	{
 	public:
-		T x{};
-		T y{};
-		T z{};
+		union
+		{
+			T x{};
+			T X;
+		};
+		union
+		{
+			T y{};
+			T Y;
+		};
+		union
+		{
+			T z{};
+			T Z;
+		};
 
 		CONSTEXPR Vector3() = default;
 		CONSTEXPR ~Vector3() = default;

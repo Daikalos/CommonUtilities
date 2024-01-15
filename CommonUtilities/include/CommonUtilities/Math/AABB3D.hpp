@@ -126,4 +126,8 @@ namespace CommonUtilities
 	{
 		return Type::AABB3D;
 	}
+
+	using AABB3DFloat	= AABB3D<float>;
+	using AABB3DDouble	= AABB3D<double>;
+	using AABB3DInt		= AABB3D<int>;
 }

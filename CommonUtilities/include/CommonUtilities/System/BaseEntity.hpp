@@ -70,7 +70,7 @@ namespace CommonUtilities
 
 		/// Attempts to add a component to entity.
 		/// 
-		/// \param someArgs: Optional constructor parameters for component
+		/// \param Args: Optional constructor parameters for component
 		/// 
 		/// \return Pointer to component, nullptr if it already has the component
 		/// 
@@ -98,7 +98,7 @@ namespace CommonUtilities
 
 		/// Sets the specified component to a different value.
 		/// 
-		/// \param someArgs: Optional constructor parameters for new component
+		/// \param Args: Optional constructor parameters for new component
 		/// 
 		/// \return Reference to new component
 		/// 
@@ -107,7 +107,7 @@ namespace CommonUtilities
 
 		/// Attempts to set the specified component to a different value.
 		/// 
-		/// \param someArgs: Optional constructor parameters for new component
+		/// \param Args: Optional constructor parameters for new component
 		/// 
 		/// \return Pointer to new component, nullptr if not found
 		/// 
@@ -123,7 +123,7 @@ namespace CommonUtilities
 
 		/// Pre-allocates memory for the components.
 		/// 
-		/// \param aCapacity: Number of components to pre-allocate memory for.
+		/// \param Capacity: Number of components to pre-allocate memory for.
 		/// 
 		CONSTEXPR void ReserveComponents(std::size_t aCapacity);
 
@@ -138,14 +138,14 @@ namespace CommonUtilities
 		/// to use the flag. The only thing it does now is prevent a particular component being refered to 
 		/// when ForEach() is called.
 		/// 
-		/// \param aFlag: New active state
+		/// \param Flag: New active state
 		/// 
 		template<typename T> requires std::derived_from<T, C>
 		CONSTEXPR void SetComponentActive(bool aFlag);
 
 		/// Runs a function for every component in the entity.
 		/// 
-		/// \param aFunc: Function to run
+		/// \param Func: Function to run
 		/// 
 		template<typename Func> requires HasParametersDecay<Func, C>
 		CONSTEXPR void ForEachComponent(Func&& aFunc) const;
@@ -171,7 +171,7 @@ namespace CommonUtilities
 
 		/// Attempts to add a component to the static list of components.
 		/// 
-		/// \param someArgs: Optional constructor parameters for component
+		/// \param Args: Optional constructor parameters for component
 		/// 
 		/// \return Pointer to component, nullptr if it already has the component
 		/// 

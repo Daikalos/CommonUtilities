@@ -34,8 +34,8 @@ namespace CommonUtilities
 
 		/// Inserts given element into the quadtree.
 		/// 
-		/// \param aRect: Rectangle encompassing item
-		/// \param someArgs: Constructor parameters for item
+		/// \param Rect: Rectangle encompassing item
+		/// \param Args: Constructor parameters for item
 		/// 
 		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
 		/// 
@@ -44,7 +44,7 @@ namespace CommonUtilities
 
 		/// Attempts to erase element from tree.
 		/// 
-		/// \param aIndex: Index to element to erase
+		/// \param Index: Index to element to erase
 		/// 
 		/// \returns True if successfully removed the element, otherwise false
 		/// 
@@ -52,8 +52,8 @@ namespace CommonUtilities
 
 		/// Updates the given element with new data.
 		/// 
-		/// \param aIndex: index to element
-		/// \param someArgs: Data to update the current element
+		/// \param Index: index to element
+		/// \param Args: Data to update the current element
 		/// 
 		/// \returns True if successfully updated the element, otherwise false
 		/// 
@@ -62,25 +62,25 @@ namespace CommonUtilities
 
 		/// Retrieves an element.
 		/// 
-		/// \param aIndex: index to element
+		/// \param Index: index to element
 		/// 
 		NODISC auto Get(SizeType aIndex) -> ValueType&;
 
 		/// Retrieves an element.
 		/// 
-		/// \param aIndex: index to element
+		/// \param Index: index to element
 		/// 
 		NODISC auto Get(SizeType aIndex) const -> const ValueType&;
 
 		/// Retrieves the rectangle encompassing item
 		/// 
-		/// \param aIndex: index to item.
+		/// \param Index: index to item.
 		/// 
 		NODISC auto GetRect(SizeType aIndex) const -> const RectFloat&;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param aRect: Bounding rectangle where all the elements are contained
+		/// \param Rect: Bounding rectangle where all the elements are contained
 		/// 
 		/// \returns List of entities contained within the bounding rectangle
 		/// 

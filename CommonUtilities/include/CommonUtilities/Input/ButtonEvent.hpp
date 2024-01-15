@@ -94,13 +94,13 @@ namespace CommonUtilities
 
 		/// Removes all callbacks that are associated with the provided button.
 		/// 
-		/// \param aButton: Button type to look for when removing.
+		/// \param Button: Button type to look for when removing.
 		/// 
 		void Remove(ButtonType aButton);
 
 		/// Removes all callbacks that are associated with the provided trigger.
 		/// 
-		/// \param aTrigger: Trigger type to look for when removing.
+		/// \param Trigger: Trigger type to look for when removing.
 		/// 
 		void Remove(bt::ButtonTrigger aTrigger);
 

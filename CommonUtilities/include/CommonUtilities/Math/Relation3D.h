@@ -65,15 +65,15 @@ namespace CommonUtilities
 
 		/// Attaches child to parent.
 		/// 
-		/// \param aParent: Parent to attach child to
-		/// \param aChild: child to attach to parent
+		/// \param Parent: Parent to attach child to
+		/// \param Child: child to attach to parent
 		/// 
 		static void Attach(Relation3DPtr aParent, Relation3DPtr aChild);
 
 		/// Detaches child from parent.
 		/// 
-		/// \param aParent: Parent to detach child from
-		/// \param aChild: child to detach from parent
+		/// \param Parent: Parent to detach child from
+		/// \param Child: child to detach from parent
 		/// 
 		/// \returns Whether detachment was successful
 		/// 

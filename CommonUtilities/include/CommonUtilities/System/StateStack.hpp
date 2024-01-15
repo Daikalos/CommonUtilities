@@ -81,20 +81,20 @@ namespace CommonUtilities
 
 		/// Push a state to the top of the stack.
 		/// 
-		/// \param aStateID: ID of the state to add
+		/// \param StateID: ID of the state to add
 		/// 
 		void Push(const IDType& aStateID);
 
 		/// Erases the first instance found with the provided ID.
 		/// 
-		/// \param aStateID: ID of the state to erase
+		/// \param StateID: ID of the state to erase
 		/// 
 		void Erase(const IDType& aStateID);
 
 		/// Moves the first instance found with the provided ID to the new position.
 		/// 
-		/// \param aStateID: ID of the state to erase
-		/// \param aNewIndex: The new position of the state
+		/// \param StateID: ID of the state to erase
+		/// \param NewIndex: The new position of the state
 		/// 
 		void Move(const IDType& aStateID, std::size_t aNewIndex);
 

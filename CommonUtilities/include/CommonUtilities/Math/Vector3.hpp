@@ -115,6 +115,14 @@ namespace CommonUtilities
 		/// 
 		NODISC CONSTEXPR Vector3 Reflect(const Vector3& aVector) const;
 
+		/// Computes the shortest angle between the two vectors.
+		/// 
+		/// \param Vector: vector to compare to.
+		/// 
+		/// \returns Angle in the range [-PI, PI) radians
+		/// 
+		NODISC CONSTEXPR T AngleTo(const Vector3& aVector) const;
+
 		/// \returns Converts this 3D vector to a 2D one.
 		/// 
 		NODISC CONSTEXPR Vector2<T> XY() const;
@@ -286,23 +294,26 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	CONSTEXPR T Vector3<T>::AngleTo(const Vector3& aVector) const
+	{
+		return std::acos(Dot(aVector) / (Length() * aVector.Length()));
+	}
+
+	template<typename T>
 	CONSTEXPR Vector2<T> Vector3<T>::XY() const
 	{
 		return Vector2<T>(x, y);
 	}
-
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector3<T>::XZ() const
 	{
 		return Vector2<T>(x, z);
 	}
-
 	template<typename T>
 	CONSTEXPR Vector2<T> Vector3<T>::YZ() const
 	{
 		return Vector2<T>(y, z);
 	}
-
 	template<typename T>
 	CONSTEXPR Vector4<T> Vector3<T>::XYZW(T aW) const
 	{

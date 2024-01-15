@@ -25,6 +25,7 @@ namespace CommonUtilities
 		NODISC virtual const Mat3f& GetViewMatrix() const;
 
 		NODISC Vector2f ViewToWorld(const Vector2f& aPosition) const;
+		NODISC Vector2f WorldToView(const Vector2f& aPosition) const;
 
 		virtual void SetPosition(const Vector2f& aPosition);
 		virtual void SetScale(const Vector2f& aScale);

@@ -43,6 +43,10 @@ Vector2f Camera2D::ViewToWorld(const Vector2f& aPosition) const
 {
 	return GetWorldMatrix() * aPosition;
 }
+Vector2f Camera2D::WorldToView(const Vector2f& aPosition) const
+{
+	return GetViewMatrix() * aPosition;
+}
 
 void Camera2D::SetPosition(const Vector2f& aPosition)
 {

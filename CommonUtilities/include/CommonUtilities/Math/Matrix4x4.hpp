@@ -68,7 +68,7 @@ namespace CommonUtilities
 
 		NODISC CONSTEXPR static auto CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
-		NODISC CONSTEXPR static auto CreatePerspective(T aHorizontalFOV, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
+		NODISC CONSTEXPR static auto CreatePerspective(T aHorizontalFOVDeg, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC CONSTEXPR static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC CONSTEXPR static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -383,18 +383,14 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	CONSTEXPR auto Matrix4x4<T>::CreatePerspective(T aHorizontalFOV, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::CreatePerspective(T aHorizontalFOVDeg, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4
 	{
 		assert((float)aNearClip < (float)aFarClip);
 		assert((float)aNearClip >= 0.00000000000001f);
 
-		const float hFOVRad = (float)aHorizontalFOV * au::DEG2RAD;
-		const float hFOVTan = std::tan(hFOVRad / 2.0f);
-
-		const float vFOVRad = 2.0f * std::atan(hFOVTan * (float)aAspectRatio);
-
-		const float xScale = 1.0f / hFOVTan;
-		const float yScale = 1.0f / std::tan(vFOVRad / 2.0f);
+		const float hFOVRad = (float)aHorizontalFOVDeg * au::DEG2RAD;
+		const float xScale = 1.0f / std::tan(hFOVRad / 2.0f);
+		const float yScale = (float)aAspectRatio * xScale;
 
 		const float Q = aFarClip / (aFarClip - aNearClip);
 
@@ -402,7 +398,7 @@ namespace CommonUtilities
 		{
 			xScale, 0,		0,				0,
 			0,		yScale,	0,				0,
-			0,		0,		Q,				1.0f / Q,
+			0,		0,		Q,				1,
 			0,		0,		-Q * aNearClip,	0
 		};
 	}

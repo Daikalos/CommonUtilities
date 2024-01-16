@@ -48,8 +48,8 @@ namespace CommonUtilities
 		CONSTEXPR void SetRotation(const Vector3<T>& aRotation);
 		CONSTEXPR void SetScale(const Vector3<T>& aScale);
 
-		NODISC CONSTEXPR auto Inverse() const -> Matrix4x4;
-		NODISC CONSTEXPR auto FastInverse() const -> Matrix4x4;
+		NODISC CONSTEXPR auto GetInverse() const -> Matrix4x4;
+		NODISC CONSTEXPR auto GetFastInverse() const -> Matrix4x4;
 
 		CONSTEXPR auto Translate(const Vector3<T>& aTranslation) -> Matrix4x4&;
 		CONSTEXPR auto Scale(const Vector3<T>& someFactors) -> Matrix4x4&;
@@ -216,13 +216,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR auto Matrix4x4<T>::Inverse() const -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::GetInverse() const -> Matrix4x4
 	{
 		throw std::runtime_error("Not yet implemented");
 		return Matrix4x4();
 	}
 	template<typename T>
-	CONSTEXPR auto Matrix4x4<T>::FastInverse() const -> Matrix4x4
+	CONSTEXPR auto Matrix4x4<T>::GetFastInverse() const -> Matrix4x4
 	{
 		const Vector3<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");

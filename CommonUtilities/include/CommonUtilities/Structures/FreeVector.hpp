@@ -9,7 +9,7 @@
 
 namespace CommonUtilities
 {
-	/// Structure that enables for quick insertion and removal
+	/// Structure that enables for quick insertion and removal from anywhere in the container.
 	/// 
 	template<class T>
 	class FreeVector

@@ -24,8 +24,8 @@ namespace CommonUtilities
 		NODISC const Vector3f& GetPosition() const noexcept;
 		NODISC const Vector3f& GetRotation() const noexcept;
 		NODISC const Vector2f& GetScreenSize() const noexcept;
-		NODISC const float GetNearClip() const noexcept;
-		NODISC const float GetFarClip() const noexcept;
+		NODISC float GetNearClip() const noexcept;
+		NODISC float GetFarClip() const noexcept;
 		NODISC std::tuple<float, float> GetProjectionPlanes() const;
 
 		NODISC Vector3f WorldToView(const Vector3f& aWorldPosition) const;

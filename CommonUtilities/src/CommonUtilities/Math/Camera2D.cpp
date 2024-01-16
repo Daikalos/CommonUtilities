@@ -11,7 +11,7 @@ const Mat3f& Camera2D::GetWorldMatrix() const
 {
 	if (myUpdateWorld)
 	{
-		myWorldMatrix = GetViewMatrix().FastInverse();
+		myWorldMatrix = GetViewMatrix().GetFastInverse();
 		myUpdateWorld = false;
 	}
 

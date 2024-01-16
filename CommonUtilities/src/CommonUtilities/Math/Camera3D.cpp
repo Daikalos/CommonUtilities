@@ -9,8 +9,8 @@ const Mat4f& Camera3D::GetProjection() const noexcept		{ return myProjectionMatr
 const Vector3f& Camera3D::GetPosition() const noexcept		{ return myTransform.GetPosition(); }
 const Vector3f& Camera3D::GetRotation() const noexcept		{ return myTransform.GetRotation(); }
 const Vector2f& Camera3D::GetScreenSize() const noexcept	{ return myScreenSize; }
-const float Camera3D::GetNearClip() const noexcept			{ return myNearClip; }
-const float Camera3D::GetFarClip() const noexcept			{ return myFarClip; }
+float Camera3D::GetNearClip() const noexcept				{ return myNearClip; }
+float Camera3D::GetFarClip() const noexcept					{ return myFarClip; }
 
 std::tuple<float, float> Camera3D::GetProjectionPlanes() const
 {

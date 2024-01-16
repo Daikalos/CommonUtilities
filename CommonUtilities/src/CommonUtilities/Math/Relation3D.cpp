@@ -99,7 +99,7 @@ const Mat4f& Relation3D::GetInverseGlobalMatrix() const
 {
 	if (myUpdateGlobalInverseMatrix)
 	{
-		myInverseGlobalMatrix = GetGlobalMatrix().FastInverse();
+		myInverseGlobalMatrix = GetGlobalMatrix().GetFastInverse();
 		myUpdateGlobalInverseMatrix = false;
 	}
 
@@ -252,7 +252,7 @@ void Relation3D::RemoveAllExpired()
 
 void Relation3D::UpdateTransform() const
 {
-	if (myParent.expired())
+	if (!HasParent())
 	{
 		UpdateToLocal();
 		return;
@@ -270,7 +270,7 @@ void Relation3D::UpdateTransform() const
 	{
 		myGlobalMatrix			= combinedMatrix;
 
-		myUpdateGlobalPosition	= true; // we delay updating rotation and scale since they may be quite expensive
+		myUpdateGlobalPosition	= true; // we delay updating since they may be quite expensive
 		myUpdateGlobalRotation	= true;
 		myUpdateGlobalScale		= true;
 	}
@@ -279,10 +279,10 @@ void Relation3D::UpdateTransform() const
 }
 void Relation3D::UpdateToLocal() const
 {
-	const Mat4f localMatrix = GetMatrix();
+	const Mat4f& localMatrix = GetMatrix();
 	if (myGlobalMatrix != localMatrix)
 	{ 
-		myGlobalMatrix			= GetMatrix();
+		myGlobalMatrix			= localMatrix;
 
 		myGlobalPosition		= myPosition;
 		myGlobalRotation		= myRotation;

@@ -35,7 +35,7 @@ const Mat4f& Transform3D::GetInverseMatrix() const
 {
 	if (myUpdateInverseMatrix)
 	{
-		myInverseMatrix = GetMatrix().FastInverse();
+		myInverseMatrix = GetMatrix().GetFastInverse();
 		myUpdateInverseMatrix = false;
 	}
 	return myInverseMatrix;

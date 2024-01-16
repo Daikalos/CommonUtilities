@@ -99,7 +99,7 @@ const Mat3f& Relation2D::GetInverseGlobalMatrix() const
 {
 	if (myUpdateGlobalInverseMatrix)
 	{
-		myInverseGlobalMatrix = GetGlobalMatrix().FastInverse();
+		myInverseGlobalMatrix = GetGlobalMatrix().GetFastInverse();
 		myUpdateGlobalInverseMatrix = false;
 	}
 
@@ -252,7 +252,7 @@ void Relation2D::RemoveAllExpired()
 
 void Relation2D::UpdateTransform() const
 {
-	if (myParent.expired())
+	if (!HasParent())
 	{
 		UpdateToLocal();
 		return;
@@ -279,10 +279,10 @@ void Relation2D::UpdateTransform() const
 }
 void Relation2D::UpdateToLocal() const
 {
-	const Mat3f localMatrix = GetMatrix();
+	const Mat3f& localMatrix = GetMatrix();
 	if (myGlobalMatrix != localMatrix)
 	{ 
-		myGlobalMatrix			= GetMatrix();
+		myGlobalMatrix			= localMatrix;
 
 		myGlobalPosition		= myPosition;
 		myGlobalRotation		= myRotation;

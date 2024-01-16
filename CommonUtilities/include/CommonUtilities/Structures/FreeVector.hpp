@@ -9,8 +9,8 @@
 
 namespace CommonUtilities
 {
-	// TODO: add docs
-
+	/// Structure that enables for quick insertion and removal
+	/// 
 	template<class T>
 	class FreeVector
 	{

@@ -124,7 +124,7 @@ namespace CommonUtilities
 		/// 
 		void ApplyPendingChanges();
 
-		/// Register the state so that it may later be able to be managed on the stack (push, pop, etc.).
+		/// Register the state so that it may later be able to be managed on the stack using ID (push, pop, etc.).
 		/// 
 		/// \param StateID: ID of the provided state
 		/// \param Args: Optional constructor arguments

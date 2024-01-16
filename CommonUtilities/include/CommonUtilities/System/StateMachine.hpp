@@ -73,7 +73,7 @@ namespace CommonUtilities
 		/// \param Args: Optional constructor arguments
 		/// 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<S, IDType&, StateMachine&, Args...>
+			requires std::constructible_from<S, const IDType&, StateMachine&, Args...>
 		void AddState(const IDType& aStateID, Args&&... someArgs)
 		{
 			myStates[aStateID] = std::make_unique<S>(aStateID, *this, std::forward<Args>(someArgs)...);

@@ -17,8 +17,8 @@ namespace CommonUtilities
 		CONSTEXPR Plane(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
 		CONSTEXPR Plane(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 
-		CONSTEXPR static Plane<T> InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
-		CONSTEXPR static Plane<T> InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
+		NODISC CONSTEXPR static Plane<T> InitWithPointAndNormal(const Vector3<T>& aPoint, const Vector3<T>& aNormal);
+		NODISC CONSTEXPR static Plane<T> InitWith3Points(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
 
 		NODISC CONSTEXPR const Vector3<T>& GetOrigin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetNormal() const noexcept;

@@ -16,8 +16,8 @@ namespace CommonUtilities
 
 		CONSTEXPR Line(const Vector2<T>& aOrigin, const Vector2<T>& aDirection);
 
-		CONSTEXPR static Line InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
-		CONSTEXPR static Line InitWithPointAndDirection(const Vector2<T>& aOrigin, const Vector2<T>& aDirection);
+		NODISC CONSTEXPR static Line InitWith2Points(const Vector2<T>& aPoint0, const Vector2<T>& aPoint1);
+		NODISC CONSTEXPR static Line InitWithPointAndDirection(const Vector2<T>& aOrigin, const Vector2<T>& aDirection);
 
 		NODISC CONSTEXPR const Vector2<T>& GetOrigin() const noexcept;
 		NODISC CONSTEXPR const Vector2<T>& GetDirection() const noexcept;

@@ -16,7 +16,7 @@ namespace CommonUtilities
 
 		CONSTEXPR Sphere(const Vector3<T>& aCenter, T aRadius);
 
-		CONSTEXPR static Sphere<T> InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius);
+		NODISC CONSTEXPR static Sphere<T> InitWithCenterAndRadius(const Vector3<T>& aCenter, T aRadius);
 
 		NODISC CONSTEXPR const Vector3<T>& GetCenter() const noexcept;
 		NODISC CONSTEXPR T GetRadius() const noexcept;

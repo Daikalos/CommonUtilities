@@ -18,8 +18,8 @@ namespace CommonUtilities
 
 		CONSTEXPR AABB3D(const Vector3<T>& aMin, const Vector3<T>& aMax);
 
-		CONSTEXPR static AABB3D InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
-		CONSTEXPR static AABB3D InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
+		NODISC CONSTEXPR static AABB3D InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
+		NODISC CONSTEXPR static AABB3D InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
 
 		NODISC CONSTEXPR const Vector3<T>& GetMin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetMax() const noexcept;

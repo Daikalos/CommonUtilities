@@ -16,8 +16,8 @@ namespace CommonUtilities
 
 		CONSTEXPR Ray(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
 
-		CONSTEXPR static Ray<T> InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint);
-		CONSTEXPR static Ray<T> InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
+		NODISC CONSTEXPR static Ray<T> InitWith2Points(const Vector3<T>& aOrigin, const Vector3<T>& aPoint);
+		NODISC CONSTEXPR static Ray<T> InitWithOriginAndDirection(const Vector3<T>& aOrigin, const Vector3<T>& aDirection);
 
 		NODISC CONSTEXPR const Vector3<T>& GetOrigin() const noexcept;
 		NODISC CONSTEXPR const Vector3<T>& GetDirection() const noexcept;

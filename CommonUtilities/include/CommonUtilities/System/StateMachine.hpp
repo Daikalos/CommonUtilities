@@ -59,7 +59,7 @@ namespace CommonUtilities
 		/// 
 		/// \param StateID: ID of the state to transition to.
 		/// 
-		/// \return Whether it transitioned
+		/// \return Whether it transitioned successfully
 		/// 
 		virtual bool TransitionTo(const IDType& aStateID);
 

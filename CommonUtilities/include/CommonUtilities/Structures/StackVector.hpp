@@ -6,8 +6,10 @@
 
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities
+namespace CommonUtilities::deprecated
 {
+	/// This structure is deprecated, use StaticVector instead
+	/// 
 	template<typename T, std::size_t SIZE>
 	class StackVector
 	{

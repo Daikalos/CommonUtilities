@@ -55,15 +55,38 @@ namespace CommonUtilities
 		NODISC virtual auto GetState(const IDType& aStateID) const -> const State&;
 		NODISC virtual auto GetState(const IDType& aStateID) -> State&;
 
+		/// Transitions from the current state to the new one.
+		/// 
+		/// \param StateID: ID of the state to transition to.
+		/// 
+		/// \return Whether it transitioned
+		/// 
 		virtual bool TransitionTo(const IDType& aStateID);
 
+		/// Exits the current state and sets the currently active one to null.
+		/// 
+		void Stop();
+
+		/// Adds the state directly to the machine so that you can later transition from and to it.
+		/// 
+		/// \param StateID: ID of the state
+		/// \param Args: Optional constructor arguments
+		/// 
 		template<std::derived_from<State> S, typename... Args>
-			requires std::constructible_from<S, const IDType&, StateMachine&, Args...>
+			requires std::constructible_from<S, IDType&, StateMachine&, Args...>
 		void AddState(const IDType& aStateID, Args&&... someArgs)
 		{
 			myStates[aStateID] = std::make_unique<S>(aStateID, *this, std::forward<Args>(someArgs)...);
 		}
 
+		/// Removes the state from the machine.
+		/// 
+		/// \param StateID: ID of the state to remove
+		/// 
+		bool RemoveState(const IDType& aStateID);
+
+		/// Generic update function that calls update on the currently active state.
+		/// 
 		virtual void Update(Timer& aTimer);
 
 	protected:
@@ -148,6 +171,31 @@ namespace CommonUtilities
 		{
 			myCurrentState->Enter();
 		}
+
+		return true;
+	}
+
+	template<typename IDType, typename Hash>
+	inline void StateMachine<IDType, Hash>::Stop()
+	{
+		if (myCurrentState != nullptr)
+		{
+			myCurrentState->Exit();
+		}
+
+		myCurrentState = nullptr;
+	}
+
+	template<typename IDType, typename Hash>
+	bool StateMachine<IDType, Hash>::RemoveState(const IDType& aStateID)
+	{
+		const auto it = myStates.find(aStateID);
+		if (it == myStates.end())
+		{
+			return false;
+		}
+
+		myStates.erase(it);
 
 		return true;
 	}

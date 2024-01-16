@@ -11,7 +11,7 @@
 
 namespace CommonUtilities
 {
-	/// Can hold any number of functions that may all be executed manually. 
+	/// Can hold any number of callbacks (functions) that may all be executed manually. 
 	/// 
 	/// Based on article by Shmuel Zang:
 	/// https://www.codeproject.com/Articles/1256352/CppEvent-How-to-Implement-Events-using-Standard-Cp
@@ -46,20 +46,74 @@ namespace CommonUtilities
 		evnt::IDType operator-=(const HandlerType& aHandler);
 		evnt::IDType operator-=(evnt::IDType aHandlerID) override;
 
+		/// \return Number registered callbacks in the event 
+		///
 		NODISC std::size_t Count() const override;
+
+		/// \return If the event is empty of callbacks
+		///
 		NODISC bool IsEmpty() const override;
 
+		/// Preallocate memory for the functions to reduce number of reallocations.
+		///
 		void Reserve(std::size_t aSize) override;
+
+		/// Removes all registered callbacks.
+		/// 
 		void Clear() override;
 
+		/// Adds the handler to the list of callbacks.
+		/// 
+		/// \param Handler: Handler that contains the callback
+		/// 
+		/// \return Unique ID for the added callback so that you can later remove it
+		/// 
 		evnt::IDType Add(const HandlerType& aHandler);
-		evnt::IDType Add(const typename HandlerType::FunctionType& aHandler);
-		evnt::IDType Add(typename HandlerType::FunctionType&& aHandler);
 
+		/// Adds the function to the list of callbacks.
+		/// 
+		/// \param Func: Function that will be invoked
+		/// 
+		/// \return Unique ID for the added callback so that you can later remove it
+		/// 
+		evnt::IDType Add(const typename HandlerType::FunctionType& aFunc);
+
+		/// Adds the function to the list of callbacks.
+		/// 
+		/// \param Func: Function that will be invoked
+		/// 
+		/// \return Unique ID for the added callback so that you can later remove it
+		/// 
+		evnt::IDType Add(typename HandlerType::FunctionType&& aFunc);
+
+		/// Removes the callback associated with the provided handler.
+		/// 
+		/// \param Handler: Handler that contains the associated ID
+		/// 
+		/// \return If removal was successful
+		/// 
 		bool Remove(const HandlerType& aHandler);
+
+		/// Removes the callback that has the provided ID
+		/// 
+		/// \param HandlerID: ID of the handler that contain the callback
+		/// 
+		/// \return If removal was successful
+		/// 
 		bool RemoveID(evnt::IDType aHandlerID) override;
 
+
+		/// Invokes the event, which calls all of the added callbacks.
+		/// 
+		/// \param Args: Optional arguments that is passed along to each callback
+		/// 
 		void Call(Args... someParams) const;
+
+		
+		/// Invokes the event asynchronously, which calls all of the added callbacks.
+		/// 
+		/// \param Args: Optional arguments that is passed along to each callback
+		/// 
 		std::future<void> CallAsync(Args... someParams) const;
 
 	private:
@@ -177,21 +231,21 @@ namespace CommonUtilities
 		return aHandler.GetID();
 	}
 	template<typename... Args>
-	inline evnt::IDType Event<Args...>::Add(const typename HandlerType::FunctionType& aHandler)
+	inline evnt::IDType Event<Args...>::Add(const typename HandlerType::FunctionType& aFunc)
 	{
 		std::scoped_lock lock(myMutex);
 
-		myHandlers.emplace_back(aHandler);
+		myHandlers.emplace_back(aFunc);
 
 		return myHandlers.back().GetID();
 	}
 
 	template<typename ...Args>
-	inline evnt::IDType Event<Args...>::Add(typename HandlerType::FunctionType&& aHandler)
+	inline evnt::IDType Event<Args...>::Add(typename HandlerType::FunctionType&& aFunc)
 	{
 		std::scoped_lock lock(myMutex);
 
-		myHandlers.emplace_back(std::move(aHandler));
+		myHandlers.emplace_back(std::move(aFunc));
 
 		return myHandlers.back().GetID();
 	}

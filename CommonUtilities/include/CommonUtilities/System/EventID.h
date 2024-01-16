@@ -6,7 +6,8 @@
 
 namespace CommonUtilities
 {
-	/// Wrapper around event id to better manage the events lifetime
+	/// Wrapper around event id to better manage the events lifetime, for example, will remove the callback 
+	/// when this is destroyed.
 	/// 
 	class EventID : public NonCopyable
 	{

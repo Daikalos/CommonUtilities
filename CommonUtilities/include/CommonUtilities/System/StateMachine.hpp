@@ -83,6 +83,8 @@ namespace CommonUtilities
 		/// 
 		/// \param StateID: ID of the state to remove
 		/// 
+		/// \return Whether it successfully removed the state
+		/// 
 		bool RemoveState(const IDType& aStateID);
 
 		/// Generic update function that calls update on the currently active state.

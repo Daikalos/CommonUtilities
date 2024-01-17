@@ -25,7 +25,7 @@ namespace CommonUtilities
 	{
 		Vector3<T>	intersection;
 		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal points right
-		float		penetration		{0.0f};
+		T			penetration		{0};
 		bool		collided		{false};
 
 		operator bool() const noexcept // implicitly convertable to boolean
@@ -292,7 +292,7 @@ namespace CommonUtilities
 			{
 				result.intersection = aRay.GetOrigin();
 				result.normal		= aPlane.GetNormal();
-				result.penetration	= 0.0f;
+				result.penetration	= 0;
 				result.collided		= true;
 
 				return result;
@@ -310,7 +310,7 @@ namespace CommonUtilities
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
 		result.normal		= aPlane.GetNormal() * -au::Sign<T>(denom); // flip normal based on what side we are approaching from
-		result.penetration	= 0.0f; 
+		result.penetration	= 0; 
 		result.collided		= true;
 
 		return result;
@@ -405,7 +405,7 @@ namespace CommonUtilities
 
 
 			result.intersection = aRay.GetOrigin();
-			result.penetration	= 0.0f;
+			result.penetration	= 0;
 			result.collided		= true;
 
 			return result;
@@ -501,7 +501,7 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * maxT;
-		result.penetration	= 0.0f;
+		result.penetration	= 0;
 		result.collided		= true;
 
 		return result;
@@ -535,7 +535,7 @@ namespace CommonUtilities
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
 		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
-		result.penetration	= 0.0f;
+		result.penetration	= 0;
 		result.collided		= true;
 
 		return result;

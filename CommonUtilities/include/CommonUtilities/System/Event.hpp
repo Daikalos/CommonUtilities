@@ -102,14 +102,12 @@ namespace CommonUtilities
 		/// 
 		bool RemoveID(evnt::IDType aHandlerID) override;
 
-
 		/// Invokes the event, which calls all of the added callbacks.
 		/// 
 		/// \param Args: Optional arguments that is passed along to each callback
 		/// 
 		void Call(Args... someParams) const;
 
-		
 		/// Invokes the event asynchronously, which calls all of the added callbacks.
 		/// 
 		/// \param Args: Optional arguments that is passed along to each callback

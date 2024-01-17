@@ -20,10 +20,10 @@ namespace CommonUtilities
 			Count		= 7
 		};
 
-		NODISC CONSTEXPR virtual auto GetType() const noexcept -> Type = 0;
+		NODISC constexpr virtual auto GetType() const noexcept -> Type = 0;
 
 	protected:
-		CONSTEXPR Shape() = default;
-		CONSTEXPR virtual ~Shape() = default;
+		constexpr Shape() = default;
+		constexpr virtual ~Shape() = default;
 	};
 }

@@ -11,19 +11,19 @@
 namespace CommonUtilities::au
 {
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI_V = std::numbers::pi_v<T>;
+	constexpr T PI_V = std::numbers::pi_v<T>;
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI_2_V = PI_V<T> / T{2};
+	constexpr T PI_2_V = PI_V<T> / T{2};
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T PI_4_V = PI_2_V<T> / T{2};
+	constexpr T PI_4_V = PI_2_V<T> / T{2};
 
 	template<IsFloatingPoint T = float> 
-	CONSTEXPR T DEG2RAD_V = PI_V<T> / T{180.0};
+	constexpr T DEG2RAD_V = PI_V<T> / T{180.0};
 
 	template<IsFloatingPoint T = float>
-	CONSTEXPR T RAD2DEG_V = T{180.0} / PI_V<T>;
+	constexpr T RAD2DEG_V = T{180.0} / PI_V<T>;
 
 	inline constexpr float			PI			= PI_V<float>;
 	inline constexpr float			PI_2		= PI_2_V<float>;
@@ -46,19 +46,19 @@ namespace CommonUtilities::au
 	inline constexpr long double	RAD2DEG_LD	= RAD2DEG_V<long double>;
 
 	template<IsFloatingPoint T>
-	NODISC CONSTEXPR T ToRadians(T aDegrees)
+	NODISC constexpr T ToRadians(T aDegrees)
 	{
 		return aDegrees * DEG2RAD_V<T>;
 	}
 
 	template<IsFloatingPoint T>
-	NODISC CONSTEXPR T ToDegrees(T aRadians)
+	NODISC constexpr T ToDegrees(T aRadians)
 	{
 		return aRadians * RAD2DEG_V<T>;
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR T Pow(T aBase, std::int32_t aExponent)
+	NODISC constexpr T Pow(T aBase, std::int32_t aExponent)
 	{
 		if (aExponent < 0)
 			return Pow(1 / aBase, -aExponent);
@@ -73,70 +73,70 @@ namespace CommonUtilities::au
 	}
 
 	template<IsFloatingPoint T>
-	NODISC CONSTEXPR auto Equal(T aFirst, T aSecond, T aEpsilon = std::numeric_limits<T>::epsilon())
+	NODISC constexpr auto Equal(T aFirst, T aSecond, T aEpsilon = std::numeric_limits<T>::epsilon())
 	{
 		return std::abs(aFirst - aSecond) <= aEpsilon;
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR T Sign(T aValue)
+	NODISC constexpr T Sign(T aValue)
 	{
 		return static_cast<T>((aValue < T{}) ? -1 : 1);
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR T MapToRange(T aValue, T aMinIn, T aMaxIn, T aMinOut, T aMaxOut)
+	NODISC constexpr T MapToRange(T aValue, T aMinIn, T aMaxIn, T aMinOut, T aMaxOut)
 	{
 		float x = (aValue - aMinIn) / static_cast<float>(aMaxIn - aMinIn);
 		return static_cast<T>(aMinOut + static_cast<float>(aMaxOut - aMinOut) * x);
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR auto SetPrecision(T aValue, int aPlaces)
+	NODISC constexpr auto SetPrecision(T aValue, int aPlaces)
 	{
 		double n = Pow(10.0, aPlaces);
 		return std::round(aValue * n) / n;
 	}
 
 	template<IsFloatingPoint T>
-	NODISC CONSTEXPR T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
+	NODISC constexpr T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
 	{
 		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), PI_V<T> * 2) - PI_V<T>);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR const T& Max(const T& aFirst, const T& aSecond)
+	NODISC constexpr const T& Max(const T& aFirst, const T& aSecond)
 	{
 		return (aFirst < aSecond) ? aSecond : aFirst;
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR const T& Min(const T& aFirst, const T& aSecond)
+	NODISC constexpr const T& Min(const T& aFirst, const T& aSecond)
 	{
 		return (aSecond < aFirst) ? aSecond : aFirst;
 	}
 
 	template<typename T, typename... Args>
-	NODISC CONSTEXPR const T& Max(const T& aFirst, const T& aSecond, const Args&... someArgs)
+	NODISC constexpr const T& Max(const T& aFirst, const T& aSecond, const Args&... someArgs)
 	{
 		return Max(Max(aFirst, aSecond), someArgs...);
 	}
 
 	template<typename T, typename... Args>
-	NODISC CONSTEXPR const T& Min(const T& aFirst, const T& aSecond, const Args&... someArgs)
+	NODISC constexpr const T& Min(const T& aFirst, const T& aSecond, const Args&... someArgs)
 	{
 		return Min(Min(aFirst, aSecond), someArgs...);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR T Abs(const T& aValue)
+	NODISC constexpr T Abs(const T& aValue)
 	{
 		// since the minus operator will possibly create a new object, we cannot return a reference
 		return (aValue >= T{}) ? aValue : -aValue;
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR const T& Clamp(const T& aValue, const T& aMin, const T& aMax)
+	NODISC constexpr const T& Clamp(const T& aValue, const T& aMin, const T& aMax)
 	{
 		assert(!(aMin > aMax) && "Min must be smaller than max!");
 		if (aValue < aMin)
@@ -151,13 +151,13 @@ namespace CommonUtilities::au
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR T Lerp(const T& aStart, const T& aEnd, float aPercentage)
+	NODISC constexpr T Lerp(const T& aStart, const T& aEnd, float aPercentage)
 	{
 		return static_cast<T>(aStart + aPercentage * (aEnd - aStart));
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR void Swap(T& aFirst, T& aSecond)
+	NODISC constexpr void Swap(T& aFirst, T& aSecond)
 	{
 		T temp	= std::move(aFirst);
 		aFirst	= std::move(aSecond);

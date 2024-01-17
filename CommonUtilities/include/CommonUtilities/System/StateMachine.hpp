@@ -177,7 +177,7 @@ namespace CommonUtilities
 		return true;
 	}
 
-	template<typename IDType, typename Hash>
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::Stop()
 	{
 		if (myCurrentState != nullptr)
@@ -188,7 +188,7 @@ namespace CommonUtilities
 		myCurrentState = nullptr;
 	}
 
-	template<typename IDType, typename Hash>
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline bool StateMachine<IDType, Hash>::RemoveState(const IDType& aStateID)
 	{
 		const auto it = myStates.find(aStateID);

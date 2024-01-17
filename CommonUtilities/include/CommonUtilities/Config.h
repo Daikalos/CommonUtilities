@@ -84,19 +84,17 @@
 #endif
 
 #if C20_SUPPORT
-#	define CONSTEXPR constexpr
 #	define NOADDRESS [[no_unique_address]]
 #else 
-#	define CONSTEXPR inline
 #	define NOADDRESS
 #endif 
 
 #if C17_SUPPORT
 #	define NODISC [[nodiscard]]
-#	define MB_UNSD [[maybe_unused]]
+#	define UNSD [[maybe_unused]]
 #else
 #	define NODISC
-#	define MB_UNSD
+#	define UNSD
 #endif
 
 #ifndef FULL_NAMESPACE

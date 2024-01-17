@@ -19,48 +19,48 @@ namespace CommonUtilities
 		T x{};
 		T y{};
 
-		CONSTEXPR Vector2() = default;
-		CONSTEXPR ~Vector2() = default;
+		constexpr Vector2() = default;
+		constexpr ~Vector2() = default;
 
-		CONSTEXPR Vector2(T aX, T aY);
+		constexpr Vector2(T aX, T aY);
 
 		template <typename U>
-		CONSTEXPR explicit Vector2(const Vector2<U>& aVector);
+		constexpr explicit Vector2(const Vector2<U>& aVector);
 
 		template<class OtherVector>
-		NODISC CONSTEXPR explicit operator OtherVector() const;
+		NODISC constexpr explicit operator OtherVector() const;
 
 		/// \returns Directional vector pointing from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector2 Direction(const Vector2& aCurrent, const Vector2& aTarget);
+		NODISC constexpr static Vector2 Direction(const Vector2& aCurrent, const Vector2& aTarget);
 
 		/// \returns Distance from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector2 Distance(const Vector2& aCurrent, const Vector2& aTarget);
+		NODISC constexpr static Vector2 Distance(const Vector2& aCurrent, const Vector2& aTarget);
 
 		/// \returns Distance squared from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector2 DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget);
+		NODISC constexpr static Vector2 DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget);
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC CONSTEXPR static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
+		NODISC constexpr static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
 
 		/// \returns Slerped vector between current and target.
 		/// 
-		NODISC CONSTEXPR static Vector2 Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
+		NODISC constexpr static Vector2 Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
 
 		/// \returns Moved vector going from current towards target.
 		/// 
-		NODISC CONSTEXPR static Vector2 MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance);
+		NODISC constexpr static Vector2 MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance);
 
 		///	Length of the vector.
 		/// 
-		NODISC CONSTEXPR T Length() const;
+		NODISC constexpr T Length() const;
 
 		/// Square length of the vector, useful for comparisons
 		/// 
-		NODISC CONSTEXPR T LengthSqr() const;
+		NODISC constexpr T LengthSqr() const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -68,7 +68,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector2<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
+		NODISC constexpr Vector2<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -77,17 +77,17 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector2<T> GetNormalized(T aLength, T aRadius) const;
+		NODISC constexpr Vector2<T> GetNormalized(T aLength, T aRadius) const;
 
 		/// Normalizes this vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
-		CONSTEXPR void Normalize(T aRadius = static_cast<T>(1));
+		constexpr void Normalize(T aRadius = static_cast<T>(1));
 
 		/// Dot product of two vectors.
 		/// 
-		NODISC CONSTEXPR T Dot(const Vector2& aVector) const;
+		NODISC constexpr T Dot(const Vector2& aVector) const;
 
 		/// Projects this vector onto another.
 		/// 
@@ -95,7 +95,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns Projected vector
 		/// 
-		NODISC CONSTEXPR Vector2 ProjectOnto(const Vector2& aVector) const;
+		NODISC constexpr Vector2 ProjectOnto(const Vector2& aVector) const;
 
 		/// Reflects provided vector from this acting as a normal.
 		/// 
@@ -103,19 +103,19 @@ namespace CommonUtilities
 		/// 
 		/// \returns Reflected vector
 		/// 
-		NODISC CONSTEXPR Vector2 Reflect(const Vector2& aVector) const;
+		NODISC constexpr Vector2 Reflect(const Vector2& aVector) const;
 
 		/// \returns Converts this 2D vector to a 3D one.
 		/// 
-		NODISC CONSTEXPR Vector3<T> XYZ(T aZ = T{}) const;
+		NODISC constexpr Vector3<T> XYZ(T aZ = T{}) const;
 
 		/// \returns Converts this 2D vector to a 3D one.
 		/// 
-		NODISC CONSTEXPR Vector3<T> XZY(T aY = T{}) const;
+		NODISC constexpr Vector3<T> XZY(T aY = T{}) const;
 
 		/// \returns Converts this 2D vector to a 3D one.
 		/// 
-		NODISC CONSTEXPR Vector3<T> YZX(T aX = T{}) const;
+		NODISC constexpr Vector3<T> YZX(T aX = T{}) const;
 
 		static const Vector2 Zero;
 		static const Vector2 Right;
@@ -140,41 +140,41 @@ namespace CommonUtilities
 	const Vector2<T> Vector2<T>::Down(static_cast<T>(0), static_cast<T>(-1));
 
 	template<typename T>
-	CONSTEXPR Vector2<T>::Vector2(T aX, T aY)
+	constexpr Vector2<T>::Vector2(T aX, T aY)
 		: x(aX), y(aY) {}
 
 	template<typename T>
 	template<typename U>
-	CONSTEXPR Vector2<T>::Vector2(const Vector2<U>& aVector)
+	constexpr Vector2<T>::Vector2(const Vector2<U>& aVector)
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)) {}
 
 	template<typename T>
 	template<class OtherVector>
-	CONSTEXPR Vector2<T>::operator OtherVector() const
+	constexpr Vector2<T>::operator OtherVector() const
 	{
 		return OtherVector{ x, y };
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::Direction(const Vector2& aCurrent, const Vector2& aTarget)
+	constexpr Vector2<T> Vector2<T>::Direction(const Vector2& aCurrent, const Vector2& aTarget)
 	{
 		return Vector2<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::Distance(const Vector2& aCurrent, const Vector2& aTarget)
+	constexpr Vector2<T> Vector2<T>::Distance(const Vector2& aCurrent, const Vector2& aTarget)
 	{
 		return Direction(aCurrent, aTarget).Length();
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget)
+	constexpr Vector2<T> Vector2<T>::DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget)
 	{
 		return Direction(aCurrent, aTarget).LengthSqr();
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
+	constexpr Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
@@ -186,7 +186,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
+	constexpr Vector2<T> Vector2<T>::Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
 		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
@@ -199,74 +199,74 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance)
+	constexpr Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance)
 	{
 		return aCurrent + Vector2<T>::Direction(aCurrent, aTarget).GetNormalized() * aDistance;
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector2<T>::Length() const
+	constexpr T Vector2<T>::Length() const
 	{
 		return static_cast<T>(std::sqrt(LengthSqr()));
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector2<T>::LengthSqr() const
+	constexpr T Vector2<T>::LengthSqr() const
 	{
 		return Dot(*this);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::GetNormalized(T aRadius) const
+	constexpr Vector2<T> Vector2<T>::GetNormalized(T aRadius) const
 	{
 		return GetNormalized(Length(), aRadius);
 	}
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::GetNormalized(T aLength, T aRadius) const
+	constexpr Vector2<T> Vector2<T>::GetNormalized(T aLength, T aRadius) const
 	{
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
 	}
 
 	template<typename T>
-	CONSTEXPR void Vector2<T>::Normalize(T aRadius)
+	constexpr void Vector2<T>::Normalize(T aRadius)
 	{
 		*this = GetNormalized(aRadius);
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector2<T>::Dot(const Vector2& aVector) const
+	constexpr T Vector2<T>::Dot(const Vector2& aVector) const
 	{
 		return x * aVector.x + y * aVector.y;
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::ProjectOnto(const Vector2& aVector) const
+	constexpr Vector2<T> Vector2<T>::ProjectOnto(const Vector2& aVector) const
 	{
 		assert(aVector != Vector2<T>() && "Cannot project onto a zero vector");
 		return (Dot(aVector) / aVector.LengthSqr()) * aVector;
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T> Vector2<T>::Reflect(const Vector2& aVector) const
+	constexpr Vector2<T> Vector2<T>::Reflect(const Vector2& aVector) const
 	{
 		return aVector - T{2} * ProjectOnto(aVector);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector3<T> Vector2<T>::XYZ(T aZ) const
+	constexpr Vector3<T> Vector2<T>::XYZ(T aZ) const
 	{
 		return Vector3<T>(x, y, aZ);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector3<T> Vector2<T>::XZY(T aY) const
+	constexpr Vector3<T> Vector2<T>::XZY(T aY) const
 	{
 		return Vector3<T>(x, aY, y);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector3<T> Vector2<T>::YZX(T aX) const
+	constexpr Vector3<T> Vector2<T>::YZX(T aX) const
 	{
 		return Vector3<T>(aX, x, y);
 	}
@@ -274,13 +274,13 @@ namespace CommonUtilities
 	// GLOBAL OPERATORS
 
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator-(const Vector2<T>& aVector)
+	NODISC constexpr Vector2<T> operator-(const Vector2<T>& aVector)
 	{
 		return Vector2<T>(-aVector.x, -aVector.y);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator+=(Vector2<T>& aLeft, const Vector2<T>& aRight)
+	constexpr Vector2<T>& operator+=(Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		aLeft.x += aRight.x;
 		aLeft.y += aRight.y;
@@ -288,7 +288,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator-=(Vector2<T>& aLeft, const Vector2<T>& aRight)
+	constexpr Vector2<T>& operator-=(Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		aLeft.x -= aRight.x;
 		aLeft.y -= aRight.y;
@@ -297,7 +297,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator*=(Vector2<T>& aLeft, T aRight)
+	constexpr Vector2<T>& operator*=(Vector2<T>& aLeft, T aRight)
 	{
 		aLeft.x *= aRight;
 		aLeft.y *= aRight;
@@ -305,7 +305,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator/=(Vector2<T>& aLeft, T aRight)
+	constexpr Vector2<T>& operator/=(Vector2<T>& aLeft, T aRight)
 	{
 		assert(aRight != 0 && "Cannot divide by zero");
 
@@ -316,7 +316,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator*=(Vector2<T>& aLeft, const Vector2<T>& aRight)
+	constexpr Vector2<T>& operator*=(Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		aLeft.x *= aRight.x;
 		aLeft.y *= aRight.y;
@@ -324,7 +324,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector2<T>& operator/=(Vector2<T>& aLeft, const Vector2<T>& aRight)
+	constexpr Vector2<T>& operator/=(Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && "Cannot divide by zero");
 
@@ -335,59 +335,59 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator+(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator+(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return Vector2<T>(aLeft.x + aRight.x, aLeft.y + aRight.y);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator-(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator-(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return Vector2<T>(aLeft.x - aRight.x, aLeft.y - aRight.y);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator*(const Vector2<T>& aLeft, T aRight)
+	NODISC constexpr Vector2<T> operator*(const Vector2<T>& aLeft, T aRight)
 	{
 		return Vector2<T>(aLeft.x * aRight, aLeft.y * aRight);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator/(const Vector2<T>& aLeft, T aRight)
+	NODISC constexpr Vector2<T> operator/(const Vector2<T>& aLeft, T aRight)
 	{
 		assert(aRight != 0 && "Cannot divide by zero");
 		return Vector2<T>(aLeft.x / aRight, aLeft.y / aRight);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator*(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator*(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return Vector2<T>(aLeft.x * aRight.x, aLeft.y * aRight.y);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator*(T aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator*(T aLeft, const Vector2<T>& aRight)
 	{
 		return aRight * aLeft;
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator/(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator/(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && "Cannot divide by zero");
 		return Vector2<T>(aLeft.x / aRight.x, aLeft.y / aRight.y);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector2<T> operator/(T aLeft, const Vector2<T>& aRight)
+	NODISC constexpr Vector2<T> operator/(T aLeft, const Vector2<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && "Cannot divide by zero");
 		return Vector2<T>(aLeft / aRight.x, aLeft / aRight.y);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR bool operator==(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr bool operator==(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return (aLeft.x == aRight.x) && (aLeft.y == aRight.y);
 	}
 	template<typename T>
-	NODISC CONSTEXPR bool operator!=(const Vector2<T>& aLeft, const Vector2<T>& aRight)
+	NODISC constexpr bool operator!=(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return !(aLeft == aRight);
 	}

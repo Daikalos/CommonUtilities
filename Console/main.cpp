@@ -22,43 +22,45 @@
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>
 
-class MenuState : public cu::StateStack<std::string>::State
+class MenuState : public cu::StateStack<int, std::string>::State
 {
 public:
-	using cu::StateStack<std::string>::State::State;
+	using cu::StateStack<int, std::string>::State::State;
 
 private:
 
 };
 
-class MenuStack : public cu::StateStack<std::string>
+class MenuStack : public cu::StateStack<int, std::string>
 {
 public:
+	using cu::StateStack<int, std::string>::StateStack;
+
 	NODISC auto operator[](std::size_t aIndex) const -> const MenuState& override
 	{
-		return static_cast<const MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+		return static_cast<const MenuState&>(cu::StateStack<int, std::string>::GetState(aIndex));
 	}
 	NODISC auto operator[](std::size_t aIndex) -> MenuState& override 
 	{
-		return static_cast<MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+		return static_cast<MenuState&>(cu::StateStack<int, std::string>::GetState(aIndex));
 	}
 
 	NODISC auto GetState(std::size_t aIndex) const -> const MenuState& override 
 	{
-		return static_cast<const MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+		return static_cast<const MenuState&>(cu::StateStack<int, std::string>::GetState(aIndex));
 	}
 	NODISC auto GetState(std::size_t aIndex) -> MenuState& override 
 	{
-		return static_cast<MenuState&>(cu::StateStack<std::string>::GetState(aIndex));
+		return static_cast<MenuState&>(cu::StateStack<int, std::string>::GetState(aIndex));
 	}
 
 	NODISC auto GetStateByID(const std::string& aStateID) const -> const MenuState* override 
 	{
-		return static_cast<const MenuState*>(cu::StateStack<std::string>::GetStateByID(aStateID));
+		return static_cast<const MenuState*>(cu::StateStack<int, std::string>::GetStateByID(aStateID));
 	}
 	NODISC auto GetStateByID(const std::string& aStateID) -> MenuState* override 
 	{ 
-		return static_cast<MenuState*>(cu::StateStack<std::string>::GetStateByID(aStateID)); 
+		return static_cast<MenuState*>(cu::StateStack<int, std::string>::GetStateByID(aStateID));
 	}
 
 private:
@@ -109,7 +111,7 @@ int main()
 
 	std::cout << test1.x << test2.x;
 
-	MenuStack stateStack;
+	MenuStack stateStack(5);
 	stateStack.RegisterState<TestState>("hello");
 	stateStack.Push("hello");
 	stateStack.ApplyPendingChanges();

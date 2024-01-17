@@ -193,12 +193,12 @@ namespace CommonUtilities
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline auto StateStack<T, IDType, Hash>::State::GetContext() const -> const T&
 	{
-		return *myContext;
+		return myContext;
 	}
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline auto StateStack<T, IDType, Hash>::State::GetContext() -> T&
 	{
-		return *myContext;
+		return myContext;
 	}
 
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>

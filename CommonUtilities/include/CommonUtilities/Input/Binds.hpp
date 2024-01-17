@@ -12,52 +12,52 @@ namespace CommonUtilities
 	class Binds : private NonCopyable
 	{
 	public:
-		NODISC CONSTEXPR Reg& operator[](const Bind& aBind);
-		NODISC CONSTEXPR const Reg& operator[](const Bind& aBind) const;
+		NODISC constexpr Reg& operator[](const Bind& aBind);
+		NODISC constexpr const Reg& operator[](const Bind& aBind) const;
 
-		NODISC CONSTEXPR Reg& At(const Bind& aBind);
-		NODISC CONSTEXPR const Reg& At(const Bind& aBind) const;
+		NODISC constexpr Reg& At(const Bind& aBind);
+		NODISC constexpr const Reg& At(const Bind& aBind) const;
 
 		///	Set the bind to match to button
 		/// 
-		CONSTEXPR void Set(const Bind& aBind, const Reg& aButton);
+		constexpr void Set(const Bind& aBind, const Reg& aButton);
 
 		///	Remove an existing bind
 		/// 
-		CONSTEXPR void Remove(const Bind& aBind);
+		constexpr void Remove(const Bind& aBind);
 
 		///	\return Whether bind is set to some button
 		/// 
-		CONSTEXPR bool IsSet(const Bind& aBind);
+		constexpr bool IsSet(const Bind& aBind);
 
-		NODISC CONSTEXPR bool GetEnabled() const noexcept;
-		CONSTEXPR void SetEnabled(bool aFlag) noexcept;
+		NODISC constexpr bool GetEnabled() const noexcept;
+		constexpr void SetEnabled(bool aFlag) noexcept;
 
 	protected:
-		CONSTEXPR Binds() = default; // only allow derived classes to construct bind
-		CONSTEXPR ~Binds() = default;
+		constexpr Binds() = default; // only allow derived classes to construct bind
+		constexpr ~Binds() = default;
 
 		std::unordered_map<Bind, Reg> myBinds;
 		bool myEnabled {true};
 	};
 	template<typename Bind, typename Reg>
-	CONSTEXPR Reg& Binds<Bind, Reg>::operator[](const Bind& aBind)
+	constexpr Reg& Binds<Bind, Reg>::operator[](const Bind& aBind)
 	{
 		return At(aBind);
 	}
 	template<typename Bind, typename Reg>
-	CONSTEXPR const Reg& Binds<Bind, Reg>::operator[](const Bind& aBind) const
+	constexpr const Reg& Binds<Bind, Reg>::operator[](const Bind& aBind) const
 	{
 		return At(aBind);
 	}
 
 	template<typename Bind, typename Reg>
-	CONSTEXPR Reg& Binds<Bind, Reg>::At(const Bind& aBind)
+	constexpr Reg& Binds<Bind, Reg>::At(const Bind& aBind)
 	{
 		return const_cast<Reg&>(std::as_const(*this).At(aBind));
 	}
 	template<typename Bind, typename Reg>
-	CONSTEXPR const Reg& Binds<Bind, Reg>::At(const Bind& aBind) const
+	constexpr const Reg& Binds<Bind, Reg>::At(const Bind& aBind) const
 	{
 		const auto it = myBinds.find(aBind);
 		if (it == myBinds.end())
@@ -69,13 +69,13 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind, typename Reg>
-	CONSTEXPR void Binds<Bind, Reg>::Set(const Bind& aBind, const Reg& aButton)
+	constexpr void Binds<Bind, Reg>::Set(const Bind& aBind, const Reg& aButton)
 	{
 		myBinds[aBind] = aButton;
 	}
 
 	template<typename Bind, typename Reg>
-	CONSTEXPR void Binds<Bind, Reg>::Remove(const Bind& aBind)
+	constexpr void Binds<Bind, Reg>::Remove(const Bind& aBind)
 	{
 		const auto it = myBinds.find(aBind);
 		if (it == myBinds.end())
@@ -87,19 +87,19 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind, typename Reg>
-	CONSTEXPR bool Binds<Bind, Reg>::IsSet(const Bind& aBind)
+	constexpr bool Binds<Bind, Reg>::IsSet(const Bind& aBind)
 	{
 		const auto it = myBinds.find(aBind);
 		return it != myBinds.end();
 	}
 
 	template<typename Bind, typename Reg>
-	CONSTEXPR bool Binds<Bind, Reg>::GetEnabled() const noexcept
+	constexpr bool Binds<Bind, Reg>::GetEnabled() const noexcept
 	{
 		return myEnabled;
 	}
 	template<typename Bind, typename Reg>
-	CONSTEXPR void Binds<Bind, Reg>::SetEnabled(bool aFlag) noexcept
+	constexpr void Binds<Bind, Reg>::SetEnabled(bool aFlag) noexcept
 	{
 		myEnabled = aFlag;
 	}

@@ -13,30 +13,30 @@ namespace CommonUtilities
 	public:
 		T left{}, top{}, width{}, height{};
 
-		CONSTEXPR Rect() = default;
-		CONSTEXPR ~Rect() = default;
+		constexpr Rect() = default;
+		constexpr ~Rect() = default;
 
-		CONSTEXPR Rect(T aLeft, T aTop, T aWidth, T aHeight);
+		constexpr Rect(T aLeft, T aTop, T aWidth, T aHeight);
 
 		template<IsArithmetic U>
-		CONSTEXPR explicit Rect(const Rect<U>& aRhs);
+		constexpr explicit Rect(const Rect<U>& aRhs);
 
-		NODISC CONSTEXPR T Right() const;
-		NODISC CONSTEXPR T Bottom() const;
+		NODISC constexpr T Right() const;
+		NODISC constexpr T Bottom() const;
 
-		NODISC CONSTEXPR T Area() const;
+		NODISC constexpr T Area() const;
 
-		NODISC CONSTEXPR Rect Union(const Rect& aOther) const;
-		NODISC CONSTEXPR std::optional<Rect> Intersection(const Rect& aOther) const;
+		NODISC constexpr Rect Union(const Rect& aOther) const;
+		NODISC constexpr std::optional<Rect> Intersection(const Rect& aOther) const;
 
-		NODISC CONSTEXPR bool Overlaps(const Rect& aOther) const;
+		NODISC constexpr bool Overlaps(const Rect& aOther) const;
 
-		NODISC CONSTEXPR bool Contains(T aX, T aY) const;
-		NODISC CONSTEXPR bool Contains(const Rect& aOther) const;
+		NODISC constexpr bool Contains(T aX, T aY) const;
+		NODISC constexpr bool Contains(const Rect& aOther) const;
 	};
 
 	template<IsArithmetic T>
-	CONSTEXPR Rect<T>::Rect(T aLeft, T aTop, T aWidth, T aHeight)
+	constexpr Rect<T>::Rect(T aLeft, T aTop, T aWidth, T aHeight)
 		: left(aLeft), top(aTop), width(aWidth), height(aHeight) 
 	{
 
@@ -44,31 +44,31 @@ namespace CommonUtilities
 
 	template<IsArithmetic T>
 	template<IsArithmetic U>
-	CONSTEXPR Rect<T>::Rect(const Rect<U>& aRhs)
+	constexpr Rect<T>::Rect(const Rect<U>& aRhs)
 		: Rect(aRhs.left, aRhs.top, aRhs.width, aRhs.height)
 	{
 
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR T Rect<T>::Right() const
+	constexpr T Rect<T>::Right() const
 	{
 		return static_cast<T>(left + width);
 	}
 	template<IsArithmetic T>
-	CONSTEXPR T Rect<T>::Bottom() const
+	constexpr T Rect<T>::Bottom() const
 	{
 		return static_cast<T>(top + height);
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR T Rect<T>::Area() const
+	constexpr T Rect<T>::Area() const
 	{
 		return width * height;
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR Rect<T> Rect<T>::Union(const Rect& aOther) const
+	constexpr Rect<T> Rect<T>::Union(const Rect& aOther) const
 	{
 		// returns a rectangle that encompasses both rects
 
@@ -93,7 +93,7 @@ namespace CommonUtilities
 		return Rect<T>(r3l, r3t, r3r - r3l, r3b - r3t);
 	}
 	template<IsArithmetic T>
-	CONSTEXPR std::optional<Rect<T>> Rect<T>::Intersection(const Rect& aOther) const
+	constexpr std::optional<Rect<T>> Rect<T>::Intersection(const Rect& aOther) const
 	{
 		const auto min = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aFirst : aSecond; };
 		const auto max = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aSecond : aFirst; };
@@ -124,7 +124,7 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR bool Rect<T>::Overlaps(const Rect& aOther) const
+	constexpr bool Rect<T>::Overlaps(const Rect& aOther) const
 	{
 		const auto min = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aFirst : aSecond; };
 		const auto max = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aSecond : aFirst; };
@@ -143,7 +143,7 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR bool Rect<T>::Contains(T aX, T aY) const
+	constexpr bool Rect<T>::Contains(T aX, T aY) const
 	{
 		const auto min = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aFirst : aSecond; };
 		const auto max = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aSecond : aFirst; };
@@ -157,7 +157,7 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR bool Rect<T>::Contains(const Rect& aOther) const
+	constexpr bool Rect<T>::Contains(const Rect& aOther) const
 	{
 		const auto min = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aFirst : aSecond; };
 		const auto max = [](T aFirst, T aSecond) { return (aFirst < aSecond) ? aSecond : aFirst; };
@@ -178,13 +178,13 @@ namespace CommonUtilities
 	// GLOBAL OPERATORS
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR Rect<T> operator-(const Rect<T>& aRect)
+	NODISC constexpr Rect<T> operator-(const Rect<T>& aRect)
 	{
 		return Rect(-aRect.left, -aRect.top, -aRect.width, -aRect.height);
 	}
 
 	template<IsArithmetic T>
-	CONSTEXPR Rect<T>& operator+=(Rect<T>& aLeft, const Rect<T>& aRight) 
+	constexpr Rect<T>& operator+=(Rect<T>& aLeft, const Rect<T>& aRight) 
 	{
 		aLeft.left		+= aRhs.left;
 		aLeft.top		+= aRhs.top;
@@ -194,7 +194,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<IsArithmetic T>
-	CONSTEXPR Rect<T>& operator-=(Rect<T>& aLeft, const Rect<T>& aRight) 
+	constexpr Rect<T>& operator-=(Rect<T>& aLeft, const Rect<T>& aRight) 
 	{
 		aLeft.left		-= aRhs.left;
 		aLeft.top		-= aRhs.top;
@@ -205,23 +205,23 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR Rect<T> operator+(const Rect<T>& aLeft, const Rect<T>& aRight) 
+	NODISC constexpr Rect<T> operator+(const Rect<T>& aLeft, const Rect<T>& aRight) 
 	{
 		return Rect<T>(aLeft.left + aRight.left, aLeft.top + aRight.top, aLeft.width + aRight.width, aLeft.height + aRight.height);
 	}
 	template<IsArithmetic T>
-	NODISC CONSTEXPR Rect<T> operator-(const Rect<T>& aLeft, const Rect<T>& aRight) 
+	NODISC constexpr Rect<T> operator-(const Rect<T>& aLeft, const Rect<T>& aRight) 
 	{
 		return Rect<T>(aLeft.left - aRight.left, aLeft.top - aRight.top, aLeft.width - aRight.width, aLeft.height - aRight.height);
 	}
 
 	template<IsArithmetic T>
-	NODISC CONSTEXPR bool operator==(const Rect<T>& aLeft, const Rect<T>& aRight) 
+	NODISC constexpr bool operator==(const Rect<T>& aLeft, const Rect<T>& aRight) 
 	{
 		return (aLeft.left == aRight.left) && (aLeft.top == aRight.top) && (aLeft.width == aRight.width) && (aLeft.height == aRight.height);
 	}
 	template<IsArithmetic T>
-	NODISC CONSTEXPR bool operator!=(const Rect<T>& aLeft, const Rect<T>& aRight)
+	NODISC constexpr bool operator!=(const Rect<T>& aLeft, const Rect<T>& aRight)
 	{
 		return !(aLeft == aRight);
 	}

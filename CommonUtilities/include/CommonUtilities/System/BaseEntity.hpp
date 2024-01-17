@@ -27,46 +27,46 @@ namespace CommonUtilities
 		using ComponentPtr		= std::unique_ptr<C>;
 		using ComponentIDType	= std::size_t;
 
-		CONSTEXPR BaseEntity() = default;
-		CONSTEXPR virtual ~BaseEntity() = 0;
+		constexpr BaseEntity() = default;
+		constexpr virtual ~BaseEntity() = 0;
 
 		/// Retrieves a component from entity.
 		/// 
 		/// \return Const reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR const T& GetComponent() const;
+		NODISC constexpr const T& GetComponent() const;
 
 		/// Retrieves a component from entity.
 		/// 
 		/// \return Reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR T& GetComponent();
+		NODISC constexpr T& GetComponent();
 
 		/// Tries to retrieve a component from entity.
 		/// 
 		/// \return Const pointer to component, nullptr if not found
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR const T* TryGetComponent() const;
+		NODISC constexpr const T* TryGetComponent() const;
 
 		/// Tries to retrieve a component from entity.
 		/// 
 		/// \return Pointer to component, nullptr if not found
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR T* TryGetComponent();
+		NODISC constexpr T* TryGetComponent();
 
 		/// \return Whether specified component is active
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR bool IsComponentActive() const;
+		NODISC constexpr bool IsComponentActive() const;
 
 		/// \return Whether current entity has specified component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR bool HasComponent() const;
+		NODISC constexpr bool HasComponent() const;
 
 		/// Attempts to add a component to entity.
 		/// 
@@ -75,12 +75,12 @@ namespace CommonUtilities
 		/// \return Pointer to component, nullptr if it already has the component
 		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
-		CONSTEXPR T* AddComponent(Args&&... someArgs);
+		constexpr T* AddComponent(Args&&... someArgs);
 
 		/// Attempts to add multiple components to entity.
 		/// 
 		template<typename... Ts> requires (std::derived_from<Ts, C> && ...)
-		CONSTEXPR void AddComponents();
+		constexpr void AddComponents();
 
 		/// Attempts to remove a component from entity.
 		/// 
@@ -89,12 +89,12 @@ namespace CommonUtilities
 		/// \return Whether removal was succesful
 		/// 
 		template<typename T, bool MaintainOrder = false> requires std::derived_from<T, C>
-		CONSTEXPR bool RemoveComponent();
+		constexpr bool RemoveComponent();
 
 		/// Attempts to remove multiple components from entity.
 		/// 
 		template<typename... Ts, bool MaintainOrder = false> requires (std::derived_from<Ts, C> && ...)
-		CONSTEXPR void RemoveComponents();
+		constexpr void RemoveComponents();
 
 		/// Sets the specified component to a different value.
 		/// 
@@ -103,7 +103,7 @@ namespace CommonUtilities
 		/// \return Reference to new component
 		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
-		CONSTEXPR T& SetComponent(Args&&... someArgs);
+		constexpr T& SetComponent(Args&&... someArgs);
 
 		/// Attempts to set the specified component to a different value.
 		/// 
@@ -112,27 +112,27 @@ namespace CommonUtilities
 		/// \return Pointer to new component, nullptr if not found
 		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
-		CONSTEXPR T* TrySetComponent(Args&&... someArgs);
+		constexpr T* TrySetComponent(Args&&... someArgs);
 
 		/// Sorts the components in the entity.
 		/// 
 		/// \param Comp: Function used to compare components
 		/// 
 		template<typename Comp>
-		CONSTEXPR void SortComponents(Comp&& aComparison);
+		constexpr void SortComponents(Comp&& aComparison);
 
 		/// Pre-allocates memory for the components.
 		/// 
 		/// \param Capacity: Number of components to pre-allocate memory for.
 		/// 
-		CONSTEXPR void ReserveComponents(std::size_t aCapacity);
+		constexpr void ReserveComponents(std::size_t aCapacity);
 
 		/// Removes all components from entity.
 		/// 
-		CONSTEXPR void ClearComponents() noexcept;
+		constexpr void ClearComponents() noexcept;
 
-		CONSTEXPR bool IsComponentsEmpty() const noexcept;
-		CONSTEXPR std::size_t ComponentsCount() const noexcept;
+		constexpr bool IsComponentsEmpty() const noexcept;
+		constexpr std::size_t ComponentsCount() const noexcept;
 
 		/// Sets the component to be active or not. Will only affect the component based on how you choose 
 		/// to use the flag. The only thing it does now is prevent a particular component being refered to 
@@ -141,33 +141,33 @@ namespace CommonUtilities
 		/// \param Flag: New active state
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		CONSTEXPR void SetComponentActive(bool aFlag);
+		constexpr void SetComponentActive(bool aFlag);
 
 		/// Runs a function for every component in the entity.
 		/// 
 		/// \param Func: Function to run
 		/// 
 		template<typename Func> requires HasParametersDecay<Func, C>
-		CONSTEXPR void ForEachComponent(Func&& aFunc) const;
+		constexpr void ForEachComponent(Func&& aFunc) const;
 
 		/// Retrieves a component from a static list of components.
 		/// 
 		/// \return Reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR static T& GetStaticComponent();
+		NODISC constexpr static T& GetStaticComponent();
 
 		/// Retrieves a component from a static list of components.
 		/// 
 		/// \return Const reference to component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR static T* TryGetStaticComponent();
+		NODISC constexpr static T* TryGetStaticComponent();
 
 		/// \return Whether the static list of components contain the specified component
 		/// 
 		template<typename T> requires std::derived_from<T, C>
-		NODISC CONSTEXPR static bool HasStaticComponent();
+		NODISC constexpr static bool HasStaticComponent();
 
 		/// Attempts to add a component to the static list of components.
 		/// 
@@ -176,7 +176,7 @@ namespace CommonUtilities
 		/// \return Pointer to component, nullptr if it already has the component
 		/// 
 		template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
-		CONSTEXPR static T* AddStaticComponent(Args&&... someArgs);
+		constexpr static T* AddStaticComponent(Args&&... someArgs);
 
 		/// Attempts to remove a component from the static list of components.
 		/// 
@@ -185,11 +185,11 @@ namespace CommonUtilities
 		/// \return Whether removal was succesful
 		/// 
 		template<typename T, bool MaintainOrder = false> requires std::derived_from<T, C>
-		CONSTEXPR static bool RemoveStaticComponent();
+		constexpr static bool RemoveStaticComponent();
 
 		/// Removes all static components.
 		/// 
-		CONSTEXPR static void ClearStaticComponents() noexcept;
+		constexpr static void ClearStaticComponents() noexcept;
 
 	protected:
 		std::vector<ComponentPtr>		myComponents;
@@ -201,7 +201,7 @@ namespace CommonUtilities
 	};
 
 	template<class C>
-	CONSTEXPR BaseEntity<C>::~BaseEntity() = default;
+	constexpr BaseEntity<C>::~BaseEntity() = default;
 
 	template<class C>
 	inline std::vector<typename BaseEntity<C>::ComponentPtr> BaseEntity<C>::myStaticComponents;
@@ -211,7 +211,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR const T& BaseEntity<C>::GetComponent() const
+	constexpr const T& BaseEntity<C>::GetComponent() const
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -223,14 +223,14 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR T& BaseEntity<C>::GetComponent()
+	constexpr T& BaseEntity<C>::GetComponent()
 	{
 		return const_cast<T&>(std::as_const(*this).template GetComponent<T>()); // const_cast to avoid code duplication
 	}
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR const T* BaseEntity<C>::TryGetComponent() const
+	constexpr const T* BaseEntity<C>::TryGetComponent() const
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -245,14 +245,14 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR T* BaseEntity<C>::TryGetComponent()
+	constexpr T* BaseEntity<C>::TryGetComponent()
 	{
 		return const_cast<T*>(std::as_const(*this).template TryGetComponent<T>());
 	}
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR bool BaseEntity<C>::IsComponentActive() const
+	constexpr bool BaseEntity<C>::IsComponentActive() const
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -268,7 +268,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR bool BaseEntity<C>::HasComponent() const
+	constexpr bool BaseEntity<C>::HasComponent() const
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -278,7 +278,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T, typename... Args> requires std::derived_from<T, C>&& std::constructible_from<T, Args...>
-	CONSTEXPR T* BaseEntity<C>::AddComponent(Args&&... someArgs)
+	constexpr T* BaseEntity<C>::AddComponent(Args&&... someArgs)
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -298,14 +298,14 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename... Ts> requires (std::derived_from<Ts, C> && ...)
-	CONSTEXPR void BaseEntity<C>::AddComponents()
+	constexpr void BaseEntity<C>::AddComponents()
 	{
 		(AddComponent<Ts>(), ...);
 	}
 
 	template<class C>
 	template<typename T, bool MaintainOrder> requires std::derived_from<T, C>
-	CONSTEXPR bool BaseEntity<C>::RemoveComponent()
+	constexpr bool BaseEntity<C>::RemoveComponent()
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -334,14 +334,14 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename... Ts, bool MaintainOrder> requires (std::derived_from<Ts, C> && ...)
-	CONSTEXPR void BaseEntity<C>::RemoveComponents()
+	constexpr void BaseEntity<C>::RemoveComponents()
 	{
 		(RemoveComponent<Ts, MaintainOrder>, ...);
 	}
 
 	template<class C>
 	template<typename T, typename... Args> requires std::derived_from<T, C> && std::constructible_from<T, Args...>
-	CONSTEXPR T& BaseEntity<C>::SetComponent(Args&&... someArgs)
+	constexpr T& BaseEntity<C>::SetComponent(Args&&... someArgs)
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -353,7 +353,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T, typename... Args> requires std::derived_from<T, C>&& std::constructible_from<T, Args...>
-	CONSTEXPR T* BaseEntity<C>::TrySetComponent(Args&&... someArgs)
+	constexpr T* BaseEntity<C>::TrySetComponent(Args&&... someArgs)
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -373,7 +373,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename Comp>
-	CONSTEXPR void BaseEntity<C>::SortComponents(Comp&& aCompare)
+	constexpr void BaseEntity<C>::SortComponents(Comp&& aCompare)
 	{
 		std::vector<std::size_t> indices(myComponents.size());
 		std::iota(indices.begin(), indices.end(), 0);
@@ -391,7 +391,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR void BaseEntity<C>::SetComponentActive(bool aFlag)
+	constexpr void BaseEntity<C>::SetComponentActive(bool aFlag)
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -403,7 +403,7 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	CONSTEXPR void BaseEntity<C>::ReserveComponents(std::size_t aCapacity)
+	constexpr void BaseEntity<C>::ReserveComponents(std::size_t aCapacity)
 	{
 		myComponents.reserve(aCapacity);
 		myComponentIDs.reserve(aCapacity);
@@ -411,7 +411,7 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	CONSTEXPR void BaseEntity<C>::ClearComponents() noexcept
+	constexpr void BaseEntity<C>::ClearComponents() noexcept
 	{
 		myComponents.clear();
 		myComponentIDs.clear();
@@ -419,20 +419,20 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	CONSTEXPR bool BaseEntity<C>::IsComponentsEmpty() const noexcept
+	constexpr bool BaseEntity<C>::IsComponentsEmpty() const noexcept
 	{
 		return myComponents.empty();
 	}
 
 	template<class C>
-	CONSTEXPR std::size_t BaseEntity<C>::ComponentsCount() const noexcept
+	constexpr std::size_t BaseEntity<C>::ComponentsCount() const noexcept
 	{
 		return myComponents.size();
 	}
 
 	template<class C>
 	template<typename Func> requires HasParametersDecay<Func, C>
-	CONSTEXPR void BaseEntity<C>::ForEachComponent(Func&& aFunc) const
+	constexpr void BaseEntity<C>::ForEachComponent(Func&& aFunc) const
 	{
 		for (std::size_t index = 0; index < myComponents.size(); ++index)
 		{
@@ -445,7 +445,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR T& BaseEntity<C>::GetStaticComponent()
+	constexpr T& BaseEntity<C>::GetStaticComponent()
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -457,7 +457,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR T* BaseEntity<C>::TryGetStaticComponent()
+	constexpr T* BaseEntity<C>::TryGetStaticComponent()
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -472,7 +472,7 @@ namespace CommonUtilities
 
 	template<class C>
 	template<typename T> requires std::derived_from<T, C>
-	CONSTEXPR bool BaseEntity<C>::HasStaticComponent()
+	constexpr bool BaseEntity<C>::HasStaticComponent()
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -481,7 +481,7 @@ namespace CommonUtilities
 	}
 	template<class C>
 	template<typename T, typename... Args> requires std::derived_from<T, C>&& std::constructible_from<T, Args...>
-	CONSTEXPR T* BaseEntity<C>::AddStaticComponent(Args&&... someArgs)
+	constexpr T* BaseEntity<C>::AddStaticComponent(Args&&... someArgs)
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -499,7 +499,7 @@ namespace CommonUtilities
 	}
 	template<class C>
 	template<typename T, bool MaintainOrder> requires std::derived_from<T, C>
-	CONSTEXPR bool BaseEntity<C>::RemoveStaticComponent()
+	constexpr bool BaseEntity<C>::RemoveStaticComponent()
 	{
 		static constexpr auto componentID = id::Type<T>::ID();
 
@@ -525,7 +525,7 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	CONSTEXPR void BaseEntity<C>::ClearStaticComponents() noexcept
+	constexpr void BaseEntity<C>::ClearStaticComponents() noexcept
 	{
 		myStaticComponents.clear();
 		myStaticComponentIDs.clear();

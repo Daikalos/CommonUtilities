@@ -199,41 +199,41 @@ namespace CommonUtilities::ctr
 	}
 
 	template<typename T>
-	CONSTEXPR void Sort(std::span<const T> someItems)
+	constexpr void Sort(std::span<const T> someItems)
 	{
 		std::ranges::sort(someItems);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR T& Sort(T& someItems)
-	{
-		std::ranges::sort(someItems);
-		return someItems;
-	}
-
-	template<typename T, typename Comp>
-	NODISC CONSTEXPR T& Sort(T& someItems, Comp&& aCompare)
-	{
-		std::ranges::sort(someItems, std::forward<Comp>(aCompare));
-		return someItems;
-	}
-
-	template<typename T>
-	NODISC CONSTEXPR T Sort(T&& someItems)
+	NODISC constexpr T& Sort(T& someItems)
 	{
 		std::ranges::sort(someItems);
 		return someItems;
 	}
 
 	template<typename T, typename Comp>
-	NODISC CONSTEXPR T Sort(T&& someItems, Comp&& aCompare)
+	NODISC constexpr T& Sort(T& someItems, Comp&& aCompare)
 	{
 		std::ranges::sort(someItems, std::forward<Comp>(aCompare));
 		return someItems;
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR void ApplyPermutation(T& aContainer, std::span<const std::size_t> someIndices)
+	NODISC constexpr T Sort(T&& someItems)
+	{
+		std::ranges::sort(someItems);
+		return someItems;
+	}
+
+	template<typename T, typename Comp>
+	NODISC constexpr T Sort(T&& someItems, Comp&& aCompare)
+	{
+		std::ranges::sort(someItems, std::forward<Comp>(aCompare));
+		return someItems;
+	}
+
+	template<typename T>
+	NODISC constexpr void ApplyPermutation(T& aContainer, std::span<const std::size_t> someIndices)
 	{
 		assert(aContainer.size() == someIndices.size() && "Vector and indices must be of equal size");
 
@@ -263,19 +263,19 @@ namespace CommonUtilities::ctr
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR bool IsSorted(std::span<const T> someItems)
+	NODISC constexpr bool IsSorted(std::span<const T> someItems)
 	{
 		return std::ranges::is_sorted(someItems);
 	}
 
 	template<typename T, typename Comp>
-	NODISC CONSTEXPR bool IsSorted(std::span<const T> someItems, Comp&& aCompare)
+	NODISC constexpr bool IsSorted(std::span<const T> someItems, Comp&& aCompare)
 	{
 		return std::ranges::is_sorted(someItems, std::forward<Comp>(aCompare));
 	}
 
 	template<typename T, typename U, typename V>
-	NODISC CONSTEXPR V Merge(const T& aFirst, const U& aSecond)
+	NODISC constexpr V Merge(const T& aFirst, const U& aSecond)
 	{
 		V result{};
 		std::ranges::set_union(aFirst, aSecond, std::begin(result));
@@ -283,7 +283,7 @@ namespace CommonUtilities::ctr
 	}
 
 	template<typename T>
-	CONSTEXPR void HashCombine(std::size_t& aSeed, const T& aValue)
+	constexpr void HashCombine(std::size_t& aSeed, const T& aValue)
 	{
 		aSeed ^= static_cast<std::size_t>(aValue) + 0x9e3779b9 + (aSeed << 6) + (aSeed >> 2);
 	}
@@ -291,7 +291,7 @@ namespace CommonUtilities::ctr
 	template<typename T>
 	struct ContainerHash
 	{
-		NODISC CONSTEXPR std::size_t operator()(std::span<const T> someItems) const
+		NODISC constexpr std::size_t operator()(std::span<const T> someItems) const
 		{
 			std::size_t seed = someItems.size();
 

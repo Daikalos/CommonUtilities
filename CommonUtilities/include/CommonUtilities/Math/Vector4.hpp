@@ -18,48 +18,48 @@ namespace CommonUtilities
 		T z{};
 		T w{};
 
-		CONSTEXPR Vector4() = default;
-		CONSTEXPR ~Vector4() = default;
+		constexpr Vector4() = default;
+		constexpr ~Vector4() = default;
 
-		CONSTEXPR Vector4(T aX, T aY, T aZ, T aW);
+		constexpr Vector4(T aX, T aY, T aZ, T aW);
 
 		template <typename U>
-		NODISC CONSTEXPR explicit Vector4(const Vector4<U>& aVector);
+		NODISC constexpr explicit Vector4(const Vector4<U>& aVector);
 
 		template<class OtherVector>
-		NODISC CONSTEXPR explicit operator OtherVector() const;
+		NODISC constexpr explicit operator OtherVector() const;
 
 		/// \returns Directional vector pointing from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector4 Direction(const Vector4& aCurrent, const Vector4& aTarget);
+		NODISC constexpr static Vector4 Direction(const Vector4& aCurrent, const Vector4& aTarget);
 
 		/// \returns Distance from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector4 Distance(const Vector4& aCurrent, const Vector4& aTarget);
+		NODISC constexpr static Vector4 Distance(const Vector4& aCurrent, const Vector4& aTarget);
 
 		/// \returns Distance squared from current to target.
 		/// 
-		NODISC CONSTEXPR static Vector4 DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget);
+		NODISC constexpr static Vector4 DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget);
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC CONSTEXPR static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
+		NODISC constexpr static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
 
 		/// \returns Slerped vector between current and target.
 		/// 
-		NODISC CONSTEXPR static Vector4 Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
+		NODISC constexpr static Vector4 Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
 
 		/// \returns Moved vector going from current towards target.
 		/// 
-		NODISC CONSTEXPR static Vector4 MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance);
+		NODISC constexpr static Vector4 MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance);
 
 		///	Length of the vector.
 		/// 
-		NODISC CONSTEXPR T Length() const;
+		NODISC constexpr T Length() const;
 
 		/// Square length of the vector, useful for comparisons
 		/// 
-		NODISC CONSTEXPR T LengthSqr() const;
+		NODISC constexpr T LengthSqr() const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -67,7 +67,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector4<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
+		NODISC constexpr Vector4<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -76,55 +76,55 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC CONSTEXPR Vector4<T> GetNormalized(T aLength, T aRadius) const;
+		NODISC constexpr Vector4<T> GetNormalized(T aLength, T aRadius) const;
 
 		/// Normalizes this vector
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
-		CONSTEXPR void Normalize(T aRadius = static_cast<T>(1));
+		constexpr void Normalize(T aRadius = static_cast<T>(1));
 
 		/// Dot product of two vectors.
 		/// 
-		NODISC CONSTEXPR T Dot(const Vector4& aVector) const;
+		NODISC constexpr T Dot(const Vector4& aVector) const;
 	};
 
 	template<typename T>
-	CONSTEXPR Vector4<T>::Vector4(T aX, T aY, T aZ, T aW)
+	constexpr Vector4<T>::Vector4(T aX, T aY, T aZ, T aW)
 		: x(aX), y(aY), z(aZ), w(aW) {}
 
 	template<typename T>
 	template<typename U>
-	CONSTEXPR Vector4<T>::Vector4(const Vector4<U>& aVector)
+	constexpr Vector4<T>::Vector4(const Vector4<U>& aVector)
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(static_cast<T>(aVector.z)), w(static_cast<T>(aVector.w)) {}
 
 	template<typename T>
 	template<class OtherVector>
-	CONSTEXPR Vector4<T>::operator OtherVector() const
+	constexpr Vector4<T>::operator OtherVector() const
 	{
 		return OtherVector{ x, y, z, w };
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::Direction(const Vector4& aCurrent, const Vector4& aTarget)
+	constexpr Vector4<T> Vector4<T>::Direction(const Vector4& aCurrent, const Vector4& aTarget)
 	{
 		return Vector4<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y, aTarget.z - aCurrent.z, aTarget.w - aCurrent.w);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::Distance(const Vector4& aCurrent, const Vector4& aTarget)
+	constexpr Vector4<T> Vector4<T>::Distance(const Vector4& aCurrent, const Vector4& aTarget)
 	{
 		return Direction(aCurrent, aTarget).Length();
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget)
+	constexpr Vector4<T> Vector4<T>::DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget)
 	{
 		return Direction(aCurrent, aTarget).LengthSqr();
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
+	constexpr Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
@@ -138,7 +138,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
+	constexpr Vector4<T> Vector4<T>::Slerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
 		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
@@ -151,43 +151,43 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance)
+	constexpr Vector4<T> Vector4<T>::MoveTowards(const Vector4& aCurrent, const Vector4& aTarget, float aDistance)
 	{
 		return aCurrent + Vector4<T>::Direction(aCurrent, aTarget).GetNormalized(aDistance);
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector4<T>::Length() const
+	constexpr T Vector4<T>::Length() const
 	{
 		return static_cast<T>(std::sqrt(LengthSqr()));
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector4<T>::LengthSqr() const
+	constexpr T Vector4<T>::LengthSqr() const
 	{
 		return Dot(*this);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::GetNormalized(T aRadius) const
+	constexpr Vector4<T> Vector4<T>::GetNormalized(T aRadius) const
 	{
 		return GetNormalized(Length(), aRadius);
 	}
 	template<typename T>
-	CONSTEXPR Vector4<T> Vector4<T>::GetNormalized(T aLength, T aRadius) const
+	constexpr Vector4<T> Vector4<T>::GetNormalized(T aLength, T aRadius) const
 	{
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
 	}
 
 	template<typename T>
-	CONSTEXPR void Vector4<T>::Normalize(T aRadius)
+	constexpr void Vector4<T>::Normalize(T aRadius)
 	{
 		*this = GetNormalized(aRadius);
 	}
 
 	template<typename T>
-	CONSTEXPR T Vector4<T>::Dot(const Vector4& aVector) const
+	constexpr T Vector4<T>::Dot(const Vector4& aVector) const
 	{
 		return x * aVector.x + y * aVector.y + z * aVector.z + w * aVector.w;
 	}
@@ -195,13 +195,13 @@ namespace CommonUtilities
 	// GLOBAL OPERATORS
 
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator-(const Vector4<T>& aVector)
+	NODISC constexpr Vector4<T> operator-(const Vector4<T>& aVector)
 	{
 		return Vector4<T>(-aVector.x, -aVector.y, -aVector.z, -aVector.w);
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator+=(Vector4<T>& aLeft, const Vector4<T>& aRight)
+	constexpr Vector4<T>& operator+=(Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		aLeft.x += aRight.x;
 		aLeft.y += aRight.y;
@@ -211,7 +211,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator-=(Vector4<T>& aLeft, const Vector4<T>& aRight)
+	constexpr Vector4<T>& operator-=(Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		aLeft.x -= aRight.x;
 		aLeft.y -= aRight.y;
@@ -222,7 +222,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator*=(Vector4<T>& aLeft, T aRight)
+	constexpr Vector4<T>& operator*=(Vector4<T>& aLeft, T aRight)
 	{
 		aLeft.x *= aRight;
 		aLeft.y *= aRight;
@@ -232,7 +232,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator/=(Vector4<T>& aLeft, T aRight)
+	constexpr Vector4<T>& operator/=(Vector4<T>& aLeft, T aRight)
 	{
 		assert(aRight != 0 && "Cannot divide by zero");
 
@@ -245,7 +245,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator*=(Vector4<T>& aLeft, const Vector4<T>& aRight)
+	constexpr Vector4<T>& operator*=(Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		aLeft.x *= aRight.x;
 		aLeft.y *= aRight.y;
@@ -255,7 +255,7 @@ namespace CommonUtilities
 		return aLeft;
 	}
 	template<typename T>
-	CONSTEXPR Vector4<T>& operator/=(Vector4<T>& aLeft, const Vector4<T>& aRight)
+	constexpr Vector4<T>& operator/=(Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && aRight.w != 0 && "Cannot divide by zero");
 
@@ -268,59 +268,59 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator+(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator+(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return Vector4<T>(aLeft.x + aRight.x, aLeft.y + aRight.y, aLeft.z + aRight.z, aLeft.w + aRight.w);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator-(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator-(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return Vector4<T>(aLeft.x - aRight.x, aLeft.y - aRight.y, aLeft.z - aRight.z, aLeft.w - aRight.w);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator*(const Vector4<T>& aLeft, T aRight)
+	NODISC constexpr Vector4<T> operator*(const Vector4<T>& aLeft, T aRight)
 	{
 		return Vector4<T>(aLeft.x * aRight, aLeft.y * aRight, aLeft.z * aRight, aLeft.w * aRight);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator/(const Vector4<T>& aLeft, T aRight)
+	NODISC constexpr Vector4<T> operator/(const Vector4<T>& aLeft, T aRight)
 	{
 		assert(aRight != 0 && "Cannot divide by zero");
 		return Vector4<T>(aLeft.x / aRight, aLeft.y / aRight, aLeft.z / aRight, aLeft.w / aRight);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator*(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator*(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return Vector4<T>(aLeft.x * aRight.x, aLeft.y * aRight.y, aLeft.z * aRight.z, aLeft.w * aRight.w);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator*(T aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator*(T aLeft, const Vector4<T>& aRight)
 	{
 		return aRight * aLeft;
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator/(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator/(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && aRight.w != 0 && "Cannot divide by zero");
 		return Vector4<T>(aLeft.x / aRight.x, aLeft.y / aRight.y, aLeft.z / aRight.z, aLeft.w / aRight.w);
 	}
 	template<typename T>
-	NODISC CONSTEXPR Vector4<T> operator/(T aLeft, const Vector4<T>& aRight)
+	NODISC constexpr Vector4<T> operator/(T aLeft, const Vector4<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && aRight.w != 0 && "Cannot divide by zero");
 		return Vector4<T>(aLeft / aRight.x, aLeft / aRight.y, aLeft / aRight.z, aLeft / aRight.w);
 	}
 
 	template<typename T>
-	NODISC CONSTEXPR bool operator==(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr bool operator==(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return (aLeft.x == aRight.x) && (aLeft.y == aRight.y) && (aLeft.z == aRight.z) && (aLeft.w == aRight.w);
 	}
 	template<typename T>
-	NODISC CONSTEXPR bool operator!=(const Vector4<T>& aLeft, const Vector4<T>& aRight)
+	NODISC constexpr bool operator!=(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return !(aLeft == aRight);
 	}

@@ -189,7 +189,7 @@ namespace CommonUtilities
 	}
 
 	template<typename IDType, typename Hash>
-	bool StateMachine<IDType, Hash>::RemoveState(const IDType& aStateID)
+	inline bool StateMachine<IDType, Hash>::RemoveState(const IDType& aStateID)
 	{
 		const auto it = myStates.find(aStateID);
 		if (it == myStates.end())

@@ -111,7 +111,7 @@ bool Camera2D::HandleEvent(UINT aMessage, [[maybe_unused]] WPARAM wParam, LPARAM
 			UINT width	= LOWORD(lParam);
 			UINT height = HIWORD(lParam);
 
-			SetSize(cu::Vector2f((float)width, (float)height)); // update size of camera when window is resized
+			SetSize(Vector2f((float)width, (float)height)); // update size of camera when window is resized
 
 			break;
 		}

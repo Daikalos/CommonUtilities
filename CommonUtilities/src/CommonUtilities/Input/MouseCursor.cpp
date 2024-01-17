@@ -31,6 +31,10 @@ const Vector2i& MouseCursor::GetMouseDelta() const noexcept
 {
 	return myMoveDelta;
 }
+const Vector2i& MouseCursor::GetWindowSize() const noexcept
+{
+	return myWindowSize;
+}
 
 void MouseCursor::SetHandle(HWND aHandle)
 {
@@ -46,6 +50,14 @@ void MouseCursor::SetHandle(HWND aHandle)
 		rid[0].dwFlags = RIDEV_INPUTSINK;
 		rid[0].hwndTarget = myHandle;
 		RegisterRawInputDevices(rid, 1, sizeof(rid[0]));
+
+		RECT rect;
+		if (GetWindowRect(myHandle, &rect))
+		{
+			myWindowSize = Vector2i(
+				rect.right - rect.left, 
+				rect.bottom - rect.top);
+		}
 	}
 }
 
@@ -55,6 +67,7 @@ void MouseCursor::SetPosition(const Vector2i& aPoint)
 }
 void MouseCursor::SetRelativePosition(const Vector2i& aPoint)
 {
+	assert(myHandle != nullptr);
 	Mouse::SetMousePosition(aPoint, myHandle);
 }
 
@@ -74,6 +87,10 @@ void MouseCursor::SetVisible(bool aState)
 		myIsVisible = aState;
 	}
 }
+void MouseCursor::SetLocked(bool aLocked)
+{
+	myIsLocked = aLocked;
+}
 
 void MouseCursor::Update()
 {
@@ -82,6 +99,11 @@ void MouseCursor::Update()
 
 	myMoveDelta	= myTentativeMoveDelta;
 	myTentativeMoveDelta = { 0, 0 };
+
+	if (myHandle != nullptr && myEnabled && myInFocus && myIsLocked)
+	{
+		SetRelativePosition(myWindowSize / 2);
+	}
 }
 
 bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam, LPARAM lParam)
@@ -122,7 +144,16 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam,
 		}
 		case WM_SIZE:
 		{
+			if (myHandle != nullptr)
+			{
+				UINT width = LOWORD(lParam);
+				UINT height = HIWORD(lParam);
+
+				myWindowSize = Vector2i(width, height);
+			}
+
 			GrabCursor(myIsGrabbed);
+
 			return false;
 		}
 		case WM_ENTERSIZEMOVE:

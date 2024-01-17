@@ -48,6 +48,8 @@ namespace CommonUtilities
 
 		virtual void SetScreenSize(const Vector2f& aScreenSize);
 
+		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
+
 	private:
 		Transform3D myTransform;
 		Mat4f		myProjectionMatrix;

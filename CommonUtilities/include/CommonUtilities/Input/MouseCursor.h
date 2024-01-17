@@ -19,6 +19,7 @@ namespace CommonUtilities
 
 		NODISC const Vector2i& GetPosition() const noexcept;
 		NODISC const Vector2i& GetMouseDelta() const noexcept;
+		NODISC const Vector2i& GetWindowSize() const noexcept;
 
 		void SetHandle(HWND aHandle);
 
@@ -27,6 +28,7 @@ namespace CommonUtilities
 
 		void SetGrabbed(bool aGrabbed);
 		void SetVisible(bool aState);
+		void SetLocked(bool aLocked);
 
 		void Update() override;
 
@@ -41,8 +43,10 @@ namespace CommonUtilities
 		Vector2i	myPreviousPosition;
 		Vector2i	myTentativeMoveDelta;
 		Vector2i	myMoveDelta;
+		Vector2i	myWindowSize;
 		bool		myIsVisible {true};
 		bool		myIsGrabbed {false};
+		bool		myIsLocked	{false};
 
 		// Inherited via InputHandler
 		void ResetTentativeState() override;

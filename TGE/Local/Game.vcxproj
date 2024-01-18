@@ -154,28 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Game\source\Bullet.h" />
-    <ClInclude Include="..\Source\Game\source\Camera.h" />
-    <ClInclude Include="..\Source\Game\source\Enemy.h" />
-    <ClInclude Include="..\Source\Game\source\GameObject.h" />
     <ClInclude Include="..\Source\Game\source\GameWorld.h" />
-    <ClInclude Include="..\Source\Game\source\Lazer.h" />
-    <ClInclude Include="..\Source\Game\source\ObjectHolder.h" />
-    <ClInclude Include="..\Source\Game\source\ObjectType.h" />
-    <ClInclude Include="..\Source\Game\source\Player.h" />
-    <ClInclude Include="..\Source\Game\source\Wall.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Game\source\Bullet.cpp" />
-    <ClCompile Include="..\Source\Game\source\Camera.cpp" />
-    <ClCompile Include="..\Source\Game\source\Enemy.cpp" />
-    <ClCompile Include="..\Source\Game\source\GameObject.cpp" />
     <ClCompile Include="..\Source\Game\source\GameWorld.cpp" />
-    <ClCompile Include="..\Source\Game\source\Lazer.cpp" />
     <ClCompile Include="..\Source\Game\source\main.cpp" />
-    <ClCompile Include="..\Source\Game\source\ObjectHolder.cpp" />
-    <ClCompile Include="..\Source\Game\source\Player.cpp" />
-    <ClCompile Include="..\Source\Game\source\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="External.vcxproj">

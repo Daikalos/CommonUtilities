@@ -278,3 +278,4 @@ examples/*/*.xml
 /TGE/*
 
 !TGE/Local
+!TGE/Source/Game/source

@@ -76,10 +76,7 @@ bool GamepadInput::IsConnected() const
 
 void GamepadInput::Connect()
 {
-	if (TryConnect())
-	{
-		myActive = true;
-	}
+	myActive = true;
 }
 void GamepadInput::Disconnect()
 {

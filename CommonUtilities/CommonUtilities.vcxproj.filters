@@ -168,10 +168,10 @@
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Input\KeyboardBindable.hpp">
+    <ClInclude Include="include\CommonUtilities\Input\KeyboardBind.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Input\MouseBindable.hpp">
+    <ClInclude Include="include\CommonUtilities\Input\MouseBind.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\PriorityQueue.hpp">
@@ -217,6 +217,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,14 +40,6 @@ namespace CommonUtilities
 	public:
 		using ButtonType = typename T::ButtonType; // relies on there being a ButtonType defined in input to access its type of button
 
-		struct ButtonCallback
-		{
-			std::function<void(Args...)>	func;
-			ButtonType						button		{};			// button type to listen for
-			bt::ButtonTrigger				trigger		{bt::None};	// button trigger to listen for
-			float							priority	{0.0f};		// determines position in callbacks
-		};
-
 		ButtonEvent() = default;
 		~ButtonEvent() = default;
 
@@ -65,31 +57,18 @@ namespace CommonUtilities
 		void SetInput(const T* aInput);
 	
 		template<typename Func>
-		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, Func&& aFunc, float aPriority = {})
+		void Add(Func&& aFunc, ButtonType aButton, bt::ButtonTrigger aTrigger)
 		{
-			const auto it = std::ranges::upper_bound(myCallbacks.begin(), myCallbacks.end(), aPriority,
-				[](float aPriority, const ButtonCallback& aCallback)
-				{
-					return aPriority > aCallback.priority;
-				});
-
-			myCallbacks.emplace(it, std::forward<Func>(aFunc), aButton, aTrigger, aPriority);
-		}
-
-		template<typename Func, typename... InnerArgs>
-		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, float aPriority, Func&& aFunc, InnerArgs&&... someInnerArgs)
-		{
-			Add(aButton, aTrigger,
-				[aFunc = std::forward<Func>(aFunc), ...someInnerArgs = std::forward<InnerArgs>(someInnerArgs)](Args... someArgs)
-				{
-					std::invoke(aFunc, someInnerArgs..., someArgs...);
-				}, aPriority);
+			myCallbacks.emplace_back(std::forward<Func>(aFunc), aButton, aTrigger);
 		}
 
 		template<typename Func, typename... InnerArgs>
 		void Add(ButtonType aButton, bt::ButtonTrigger aTrigger, Func&& aFunc, InnerArgs&&... someInnerArgs)
 		{
-			Add(aButton, aTrigger, {}, std::forward<Func>(aFunc), std::forward<InnerArgs>(someInnerArgs)...);
+			Add([aFunc = std::forward<Func>(aFunc), ...someInnerArgs = std::forward<InnerArgs>(someInnerArgs)](Args... someArgs)
+				{
+					std::invoke(aFunc, someInnerArgs..., someArgs...);
+				}, aButton, aTrigger);
 		}
 
 		/// Removes all callbacks that are associated with the provided button.
@@ -113,6 +92,13 @@ namespace CommonUtilities
 		void Clear();
 
 	private:
+		struct ButtonCallback
+		{
+			std::function<void(Args...)>	func;
+			ButtonType						button	{};			// button type to listen for
+			bt::ButtonTrigger				trigger	{bt::None};	// button trigger to listen for
+		};
+
 		std::vector<ButtonCallback> myCallbacks;
 		const T* myInput {nullptr};
 	};

@@ -6,13 +6,13 @@
 namespace CommonUtilities
 {
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	class KeyboardBindable final : public Binds<Bind, Keyboard::Key>
+	class KeyboardBind final : public Binds<Bind, Keyboard::Key>
 	{
 	public:
 		using ButtonType = Bind;
 
-		explicit KeyboardBindable(const KeyboardInput& aKeyboard);
-		~KeyboardBindable();
+		explicit KeyboardBind(const KeyboardInput& aKeyboard);
+		~KeyboardBind();
 
 		NODISC const KeyboardInput& GetKeyboard() const;
 		NODISC KeyboardInput& GetKeyboard();
@@ -26,40 +26,40 @@ namespace CommonUtilities
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline KeyboardBindable<Bind>::KeyboardBindable(const KeyboardInput& aKeyboard)
+	inline KeyboardBind<Bind>::KeyboardBind(const KeyboardInput& aKeyboard)
 		: myKeyboard(&aKeyboard) 
 	{ 
 
 	}
 
 	template<typename Bind>
-	inline KeyboardBindable<Bind>::~KeyboardBindable() = default;
+	inline KeyboardBind<Bind>::~KeyboardBind() = default;
 
 	template<typename Bind>
-	inline const KeyboardInput& KeyboardBindable<Bind>::GetKeyboard() const
+	inline const KeyboardInput& KeyboardBind<Bind>::GetKeyboard() const
 	{
 		return *myKeyboard;
 	}
 	template<typename Bind>
-	inline KeyboardInput& KeyboardBindable<Bind>::GetKeyboard()
+	inline KeyboardInput& KeyboardBind<Bind>::GetKeyboard()
 	{
 		return *myKeyboard;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::IsHeld(const ButtonType& aBind) const
+	inline bool KeyboardBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::IsPressed(const ButtonType& aBind) const
+	inline bool KeyboardBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline bool KeyboardBindable<Bind>::IsReleased(const ButtonType& aBind) const
+	inline bool KeyboardBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetKeyboard().IsReleased(this->At(aBind));
 	}

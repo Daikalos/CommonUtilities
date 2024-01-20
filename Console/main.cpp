@@ -21,6 +21,7 @@
 
 #include <CommonUtilities/System/StateStack.hpp>
 #include <CommonUtilities/System/StateMachine.hpp>
+#include <CommonUtilities/Input/InputBind.hpp>
 
 class MenuState : public cu::StateStack<int, std::string>::State
 {
@@ -100,6 +101,15 @@ public:
 
 int main()
 {
+	enum class GameButton
+	{
+		None = -1,
+		Up,
+		Left,
+		Right,
+		Down,
+	};
+
 	cu::bm::Begin();
 	cu::AABB3D<float> aabb = cu::AABB3D<float>::InitWithCenterAndSize(cu::Vector3f::Zero, cu::Vector3f(1.0f, 1.0f, 1.0f));
 

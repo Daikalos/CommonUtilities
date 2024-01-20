@@ -6,15 +6,15 @@
 namespace CommonUtilities
 {
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	class MouseBindable final : public Binds<Bind, Mouse::Button>
+	class MouseBind final : public Binds<Bind, Mouse::Button>
 	{
 	public:
 		using ButtonType = Bind;
 
-		MouseBindable() = default;
-		~MouseBindable() = default;
+		MouseBind() = default;
+		~MouseBind() = default;
 
-		explicit MouseBindable(const MouseInput& aMouse);
+		explicit MouseBind(const MouseInput& aMouse);
 
 		NODISC const MouseInput& GetMouse() const;
 		NODISC MouseInput& GetMouse();
@@ -28,34 +28,34 @@ namespace CommonUtilities
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline MouseBindable<Bind>::MouseBindable(const MouseInput& aMouse)
+	inline MouseBind<Bind>::MouseBind(const MouseInput& aMouse)
 		: myMouse(&aMouse) { }
 
 	template<typename Bind>
-	inline const MouseInput& MouseBindable<Bind>::GetMouse() const
+	inline const MouseInput& MouseBind<Bind>::GetMouse() const
 	{
 		return *myMouse;
 	}
 	template<typename Bind>
-	inline MouseInput& MouseBindable<Bind>::GetMouse()
+	inline MouseInput& MouseBind<Bind>::GetMouse()
 	{
 		return *myMouse;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::IsHeld(const ButtonType& aBind) const
+	inline bool MouseBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::IsPressed(const ButtonType& aBind) const
+	inline bool MouseBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline bool MouseBindable<Bind>::IsReleased(const ButtonType& aBind) const
+	inline bool MouseBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
 		return this->GetEnabled() && GetMouse().IsReleased(this->At(aBind));
 	}

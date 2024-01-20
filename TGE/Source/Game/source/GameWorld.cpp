@@ -10,9 +10,10 @@
 
 #include "EnumKeys.h"
 
-GameWorld::GameWorld()
+GameWorld::GameWorld() : myInputBind()
 {
-
+	myInputBind.Set(GameActions::Up, cu::Mouse::Left);
+	//myInputBind.Set(GameActions::Up, cu::Keyboard::E);
 }
 
 GameWorld::~GameWorld() 
@@ -26,7 +27,10 @@ void GameWorld::Init()
 }
 void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aTimeDelta)
 {
-	if (aInputHandler.Keyboard().IsHeld(cu::Keyboard::W))
+	myInputBind.SetKeyboard(&aInputHandler.Keyboard());
+	myInputBind.SetMouse(&aInputHandler.Mouse());
+
+	if (myInputBind.IsHeld(GameActions::Up))
 	{
 		cu::Vector2i pos = aInputHandler.Cursor().GetMouseDelta();
 		std::cout << pos.x << " " << pos.y << '\n';

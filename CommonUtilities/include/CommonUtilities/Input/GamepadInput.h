@@ -34,6 +34,9 @@ namespace CommonUtilities
 		NODISC int GetIndex() const;
 		NODISC bool IsConnected() const;
 
+		void Connect();
+		void Disconnect();
+
 		/// Vibrate the controller
 		/// 
 		/// \param LeftMotor: Amount to vibrate on left motor (0.0f to cancel, 1.0f is max speed)
@@ -52,14 +55,15 @@ namespace CommonUtilities
 		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 		void ResetTentativeState() override;
 
-		XINPUT_STATE myState;
-		int myIndex {-1};
+		XINPUT_STATE	myState;
+		int				myIndex			{-1};
 
-		Vector2f myDeadzone		{0.05f, 0.02f};
-		Vector2f myLeftStick;
-		Vector2f myRightStick;
-		float myLeftTrigger		{0.0f};
-		float myRightTrigger	{0.0f};
+		Vector2f		myDeadzone		{0.05f, 0.02f};
+		Vector2f		myLeftStick;
+		Vector2f		myRightStick;
+		float			myLeftTrigger	{0.0f};
+		float			myRightTrigger	{0.0f};
+		bool			myActive		{false};
 
 		std::array<bool, Gamepad::ButtonCount> myCurrentState	= {false};
 		std::array<bool, Gamepad::ButtonCount> myPreviousState	= {false};

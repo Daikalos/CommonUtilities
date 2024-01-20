@@ -74,6 +74,19 @@ bool GamepadInput::IsConnected() const
 	return (myIndex != -1) ? Gamepad::IsConnected(myIndex) : false;
 }
 
+void GamepadInput::Connect()
+{
+	if (TryConnect())
+	{
+		myActive = true;
+	}
+}
+void GamepadInput::Disconnect()
+{
+	myIndex = -1;
+	myActive = false;
+}
+
 void GamepadInput::Rumble(float aLeftMotor, float aRightMotor)
 {
 	Gamepad::Rumble(myIndex, aLeftMotor, aRightMotor);
@@ -90,6 +103,11 @@ void GamepadInput::SetDeadzoneY(float aDeadzoneY)
 
 void GamepadInput::Update()
 {
+	if (!myActive)
+	{
+		return;
+	}
+
 	// try to connect to new port if current is invalid
 	if (myIndex == -1 && !TryConnect())
 	{

@@ -48,7 +48,7 @@ namespace CommonUtilities
 	template<typename... Ts>
 	concept HasNoDuplicates = requires
 	{
-		Traits::NoDuplicates<Ts...>{};
+		tr::NoDuplicates<Ts...>{};
 	};
 
 	template<typename F, typename T>
@@ -61,14 +61,14 @@ namespace CommonUtilities
 	concept Contains = std::disjunction_v<std::is_same<T, Args>...>;
 
 	template<class Lambda, typename T, std::size_t... Index>
-	concept SameTypeParamDecay = (std::same_as<T, std::decay_t<typename Traits::FunctionTraits<Lambda>::template arg_type<Index>>> && ...);
+	concept SameTypeParamDecay = (std::same_as<T, std::decay_t<typename tr::FunctionTraits<Lambda>::template arg_type<Index>>> && ...);
 
 	template<class Lambda, typename T, std::size_t... Index>
-	concept SameTypeParam = (std::same_as<T, typename Traits::FunctionTraits<Lambda>::template arg_type<Index>> && ...);
+	concept SameTypeParam = (std::same_as<T, typename tr::FunctionTraits<Lambda>::template arg_type<Index>> && ...);
 
 	template<class Lambda, typename... Ts>
-	concept HasParameters = (std::same_as<std::tuple<Ts...>, typename Traits::FunctionTraits<Lambda>::arguments>);
+	concept HasParameters = (std::same_as<std::tuple<Ts...>, typename tr::FunctionTraits<Lambda>::arguments>);
 
 	template<class Lambda, typename... Ts>
-	concept HasParametersDecay = (std::same_as<std::tuple<std::decay_t<Ts>...>, typename Traits::FunctionTraits<Lambda>::arguments_decay>);
+	concept HasParametersDecay = (std::same_as<std::tuple<std::decay_t<Ts>...>, typename tr::FunctionTraits<Lambda>::arguments_decay>);
 }

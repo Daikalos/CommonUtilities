@@ -9,9 +9,9 @@
 
 using namespace CommonUtilities;
 
-MouseCursor::MouseCursor(HWND aHandle)
+MouseCursor::MouseCursor(HWND aHandle) : myHandle(nullptr)
 {
-	SetHandle(aHandle);
+	Connect(aHandle);
 }
 
 bool MouseCursor::GetGrabbed() const noexcept
@@ -36,29 +36,60 @@ const Vector2i& MouseCursor::GetWindowSize() const noexcept
 	return myWindowSize;
 }
 
-void MouseCursor::SetHandle(HWND aHandle)
+bool MouseCursor::IsConnected() const noexcept
 {
-	assert(aHandle != nullptr && "You provided a nullptr handle...");
+	return myHandle != nullptr;
+}
 
+void MouseCursor::Connect(HWND aHandle)
+{
 	if (myHandle != aHandle)
 	{
-		myHandle = aHandle;
+		Disconnect();
+		if (aHandle != nullptr)
+		{ 
+			RAWINPUTDEVICE rid[1]{};
+			rid[0].usUsagePage	= HID_USAGE_PAGE_GENERIC;
+			rid[0].usUsage		= HID_USAGE_GENERIC_MOUSE;
+			rid[0].dwFlags		= RIDEV_INPUTSINK;
+			rid[0].hwndTarget	= aHandle;
+			if (!RegisterRawInputDevices(rid, 1, sizeof(rid[0])))
+			{
+				assert(false && "Failed to register raw input device");
+			}
 
-		RAWINPUTDEVICE rid[1]{};
-		rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
-		rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
-		rid[0].dwFlags = RIDEV_INPUTSINK;
-		rid[0].hwndTarget = myHandle;
-		RegisterRawInputDevices(rid, 1, sizeof(rid[0]));
-
-		RECT rect;
-		if (GetWindowRect(myHandle, &rect))
-		{
-			myWindowSize = Vector2i(
-				rect.right - rect.left, 
-				rect.bottom - rect.top);
+			RECT rect;
+			if (GetWindowRect(aHandle, &rect))
+			{
+				myWindowSize = Vector2i(
+					rect.right - rect.left, 
+					rect.bottom - rect.top);
+			}
+			else
+			{
+				assert(false && "Failed to get window rect");
+			}
 		}
 	}
+
+	myHandle = aHandle;
+}
+void MouseCursor::Disconnect()
+{
+	if (myHandle != nullptr)
+	{
+		RAWINPUTDEVICE rid[1]{};
+		rid[0].usUsagePage	= HID_USAGE_PAGE_GENERIC;
+		rid[0].usUsage		= HID_USAGE_GENERIC_MOUSE;
+		rid[0].dwFlags		= RIDEV_REMOVE;
+		rid[0].hwndTarget	= nullptr;
+		if (RegisterRawInputDevices(rid, 1, sizeof(rid[0])))
+		{
+			assert(false && "Failed to remove raw input device");
+		}
+	}
+
+	myHandle = nullptr;
 }
 
 void MouseCursor::SetPosition(const Vector2i& aPoint)
@@ -100,13 +131,13 @@ void MouseCursor::Update()
 	myMoveDelta	= myTentativeMoveDelta;
 	myTentativeMoveDelta = { 0, 0 };
 
-	if (myHandle != nullptr && myEnabled && myInFocus && myIsLocked)
+	if (IsConnected() && myEnabled && myInFocus && myIsLocked)
 	{
 		SetRelativePosition(myWindowSize / 2);
 	}
 }
 
-bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam, LPARAM lParam)
+bool MouseCursor::HandleEventImpl(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{
@@ -122,7 +153,7 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam,
 		}
 		case WM_INPUT:
 		{
-			if (myHandle != nullptr)
+			if (IsConnected())
 			{
 				UINT dwSize = sizeof(RAWINPUT);
 				static BYTE lpb[sizeof(RAWINPUT)];
@@ -144,7 +175,7 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, [[maybe_unused]] WPARAM wParam,
 		}
 		case WM_SIZE:
 		{
-			if (myHandle != nullptr)
+			if (IsConnected())
 			{
 				UINT width = LOWORD(lParam);
 				UINT height = HIWORD(lParam);
@@ -186,7 +217,7 @@ void MouseCursor::GrabCursor(bool aGrabbed)
 {
 	if (aGrabbed)
 	{
-		assert(myHandle != nullptr && "A handle is required for grabbing");
+		assert(IsConnected() && "A handle is required for grabbing");
 
 		RECT rect;
 		GetClientRect(myHandle, &rect);

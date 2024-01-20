@@ -88,7 +88,7 @@ void Camera3D::SetScreenSize(const Vector2f& aScreenSize)
 	myScreenSize = aScreenSize;
 }
 
-bool Camera3D::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
+bool Camera3D::HandleEvent(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{

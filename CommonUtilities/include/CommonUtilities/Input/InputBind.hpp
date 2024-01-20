@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Binds.hpp"
+#include <unordered_map>
+#include <variant>
+
+#include <CommonUtilities/Utility/Traits.h>
+
 #include "KeyboardInput.h"
 #include "MouseInput.h"
 
@@ -15,17 +19,16 @@ namespace CommonUtilities
 		explicit InputBind(const KeyboardInput* aKeyboard = nullptr, const MouseInput* aMouse = nullptr);
 		~InputBind();
 
-		NODISC const KeyboardInput* GetKeyboard() const;
-		NODISC KeyboardInput* GetKeyboard();
-
-		NODISC const MouseInput* GetMouse() const;
-		NODISC MouseInput* GetMouse();
+		NODISC bool IsKeyboardConnected() const noexcept;
+		NODISC bool IsMouseConnected() const noexcept;
 
 		NODISC bool GetEnabled() const noexcept;
 
-		void SetKeyboard(const KeyboardInput* aKeyboard);
+		void Connect(const KeyboardInput& aKeyboard);
+		void Connect(const MouseInput& aMouse);
 
-		void SetMouse(const MouseInput* aMouse);
+		void DisconnectKeyboard();
+		void DisconnectMouse();
 
 		void SetEnabled(bool aFlag);
 
@@ -50,21 +53,7 @@ namespace CommonUtilities
 		NODISC bool IsReleased(const ButtonType& aBind) const;
 
 	private:
-		enum class InputType
-		{
-			Mouse,
-			Keyboard
-		};
-
-		struct ButtonReg
-		{
-			union
-			{
-				Keyboard::Key key;
-				Mouse::Button button;
-			};
-			InputType type;
-		};
+		using ButtonReg = std::variant<Keyboard::Key, Mouse::Button>;
 
 		NODISC auto At(const ButtonType& aBind) -> ButtonReg&;
 		NODISC auto At(const ButtonType& aBind) const -> const ButtonReg&;
@@ -87,25 +76,14 @@ namespace CommonUtilities
 	inline InputBind<Bind>::~InputBind() = default;
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline const KeyboardInput* InputBind<Bind>::GetKeyboard() const
+	inline bool InputBind<Bind>::IsKeyboardConnected() const noexcept
 	{
-		return myKeyboard;
+		return myKeyboard != nullptr;
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline KeyboardInput* InputBind<Bind>::GetKeyboard()
+	inline bool InputBind<Bind>::IsMouseConnected() const noexcept
 	{
-		return myKeyboard;
-	}
-
-	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline const MouseInput* InputBind<Bind>::GetMouse() const
-	{
-		return myMouse;
-	}
-	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline MouseInput* InputBind<Bind>::GetMouse()
-	{
-		return myMouse;
+		return myMouse != nullptr;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
@@ -115,14 +93,25 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline void InputBind<Bind>::SetKeyboard(const KeyboardInput* aKeyboard)
+	inline void InputBind<Bind>::Connect(const KeyboardInput& aKeyboard)
 	{
-		myKeyboard = aKeyboard;
+		myKeyboard = &aKeyboard;
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline void InputBind<Bind>::SetMouse(const MouseInput* aMouse)
+	inline void InputBind<Bind>::Connect(const MouseInput& aMouse)
 	{
-		myMouse = aMouse;
+		myMouse = &aMouse;
+	}
+
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline void InputBind<Bind>::DisconnectKeyboard()
+	{
+		myKeyboard = nullptr;
+	}
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline void InputBind<Bind>::DisconnectMouse()
+	{
+		myMouse = nullptr;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
@@ -134,20 +123,12 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline void InputBind<Bind>::Set(const ButtonType& aBind, Keyboard::Key aKey)
 	{
-		ButtonReg reg{};
-		reg.key = aKey;
-		reg.type = InputType::Keyboard;
-
-		myBinds[aBind] = reg;
+		myBinds[aBind] = ButtonReg{ aKey };
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline void InputBind<Bind>::Set(const ButtonType& aBind, Mouse::Button aButton)
 	{
-		ButtonReg reg{};
-		reg.button = aButton;
-		reg.type = InputType::Mouse;
-
-		myBinds[aBind] = reg;
+		myBinds[aBind] = ButtonReg{ aButton };
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
@@ -172,52 +153,34 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
-			return false;
-
-		const ButtonReg& reg = At(aBind);
-
-		switch (reg.type)
-		{
-			case InputType::Keyboard: return GetKeyboard() && GetKeyboard()->IsHeld(reg.key);
-			case InputType::Mouse: return GetMouse() && GetMouse()->IsHeld(reg.button);
-		}
-
-		return false;
+		return GetEnabled() && 
+			std::visit(tr::Overload
+			{
+				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsHeld(aKey); },
+				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsHeld(aButton); }
+			}, At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
-			return false;
-
-		const ButtonReg& reg = At(aBind);
-
-		switch (reg.type)
-		{
-			case InputType::Keyboard: return GetKeyboard() && GetKeyboard()->IsPressed(reg.key);
-			case InputType::Mouse: return GetMouse() && GetMouse()->IsPressed(reg.button);
-		}
-
-		return false;
+		return GetEnabled() && 
+			std::visit(tr::Overload
+			{
+				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsPressed(aKey); },
+				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsPressed(aButton); }
+			}, At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
-			return false;
-
-		const ButtonReg& reg = At(aBind);
-
-		switch (reg.type)
-		{
-			case InputType::Keyboard: return GetKeyboard() && GetKeyboard()->IsReleased(reg.key);
-			case InputType::Mouse: return GetMouse() && GetMouse()->IsReleased(reg.button);
-		}
-
-		return false;
+		return GetEnabled() && 
+			std::visit(tr::Overload
+			{
+				[](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsReleased(aKey); },
+				[](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsReleased(aButton); }
+			}, At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)

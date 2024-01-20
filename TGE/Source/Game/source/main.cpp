@@ -30,8 +30,6 @@ LRESULT WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	wParam;
 	hWnd;
 
-	globalInputHolder.Cursor().SetHandle(hWnd);
-
 	if (globalInputHolder.HandleEvent(message, wParam, lParam))
 	{
 		return 0;
@@ -80,6 +78,8 @@ void Go()
 		gameWorld.Init();
 
 		Tga::Engine& engine = *Tga::Engine::GetInstance();
+
+		globalInputHolder.Cursor().Connect(*engine.GetHWND());
 
 		while (engine.BeginFrame())
 		{

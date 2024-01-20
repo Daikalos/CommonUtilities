@@ -13,7 +13,7 @@
 GameWorld::GameWorld() : myInputBind()
 {
 	myInputBind.Set(GameActions::Up, cu::Mouse::Left);
-	//myInputBind.Set(GameActions::Up, cu::Keyboard::E);
+	myInputBind.Set(GameActions::Up, cu::Keyboard::E);
 }
 
 GameWorld::~GameWorld() 
@@ -27,8 +27,8 @@ void GameWorld::Init()
 }
 void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aTimeDelta)
 {
-	myInputBind.SetKeyboard(&aInputHandler.Keyboard());
-	myInputBind.SetMouse(&aInputHandler.Mouse());
+	myInputBind.Connect(aInputHandler.Keyboard());
+	myInputBind.Connect(aInputHandler.Mouse());
 
 	if (myInputBind.IsHeld(GameActions::Up))
 	{

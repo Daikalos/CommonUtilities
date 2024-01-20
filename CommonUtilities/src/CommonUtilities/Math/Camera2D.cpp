@@ -102,7 +102,7 @@ void Camera2D::Rotate(float aRotation)
 	SetRotation(GetRotation() + aRotation);
 }
 
-bool Camera2D::HandleEvent(UINT aMessage, [[maybe_unused]] WPARAM wParam, LPARAM lParam)
+bool Camera2D::HandleEvent(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
 {
 	switch (aMessage)
 	{

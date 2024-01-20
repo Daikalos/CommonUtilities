@@ -11,11 +11,13 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		explicit KeyboardBind(const KeyboardInput& aKeyboard);
+		explicit KeyboardBind(const KeyboardInput* aKeyboard = nullptr);
 		~KeyboardBind();
 
-		NODISC const KeyboardInput& GetKeyboard() const;
-		NODISC KeyboardInput& GetKeyboard();
+		NODISC bool IsConnected() const noexcept;
+
+		void Connect(const KeyboardInput& aKeyboard);
+		void Disconnect();
 
 		NODISC bool IsHeld(const ButtonType& aBind) const;
 		NODISC bool IsPressed(const ButtonType& aBind) const;
@@ -26,8 +28,8 @@ namespace CommonUtilities
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
-	inline KeyboardBind<Bind>::KeyboardBind(const KeyboardInput& aKeyboard)
-		: myKeyboard(&aKeyboard) 
+	inline KeyboardBind<Bind>::KeyboardBind(const KeyboardInput* aKeyboard)
+		: myKeyboard(aKeyboard) 
 	{ 
 
 	}
@@ -36,31 +38,37 @@ namespace CommonUtilities
 	inline KeyboardBind<Bind>::~KeyboardBind() = default;
 
 	template<typename Bind>
-	inline const KeyboardInput& KeyboardBind<Bind>::GetKeyboard() const
+	inline bool KeyboardBind<Bind>::IsConnected() const noexcept
 	{
-		return *myKeyboard;
+		return myKeyboard != nullptr;
+	}
+
+	template<typename Bind>
+	inline void KeyboardBind<Bind>::Connect(const KeyboardInput& aKeyboard)
+	{
+		myKeyboard = &aKeyboard;
 	}
 	template<typename Bind>
-	inline KeyboardInput& KeyboardBind<Bind>::GetKeyboard()
+	inline void KeyboardBind<Bind>::Disconnect()
 	{
-		return *myKeyboard;
+		myKeyboard = nullptr;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetKeyboard().IsHeld(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myKeyboard->IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetKeyboard().IsPressed(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myKeyboard->IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetKeyboard().IsReleased(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myKeyboard->IsReleased(this->At(aBind));
 	}
 }

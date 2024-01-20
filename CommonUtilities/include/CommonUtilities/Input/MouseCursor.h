@@ -21,7 +21,10 @@ namespace CommonUtilities
 		NODISC const Vector2i& GetMouseDelta() const noexcept;
 		NODISC const Vector2i& GetWindowSize() const noexcept;
 
-		void SetHandle(HWND aHandle);
+		NODISC bool IsConnected() const noexcept;
+
+		void Connect(HWND aHandle);
+		void Disconnect();
 
 		void SetPosition(const Vector2i& aPoint);
 		void SetRelativePosition(const Vector2i& aPoint);

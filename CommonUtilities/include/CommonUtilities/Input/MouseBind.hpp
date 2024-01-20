@@ -14,10 +14,12 @@ namespace CommonUtilities
 		MouseBind() = default;
 		~MouseBind() = default;
 
-		explicit MouseBind(const MouseInput& aMouse);
+		explicit MouseBind(const MouseInput* aMouse = nullptr);
 
-		NODISC const MouseInput& GetMouse() const;
-		NODISC MouseInput& GetMouse();
+		NODISC bool IsConnected() const noexcept;
+
+		void Connect(const MouseInput& aMouse);
+		void Disconnect();
 
 		NODISC bool IsHeld(const ButtonType& aBind) const;
 		NODISC bool IsPressed(const ButtonType& aBind) const;
@@ -28,35 +30,41 @@ namespace CommonUtilities
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
-	inline MouseBind<Bind>::MouseBind(const MouseInput& aMouse)
-		: myMouse(&aMouse) { }
+	inline MouseBind<Bind>::MouseBind(const MouseInput* aMouse)
+		: myMouse(aMouse) { }
 
 	template<typename Bind>
-	inline const MouseInput& MouseBind<Bind>::GetMouse() const
+	inline bool MouseBind<Bind>::IsConnected() const noexcept
 	{
-		return *myMouse;
+		return myMouse != nullptr;
+	}
+
+	template<typename Bind>
+	inline void MouseBind<Bind>::Connect(const MouseInput& aMouse)
+	{
+		myMouse = &aMouse;
 	}
 	template<typename Bind>
-	inline MouseInput& MouseBind<Bind>::GetMouse()
+	inline void MouseBind<Bind>::Disconnect()
 	{
-		return *myMouse;
+		myMouse = nullptr;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetMouse().IsHeld(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myMouse->IsHeld(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetMouse().IsPressed(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myMouse->IsPressed(this->At(aBind));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && GetMouse().IsReleased(this->At(aBind));
+		return this->GetEnabled() && IsConnected() && myMouse->IsReleased(this->At(aBind));
 	}
 }

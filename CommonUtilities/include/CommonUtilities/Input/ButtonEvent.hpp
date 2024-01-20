@@ -43,7 +43,7 @@ namespace CommonUtilities
 		ButtonEvent() = default;
 		~ButtonEvent() = default;
 
-		ButtonEvent(const T& input);
+		ButtonEvent(const T* input = nullptr);
 
 		ButtonEvent(const ButtonEvent& aOther);
 		ButtonEvent(ButtonEvent&& aOther) noexcept;
@@ -51,10 +51,14 @@ namespace CommonUtilities
 		auto operator=(const ButtonEvent& aOther) -> ButtonEvent&;
 		auto operator=(ButtonEvent&& aOther) noexcept -> ButtonEvent&;
 
-		void Execute(Args... someArgs);
 		void operator()(Args... someArgs);
 
-		void SetInput(const T* aInput);
+		NODISC bool IsConnected() const noexcept;
+
+		void Execute(Args... someArgs);
+
+		void Connect(const T& aInput);
+		void Disconnect();
 	
 		template<typename Func>
 		void Add(Func&& aFunc, ButtonType aButton, bt::ButtonTrigger aTrigger)
@@ -104,8 +108,8 @@ namespace CommonUtilities
 	};
 
 	template<class T, typename... Args> requires HasButtonInput<T>
-	inline ButtonEvent<T, Args...>::ButtonEvent(const T& input) 
-		: myCallbacks(), myInput(&input) { }
+	inline ButtonEvent<T, Args...>::ButtonEvent(const T* input) 
+		: myCallbacks(), myInput(input) { }
 
 	template<class T, typename... Args> requires HasButtonInput<T>
 	inline ButtonEvent<T, Args...>::ButtonEvent(const ButtonEvent& rhs)
@@ -140,6 +144,18 @@ namespace CommonUtilities
 	}
 
 	template<class T, typename... Args> requires HasButtonInput<T>
+	inline void ButtonEvent<T, Args...>::operator()(Args... someArgs)
+	{
+		Execute(someArgs...);
+	}
+
+	template<class T, typename ...Args>
+	inline bool ButtonEvent<T, Args...>::IsConnected() const noexcept
+	{
+		return myInput != nullptr;
+	}
+
+	template<class T, typename... Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Execute(Args... someArgs)
 	{
 		if (myInput == nullptr)
@@ -164,16 +180,15 @@ namespace CommonUtilities
 		}
 	}
 
-	template<class T, typename... Args> requires HasButtonInput<T>
-	inline void ButtonEvent<T, Args...>::operator()(Args... someArgs)
+	template<class T, typename ...Args>
+	inline void ButtonEvent<T, Args...>::Connect(const T& aInput)
 	{
-		Execute(someArgs...);
+		myInput = &aInput;
 	}
-
-	template<class T, typename... Args> requires HasButtonInput<T>
-	inline void ButtonEvent<T, Args...>::SetInput(const T* aInput)
+	template<class T, typename ...Args>
+	inline void ButtonEvent<T, Args...>::Disconnect()
 	{
-		myInput = aInput;
+		myInput = nullptr;
 	}
 
 	template<class T, typename... Args> requires HasButtonInput<T>

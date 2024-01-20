@@ -8,7 +8,7 @@
 #error Some traits here use C++20 features; please change the language standard or don't include the header that caused this message.
 #endif
 
-namespace CommonUtilities::Traits
+namespace CommonUtilities::tr
 {
     namespace details
     {

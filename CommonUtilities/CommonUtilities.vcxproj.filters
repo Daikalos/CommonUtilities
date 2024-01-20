@@ -36,7 +36,7 @@
     <ClInclude Include="include\CommonUtilities\Input\MouseCursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Input\JoystickInput.h">
+    <ClInclude Include="include\CommonUtilities\Input\GamepadInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\NonCopyable.h">
@@ -54,7 +54,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\FreeVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Input\Joystick.h">
+    <ClInclude Include="include\CommonUtilities\Input\Gamepad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Vector2.hpp">
@@ -279,6 +279,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Math\Camera3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\Input\GamepadInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\Input\Gamepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

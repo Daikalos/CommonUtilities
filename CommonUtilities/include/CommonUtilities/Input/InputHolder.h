@@ -6,6 +6,7 @@
 #include "KeyboardInput.h"
 #include "MouseInput.h"
 #include "MouseCursor.h"
+#include "GamepadInput.h"
 
 namespace CommonUtilities
 {

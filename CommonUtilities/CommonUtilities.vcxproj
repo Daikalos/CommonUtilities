@@ -165,7 +165,7 @@
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\ButtonEvent.hpp" />
-    <ClInclude Include="include\CommonUtilities\Input\Joystick.h" />
+    <ClInclude Include="include\CommonUtilities\Input\Gamepad.h" />
     <ClInclude Include="include\CommonUtilities\Input\KeyboardBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\MouseBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\AABB3D.hpp" />
@@ -186,7 +186,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\FreeVector.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputHandler.h" />
     <ClInclude Include="include\CommonUtilities\Input\InputHolder.h" />
-    <ClInclude Include="include\CommonUtilities\Input\JoystickInput.h" />
+    <ClInclude Include="include\CommonUtilities\Input\GamepadInput.h" />
     <ClInclude Include="include\CommonUtilities\Input\Keyboard.h" />
     <ClInclude Include="include\CommonUtilities\Input\KeyboardInput.h" />
     <ClInclude Include="include\CommonUtilities\Input\Mouse.h" />
@@ -223,6 +223,8 @@
     <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CommonUtilities\Input\Gamepad.cpp" />
+    <ClCompile Include="src\CommonUtilities\Input\GamepadInput.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Camera2D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Camera3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Relation2D.cpp" />

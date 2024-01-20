@@ -84,6 +84,18 @@ void GamepadInput::Connect()
 void GamepadInput::Disconnect()
 {
 	myIndex = -1;
+
+	myLeftStick = Vector2f{};
+	myRightStick = Vector2f{};
+
+	myLeftTrigger = 0.0f;
+	myRightTrigger = 0.0f;
+
+	for (int i = 0; i < Gamepad::ButtonCount; ++i)
+	{
+		myPreviousState[i] = myCurrentState[i] = myTentativeState[i] = false;
+	}
+
 	myActive = false;
 }
 

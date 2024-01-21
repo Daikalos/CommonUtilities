@@ -16,8 +16,14 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		explicit InputBind(const KeyboardInput* aKeyboard = nullptr, const MouseInput* aMouse = nullptr);
+		InputBind(const KeyboardInput* aKeyboard = nullptr, const MouseInput* aMouse = nullptr);
 		~InputBind();
+
+		NODISC const KeyboardInput* Keyboard() const noexcept;
+		NODISC KeyboardInput* Keyboard() noexcept;
+
+		NODISC const MouseInput* Mouse() const noexcept;
+		NODISC MouseInput* Mouse() noexcept;
 
 		NODISC bool IsKeyboardConnected() const noexcept;
 		NODISC bool IsMouseConnected() const noexcept;
@@ -46,7 +52,7 @@ namespace CommonUtilities
 
 		///	\return Whether bind is set to some button
 		/// 
-		bool IsSet(const ButtonType& aBind);
+		NODISC bool IsSet(const ButtonType& aBind);
 
 		NODISC bool IsHeld(const ButtonType& aBind) const;
 		NODISC bool IsPressed(const ButtonType& aBind) const;
@@ -74,6 +80,28 @@ namespace CommonUtilities
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline InputBind<Bind>::~InputBind() = default;
+
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline const KeyboardInput* InputBind<Bind>::Keyboard() const noexcept
+	{
+		return myKeyboard;
+	}
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline KeyboardInput* InputBind<Bind>::Keyboard() noexcept
+	{
+		return myKeyboard;
+	}
+
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline const MouseInput* InputBind<Bind>::Mouse() const noexcept
+	{
+		return myMouse;
+	}
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline MouseInput* InputBind<Bind>::Mouse() noexcept
+	{
+		return myMouse;
+	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsKeyboardConnected() const noexcept

@@ -37,29 +37,29 @@ namespace CommonUtilities
 
 	}
 
-	template<typename Bind>
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline const GamepadInput* GamepadBind<Bind>::Gamepad() const noexcept
 	{
 		return myGamepad;
 	}
-	template<typename Bind>
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline GamepadInput* GamepadBind<Bind>::Gamepad() noexcept
 	{
 		return myGamepad;
 	}
 
-	template<typename Bind>
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsConnected() const noexcept
 	{
 		return myGamepad != nullptr;
 	}
 
-	template<typename Bind>
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline void GamepadBind<Bind>::Connect(const GamepadInput& aGamepad)
 	{
 		myGamepad = &aGamepad;
 	}
-	template<typename Bind>
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline void GamepadBind<Bind>::Disconnect()
 	{
 		myGamepad = nullptr;

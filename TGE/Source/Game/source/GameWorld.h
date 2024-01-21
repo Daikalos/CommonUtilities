@@ -2,6 +2,7 @@
 
 #include <CommonUtilities/Input/InputHolder.h>
 #include <CommonUtilities/Input/InputBind.hpp>
+#include <CommonUtilities/Input/GamepadInput.h>
 
 enum class GameActions
 {
@@ -23,4 +24,5 @@ public:
 
 private:
 	cu::InputBind<GameActions> myInputBind;
+	cu::GamepadInput myGamepad;
 };

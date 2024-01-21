@@ -80,13 +80,13 @@ void GamepadInput::Connect()
 }
 void GamepadInput::Disconnect()
 {
-	myIndex = -1;
+	myIndex			= -1;
 
-	myLeftStick = Vector2f{};
-	myRightStick = Vector2f{};
+	myLeftStick		= Vector2f{};
+	myRightStick	= Vector2f{};
 
-	myLeftTrigger = 0.0f;
-	myRightTrigger = 0.0f;
+	myLeftTrigger	= 0.0f;
+	myRightTrigger	= 0.0f;
 
 	for (int i = 0; i < Gamepad::ButtonCount; ++i)
 	{
@@ -98,7 +98,10 @@ void GamepadInput::Disconnect()
 
 void GamepadInput::Rumble(float aLeftMotor, float aRightMotor)
 {
-	Gamepad::Rumble(myIndex, aLeftMotor, aRightMotor);
+	if (IsConnected())
+	{
+		Gamepad::Rumble(myIndex, aLeftMotor, aRightMotor);
+	}
 }
 
 void GamepadInput::SetDeadzoneX(float aDeadzoneX)

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <CommonUtilities/Math/Matrix.hpp>
+#include <CommonUtilities/Utility/PrintUtils.hpp>
 
 #include "GameWorld.h"
 #include <tge/graphics/GraphicsEngine.h>
@@ -10,10 +11,11 @@
 
 #include "EnumKeys.h"
 
-GameWorld::GameWorld() : myInputBind()
+GameWorld::GameWorld() : myInputBind(), myGamepad()
 {
 	myInputBind.Set(GameActions::Up, cu::Mouse::Left);
 	myInputBind.Set(GameActions::Up, cu::Keyboard::E);
+	myGamepad.Connect();
 }
 
 GameWorld::~GameWorld() 
@@ -27,6 +29,8 @@ void GameWorld::Init()
 }
 void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aTimeDelta)
 {
+	myGamepad.Update();
+
 	myInputBind.Connect(aInputHandler.Keyboard());
 	myInputBind.Connect(aInputHandler.Mouse());
 
@@ -34,6 +38,10 @@ void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aT
 	{
 		cu::Vector2i pos = aInputHandler.Cursor().GetMouseDelta();
 		std::cout << pos.x << " " << pos.y << '\n';
+	}
+	if (myGamepad.IsHeld(cu::Gamepad::A))
+	{
+		std::cout << myGamepad.GetLeftStick() << '\n';
 	}
 }
 

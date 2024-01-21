@@ -11,8 +11,11 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		explicit KeyboardBind(const KeyboardInput* aKeyboard = nullptr);
-		~KeyboardBind();
+		KeyboardBind(const KeyboardInput* aKeyboard = nullptr);
+		~KeyboardBind() = default;
+
+		NODISC const KeyboardInput* Keyboard() const noexcept;
+		NODISC KeyboardInput* Keyboard() noexcept;
 
 		NODISC bool IsConnected() const noexcept;
 
@@ -35,7 +38,15 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind>
-	inline KeyboardBind<Bind>::~KeyboardBind() = default;
+	inline const KeyboardInput* KeyboardBind<Bind>::Keyboard() const noexcept
+	{
+		return myKeyboard;
+	}
+	template<typename Bind>
+	inline KeyboardInput* KeyboardBind<Bind>::Keyboard() noexcept
+	{
+		return myKeyboard;
+	}
 
 	template<typename Bind>
 	inline bool KeyboardBind<Bind>::IsConnected() const noexcept

@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\CommonUtilities\Config.h" />
+    <ClInclude Include="include\CommonUtilities\Input\GamepadBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Camera2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Camera3D.h" />

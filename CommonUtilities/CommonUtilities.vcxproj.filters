@@ -222,6 +222,9 @@
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Input\GamepadBind.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">

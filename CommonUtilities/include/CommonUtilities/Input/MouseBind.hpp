@@ -11,10 +11,11 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		MouseBind() = default;
+		MouseBind(const MouseInput* aMouse = nullptr);
 		~MouseBind() = default;
 
-		explicit MouseBind(const MouseInput* aMouse = nullptr);
+		NODISC const MouseInput* Mouse() const noexcept;
+		NODISC MouseInput* Mouse() noexcept;
 
 		NODISC bool IsConnected() const noexcept;
 
@@ -32,6 +33,17 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline MouseBind<Bind>::MouseBind(const MouseInput* aMouse)
 		: myMouse(aMouse) { }
+
+	template<typename Bind>
+	inline const MouseInput* MouseBind<Bind>::Mouse() const noexcept
+	{
+		return myMouse;
+	}
+	template<typename Bind>
+	inline MouseInput* MouseBind<Bind>::Mouse() noexcept
+	{
+		return myMouse;
+	}
 
 	template<typename Bind>
 	inline bool MouseBind<Bind>::IsConnected() const noexcept

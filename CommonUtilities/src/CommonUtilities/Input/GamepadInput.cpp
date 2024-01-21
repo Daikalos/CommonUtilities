@@ -26,7 +26,7 @@ GamepadInput::GamepadInput(int aGamepadIndex)
 	: myState()
 	, myIndex(aGamepadIndex - 1)
 {
-	TryConnect();
+
 }
 
 const Vector2f& GamepadInput::GetDeadzone() const
@@ -120,7 +120,7 @@ void GamepadInput::Update()
 		return;
 	}
 
-	// try to connect to new port if current is invalid
+	// try to connect to a new port if current is invalid
 	if (myIndex == -1 && !TryConnect())
 	{
 		return;

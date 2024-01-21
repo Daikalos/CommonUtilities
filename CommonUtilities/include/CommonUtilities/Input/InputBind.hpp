@@ -55,8 +55,8 @@ namespace CommonUtilities
 	private:
 		using ButtonReg = std::variant<Keyboard::Key, Mouse::Button>;
 
-		NODISC auto At(const ButtonType& aBind) -> ButtonReg&;
 		NODISC auto At(const ButtonType& aBind) const -> const ButtonReg&;
+		NODISC auto At(const ButtonType& aBind) -> ButtonReg&;
 
 		const KeyboardInput* myKeyboard {nullptr};
 		const MouseInput* myMouse		{nullptr};
@@ -184,11 +184,6 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline auto InputBind<Bind>::At(const ButtonType& aBind) -> ButtonReg&
-	{
-		return const_cast<ButtonReg&>(std::as_const(*this).At(aBind));
-	}
-	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline auto InputBind<Bind>::At(const ButtonType& aBind) const -> const ButtonReg&
 	{
 		const auto it = myBinds.find(aBind);
@@ -199,5 +194,9 @@ namespace CommonUtilities
 
 		return it->second;
 	}
-
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline auto InputBind<Bind>::At(const ButtonType& aBind) -> ButtonReg&
+	{
+		return const_cast<ButtonReg&>(std::as_const(*this).At(aBind));
+	}
 }

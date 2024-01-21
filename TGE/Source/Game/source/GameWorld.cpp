@@ -11,11 +11,10 @@
 
 #include "EnumKeys.h"
 
-GameWorld::GameWorld() : myInputBind(), myGamepad()
+GameWorld::GameWorld() : myInputBind()
 {
 	myInputBind.Set(GameActions::Up, cu::Mouse::Left);
 	myInputBind.Set(GameActions::Up, cu::Keyboard::E);
-	myGamepad.Connect();
 }
 
 GameWorld::~GameWorld() 
@@ -29,7 +28,7 @@ void GameWorld::Init()
 }
 void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aTimeDelta)
 {
-	myGamepad.Update();
+	aInputHandler.Gamepad().Connect();
 
 	myInputBind.Connect(aInputHandler.Keyboard());
 	myInputBind.Connect(aInputHandler.Mouse());
@@ -39,9 +38,9 @@ void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aT
 		cu::Vector2i pos = aInputHandler.Cursor().GetMouseDelta();
 		std::cout << pos.x << " " << pos.y << '\n';
 	}
-	if (myGamepad.IsHeld(cu::Gamepad::A))
+	if (aInputHandler.Gamepad().IsHeld(cu::Gamepad::A))
 	{
-		std::cout << myGamepad.GetLeftStick() << '\n';
+		std::cout << aInputHandler.Gamepad().GetLeftStick() << '\n';
 	}
 }
 

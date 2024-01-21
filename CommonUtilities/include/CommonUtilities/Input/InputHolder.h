@@ -25,6 +25,9 @@ namespace CommonUtilities
 		NODISC const MouseCursor& Cursor() const noexcept;
 		NODISC MouseCursor& Cursor() noexcept;
 
+		NODISC const GamepadInput& Gamepad() const noexcept;
+		NODISC GamepadInput& Gamepad() noexcept;
+
 		void SetEnabled(bool aFlag);
 
 		void Update();
@@ -34,5 +37,6 @@ namespace CommonUtilities
 		KeyboardInput	myKeyboard;
 		MouseInput		myMouse;
 		MouseCursor		myCursor;
+		GamepadInput	myGamepad;
 	};
 }

@@ -24,5 +24,4 @@ public:
 
 private:
 	cu::InputBind<GameActions> myInputBind;
-	cu::GamepadInput myGamepad;
 };

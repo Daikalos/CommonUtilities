@@ -206,8 +206,8 @@ namespace CommonUtilities
 		return GetEnabled() && 
 			std::visit(tr::Overload
 			{
-				[](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsReleased(aKey); },
-				[](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsReleased(aButton); }
+				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsReleased(aKey); },
+				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsReleased(aButton); }
 			}, At(aBind));
 	}
 

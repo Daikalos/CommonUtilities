@@ -5,6 +5,7 @@
 #include <ranges>
 #include <span>
 #include <cassert>
+#include <algorithm>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>

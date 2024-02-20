@@ -50,7 +50,7 @@ namespace CommonUtilities
 
 		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
-	private:
+	protected:
 		Transform3D myTransform;
 		Mat4f		myProjectionMatrix;
 		Vector2f	myScreenSize;

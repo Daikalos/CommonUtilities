@@ -14,6 +14,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class Matrix3x3;
+
+	template<typename T>
 	class Matrix4x4
 	{
 	public:
@@ -26,6 +29,11 @@ namespace CommonUtilities
 			T a02, T a12, T a22, T a32,
 			T a03, T a13, T a23, T a33);
 
+		constexpr Matrix4x4(const Matrix3x3<T>& aMatrix);
+
+		template<class OtherMatrix>
+		NODISC constexpr explicit operator OtherMatrix() const;
+
 		NODISC constexpr T& operator[](int aIndex);
 		NODISC constexpr const T& operator[](int aIndex) const;
 
@@ -33,8 +41,10 @@ namespace CommonUtilities
 		NODISC constexpr const T& operator()(int aRow, int aColumn) const;
 
 		NODISC constexpr const T* GetData() const noexcept;
+		NODISC constexpr T* GetData() noexcept;
 
 		NODISC constexpr auto GetTranspose() const -> Matrix4x4;
+		NODISC constexpr auto GetRotationMatrix() const -> Matrix4x4;
 
 		NODISC constexpr Vector3<T> GetTranslation() const;
 		NODISC constexpr Vector3<T> GetRotation() const;
@@ -106,6 +116,24 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline constexpr Matrix4x4<T>::Matrix4x4(const Matrix3x3<T>& aMatrix)
+		: myMatrix{
+			aMatrix[0],		aMatrix[1],		0,		aMatrix[2],
+			aMatrix[3],		aMatrix[4],		0,		aMatrix[5],
+			0,				0,				1,		0,
+			aMatrix[6],		aMatrix[7],		0,		aMatrix[8]}
+	{
+
+	}
+
+	template<typename T>
+	template<class OtherMatrix>
+	constexpr Matrix4x4<T>::operator OtherMatrix() const
+	{
+		return OtherMatrix{ GetData() };
+	}
+
+	template<typename T>
 	constexpr T& Matrix4x4<T>::operator[](int aIndex)
 	{
 		return myMatrix[aIndex];
@@ -128,7 +156,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline constexpr const T* Matrix4x4<T>::GetData() const noexcept
+	constexpr const T* Matrix4x4<T>::GetData() const noexcept
+	{
+		return myMatrix.data();
+	}
+	template<typename T>
+	constexpr T* Matrix4x4<T>::GetData() noexcept
 	{
 		return myMatrix.data();
 	}
@@ -143,6 +176,21 @@ namespace CommonUtilities
 			myMatrix[2], myMatrix[6], myMatrix[10], myMatrix[14],
 			myMatrix[3], myMatrix[7], myMatrix[11], myMatrix[15]
 		};
+	}
+	template<typename T>
+	constexpr auto Matrix4x4<T>::GetRotationMatrix() const -> Matrix4x4
+	{
+		Matrix4x4<T> rotationMatrix
+		{
+			myMatrix[0],	myMatrix[4],	myMatrix[8],	0,
+			myMatrix[1],	myMatrix[5],	myMatrix[9],	0,
+			myMatrix[2],	myMatrix[6],	myMatrix[10],	0,
+			0,				0,				0,				1
+		};
+
+		rotationMatrix.SetScale(Vector3f(1.0f, 1.0f, 1.0f)); // remove scaling
+
+		return rotationMatrix;
 	}
 
 	template<typename T>

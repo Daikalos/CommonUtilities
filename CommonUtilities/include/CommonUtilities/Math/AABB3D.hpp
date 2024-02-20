@@ -34,6 +34,7 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
 
 	private:
 		Vector3<T> myMin;
@@ -79,7 +80,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> AABB3D<T>::GetCenter() const
 	{
-		return GetSize() / 2.0f + myMin;
+		return (myMin + myMax) / 2.0f;
 	}
 
 	template<typename T>
@@ -125,6 +126,11 @@ namespace CommonUtilities
 	constexpr auto AABB3D<T>::GetType() const noexcept -> Type
 	{
 		return Type::AABB3D;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<Shape> AABB3D<T>::Clone() const
+	{
+		return std::make_unique<AABB3D<T>>(*this);
 	}
 
 	using AABB3DFloat	= AABB3D<float>;

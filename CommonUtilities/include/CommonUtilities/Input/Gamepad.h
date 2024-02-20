@@ -10,6 +10,7 @@ namespace CommonUtilities::Gamepad
 {
 	enum Button
 	{
+		None = -1,
 		A,
 		B,
 		X,

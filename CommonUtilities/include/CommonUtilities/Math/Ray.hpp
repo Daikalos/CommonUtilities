@@ -26,6 +26,7 @@ namespace CommonUtilities
 		constexpr void SetDirection(const Vector3<T>& aDirection);
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
 
 	private:
 		Vector3<T> myOrigin;
@@ -77,6 +78,11 @@ namespace CommonUtilities
 	constexpr auto Ray<T>::GetType() const noexcept -> Type
 	{
 		return Type::Ray;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<Shape> Ray<T>::Clone() const
+	{
+		return std::make_unique<Ray<T>>(*this);
 	}
 
 	using RayFloat	= Ray<float>;

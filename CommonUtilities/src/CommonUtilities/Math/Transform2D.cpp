@@ -32,7 +32,7 @@ const Mat3f& Transform2D::GetMatrix() const
 {
 	if (myUpdateMatrix)
 	{
-		myMatrix = Mat3f::CreateTRS(myPosition, myRotation, myScale, myOrigin);
+		myMatrix = Mat3f::CreateTRS(myPosition, myRotation, myScale, myScaleMultiplier, myOrigin);
 		myUpdateMatrix = false;
 	}
 	return myMatrix;
@@ -62,6 +62,10 @@ float Transform2D::GetRotation() const noexcept
 const Vector2f& Transform2D::GetScale() const noexcept
 {
 	return myScale;
+}
+const Vector2f& Transform2D::GetScaleMultiplier() const noexcept
+{
+	return myScaleMultiplier;
 }
 
 Vector2f Transform2D::ModelToWorld(const Vector2f& aModelPosition) const
@@ -105,6 +109,16 @@ void Transform2D::SetScale(const Vector2f& aScale)
 	if (myScale != aScale)
 	{
 		myScale					= aScale;
+		myUpdateMatrix			= true;
+		myUpdateInverseMatrix	= true;
+	}
+}
+
+void Transform2D::SetScaleMultiplier(const Vector2f& aScaleMultiplier)
+{
+	if (myScaleMultiplier != aScaleMultiplier)
+	{
+		myScaleMultiplier		= aScaleMultiplier;
 		myUpdateMatrix			= true;
 		myUpdateInverseMatrix	= true;
 	}

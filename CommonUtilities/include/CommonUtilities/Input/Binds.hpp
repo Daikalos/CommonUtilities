@@ -32,7 +32,7 @@ namespace CommonUtilities
 
 		///	\return Whether bind is set to some button
 		/// 
-		bool IsSet(const Bind& aBind);
+		bool IsSet(const Bind& aBind) const;
 
 	protected:
 		Binds() = default; // only allow derived classes to construct bind
@@ -101,7 +101,7 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind, typename Reg>
-	inline bool Binds<Bind, Reg>::IsSet(const Bind& aBind)
+	inline bool Binds<Bind, Reg>::IsSet(const Bind& aBind) const
 	{
 		const auto it = myBinds.find(aBind);
 		return it != myBinds.end();

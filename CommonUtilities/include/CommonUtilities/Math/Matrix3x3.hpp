@@ -36,8 +36,10 @@ namespace CommonUtilities
 		NODISC constexpr const T& operator()(int aRow, int aColumn) const;
 
 		NODISC constexpr const T* GetData() const noexcept;
+		NODISC constexpr T* GetData() noexcept;
 
 		NODISC constexpr auto GetTranspose() const -> Matrix3x3;
+		NODISC constexpr auto GetRotationMatrix() const -> Matrix3x3;
 
 		NODISC constexpr Vector2<T> GetTranslation() const;
 		NODISC constexpr T GetRotation() const;
@@ -64,7 +66,12 @@ namespace CommonUtilities
 		constexpr auto Subtract(const Matrix3x3& aRight) -> Matrix3x3&;
 		constexpr auto Combine(const Matrix3x3& aRight) -> Matrix3x3&;
 
-		NODISC constexpr static auto CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale, const Vector2<T>& aOrigin = Vector2<T>()) -> Matrix3x3;
+		NODISC constexpr static auto CreateTRS(
+			const Vector2<T>& aPosition, 
+			T aRotation, 
+			const Vector2<T>& aScale, 
+			const Vector2<T>& aScaleMultiplier = Vector2<T>(1, 1),
+			const Vector2<T>& aOrigin = Vector2<T>()) -> Matrix3x3;
 
 		NODISC constexpr static auto CreateRotationAroundX(T aRadians) -> Matrix3x3;
 		NODISC constexpr static auto CreateRotationAroundY(T aRadians) -> Matrix3x3;
@@ -134,6 +141,11 @@ namespace CommonUtilities
 	{
 		return myMatrix.data();
 	}
+	template<typename T>
+	constexpr T* Matrix3x3<T>::GetData() noexcept
+	{
+		return myMatrix.data();
+	}
 
 	template<typename T>
 	constexpr auto Matrix3x3<T>::GetTranspose() const -> Matrix3x3
@@ -144,6 +156,20 @@ namespace CommonUtilities
 			myMatrix[1], myMatrix[4], myMatrix[7],
 			myMatrix[2], myMatrix[5], myMatrix[8] 
 		};
+	}
+	template<typename T>
+	constexpr auto Matrix3x3<T>::GetRotationMatrix() const -> Matrix3x3
+	{
+		Matrix3x3<T> rotationMatrix
+		{
+			myMatrix[0],	myMatrix[3],	0,
+			myMatrix[1],	myMatrix[4],	0,
+			0,				0,				1
+		};
+
+		rotationMatrix.SetScale(Vector3f(1.0f, 1.0f, 1.0f)); // remove scaling
+
+		return rotationMatrix;
 	}
 
 	template<typename T>
@@ -330,16 +356,21 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix3x3<T>::CreateTRS(const Vector2<T>& aPosition, T aRotation, const Vector2<T>& aScale, const Vector2<T>& aOrigin) -> Matrix3x3
+	constexpr auto Matrix3x3<T>::CreateTRS(
+		const Vector2<T>& aPosition, 
+		T aRotation, 
+		const Vector2<T>& aScale, 
+		const Vector2<T>& aScaleMultiplier, 
+		const Vector2<T>& aOrigin) -> Matrix3x3
 	{
 		const T c	= std::cos(aRotation);
 		const T s	= std::sin(aRotation);
-		const T sxc = aScale.x * c;
-		const T syc = aScale.y * c;
-		const T sxs = aScale.x * s;
-		const T sys = aScale.y * s;
+		const T sxc = aScale.x * aScaleMultiplier.x * c;
+		const T syc = aScale.y * aScaleMultiplier.y * c;
+		const T sxs = aScale.x * aScaleMultiplier.x * s;
+		const T sys = aScale.y * aScaleMultiplier.y * s;
 		const T tx	= -aOrigin.x * sxc - aOrigin.y * sys + aPosition.x;
-		const T ty	= aOrigin.x * sxs - aOrigin.y * syc + aPosition.y;
+		const T ty	= -aOrigin.x * sxs + aOrigin.y * syc + aPosition.y;
 
 		return Matrix3x3
 		{

@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <variant>
+#include <stdexcept>
 
 #include <CommonUtilities/Utility/Traits.h>
 

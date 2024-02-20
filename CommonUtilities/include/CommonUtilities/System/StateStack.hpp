@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <cassert>
 
 #include <CommonUtilities/Utility/ContainerUtils.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
@@ -80,6 +81,12 @@ namespace CommonUtilities
 
 		NODISC virtual auto GetStateByID(const IDType& aStateID) const -> const State*;
 		NODISC virtual auto GetStateByID(const IDType& aStateID) -> State*;
+
+		NODISC virtual auto GetTopState() const -> const State&;
+		NODISC virtual auto GetTopState() -> State&;
+
+		NODISC virtual auto GetBotState() const -> const State&;
+		NODISC virtual auto GetBotState() -> State&;
 
 		/// \return Number of states currently in the stack
 		/// 
@@ -267,6 +274,28 @@ namespace CommonUtilities
 	}
 
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetTopState() const -> const State&
+	{
+		return *myStack.back();
+	}
+	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetTopState() -> State&
+	{
+		return *myStack.back();
+	}
+
+	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetBotState() const -> const State&
+	{
+		return *myStack.front();
+	}
+	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateStack<T, IDType, Hash>::GetBotState() -> State&
+	{
+		return *myStack.front();
+	}
+
+	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline std::size_t StateStack<T, IDType, Hash>::Count() const noexcept
 	{
 		return myStack.size();
@@ -318,8 +347,10 @@ namespace CommonUtilities
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline void StateStack<T, IDType, Hash>::ApplyPendingChanges()
 	{
-		const auto PopState = [this]()
+		const auto PopState = [this]
 		{
+			assert(!myStack.empty() && "Cannot pop an empty stack!");
+
 			myStack.back()->OnDestroy();
 			myStack.pop_back();
 
@@ -341,7 +372,6 @@ namespace CommonUtilities
 					}
 
 					StatePtr newState = CreateState(change.stateID);
-					newState->OnCreate();
 					newState->OnActivate();
 
 					myStack.emplace_back(std::move(newState));
@@ -435,7 +465,7 @@ namespace CommonUtilities
 	}
 	template<typename T, typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline StateStack<T, IDType, Hash>::PendingChange::PendingChange(const Action& aAction)
-		: PendingChange(aAction, IDType, 0)
+		: PendingChange(aAction, IDType{}, 0)
 	{
 
 	}
@@ -449,6 +479,9 @@ namespace CommonUtilities
 			throw std::runtime_error("State could not be found");
 		}
 
-		return it->second();
+		auto statePtr = it->second();
+		statePtr->OnCreate();
+
+		return statePtr;
 	}
 }

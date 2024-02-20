@@ -72,6 +72,70 @@ namespace CommonUtilities::au
 		return aBase * Pow(aBase, (aExponent - 1) / 2) * Pow(aBase, (aExponent - 1) / 2);
 	}
 
+	template<IsIntegral T>
+	NODISC constexpr auto Wrap(T val, T max, T min = 0)
+	{
+		const auto range = max - min;
+
+		if (val < min)
+			return max - ((min - val) % range);
+
+		if (val >= max)
+			return min + ((val - min) % range);
+
+		return val;
+	}
+
+	template<IsFloatingPoint T>
+	NODISC constexpr auto Wrap(T val, T max, T min = 0)
+	{
+		const auto range = max - min;
+
+		if (val < min)
+			return max - std::fmod(min - val, range);
+
+		if (val >= max)
+			return min + std::fmod(val - min, range);
+
+		return val;
+	}
+
+	template<IsIntegral T>
+	NODISC constexpr auto WrapLower(T val, T max, T min = 0)
+	{
+		if (val < min)
+			return max - ((min - val) % (max - min));
+
+		return val;
+	}
+
+	template<IsIntegral T>
+	NODISC constexpr auto WrapUpper(T val, T max, T min = 0)
+	{
+		if (val >= max)
+			return min + ((val - min) % (max - min));
+
+		return val;
+	}
+
+	template<IsFloatingPoint T>
+	NODISC constexpr auto WrapLower(T val, T max, T min = 0)
+	{
+		if (val < min)
+			return max - std::fmod(min - val, max - min);
+
+		return val;
+	}
+
+	template<IsFloatingPoint T>
+	NODISC constexpr auto WrapUpper(T val, T max, T min = 0)
+	{
+		if (val > max)
+			return min + std::fmod(val - min, max - min);
+
+		return val;
+	}
+
 	template<IsFloatingPoint T>
 	NODISC constexpr auto Equal(T aFirst, T aSecond, T aEpsilon = std::numeric_limits<T>::epsilon())
 	{
@@ -102,6 +166,11 @@ namespace CommonUtilities::au
 	NODISC constexpr T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
 	{
 		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), PI_V<T> * 2) - PI_V<T>);
+	}
+	template<IsFloatingPoint T>
+	NODISC constexpr T ShortestAngleDegrees(T aFirstDegrees, T aSecondDegrees)
+	{
+		return T(180) - std::abs(std::fmodf(std::abs(aSecondDegrees - aFirstDegrees), T(360)) - T(180));
 	}
 
 	template<typename T>

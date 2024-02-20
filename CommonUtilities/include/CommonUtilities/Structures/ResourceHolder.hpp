@@ -1,7 +1,6 @@
 #pragma once
 
 #include <future>
-#include <memory>
 #include <unordered_map>
 #include <thread>
 #include <shared_mutex>
@@ -29,8 +28,6 @@ namespace CommonUtilities
 	class ResourceHolder : private NonCopyable
 	{
 	public:
-		using ResourcePtr = typename std::unique_ptr<R>;
-
 		using ReturnType = R&;
 		using ConstReturnType = const R&;
 
@@ -53,9 +50,9 @@ namespace CommonUtilities
 	private:
 		void ReleaseImpl(const I& aID);
 		auto Load(const I& aID, const ResourceLoader<R>& aLoader) -> ReturnType;
-		auto Insert(const I& aID, ResourcePtr&& aResource) -> ReturnType;
+		auto Insert(const I& aID, R&& aResource) -> ReturnType;
 
-		std::unordered_map<I, ResourcePtr> myResources;
+		std::unordered_map<I, R> myResources;
 		mutable std::shared_mutex myMutex;
 	};
 
@@ -85,7 +82,7 @@ namespace CommonUtilities
 		if (it == myResources.end())
 			throw std::runtime_error("Resource does not exist");
 
-		return *it->second;
+		return it->second;
 	}
 
 	template<class R, typename I>
@@ -105,7 +102,7 @@ namespace CommonUtilities
 				ReleaseImpl(aID);
 				return Load(aID, aLoader);
 			default: // reuse as default
-				return *it->second;
+				return it->second;
 		}
 	}
 
@@ -115,7 +112,7 @@ namespace CommonUtilities
 		return std::async(std::launch::async,
 			[this](I aID, ResourceLoader<R> aLoader, res::LoadStrategy aStrat) -> ReturnType
 			{
-				ResourcePtr resource = aLoader(); // we load it first for async benefits
+				R resource = aLoader(); // we load it first for async benefits
 
 				if (!resource)
 					throw std::runtime_error("Failed to load resource");
@@ -166,7 +163,7 @@ namespace CommonUtilities
 	template<class R, typename I>
 	inline auto ResourceHolder<R, I>::Load(const I& aID, const ResourceLoader<R>& aLoader) -> ReturnType
 	{
-		ResourcePtr resource = aLoader();
+		R resource = aLoader();
 
 		if (!resource)
 			throw std::runtime_error("Failed to load resource");
@@ -175,8 +172,8 @@ namespace CommonUtilities
 	}
 
 	template<class R, typename I>
-	inline auto ResourceHolder<R, I>::Insert(const I& aID, ResourcePtr&& aResource) -> ReturnType
+	inline auto ResourceHolder<R, I>::Insert(const I& aID, R&& aResource) -> ReturnType
 	{
-		return *myResources.try_emplace(aID, std::move(aResource)).first->second;
+		return myResources.try_emplace(aID, std::move(aResource)).first->second;
 	}
 }

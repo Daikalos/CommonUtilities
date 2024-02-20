@@ -28,6 +28,7 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
 
 	private:
 		Vector3<T>	myCenter;
@@ -86,6 +87,11 @@ namespace CommonUtilities
 	constexpr auto Sphere<T>::GetType() const noexcept -> Type
 	{
 		return Type::Sphere;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<Shape> Sphere<T>::Clone() const
+	{
+		return std::make_unique<Sphere<T>>(*this);
 	}
 
 	using SphereFloat	= Sphere<float>;

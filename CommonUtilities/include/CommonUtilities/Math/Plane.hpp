@@ -29,6 +29,7 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
 
 	private:
 		Vector3<T> myOrigin;
@@ -92,6 +93,11 @@ namespace CommonUtilities
 	constexpr auto Plane<T>::GetType() const noexcept -> Type
 	{
 		return Type::Plane;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<Shape> Plane<T>::Clone() const
+	{
+		return std::make_unique<Plane<T>>(*this);
 	}
 
 	// using declarations

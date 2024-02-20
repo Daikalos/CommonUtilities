@@ -1,7 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <memory>
+
+#include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
@@ -9,13 +10,13 @@ namespace CommonUtilities
 	class ResourceLoader
 	{
 	public:
-		using Loader = std::function<std::unique_ptr<R>()>;
+		using Loader = std::function<R()>;
 
 		ResourceLoader(const Loader& aLoader);
 		ResourceLoader(Loader&& aLoader);
 
-		std::unique_ptr<R> operator()() const;
-		std::unique_ptr<R> Load() const;
+		NODISC R operator()() const;
+		NODISC R Load() const;
 
 	private:
 		Loader myLoader;
@@ -30,13 +31,13 @@ namespace CommonUtilities
 		: myLoader(std::move(aLoader)) { }
 
 	template<class R>
-	inline std::unique_ptr<R> ResourceLoader<R>::operator()() const
+	inline R ResourceLoader<R>::operator()() const
 	{
 		return myLoader();
 	}
 
 	template<class R>
-	inline std::unique_ptr<R> ResourceLoader<R>::Load() const
+	inline R ResourceLoader<R>::Load() const
 	{
 		return myLoader();
 	}
@@ -45,11 +46,11 @@ namespace CommonUtilities
 	inline ResourceLoader<R> MakeResourceLoader(Func&& aFunc)
 	{
 		return ResourceLoader<R>(
-			[func = std::forward<Func>(aFunc)] -> std::unique_ptr<R>
+			[func = std::forward<Func>(aFunc)]() -> R
 			{
-				auto resource = std::make_unique<R>();
+				R resource{};
 
-				if (func(*resource))
+				if (func(resource))
 					return resource;
 
 				return nullptr;

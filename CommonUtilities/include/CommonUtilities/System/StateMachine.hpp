@@ -20,7 +20,7 @@ namespace CommonUtilities
 	/// \param Hash: Function that generates the hash for IDType
 	/// 
 	template<typename IDType = std::uint32_t, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
-	class StateMachine : private NonCopyable
+	class StateMachine
 	{
 	public:
 		class State
@@ -33,9 +33,11 @@ namespace CommonUtilities
 
 			NODISC const IDType& GetID() const noexcept;
 
-			virtual void Enter() = 0;
+			virtual void Init() {};
+			virtual void Enter() {};
+			virtual void Exit() {};
+
 			virtual void Update(Timer& aTimer) = 0;
-			virtual void Exit() = 0;
 
 		protected:
 			NODISC virtual auto GetMachine() const -> const StateMachine&;
@@ -76,7 +78,10 @@ namespace CommonUtilities
 			requires std::constructible_from<S, const IDType&, StateMachine&, Args...>
 		void AddState(const IDType& aStateID, Args&&... someArgs)
 		{
-			myStates[aStateID] = std::make_unique<S>(aStateID, *this, std::forward<Args>(someArgs)...);
+			auto statePtr = std::make_unique<S>(aStateID, *this, std::forward<Args>(someArgs)...);
+			statePtr->Init();
+
+			myStates[aStateID] = std::move(statePtr);
 		}
 
 		/// Removes the state from the machine.

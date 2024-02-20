@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
@@ -7,6 +9,9 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API Shape
 	{
 	public:
+		constexpr Shape() = default;
+		constexpr virtual ~Shape() = default;
+
 		enum class Type // explicitly stated to prevent any human-error
 		{
 			None		= -1,
@@ -21,9 +26,6 @@ namespace CommonUtilities
 		};
 
 		NODISC constexpr virtual auto GetType() const noexcept -> Type = 0;
-
-	protected:
-		constexpr Shape() = default;
-		constexpr virtual ~Shape() = default;
+		NODISC constexpr virtual std::unique_ptr<Shape> Clone() const = 0;
 	};
 }

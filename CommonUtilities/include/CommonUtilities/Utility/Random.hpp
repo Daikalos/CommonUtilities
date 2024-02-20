@@ -4,6 +4,10 @@
 #include <type_traits>
 #include <numeric>
 
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+#include <CommonUtilities/Math/Vector2.hpp>
+#include <CommonUtilities/Math/Vector3.hpp>
+
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 
@@ -28,6 +32,12 @@ namespace CommonUtilities::rn
 	{
 		std::uniform_int_distribution<T> uid(aMin, aMax);
 		return uid(dre);
+	}
+
+	template<typename T>
+	NODISC inline T RandomDev(T aMiddle, T aDeviation)
+	{
+		return Random<T>(aMiddle - aDeviation, aMiddle + aDeviation);
 	}
 
 	template<typename T, typename... Args>
@@ -66,8 +76,37 @@ namespace CommonUtilities::rn
 		return result;
 	}
 
-	inline void Seed(std::uint64_t seed = std::mt19937_64::default_seed)
+	template<typename T>
+	NODISC inline cu::Vector2<T> RandomPointInRect(const cu::Vector2<T>& aCenter, const cu::Vector2<T>& aHalfSize)
 	{
-		dre.seed(seed);
+		return cu::Vector2<T>(
+			RandomDev<T>(aCenter.x, aHalfSize.x), 
+			RandomDev<T>(aCenter.y, aHalfSize.y));
 	}
+
+	template<typename T>
+	NODISC inline cu::Vector2<T> RandomPointInCircle(const cu::Vector2<T>& aCenter, T aRadius)
+	{
+		float r = aRadius * std::sqrt(Random());
+		float theta = Random() * 2.0f * au::PI;
+
+		return cu::Vector2<T>(
+			(T)(aCenter.x + r * std::cos(theta)),
+			(T)(aCenter.y + r * std::sin(theta)));
+	}
+
+	template<typename T>
+	NODISC inline cu::Vector2<T> RandomDeflection(const cu::Vector2<T>& aDirection, T aMaxRotation)
+	{
+		T angle = RandomDev<T>(0.0f, aMaxRotation);
+
+		T cos = std::cos(angle);
+		T sin = std::sin(angle);
+
+		return cu::Vector2<T>(
+			(T)(cos * aDirection.x - sin * aDirection.y),
+			(T)(sin * aDirection.x + cos * aDirection.y));
+	}
+
+	COMMON_UTILITIES_API void Seed(std::uint64_t seed = std::mt19937_64::default_seed);
 }

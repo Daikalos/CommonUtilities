@@ -157,8 +157,10 @@
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Camera2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Camera3D.h" />
+    <ClInclude Include="include\CommonUtilities\Math\Distribution.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
+    <ClInclude Include="include\CommonUtilities\Structures\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
@@ -228,6 +230,7 @@
     <ClCompile Include="src\CommonUtilities\Input\GamepadInput.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Camera2D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Camera3D.cpp" />
+    <ClCompile Include="src\CommonUtilities\Math\Distribution.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Relation2D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Relation3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Shape.cpp" />
@@ -244,6 +247,7 @@
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Benchmark.cpp" />
+    <ClCompile Include="src\CommonUtilities\Utility\Random.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\StringUtils.cpp" />
   </ItemGroup>
   <ItemGroup>

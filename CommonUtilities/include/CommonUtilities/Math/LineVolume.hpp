@@ -39,6 +39,7 @@ namespace CommonUtilities
 		constexpr void Clear();
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<LineVolume<T>> Clone() const override;
 
 	private:
 		std::vector<Line<T>> myLines;
@@ -133,6 +134,11 @@ namespace CommonUtilities
 	constexpr auto LineVolume<T>::GetType() const noexcept -> Type
 	{
 		return Type::LineVolume;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<LineVolume<T>> LineVolume<T>::Clone() const
+	{
+		return std::make_unique<LineVolume<T>>(*this);
 	}
 
 	using LineVolumeFloat	= LineVolume<float>;

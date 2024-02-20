@@ -202,7 +202,7 @@ namespace CommonUtilities
 			return result;
 		}
 
-		if (distSqr > FLT_EPSILON * FLT_EPSILON)
+		if (!au::Equal<T>(distSqr, 0, std::numeric_limits<T>::epsilon() * std::numeric_limits<T>::epsilon()))
 		{
 			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
 		}
@@ -285,7 +285,7 @@ namespace CommonUtilities
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
 		T denom = aPlane.GetNormal().Dot(aRay.GetDirection());
 
-		if (static_cast<T>(std::abs(denom)) <= static_cast<T>(FLT_EPSILON))
+		if (au::Equal<T>(denom, 0))
 		{
 			// if the numenator is zero then the origin of the ray lies on plane, which it must if parallel to the plane and allow intersection
 			if (numen == 0)
@@ -294,8 +294,6 @@ namespace CommonUtilities
 				result.normal		= aPlane.GetNormal();
 				result.penetration	= 0;
 				result.collided		= true;
-
-				return result;
 			}
 
 			return result;
@@ -365,7 +363,7 @@ namespace CommonUtilities
 		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
 
-		if (distance > FLT_EPSILON * FLT_EPSILON)
+		if (!au::Equal<T>(distance, 0, std::numeric_limits<T>::epsilon() * std::numeric_limits<T>::epsilon()))
 		{ 
 			distance	= std::sqrt(distance);
 			normal		= normal.GetNormalized(distance, 1.0f);

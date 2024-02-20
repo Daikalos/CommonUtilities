@@ -7,6 +7,7 @@
 #include <memory>
 #include <stdexcept>
 #include <limits>
+#include <type_traits>
 
 #include <CommonUtilities/Config.h>
 
@@ -407,7 +408,7 @@ namespace CommonUtilities
 
 	template<typename T, std::size_t Capacity>
 	template<std::size_t OtherCapacity> requires(std::is_copy_constructible_v<T>&& std::is_copy_assignable_v<T> && (Capacity != OtherCapacity))
-	inline constexpr auto StaticVector<T, Capacity>::operator=(const StaticVector& aOther) noexcept(std::is_nothrow_copy_constructible_v<T> && std::is_nothrow_copy_assignable_v<T> && std::is_nothrow_destructible_v<T> && (Capacity > OtherCapacity)) -> StaticVector&
+	constexpr auto StaticVector<T, Capacity>::operator=(const StaticVector& aOther) noexcept(std::is_nothrow_copy_constructible_v<T> && std::is_nothrow_copy_assignable_v<T> && std::is_nothrow_destructible_v<T> && (Capacity > OtherCapacity)) -> StaticVector&
 	{
 		if (this == &aOther)
 		{
@@ -492,7 +493,7 @@ namespace CommonUtilities
 
 	template<typename T, std::size_t Capacity>
 	template<std::size_t OtherCapacity> requires(((std::is_copy_constructible_v<T>&& std::is_copy_assignable_v<T>) || (std::is_move_constructible_v<T> && std::is_move_assignable_v<T>)) && (Capacity != OtherCapacity))
-	inline constexpr auto StaticVector<T, Capacity>::operator=(StaticVector&& aOther) noexcept(NoThrowMoveAssignment && (Capacity > OtherCapacity)) -> StaticVector&
+	constexpr auto StaticVector<T, Capacity>::operator=(StaticVector&& aOther) noexcept(NoThrowMoveAssignment && (Capacity > OtherCapacity)) -> StaticVector&
 	{
 		if (this == &aOther)
 		{
@@ -708,7 +709,7 @@ namespace CommonUtilities
 	constexpr auto StaticVector<T, Capacity>::max_size() const noexcept -> size_type
 	{
 		// if you see error here, add #define NOMINMAX before including <cmath>
-		return std::numeric_limits<size_type>::max();
+		return (std::numeric_limits<size_type>::max)();
 	}
 
 	template<typename T, std::size_t Capacity>

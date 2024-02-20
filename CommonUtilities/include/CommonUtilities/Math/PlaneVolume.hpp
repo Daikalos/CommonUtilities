@@ -39,6 +39,7 @@ namespace CommonUtilities
 		constexpr void Clear();
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
+		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
 
 	private:
 		std::vector<Plane<T>> myPlanes;
@@ -133,6 +134,11 @@ namespace CommonUtilities
 	constexpr auto PlaneVolume<T>::GetType() const noexcept -> Type
 	{
 		return Type::PlaneVolume;
+	}
+	template<typename T>
+	constexpr std::unique_ptr<Shape> PlaneVolume<T>::Clone() const
+	{
+		return std::make_unique<PlaneVolume<T>>(*this);
 	}
 
 	using PlaneVolumeFloat	= PlaneVolume<float>;

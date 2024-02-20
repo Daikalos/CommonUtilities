@@ -25,6 +25,18 @@ GameWorld::~GameWorld()
 void GameWorld::Init()  
 {
 	[[maybe_unused]] auto& engine = *Tga::Engine::GetInstance();
+	mySpriteSharedData.myTexture = engine.GetTextureManager().GetTexture(L"Textures/Helicopter.png");
+
+	cu::Mat4f matrix = cu::Mat4f::CreateTRS(
+		cu::Vector3f(512.0f, 512.0f, 0.0f), 
+		cu::Vector3f(0.0f, 0.0f, 0.0f), 
+		cu::Vector3f(100.0f, 100.0f, 1.0f));
+
+	for (int i = 0; i < 16; ++i)
+	{
+		mySpriteInstance.myTransform.GetDataPtr()[i] = matrix[i];
+	}
+
 }
 void GameWorld::Update(cu::InputHolder& aInputHandler, [[maybe_unused]] float aTimeDelta)
 {
@@ -49,4 +61,5 @@ void GameWorld::Render()
 	auto &engine = *Tga::Engine::GetInstance();
 	[[maybe_unused]] Tga::SpriteDrawer& spriteDrawer = engine.GetGraphicsEngine().GetSpriteDrawer();
 
+	spriteDrawer.Draw(mySpriteSharedData, mySpriteInstance);
 }

@@ -17,8 +17,11 @@ namespace CommonUtilities
 		const T& GetValue() const;
 		T& GetValue();
 
-		DoublyLinkedListNode* GetNext() const;
-		DoublyLinkedListNode* GetPrevious() const;
+		const DoublyLinkedListNode* GetNext() const;
+		DoublyLinkedListNode* GetNext();
+
+		const DoublyLinkedListNode* GetPrevious() const;
+		DoublyLinkedListNode* GetPrevious();
 
 	private:
 		friend class DoublyLinkedList<T>;
@@ -55,12 +58,23 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetNext() const
+	inline const DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetNext() const
 	{
 		return myNext;
 	}
 	template<typename T>
-	inline DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetPrevious() const
+	inline DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetNext()
+	{
+		return myNext;
+	}
+
+	template<typename T>
+	inline const DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetPrevious() const
+	{
+		return myPrev;
+	}
+	template<typename T>
+	inline DoublyLinkedListNode<T>* DoublyLinkedListNode<T>::GetPrevious()
 	{
 		return myPrev;
 	}
@@ -72,44 +86,23 @@ namespace CommonUtilities
 		DoublyLinkedList();
 		~DoublyLinkedList();
 
-		// Returnerar antalet element i listan
 		int GetSize() const;
 
-		// Returnerar första noden i listan, eller nullptr om listan är tom
 		DoublyLinkedListNode<T>* GetFirst();
-
-		// Returnerar sista noden i listan, eller nullptr om listan är tom
 		DoublyLinkedListNode<T>* GetLast();
 
 		void InsertFirst(const T& aValue);
 		void InsertLast(const T& aValue);
 
-		// Skjuter in ett nytt element innan aNode
 		void InsertBefore(DoublyLinkedListNode<T>* aNode, const T& aValue);
-
-		// Skjuter in ett nytt element efter aNode
 		void InsertAfter(DoublyLinkedListNode<T>* aNode, const T& aValue);
 
-		// Plockar bort noden ur listan och frigör minne. (Det är ok att anta att
-		// aNode är en nod i listan, och inte från en annan lista)
 		void Remove(DoublyLinkedListNode<T>* aNode);
 
-		// Hittar första elementet i listan som har ett visst värde. Jämförelsen
-		// görs med operator==. Om inget element hittas returneras nullptr.
 		DoublyLinkedListNode<T>* FindFirst(const T& aValue);
-
-		// Hittar sista elementet i listan som har ett visst värde. Jämförelsen
-		// görs med operator==. Om inget element hittas returneras nullptr.
 		DoublyLinkedListNode<T>* FindLast(const T& aValue);
 
-		// Plockar bort första elementet i listan som har ett visst värde. 
-		// Jämförelsen görs med operator==. Om inget element hittas görs ingenting.
-		// Returnerar true om ett element plockades bort, och false annars.
 		bool RemoveFirst(const T& aValue);
-
-		// Plockar bort sista elementet i listan som har ett visst värde.
-		// Jämförelsen görs med operator==. Om inget element hittas görs ingenting.
-		// Returnerar true om ett element plockades bort, och false annars.
 		bool RemoveLast(const T& aValue);
 
 	private:
@@ -131,7 +124,7 @@ namespace CommonUtilities
 	inline DoublyLinkedList<T>::~DoublyLinkedList()
 	{
 		DoublyLinkedListNode<T>* currNode = myHead;
-		while (currNode != nullptr && currNode != (myTail + 1))
+		while (currNode != nullptr)
 		{
 			DoublyLinkedListNode<T>* nextNode = currNode->myNext;
 			delete currNode;

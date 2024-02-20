@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tge/sprite/sprite.h>
+
 #include <CommonUtilities/Input/InputHolder.h>
 #include <CommonUtilities/Input/InputBind.hpp>
 #include <CommonUtilities/Input/GamepadInput.h>
@@ -24,4 +26,6 @@ public:
 
 private:
 	cu::InputBind<GameActions> myInputBind;
+	Tga::Sprite3DInstanceData mySpriteInstance;
+	Tga::SpriteSharedData mySpriteSharedData;
 };

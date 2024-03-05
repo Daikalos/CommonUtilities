@@ -99,7 +99,7 @@ namespace CommonUtilities
 	{
 		if (aNode == nullptr)
 		{
-			return nullptr;
+			return aNode;
 		}
 
 		if (aValue < aNode->value)

@@ -27,17 +27,17 @@ namespace CommonUtilities
 		class Node
 		{
 		public:
+			Node(const T& aValue);
+
 			Node(const Node&) = delete;
 			Node& operator=(const Node&) = delete;
+
+			Node(Node&&) = delete;
+			Node& operator=(Node&&) = delete;
 
 			T		value;
 			NodePtr left;
 			NodePtr right;
-
-		private:
-			friend class BSTSet<T>;
-
-			Node(const T& aValue);
 		};
 
 		auto SearchImpl(const NodePtr& aNode, const T& aValue) const -> const NodePtr&;
@@ -76,7 +76,7 @@ namespace CommonUtilities
 	{
 		if (myRoot == nullptr)
 		{
-			myRoot = std::unique_ptr<Node>(new Node(aValue));
+			myRoot = std::make_unique<Node>(aValue);
 		}
 		else
 		{
@@ -127,7 +127,7 @@ namespace CommonUtilities
 		{
 			if (aNode.left == nullptr)
 			{
-				aNode.left = std::unique_ptr<Node>(new Node(aValue));
+				aNode.left = std::make_unique<Node>(aValue);
 			}
 			else
 			{
@@ -138,7 +138,7 @@ namespace CommonUtilities
 		{
 			if (aNode.right == nullptr)
 			{
-				aNode.right = std::unique_ptr<Node>(new Node(aValue));
+				aNode.right = std::make_unique<Node>(aValue);
 			}
 			else
 			{

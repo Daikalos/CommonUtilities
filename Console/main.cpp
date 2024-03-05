@@ -1,20 +1,21 @@
 #include <CommonUtilities/Structures/BSTSet.hpp>
 
+#include <string>
+
 int main()
 {
-	CommonUtilities::BSTSet<int> set;
-	set.Insert(5);
-	set.Insert(-3);
-	set.Insert(2);
-	set.Insert(7);
-	set.Insert(-8);
-	set.Insert(10);
-	set.Remove(-8);
-	set.Remove(-3);
-	set.Remove(-2);
-	set.Remove(-8);
-	
-	bool exists = set.HasElement(5);
+	for (int i = 0; i < 100000000; ++i)
+	{
+		CommonUtilities::BSTSet<std::string> set;
+		set.Insert("hello");
+		set.Insert("wow");
+		set.Insert("yesss");
+		set.Insert("lololol");
+		set.Remove("hello");
+		set.Remove("lololol");
+
+		bool exists = set.HasElement("lololol");
+	}
 
 	return 0;
 }

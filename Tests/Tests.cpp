@@ -20,7 +20,7 @@ namespace Tests
 			set.Insert("lololol");
 			set.Remove("hello");
 			set.Remove("lololol");
-			Assert::IsTrue(set.HasElement("lololol"));
+			Assert::IsTrue(set.HasElement("yesss"));
 		}
 	};
 }

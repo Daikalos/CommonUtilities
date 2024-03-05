@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-#include <utility>
 #include <cassert>
+#include <utility>
 
 namespace CommonUtilities
 {
@@ -11,7 +10,7 @@ namespace CommonUtilities
 	{
 	public:
 		BSTSet();
-		~BSTSet() = default;
+		~BSTSet();
 
 		bool HasElement(const T& aValue) const;
 
@@ -20,14 +19,11 @@ namespace CommonUtilities
 		void Remove(const T& aValue);
 
 	private:
-		class Node;
-
-		using NodePtr = std::unique_ptr<Node>;
-
 		class Node
 		{
 		public:
 			Node(const T& aValue);
+			~Node();
 
 			Node(const Node&) = delete;
 			Node& operator=(const Node&) = delete;
@@ -36,26 +32,44 @@ namespace CommonUtilities
 			Node& operator=(Node&&) = delete;
 
 			T		value;
-			NodePtr left;
-			NodePtr right;
+			Node*	left;
+			Node*	right;
 		};
 
-		auto SearchImpl(const NodePtr& aNode, const T& aValue) const -> const NodePtr&;
-		auto SearchImpl(NodePtr& aNode, const T& aValue) -> NodePtr&;
+		auto SearchImpl(const Node* aNode, const T& aValue) const -> const Node*;
+		auto SearchImpl(Node* aNode, const T& aValue) -> Node*;
 
-		void InsertImpl(Node& aNode, const T& aValue);
+		auto InsertImpl(Node* aNode, const T& aValue) -> Node*;
 
-		void RemoveNode(NodePtr& aNode);
+		auto RemoveImpl(Node* aNode, const T& aValue) -> Node*;
+		auto FindMinValueNode(Node* aNode) const -> Node*;
 
-		T FindSuccessor(NodePtr& aNode);
-
-		NodePtr myRoot;
+		Node* myRoot;
 	};
 
 	template<typename T>
-	inline BSTSet<T>::Node::Node(const T& aValue) : value(aValue)
+	inline BSTSet<T>::Node::Node(const T& aValue) 
+		: value(aValue)
+		, left(nullptr)
+		, right(nullptr)
 	{
 
+	}
+
+	template<typename T>
+	inline BSTSet<T>::Node::~Node()
+	{
+		if (left != nullptr)
+		{
+			delete left;
+			left = nullptr;
+		}
+
+		if (right != nullptr)
+		{
+			delete right;
+			right = nullptr;
+		}
 	}
 
 	template<typename T>
@@ -63,6 +77,16 @@ namespace CommonUtilities
 		: myRoot(nullptr)
 	{
 
+	}
+
+	template<typename T>
+	inline BSTSet<T>::~BSTSet()
+	{
+		if (myRoot != nullptr)
+		{
+			delete myRoot;
+			myRoot = nullptr;
+		}
 	}
 
 	template<typename T>
@@ -74,32 +98,21 @@ namespace CommonUtilities
 	template<typename T>
 	inline void BSTSet<T>::Insert(const T& aValue)
 	{
-		if (myRoot == nullptr)
-		{
-			myRoot = std::make_unique<Node>(aValue);
-		}
-		else
-		{
-			InsertImpl(*myRoot, aValue);
-		}
+		myRoot = InsertImpl(myRoot, aValue);
 	}
 
 	template<typename T>
 	inline void BSTSet<T>::Remove(const T& aValue)
 	{
-		NodePtr& nodeToDelete = SearchImpl(myRoot, aValue);
-		if (nodeToDelete != nullptr)
-		{
-			RemoveNode(nodeToDelete);
-		}
+		myRoot = RemoveImpl(myRoot, aValue);
 	}
 
 	template<typename T>
-	inline auto BSTSet<T>::SearchImpl(const NodePtr& aNode, const T& aValue) const -> const NodePtr&
+	inline auto BSTSet<T>::SearchImpl(const Node* aNode, const T& aValue) const -> const Node*
 	{
 		if (aNode == nullptr)
 		{
-			return aNode;
+			return nullptr; // element not found
 		}
 
 		if (aValue < aNode->value)
@@ -115,70 +128,89 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline auto BSTSet<T>::SearchImpl(NodePtr& aNode, const T& aValue) -> NodePtr&
+	inline auto BSTSet<T>::SearchImpl(Node* aNode, const T& aValue) -> Node*
 	{
-		return const_cast<NodePtr&>(std::as_const(*this).SearchImpl(aNode, aValue));
+		return const_cast<Node*>(std::as_const(*this).SearchImpl(aNode, aValue));
 	}
 
 	template<typename T>
-	inline void BSTSet<T>::InsertImpl(Node& aNode, const T& aValue)
+	inline auto BSTSet<T>::InsertImpl(Node* aNode, const T& aValue) -> Node*
 	{
-		if (aValue < aNode.value)
+		if (aNode == nullptr)
 		{
-			if (aNode.left == nullptr)
-			{
-				aNode.left = std::make_unique<Node>(aValue);
-			}
-			else
-			{
-				InsertImpl(*aNode.left, aValue);
-			}
+			return new Node(aValue);
 		}
-		else if (aNode.value < aValue)
+
+		if (aValue < aNode->value)
 		{
-			if (aNode.right == nullptr)
-			{
-				aNode.right = std::make_unique<Node>(aValue);
-			}
-			else
-			{
-				InsertImpl(*aNode.right, aValue);
-			}
+			aNode->left = InsertImpl(aNode->left, aValue);
+		}
+		else if (aNode->value < aValue)
+		{
+			aNode->right = InsertImpl(aNode->right, aValue);
 		}
 		else
 		{
 			//assert(false && "Element already exists in the set >:(");
 		}
+
+		return aNode;
 	}
 
 	template<typename T>
-	inline void BSTSet<T>::RemoveNode(NodePtr& aNode)
+	inline auto BSTSet<T>::RemoveImpl(Node* aNode, const T& aValue) -> Node*
 	{
-		if (aNode->left == nullptr)
+		if (aNode == nullptr)
 		{
-			aNode = std::move(aNode->right);
+			return nullptr;
 		}
-		else if (aNode->right == nullptr)
+
+		if (aValue < aNode->value)
 		{
-			aNode = std::move(aNode->left);
+			aNode->left = RemoveImpl(aNode->left, aValue);
 		}
-		else // has two children
+		else if (aNode->value < aValue)
 		{
-			aNode->value = FindSuccessor(aNode->right); // swap values with successor and remove it
+			aNode->right = RemoveImpl(aNode->right, aValue);
 		}
+		else // equal, remove this node
+		{
+			if (aNode->left == nullptr)
+			{
+				Node* temp = aNode->right;
+				aNode->right = nullptr; // set to null to prevent deletion of child
+				delete aNode;
+				return temp;
+			}
+			else if (aNode->right == nullptr)
+			{
+				Node* temp = aNode->left;
+				aNode->left = nullptr;
+				delete aNode;
+				return temp;
+			}
+			else // has two children
+			{
+				Node* minValueNode = FindMinValueNode(aNode->right); // find smallest value in the right sub-tree
+
+				aNode->value = std::move(minValueNode->value);
+				aNode->right = RemoveImpl(aNode->right, aNode->value);
+			}
+		}
+
+		return aNode;
 	}
 
 	template<typename T>
-	inline T BSTSet<T>::FindSuccessor(NodePtr& aNode)
+	inline auto BSTSet<T>::FindMinValueNode(Node* aNode) const -> Node*
 	{
-		if (aNode->left != nullptr) // find smallest value in right sub-tree
+		assert(aNode != nullptr && "Node should never be null here!");
+
+		if (aNode->left != nullptr)
 		{
-			return FindSuccessor(aNode->left);
+			return FindMinValueNode(aNode->left);
 		}
 
-		T result = std::move(aNode->value);
-		aNode = std::move(aNode->right);
-
-		return result;
+		return aNode;
 	}
 }

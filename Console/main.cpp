@@ -1,42 +1,19 @@
-#include <CommonUtilities/Structures/DoublyLinkedList.hpp>
-#include <CommonUtilities/Utility/Random.hpp>
+#include <CommonUtilities/Structures/BSTSet.hpp>
 
-#include <iostream>
+#include <CommonUtilities/Utility/Random.hpp>
 
 int main()
 {
-	int listCount = cu::rn::Random(512, 10024);
-	for (int i = 0; i < listCount; ++i)
-	{
-		CommonUtilities::DoublyLinkedList<int> linkedList;
-
-		int listSize = cu::rn::Random(512, 1024);
-		for (int i = 0; i < listSize; ++i)
-		{
-			int test = cu::rn::Random(0, 4);
-			if (test == 0)
-			{
-				linkedList.InsertFirst(cu::rn::Random(0, 512));
-			}
-			else if (test == 1)
-			{
-				linkedList.InsertLast(cu::rn::Random(0, 512));
-			}
-			else if (test == 2)
-			{
-				linkedList.RemoveFirst(cu::rn::Random(0, 512));
-			}
-			else
-			{
-				linkedList.RemoveLast(cu::rn::Random(0, 512));
-			}
-		}
-
-		int a = linkedList.GetSize();
-		int b = 0;
-	}
-
-	std::cin.get();
+	BSTSet<int> set;
+	set.Insert(5);
+	set.Insert(-3);
+	set.Insert(2);
+	set.Insert(7);
+	set.Insert(-8);
+	set.Insert(10);
+	set.Remove(5);
+	
+	bool exists = set.HasElement(5);
 
 	return 0;
 }

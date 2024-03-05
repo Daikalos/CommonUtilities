@@ -160,9 +160,13 @@
     <ClInclude Include="include\CommonUtilities\Math\Distribution.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
+    <ClInclude Include="include\CommonUtilities\Structures\BSTSet.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Queue.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\SolveSudoku.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />

@@ -1,20 +1,27 @@
 #include <CommonUtilities/Structures/BSTSet.hpp>
+#include <CommonUtilities/Utility/Random.hpp>
 
 #include <string>
 
 int main()
 {
-	for (int i = 0; i < 100000000; ++i)
+	for (int i = 0; i < 1000000; ++i)
 	{
-		CommonUtilities::BSTSet<std::string> set;
-		set.Insert("hello");
-		set.Insert("wow");
-		set.Insert("yesss");
-		set.Insert("lololol");
-		set.Remove("hello");
-		set.Remove("lololol");
+		CommonUtilities::BSTSet<int> set;
 
-		bool exists = set.HasElement("lololol");
+		set.Insert(6);
+		set.Insert(4);
+		set.Insert(-2);
+		set.Insert(8);
+		set.Insert(10);
+		set.Insert(-3);
+		set.Insert(3);
+		set.Insert(-7);
+		set.Insert(0);
+		set.Insert(15);
+
+		set.DSWBalance();
+
 	}
 
 	return 0;

@@ -368,9 +368,7 @@ namespace CommonUtilities
 		for (int i = 0; i < aCount; ++i)
 		{
 			NodeType* child = scanner->myRight;
-
 			RotateLeft(scanner, child, child->myRight);
-
 			scanner = scanner->myRight;
 		}
 	}

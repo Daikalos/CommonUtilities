@@ -21,7 +21,7 @@
     <ClInclude Include="include\CommonUtilities\Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\StackVector.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\StackVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Input\InputHandler.h">
@@ -228,22 +228,25 @@
     <ClInclude Include="include\CommonUtilities\Math\Distribution.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\DoublyLinkedList.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\DoublyLinkedList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\Stack.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\Queue.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\Queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\SolveSudoku.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\BSTSet.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\BSTSet.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Structures\Heap.hpp">
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\Heap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\ComponentPool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

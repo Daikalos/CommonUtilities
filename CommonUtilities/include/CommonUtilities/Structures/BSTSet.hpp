@@ -48,6 +48,8 @@ namespace CommonUtilities
 		void Remove(const T& aValue);
 		void DSWBalance();
 
+		int GetDepth() const;
+
 	private:
 		using NodeType = BSTSetNode<T>;
 
@@ -65,6 +67,8 @@ namespace CommonUtilities
 
 		void RotateLeft(NodeType* aGrandParent, NodeType* aParent, NodeType* aChild);
 		void RotateRight(NodeType* aGrandParent, NodeType* aParent, NodeType* aChild);
+
+		int GetDepthImpl(const NodeType* aNode) const;
 
 		NodeType* myRoot;
 	};
@@ -209,6 +213,12 @@ namespace CommonUtilities
 		pseudoRoot->myRight = nullptr;
 
 		delete pseudoRoot;
+	}
+
+	template<typename T>
+	inline int BSTSet<T>::GetDepth() const
+	{
+		return GetDepthImpl(myRoot);
 	}
 
 	template<typename T>
@@ -398,5 +408,24 @@ namespace CommonUtilities
 
 		aParent->SetLeftSubTree(aChild, aChild->myRight);
 		aChild->SetRightSubTree(nullptr, aParent); // parent no longer has a grand parent
+	}
+
+	template<typename T>
+	inline int BSTSet<T>::GetDepthImpl(const NodeType* aNode) const
+	{
+		if (aNode == nullptr)
+		{
+			return 0;
+		}
+
+		int leftDepth = GetDepthImpl(aNode->myLeft);
+		int rightDepth = GetDepthImpl(aNode->myRight);
+
+		if (leftDepth > rightDepth)
+		{
+			return leftDepth + 1;
+		}
+
+		return rightDepth + 1;
 	}
 }

@@ -163,6 +163,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\BSTSet.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Heap.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Queue.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\SolveSudoku.hpp" />

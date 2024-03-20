@@ -1,27 +1,27 @@
-#include <CommonUtilities/Structures/BSTSet.hpp>
-#include <CommonUtilities/Utility/Random.hpp>
-
+#include <iostream>
 #include <string>
+
+#include <CommonUtilities/Structures/Heap.hpp>
+#include <CommonUtilities/Utility/Random.hpp>
 
 int main()
 {
 	for (int i = 0; i < 1000000; ++i)
 	{
-		CommonUtilities::BSTSet<int> set;
+		CommonUtilities::Heap<int> heap;
 
-		set.Insert(6);
-		set.Insert(4);
-		set.Insert(-2);
-		set.Insert(8);
-		set.Insert(10);
-		set.Insert(-3);
-		set.Insert(3);
-		set.Insert(-7);
-		set.Insert(0);
-		set.Insert(15);
+		for (int j = 0; j < 1000; ++j)
+		{
+			heap.Enqueue(cu::rn::Random(-10000, 10000));
+		}
 
-		set.DSWBalance();
+		int size = heap.GetSize();
+		for (int j = 0; j < size; ++j)
+		{
+			std::cout << heap.Dequeue() << '\n';
+		}
 
+		heap.Enqueue(5);
 	}
 
 	return 0;

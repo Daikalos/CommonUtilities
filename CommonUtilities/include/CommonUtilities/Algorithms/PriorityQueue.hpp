@@ -93,18 +93,18 @@ namespace CommonUtilities
 		template<>
 		struct Comp<pq::HeapType::Min>
 		{
-			NODISC constexpr bool operator()(const Node& lhs, const Node& rhs) const noexcept
+			NODISC bool operator()(const Node& lhs, const Node& rhs) const
 			{
-				return lhs < rhs;
+				return rhs < lhs;
 			}
 		};
 
 		template<>
 		struct Comp<pq::HeapType::Max>
 		{
-			NODISC constexpr bool operator()(const Node& lhs, const Node& rhs) const noexcept
+			NODISC bool operator()(const Node& lhs, const Node& rhs) const
 			{
-				return rhs < lhs;
+				return lhs < rhs;
 			}
 		};
 

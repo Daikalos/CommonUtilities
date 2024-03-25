@@ -249,6 +249,12 @@
     <ClInclude Include="include\CommonUtilities\System\ComponentPool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Algorithms\Dijkstra.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Algorithms\PriorityQueue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">

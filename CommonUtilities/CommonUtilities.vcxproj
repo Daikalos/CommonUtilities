@@ -162,6 +162,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Distribution.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
+    <ClInclude Include="include\CommonUtilities\Structures\Blackboard.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\BSTSet.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />

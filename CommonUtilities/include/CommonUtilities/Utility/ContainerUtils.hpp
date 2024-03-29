@@ -81,7 +81,7 @@ namespace CommonUtilities::ctr
 	{
 		assert(aIndex < aContainer.size());
 
-		std::swap(aContainer[aIndex], aContainer.back());
+		aContainer[aIndex] = std::move(aContainer.back());
 		aContainer.pop_back();
 	}
 

@@ -1,24 +1,20 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/Algorithms/Dijkstra.hpp>
-#include <CommonUtilities/Utility/Random.hpp>
+#include <CommonUtilities/Structures/Blackboard.hpp>
 
 int main()
 {
-	std::vector<cu::Tile> map;
-
-
-	for (int i = 0; i < 50; ++i)
-	{
-		map.emplace_back(cu::Tile::Passable);
-	}
-
-	//map[31] = cu::Tile::Impassable;
-
-	std::vector<int> path = cu::Dijkstra(map, 1, 8);
-
+	cu::Blackboard<> blackboard;
+	blackboard.Set("hello", 5);
+	blackboard.Set<std::string>("test", "test");
 	
+	int test = blackboard.Get<int>("hello");
+	std::string yes = blackboard.Get<std::string>("test");
+
+	blackboard.Erase<std::string>("test");
+
+	std::string error = blackboard.Get<std::string>("test");
 
 	return 0;
 }

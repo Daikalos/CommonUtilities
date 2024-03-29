@@ -136,9 +136,8 @@ namespace CommonUtilities
 
 		RectFloat	myRootRect;
 
-		SizeType	myFreeNode			{-1};
-		SizeType	myMaxElements		{8}; // max elements before subdivision
-		SizeType	myMaxDepth			{8};  // max depth before no more leaves will be created
+		SizeType	myMaxElements	{8}; // max elements before subdivision
+		SizeType	myMaxDepth		{8};  // max depth before no more leaves will be created
 
 		mutable std::vector<bool> myVisited;
 		mutable std::shared_mutex myMutex;
@@ -259,9 +258,9 @@ namespace CommonUtilities
 
 		for (const NodeReg& leaf : FindLeaves({ myRootRect, 0, 0 }, aRect))
 		{
-			const auto nd_index = leaf.index;
+			const auto nodeIndex = leaf.index;
 			
-			for (auto child = myNodes[nd_index].firstChild; child != -1;)
+			for (auto child = myNodes[nodeIndex].firstChild; child != -1)
 			{
 				const auto eltIndex	= myElementsPtr[child].element;
 				const auto& elt		= myElements[eltIndex];
@@ -342,8 +341,6 @@ namespace CommonUtilities
 		myElements.clear();
 		myElementsPtr.clear();
 		myNodes.clear();
-
-		myFreeNode = {-1};
 	}
 
 	template<std::equality_comparable T>

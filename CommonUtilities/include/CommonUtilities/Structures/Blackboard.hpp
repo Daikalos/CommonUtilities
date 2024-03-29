@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <cassert>
+#include <shared_mutex>
 
 #include <CommonUtilities/Config.h>
 #include <CommonUtilities/System/IDGenerator.h>
@@ -45,6 +46,8 @@ namespace CommonUtilities
 			ValueMapBase() = default;
 			virtual ~ValueMapBase() = 0;
 
+			virtual bool Has(const IDType& aID) = 0;
+
 			virtual void Erase(const IDType& aID) = 0;
 			virtual void Clear() = 0;
 
@@ -65,7 +68,7 @@ namespace CommonUtilities
 			void Insert(const IDType& aID, const T& aValue);
 			void Insert(const IDType& aID, T&& aValue);
 
-			bool Has(const IDType& aID);
+			bool Has(const IDType& aID) override;
 
 			void Erase(const IDType& aID) override;
 			void Clear() override;
@@ -82,7 +85,10 @@ namespace CommonUtilities
 		template<typename T>
 		auto FindValueMap() -> ValueMap<T>&;
 
-		std::unordered_map<std::size_t, std::unique_ptr<ValueMapBase>> myData;
+		using TypeValueMap = std::unordered_map<std::size_t, std::unique_ptr<ValueMapBase>>;
+
+		TypeValueMap myData;
+		mutable std::shared_mutex myMutex;
 	};
 
 
@@ -90,6 +96,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline const T& Blackboard<IDType, Hash>::Get(const IDType& aID) const
 	{
+		std::shared_lock lock(myMutex);
+
 		ValueMap<T>& map = FindValueMap<T>();
 		return map.Get(aID);
 	}
@@ -98,6 +106,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline T& Blackboard<IDType, Hash>::Get(const IDType& aID)
 	{
+		std::lock_guard lock(myMutex);
+
 		ValueMap<T>& map = FindValueMap<T>();
 		return map.Get(aID);
 	}
@@ -108,6 +118,8 @@ namespace CommonUtilities
 	{
 		using Type = std::decay_t<T>;
 
+		std::lock_guard lock(myMutex);
+
 		ValueMap<Type>& map = FindValueMap<Type>();
 		map.Insert(aID, std::forward<T>(aValue));
 	}
@@ -116,6 +128,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::Erase(const IDType& aID)
 	{
+		std::lock_guard lock(myMutex);
+
 		ValueMap<T>& map = FindValueMap<T>();
 		map.Erase(aID);
 	}
@@ -124,6 +138,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::Has(const IDType& aID) const
 	{
+		std::shared_lock lock(myMutex);
+
 		ValueMap<T>& map = FindValueMap<T>();
 		return map.Has(aID);
 	}
@@ -131,6 +147,8 @@ namespace CommonUtilities
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline void Blackboard<IDType, Hash>::EraseKey(const IDType& aID)
 	{
+		std::lock_guard lock(myMutex);
+
 		for (auto& [id, map] : myData)
 		{
 			map.Erase(aID);
@@ -140,6 +158,8 @@ namespace CommonUtilities
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline void Blackboard<IDType, Hash>::Clear()
 	{
+		std::lock_guard lock(myMutex);
+
 		for (auto& [id, map] : myData)
 		{
 			map.Clear();

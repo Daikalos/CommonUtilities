@@ -260,7 +260,7 @@ namespace CommonUtilities
 		{
 			const auto nodeIndex = leaf.index;
 			
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1)
+			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
 			{
 				const auto eltIndex	= myElementsPtr[child].element;
 				const auto& elt		= myElements[eltIndex];

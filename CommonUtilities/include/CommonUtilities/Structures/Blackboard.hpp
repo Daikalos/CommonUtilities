@@ -21,10 +21,10 @@ namespace CommonUtilities
 		~Blackboard() = default;
 
 		template<typename T>
-		const T& Get(const IDType& aID) const;
+		NODISC const T& Get(const IDType& aID) const;
 
 		template<typename T>
-		T& Get(const IDType& aID);
+		NODISC T& Get(const IDType& aID);
 
 		template<typename T>
 		void Set(const IDType& aID, T&& aValue);
@@ -33,7 +33,7 @@ namespace CommonUtilities
 		void Erase(const IDType& aID);
 
 		template<typename T>
-		bool Has(const IDType& aID) const;
+		NODISC bool Has(const IDType& aID) const;
 
 		void EraseKey(const IDType& aID);
 
@@ -46,7 +46,7 @@ namespace CommonUtilities
 			ValueMapBase() = default;
 			virtual ~ValueMapBase() = 0;
 
-			virtual bool Has(const IDType& aID) = 0;
+			NODISC virtual bool Has(const IDType& aID) = 0;
 
 			virtual void Erase(const IDType& aID) = 0;
 			virtual void Clear() = 0;
@@ -62,13 +62,13 @@ namespace CommonUtilities
 			ValueMap() = default;
 			~ValueMap() = default;
 
-			const T& Get(const IDType& aID) const;
-			T& Get(const IDType& aID);
+			NODISC const T& Get(const IDType& aID) const;
+			NODISC T& Get(const IDType& aID);
 
 			void Insert(const IDType& aID, const T& aValue);
 			void Insert(const IDType& aID, T&& aValue);
 
-			bool Has(const IDType& aID) override;
+			NODISC bool Has(const IDType& aID) override;
 
 			void Erase(const IDType& aID) override;
 			void Clear() override;
@@ -81,7 +81,7 @@ namespace CommonUtilities
 		};
 
 		template<typename T>
-		auto FindValueMap() -> ValueMap<T>&;
+		NODISC auto FindValueMap() -> ValueMap<T>&;
 
 		using TypeValueMap = std::unordered_map<std::size_t, std::unique_ptr<ValueMapBase>>;
 

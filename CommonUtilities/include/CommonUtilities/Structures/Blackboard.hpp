@@ -157,7 +157,7 @@ namespace CommonUtilities
 			return *static_cast<ValueMap<T>*>(it->second.get());
 		}
 
-		auto insert = myData.try_emplace(key, std::make_unique<ValueMap<T>>());
+		UNSD auto insert = myData.try_emplace(key, std::make_unique<ValueMap<T>>());
 		assert(insert.second);
 
 		return *static_cast<ValueMap<T>*>(insert.first->second.get());
@@ -190,7 +190,7 @@ namespace CommonUtilities
 		else
 		{
 			std::size_t index = myValues.emplace(aValue);
-			auto insert = myIndices.try_emplace(aID, index);
+			UNSD auto insert = myIndices.try_emplace(aID, index);
 			assert(insert.second);
 		}
 	}
@@ -206,7 +206,7 @@ namespace CommonUtilities
 		else
 		{
 			std::size_t index = myValues.emplace(std::move(aValue));
-			auto insert = myIndices.try_emplace(aID, index);
+			UNSD auto insert = myIndices.try_emplace(aID, index);
 			assert(insert.second);
 		}
 	}

@@ -78,8 +78,6 @@ namespace CommonUtilities
 
 			FreeVector<T>	myValues;
 			IDIndicesMap	myIndices;
-
-			friend class Blackboard;
 		};
 
 		template<typename T>

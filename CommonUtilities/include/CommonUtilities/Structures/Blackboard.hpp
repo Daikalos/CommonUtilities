@@ -35,6 +35,9 @@ namespace CommonUtilities
 		template<typename T>
 		NODISC bool Has(const IDType& aID) const;
 
+		template<typename T>
+		NODISC bool HasType() const;
+
 		void EraseKey(const IDType& aID);
 
 		void Clear();
@@ -140,6 +143,16 @@ namespace CommonUtilities
 
 		ValueMap<T>& map = FindValueMap<T>();
 		return map.Has(aID);
+	}
+
+	template<typename IDType, typename Hash>
+	template<typename T>
+	inline bool Blackboard<IDType, Hash>::HasType() const
+	{
+		static constexpr std::size_t key = id::Type<T>::ID();
+
+		const auto it = myData.find(key);
+		return it != myData.end();
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

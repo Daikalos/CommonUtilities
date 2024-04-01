@@ -145,7 +145,7 @@ namespace CommonUtilities
 		return map.Has(aID);
 	}
 
-	template<typename IDType, typename Hash>
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::HasType() const
 	{

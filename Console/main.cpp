@@ -1,20 +1,18 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/Structures/Blackboard.hpp>
+#include <CommonUtilities/Algorithms/Sort.hpp>
+#include <CommonUtilities/Utility/Random.hpp>
 
 int main()
 {
-	cu::Blackboard<> blackboard;
+	std::vector<int> test = cu::rn::RandomVector(100);
+	std::vector<int> test2 = cu::rn::RandomVector(100);
+	std::vector<int> test3 = cu::rn::RandomVector(100);
 
-	int hey = 5;
-	blackboard.Set("hello", hey);
-	blackboard.Set<std::string>("test", "test");
-	
-	int test = blackboard.Get<int>("hello");
-	std::string yes = blackboard.Get<std::string>("test");
-
-
+	CommonUtilities::QuickSort(test);
+	CommonUtilities::QuickSort(test2);
+	CommonUtilities::QuickSort(test3);
 
 	return 0;
 }

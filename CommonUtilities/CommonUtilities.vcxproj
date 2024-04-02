@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="include\CommonUtilities\Algorithms\Dijkstra.hpp" />
     <ClInclude Include="include\CommonUtilities\Algorithms\PriorityQueue.hpp" />
+    <ClInclude Include="include\CommonUtilities\Algorithms\Sort.hpp" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Input\GamepadBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp" />

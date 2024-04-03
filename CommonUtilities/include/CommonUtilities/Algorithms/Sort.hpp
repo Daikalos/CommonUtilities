@@ -132,7 +132,7 @@ namespace CommonUtilities
 			swapped = false;
 			for (int j = 0; j < (int)aVector.size() - i - 1; ++j)
 			{
-				if (aVector[j] > aVector[j + 1])
+				if (aVector[j + 1] < aVector[j])
 				{
 					std::swap(aVector[j], aVector[j + 1]);
 					swapped = true;

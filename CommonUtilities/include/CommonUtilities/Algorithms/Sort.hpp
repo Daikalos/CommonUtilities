@@ -105,9 +105,9 @@ namespace CommonUtilities
 	template<typename T>
 	inline void SelectionSort(std::vector<T>& aVector)
 	{
-		int minIndex = 0;
 		for (int i = 0; i < (int)aVector.size() - 1; ++i)
 		{
+			int minIndex = i;
 			for (int j = i + 1; j < (int)aVector.size(); ++j)
 			{
 				if (aVector[j] < aVector[minIndex])

@@ -71,4 +71,8 @@ namespace CommonUtilities
 	COMMON_UTILITIES_API NODISC Distribution<cu::Vector2f> CreateDistributionCircle(const cu::Vector2f& aCenter, float aRadius);
 
 	COMMON_UTILITIES_API NODISC Distribution<cu::Vector2f> CreateDistributionDeflect(const cu::Vector2f& aDirection, float aMaxRotation);
+
+	COMMON_UTILITIES_API NODISC Distribution<cu::Vector3f> CreateDistributionRect(const cu::Vector3f& aCenter, const cu::Vector3f& aHalfSize);
+
+	COMMON_UTILITIES_API NODISC Distribution<cu::Vector3f> CreateDistributionSphere(const cu::Vector3f& aCenter, float aRadius);
 }

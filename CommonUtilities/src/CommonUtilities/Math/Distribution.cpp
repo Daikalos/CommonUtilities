@@ -35,3 +35,13 @@ Distribution<cu::Vector2f> CommonUtilities::CreateDistributionDeflect(const cu::
 	return [=] { return rn::RandomDeflection(aDirection, aMaxRotation); };
 }
 
+Distribution<cu::Vector3f> CommonUtilities::CreateDistributionRect(const cu::Vector3f& aCenter, const cu::Vector3f& aHalfSize)
+{
+	return [=] { return rn::RandomPointInRect(aCenter, aHalfSize); };
+}
+
+Distribution<cu::Vector3f> CommonUtilities::CreateDistributionSphere(const cu::Vector3f& aCenter, float aRadius)
+{
+	return [=] { return rn::RandomPointInSphere(aCenter, aRadius); };
+}
+

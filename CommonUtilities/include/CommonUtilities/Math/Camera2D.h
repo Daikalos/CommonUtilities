@@ -2,7 +2,6 @@
 
 #include <Windows.h>
 
-#include <CommonUtilities/System/Timer.h>
 #include <CommonUtilities/Config.h>
 
 #include "Matrix3x3.hpp"

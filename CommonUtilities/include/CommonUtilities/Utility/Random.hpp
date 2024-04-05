@@ -111,7 +111,7 @@ namespace CommonUtilities::rn
 	template<typename T>
 	NODISC inline cu::Vector3<T> RandomPointInRect(const cu::Vector3<T>& aCenter, const cu::Vector3<T>& aHalfSize)
 	{
-		return cu::Vector2<T>(
+		return cu::Vector3<T>(
 			RandomDev<T>(aCenter.x, aHalfSize.x),
 			RandomDev<T>(aCenter.y, aHalfSize.y),
 			RandomDev<T>(aCenter.z, aHalfSize.z));
@@ -127,10 +127,10 @@ namespace CommonUtilities::rn
 		const float s = std::sin(theta);
 		const float c = std::cos(theta);
 
-		return cu::Vector2<T>(
+		return cu::Vector3<T>(
 			(T)(aCenter.x + r * c * std::cos(phi)),
 			(T)(aCenter.y + r * s * std::sin(phi)),
-			(T)(aCenter.z + r * c);
+			(T)(aCenter.z + r * c));
 	}
 
 	COMMON_UTILITIES_API void Seed(std::uint64_t seed = std::mt19937_64::default_seed);

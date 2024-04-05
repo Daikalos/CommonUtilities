@@ -13,7 +13,7 @@
 
 namespace CommonUtilities
 {
-	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
+	template<typename IDType = std::string, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
 	class Blackboard
 	{
 	public:

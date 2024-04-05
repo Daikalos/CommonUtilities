@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Math/Camera3D.h>
 
 #include <cassert>

@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Utility/Benchmark.h>
 
 namespace CommonUtilities::bm

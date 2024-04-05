@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/System/Timer.h>
 
 #include <cmath>

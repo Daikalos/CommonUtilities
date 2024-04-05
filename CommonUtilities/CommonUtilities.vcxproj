@@ -86,6 +86,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CommonUtilities/pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,6 +103,8 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CommonUtilities/pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,8 +122,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)CommonUtilities\include\</AdditionalIncludeDirectories>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CommonUtilities/pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -139,8 +143,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)CommonUtilities\include\</AdditionalIncludeDirectories>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>CommonUtilities/pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -163,6 +167,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Distribution.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
+    <ClInclude Include="include\CommonUtilities\pch.h" />
     <ClInclude Include="include\CommonUtilities\Structures\Blackboard.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\BSTSet.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\DoublyLinkedList.hpp" />
@@ -173,7 +178,6 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
-    <ClInclude Include="include\CommonUtilities\System\ComponentPool.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp" />
@@ -253,6 +257,20 @@
     <ClCompile Include="src\CommonUtilities\Input\InputHandler.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Transform3D.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Transform2D.cpp" />
+    <ClCompile Include="src\CommonUtilities\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp" />

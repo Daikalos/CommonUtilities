@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Math/Transform2D.h>
 
 using namespace CommonUtilities;

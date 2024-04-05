@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/MouseCursor.h>
 
 #include <CommonUtilities/Input/Mouse.h>

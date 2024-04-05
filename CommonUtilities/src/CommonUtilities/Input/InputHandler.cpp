@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/InputHandler.h>
 
 #include <windowsx.h>

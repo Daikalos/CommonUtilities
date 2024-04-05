@@ -1,6 +1,5 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Utility/StringUtils.h>
-
-#include <algorithm>
 
 namespace CommonUtilities::st
 { 

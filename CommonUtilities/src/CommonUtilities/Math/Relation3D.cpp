@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Math/Relation3D.h>
 
 #include <stdexcept>

@@ -1,3 +1,4 @@
+#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/GamepadInput.h>
 
 #pragma comment(lib, "Xinput.lib")

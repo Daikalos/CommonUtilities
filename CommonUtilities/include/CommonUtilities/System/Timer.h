@@ -36,16 +36,17 @@ namespace CommonUtilities
 		void Update();
 
 	private:
-		static constexpr long double ourMaxDeltaTime = 0.075;
+		static constexpr long double ourMaxDeltaTime	= 0.075;
+		static constexpr float ourInitialFixedDeltaTime = 1.0f / 60.0f;
 
 		using ClockImpl = std::chrono::high_resolution_clock;
 
-		ClockImpl::time_point myReferencePoint;
+		typename ClockImpl::time_point myReferencePoint;
 
 		float		myDeltaTime				{0.0f};			// total time it took for previous loop
 		float		myRealDeltaTime			{0.0f};
-		float		myFixedDeltaTime		{1.0f / 60.0f};	// fixed delta time for physics etc.
-		float		myRealFixedDeltaTime	{0.0f};
+		float		myFixedDeltaTime		{ourInitialFixedDeltaTime};	// fixed delta time for physics etc.
+		float		myRealFixedDeltaTime	{ourInitialFixedDeltaTime};
 		float		myScaledTime			{1.0f};			// scaled time (set to 1 as default)
 		float		myAlpha					{0.0f};
 

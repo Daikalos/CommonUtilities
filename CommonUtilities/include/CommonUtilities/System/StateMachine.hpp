@@ -33,6 +33,10 @@ namespace CommonUtilities
 
 			NODISC const IDType& GetID() const noexcept;
 
+			void SetMachine(StateMachine& aStateMachine) noexcept;
+
+			virtual std::unique_ptr<State> Clone() const = 0;
+
 			virtual void Init() {};
 			virtual void Enter() {};
 			virtual void Exit() {};
@@ -51,8 +55,17 @@ namespace CommonUtilities
 		StateMachine() = default;
 		virtual ~StateMachine() = default;
 
+		StateMachine(StateMachine&& aOther) noexcept;
+		StateMachine(const StateMachine& aOther);
+
+		StateMachine& operator=(StateMachine&& aOther) noexcept;
+		StateMachine& operator=(const StateMachine& aOther);
+
 		NODISC virtual auto GetCurrentState() const -> const State&;
 		NODISC virtual auto GetCurrentState() -> State&;
+
+		NODISC virtual auto GetPreviousState() const -> const State&;
+		NODISC virtual auto GetPreviousState() -> State&;
 
 		NODISC virtual auto GetState(const IDType& aStateID) const -> const State&;
 		NODISC virtual auto GetState(const IDType& aStateID) -> State&;
@@ -92,6 +105,8 @@ namespace CommonUtilities
 		/// 
 		bool RemoveState(const IDType& aStateID);
 
+		void Clear();
+
 		/// Generic update function that calls update on the currently active state.
 		/// 
 		virtual void Update(Timer& aTimer);
@@ -101,7 +116,11 @@ namespace CommonUtilities
 		using StateMap	= std::unordered_map<IDType, StatePtr, Hash>;
 
 		StateMap	myStates;
-		State*		myCurrentState {nullptr};
+		State*		myCurrentState	{nullptr};
+		State*		myPreviousState {nullptr};
+
+	private:
+		void DeepCopy(const StateMachine& aOther);
 	};
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
@@ -118,6 +137,12 @@ namespace CommonUtilities
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline void StateMachine<IDType, Hash>::State::SetMachine(StateMachine& aStateMachine) noexcept
+	{
+		myStateMachine = &aStateMachine;
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::State::GetMachine() const -> const StateMachine&
 	{
 		return *myStateMachine;
@@ -126,6 +151,60 @@ namespace CommonUtilities
 	inline auto StateMachine<IDType, Hash>::State::GetMachine() -> StateMachine&
 	{
 		return *myStateMachine;
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline StateMachine<IDType, Hash>::StateMachine(StateMachine&& aOther) noexcept
+		: myStates(std::move(aOther.myStates))
+		, myCurrentState(std::exchange(aOther.myCurrentState, nullptr))
+		, myPreviousState(std::exchange(aOther.myPreviousState, nullptr))
+	{
+		for (auto& [id, statePtr] : myStates)
+		{
+			if (statePtr != nullptr)
+			{
+				statePtr->SetMachine(*this); // update references to new machine
+			}
+		}
+	}
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline StateMachine<IDType, Hash>::StateMachine(const StateMachine& aOther)
+	{
+		if (this == &aOther)
+			return;
+
+		DeepCopy(aOther);
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline StateMachine<IDType, Hash>& StateMachine<IDType, Hash>::operator=(StateMachine&& aOther) noexcept
+	{
+		if (this == &aOther)
+			return *this;
+
+		myStates		= std::move(aOther.myStates);
+		myCurrentState	= std::exchange(aOther.myCurrentState, nullptr);
+		myPreviousState = std::exchange(aOther.myPreviousState, nullptr);
+
+		for (auto& [id, statePtr] : myStates)
+		{
+			if (statePtr != nullptr)
+			{
+				statePtr->SetMachine(*this);
+			}
+		}
+
+		return *this;
+	}
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline StateMachine<IDType, Hash>& StateMachine<IDType, Hash>::operator=(const StateMachine& aOther)
+	{
+		if (this == &aOther)
+			return *this;
+
+		DeepCopy(aOther);
+
+		return *this;
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
@@ -139,6 +218,18 @@ namespace CommonUtilities
 	{
 		assert(myCurrentState != nullptr && "No state currently set");
 		return *myCurrentState;
+	}
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateMachine<IDType, Hash>::GetPreviousState() const -> const State&
+	{
+		assert(myPreviousState != nullptr && "No state currently set");
+		return *myPreviousState;
+	}
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline auto StateMachine<IDType, Hash>::GetPreviousState() -> State&
+	{
+		assert(myPreviousState != nullptr && "No state currently set");
+		return *myPreviousState;
 	}
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetState(const IDType& aStateID) const -> const State&
@@ -172,6 +263,7 @@ namespace CommonUtilities
 			myCurrentState->Exit();
 		}
 
+		myPreviousState = (myCurrentState != nullptr) ? myCurrentState : newState;
 		myCurrentState = newState;
 
 		if (myCurrentState != nullptr)
@@ -208,11 +300,42 @@ namespace CommonUtilities
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline void StateMachine<IDType, Hash>::Clear()
+	{
+		myStates.clear();
+		myCurrentState = nullptr;
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::Update(Timer& aTimer)
 	{
 		if (myCurrentState != nullptr)
 		{
 			myCurrentState->Update(aTimer);
 		}
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline void StateMachine<IDType, Hash>::DeepCopy(const StateMachine& aOther)
+	{
+		myStates.clear();
+
+		myCurrentState = nullptr;
+		myPreviousState = nullptr;
+
+		for (auto& [id, ptr] : aOther.myStates)
+		{
+			if (ptr != nullptr)
+			{
+				auto statePtr = ptr->Clone();
+
+				statePtr->SetMachine(*this);
+				statePtr->Init();
+
+				myStates[id] = std::move(statePtr);
+			}
+		}
+
+		TransitionTo(aOther.GetCurrentState().GetID());
 	}
 }

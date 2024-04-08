@@ -3,6 +3,7 @@
 #include <functional>
 
 #include <CommonUtilities/Math/Vector2.hpp>
+#include <CommonUtilities/Math/Vector3.hpp>
 #include <CommonUtilities/Utility/Traits.h>
 
 namespace CommonUtilities

@@ -28,7 +28,7 @@ const Vector2i& MouseCursor::GetPosition() const noexcept
 {
 	return myCurrentPosition;
 }
-const Vector2i& MouseCursor::GetMouseDelta() const noexcept
+const Vector2i& MouseCursor::GetDelta() const noexcept
 {
 	return myMoveDelta;
 }

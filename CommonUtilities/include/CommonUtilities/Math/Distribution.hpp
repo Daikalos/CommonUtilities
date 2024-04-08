@@ -3,7 +3,6 @@
 #include <functional>
 
 #include <CommonUtilities/Math/Vector2.hpp>
-#include <CommonUtilities/Math/Vector3.hpp>
 #include <CommonUtilities/Utility/Traits.h>
 
 namespace CommonUtilities
@@ -12,14 +11,20 @@ namespace CommonUtilities
 	class Distribution
 	{
 	public:
+		Distribution(const Distribution&) = default;
+		Distribution(Distribution&&) = default;
+
+		Distribution& operator=(const Distribution&) = default;
+		Distribution& operator=(Distribution&&) = default;
+
 		template<std::convertible_to<T> U>
 		Distribution(U&& aConstant);
 
 		template<std::convertible_to<T> U>
 		Distribution(const Distribution<U>& aDistribution);
 
-		template<typename Func> requires (!std::convertible_to<Func, T>)
-		Distribution(Func&& aFunction);
+		template<typename Func>
+		Distribution(Func&& aFunction) requires (!std::convertible_to<Func, T>&& !std::same_as<std::decay_t<Func>, Distribution>);
 
 		T operator()() const;
 
@@ -48,8 +53,8 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	template<typename Func> requires (!std::convertible_to<Func, T>)
-	inline Distribution<T>::Distribution(Func&& aFunction)
+	template<typename Func>
+	inline Distribution<T>::Distribution(Func&& aFunction) requires (!std::convertible_to<Func, T> && !std::same_as<std::decay_t<Func>, Distribution>)
 		: myFactory(std::forward<Func>(aFunction))
 	{
 

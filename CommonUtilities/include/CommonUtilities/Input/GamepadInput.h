@@ -52,8 +52,9 @@ namespace CommonUtilities
 	private:
 		bool TryConnect();
 
-		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 		void ResetTentativeState() override;
+
+		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 		XINPUT_STATE	myState;
 		int				myIndex			{-1};

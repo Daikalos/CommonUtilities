@@ -18,7 +18,7 @@ namespace CommonUtilities
 		NODISC bool GetVisible() const noexcept;
 
 		NODISC const Vector2i& GetPosition() const noexcept;
-		NODISC const Vector2i& GetMouseDelta() const noexcept;
+		NODISC const Vector2i& GetDelta() const noexcept;
 		NODISC const Vector2i& GetWindowSize() const noexcept;
 
 		NODISC bool IsConnected() const noexcept;
@@ -36,6 +36,8 @@ namespace CommonUtilities
 		void Update() override;
 
 	private:
+		void ResetTentativeState() override;
+
 		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 
 		void GrabCursor(bool aGrabbed);
@@ -50,8 +52,5 @@ namespace CommonUtilities
 		bool		myIsVisible {true};
 		bool		myIsGrabbed {false};
 		bool		myIsLocked	{false};
-
-		// Inherited via InputHandler
-		void ResetTentativeState() override;
 	};
 }

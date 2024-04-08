@@ -68,18 +68,57 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myKeyboard->IsHeld(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myKeyboard->IsHeld(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myKeyboard->IsPressed(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myKeyboard->IsPressed(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myKeyboard->IsReleased(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myKeyboard->IsReleased(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

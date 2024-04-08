@@ -35,6 +35,7 @@ namespace CommonUtilities
 
 	protected:
 		virtual void ResetTentativeState() = 0;
+
 		virtual bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
 
 		bool	myEnabled			{true};		// is always enabled initially

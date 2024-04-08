@@ -17,7 +17,7 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		InputBind(const KeyboardInput* aKeyboard = nullptr, const MouseInput* aMouse = nullptr);
+		InputBind(KeyboardInput* aKeyboard = nullptr, MouseInput* aMouse = nullptr);
 		~InputBind();
 
 		NODISC const KeyboardInput* Keyboard() const noexcept;
@@ -31,8 +31,8 @@ namespace CommonUtilities
 
 		NODISC bool GetEnabled() const noexcept;
 
-		void Connect(const KeyboardInput& aKeyboard);
-		void Connect(const MouseInput& aMouse);
+		void Connect(KeyboardInput& aKeyboard);
+		void Connect(MouseInput& aMouse);
 
 		void DisconnectKeyboard();
 		void DisconnectMouse();
@@ -62,18 +62,18 @@ namespace CommonUtilities
 	private:
 		using ButtonReg = std::variant<Keyboard::Key, Mouse::Button>;
 
-		NODISC auto At(const ButtonType& aBind) const -> const ButtonReg&;
-		NODISC auto At(const ButtonType& aBind) -> ButtonReg&;
+		NODISC auto At(const ButtonType& aBind) const;
+		NODISC auto At(const ButtonType& aBind);
 
-		const KeyboardInput* myKeyboard {nullptr};
-		const MouseInput* myMouse		{nullptr};
+		KeyboardInput* myKeyboard	{nullptr};
+		MouseInput* myMouse			{nullptr};
 
-		std::unordered_map<ButtonType, ButtonReg> myBinds;
+		std::unordered_multimap<ButtonType, ButtonReg> myBinds;
 		bool myEnabled {true};
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline InputBind<Bind>::InputBind(const KeyboardInput* aKeyboard, const MouseInput* aMouse)
+	inline InputBind<Bind>::InputBind(KeyboardInput* aKeyboard, MouseInput* aMouse)
 		: myKeyboard(aKeyboard), myMouse(aMouse)
 	{ 
 
@@ -122,12 +122,12 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline void InputBind<Bind>::Connect(const KeyboardInput& aKeyboard)
+	inline void InputBind<Bind>::Connect(KeyboardInput& aKeyboard)
 	{
 		myKeyboard = &aKeyboard;
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline void InputBind<Bind>::Connect(const MouseInput& aMouse)
+	inline void InputBind<Bind>::Connect(MouseInput& aMouse)
 	{
 		myMouse = &aMouse;
 	}
@@ -152,12 +152,12 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline void InputBind<Bind>::Set(const ButtonType& aBind, Keyboard::Key aKey)
 	{
-		myBinds[aBind] = ButtonReg{ aKey };
+		myBinds.insert(std::make_pair(aBind, ButtonReg{ aKey }));
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline void InputBind<Bind>::Set(const ButtonType& aBind, Mouse::Button aButton)
 	{
-		myBinds[aBind] = ButtonReg{ aButton };
+		myBinds.insert(std::make_pair(aBind, ButtonReg{ aButton }));
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
@@ -182,50 +182,100 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return GetEnabled() && 
-			std::visit(tr::Overload
+		if (!GetEnabled())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			bool active = std::visit(tr::Overload
 			{
 				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsHeld(aKey); },
 				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsHeld(aButton); }
-			}, At(aBind));
+			}, it->second);
+
+			if (active)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return GetEnabled() && 
-			std::visit(tr::Overload
+		if (!GetEnabled())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			bool active = std::visit(tr::Overload
 			{
 				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsPressed(aKey); },
 				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsPressed(aButton); }
-			}, At(aBind));
+			}, it->second);
+
+			if (active)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return GetEnabled() && 
-			std::visit(tr::Overload
+		if (!GetEnabled())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			bool active = std::visit(tr::Overload
 			{
 				[this](Keyboard::Key aKey) { return IsKeyboardConnected() && myKeyboard->IsReleased(aKey); },
 				[this](Mouse::Button aButton) { return IsMouseConnected() && myMouse->IsReleased(aButton); }
-			}, At(aBind));
+			}, it->second);
+
+			if (active)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline auto InputBind<Bind>::At(const ButtonType& aBind) const -> const ButtonReg&
+	inline auto InputBind<Bind>::At(const ButtonType& aBind) const
 	{
-		const auto it = myBinds.find(aBind);
-		if (it == myBinds.end())
+		auto range = myBinds.equal_range(aBind);
+
+		if (range.first == myBinds.end() && range.second == myBinds.end())
 		{
 			throw std::runtime_error("Bind could not be found");
 		}
 
-		return it->second;
+		return range;
 	}
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline auto InputBind<Bind>::At(const ButtonType& aBind) -> ButtonReg&
+	inline auto InputBind<Bind>::At(const ButtonType& aBind)
 	{
-		return const_cast<ButtonReg&>(std::as_const(*this).At(aBind));
+		auto range = myBinds.equal_range(aBind);
+
+		if (range.first == myBinds.end() && range.second == myBinds.end())
+		{
+			throw std::runtime_error("Bind could not be found");
+		}
+
+		return range;
 	}
 }

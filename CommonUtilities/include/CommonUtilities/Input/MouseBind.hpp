@@ -65,18 +65,57 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myMouse->IsHeld(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myMouse->IsHeld(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myMouse->IsPressed(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myMouse->IsPressed(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myMouse->IsReleased(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myMouse->IsReleased(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

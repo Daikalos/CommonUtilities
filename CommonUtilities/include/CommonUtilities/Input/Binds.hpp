@@ -12,12 +12,6 @@ namespace CommonUtilities
 	class Binds : private NonCopyable
 	{
 	public:
-		NODISC Reg& operator[](const Bind& aBind);
-		NODISC const Reg& operator[](const Bind& aBind) const;
-
-		NODISC Reg& At(const Bind& aBind);
-		NODISC const Reg& At(const Bind& aBind) const;
-
 		NODISC bool GetEnabled() const noexcept;
 
 		void SetEnabled(bool aFlag);
@@ -38,37 +32,15 @@ namespace CommonUtilities
 		Binds() = default; // only allow derived classes to construct bind
 		~Binds() = default;
 
-		std::unordered_map<Bind, Reg> myBinds;
+		NODISC auto operator[](const Bind& aBind) const;
+		NODISC auto operator[](const Bind& aBind);
+
+		NODISC auto At(const Bind& aBind) const;
+		NODISC auto At(const Bind& aBind);
+
+		std::unordered_multimap<Bind, Reg> myBinds;
 		bool myEnabled {true};
 	};
-
-	template<typename Bind, typename Reg>
-	inline Reg& Binds<Bind, Reg>::operator[](const Bind& aBind)
-	{
-		return At(aBind);
-	}
-	template<typename Bind, typename Reg>
-	inline const Reg& Binds<Bind, Reg>::operator[](const Bind& aBind) const
-	{
-		return At(aBind);
-	}
-
-	template<typename Bind, typename Reg>
-	inline Reg& Binds<Bind, Reg>::At(const Bind& aBind)
-	{
-		return const_cast<Reg&>(std::as_const(*this).At(aBind));
-	}
-	template<typename Bind, typename Reg>
-	inline const Reg& Binds<Bind, Reg>::At(const Bind& aBind) const
-	{
-		const auto it = myBinds.find(aBind);
-		if (it == myBinds.end())
-		{
-			throw std::runtime_error("Bind could not be found");
-		}
-
-		return it->second;
-	}
 
 	template<typename Bind, typename Reg>
 	inline bool Binds<Bind, Reg>::GetEnabled() const noexcept
@@ -85,7 +57,7 @@ namespace CommonUtilities
 	template<typename Bind, typename Reg>
 	inline void Binds<Bind, Reg>::Set(const Bind& aBind, const Reg& aButton)
 	{
-		myBinds[aBind] = aButton;
+		myBinds.insert(std::make_pair(aBind, aButton));
 	}
 
 	template<typename Bind, typename Reg>
@@ -105,5 +77,41 @@ namespace CommonUtilities
 	{
 		const auto it = myBinds.find(aBind);
 		return it != myBinds.end();
+	}
+
+	template<typename Bind, typename Reg>
+	inline auto Binds<Bind, Reg>::operator[](const Bind& aBind) const
+	{
+		return At(aBind);
+	}
+	template<typename Bind, typename Reg>
+	inline auto Binds<Bind, Reg>::operator[](const Bind& aBind)
+	{
+		return At(aBind);
+	}
+
+	template<typename Bind, typename Reg>
+	inline auto Binds<Bind, Reg>::At(const Bind& aBind) const
+	{
+		auto range = myBinds.equal_range(aBind);
+
+		if (range.first == myBinds.end() && range.second == myBinds.end())
+		{
+			throw std::runtime_error("Bind could not be found");
+		}
+
+		return range;
+	}
+	template<typename Bind, typename Reg>
+	inline auto Binds<Bind, Reg>::At(const Bind& aBind)
+	{
+		auto range = myBinds.equal_range(aBind);
+
+		if (range.first == myBinds.end() && range.second == myBinds.end())
+		{
+			throw std::runtime_error("Bind could not be found");
+		}
+
+		return range;
 	}
 }

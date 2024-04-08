@@ -11,7 +11,7 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Bind;
 
-		explicit GamepadBind(const GamepadInput* aGamepad = nullptr);
+		explicit GamepadBind(GamepadInput* aGamepad = nullptr);
 		~GamepadBind() = default;
 
 		NODISC const GamepadInput* Gamepad() const noexcept;
@@ -19,7 +19,7 @@ namespace CommonUtilities
 
 		NODISC bool IsConnected() const noexcept;
 
-		void Connect(const GamepadInput& aGamepad);
+		void Connect(GamepadInput& aGamepad);
 		void Disconnect();
 
 		NODISC bool IsHeld(const ButtonType& aBind) const;
@@ -27,11 +27,11 @@ namespace CommonUtilities
 		NODISC bool IsReleased(const ButtonType& aBind) const;
 
 	private:
-		const GamepadInput* myGamepad {nullptr};
+		GamepadInput* myGamepad {nullptr};
 	};
 
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
-	inline GamepadBind<Bind>::GamepadBind(const GamepadInput* aGamepad)
+	inline GamepadBind<Bind>::GamepadBind(GamepadInput* aGamepad)
 		: myGamepad(aGamepad)
 	{ 
 
@@ -55,7 +55,7 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
-	inline void GamepadBind<Bind>::Connect(const GamepadInput& aGamepad)
+	inline void GamepadBind<Bind>::Connect(GamepadInput& aGamepad)
 	{
 		myGamepad = &aGamepad;
 	}
@@ -68,18 +68,57 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myGamepad->IsHeld(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myGamepad->IsHeld(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myGamepad->IsPressed(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myGamepad->IsPressed(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		return this->GetEnabled() && IsConnected() && myGamepad->IsReleased(this->At(aBind));
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		auto range = this->At(aBind);
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (myGamepad->IsReleased(it->second))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

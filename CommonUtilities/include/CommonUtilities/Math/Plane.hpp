@@ -27,6 +27,7 @@ namespace CommonUtilities
 		constexpr void SetNormal(const Vector3<T>& aNormal);
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
+		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, T aRadius) const;
 
 		NODISC constexpr auto GetType() const noexcept -> Type override;
 		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
@@ -87,6 +88,11 @@ namespace CommonUtilities
 	constexpr bool Plane<T>::IsInside(const Vector3<T>& aPosition) const
 	{
 		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= T{};
+	}
+	template<typename T>
+	constexpr bool Plane<T>::IsInside(const Vector3<T>& aPosition, T aRadius) const
+	{
+		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= aRadius;
 	}
 
 	template<typename T>

@@ -13,7 +13,7 @@
 
 namespace CommonUtilities
 {
-	template<typename IDType = std::string, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
+	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
 	class Blackboard
 	{
 	public:
@@ -28,6 +28,17 @@ namespace CommonUtilities
 
 		template<typename T>
 		void Set(const IDType& aID, T&& aValue);
+
+		template<typename T, typename... Args> requires std::constructible_from<T, Args...>
+		void Emplace(const IDType& aID, Args&&... someArgs)
+		{
+			using ValueType = std::decay_t<T>;
+
+			std::scoped_lock lock(myMutex);
+
+			ValueMap<ValueType>& map = FindValueMap<ValueType>();
+			map.Emplace(aID, std::forward<Args>(someArgs)...);
+		}
 
 		template<typename T>
 		void Erase(const IDType& aID);
@@ -68,6 +79,23 @@ namespace CommonUtilities
 			NODISC const T& Get(const IDType& aID) const;
 			NODISC T& Get(const IDType& aID);
 
+			template<typename... Args>
+			void Emplace(const IDType& aID, Args&&... someArgs)
+			{
+				const std::size_t hash = Hash{}(aID);
+
+				if (const auto it = myIndices.find(hash); it != myIndices.end())
+				{
+					myValues[it->second] = T{ std::forward<Args>(someArgs)... };
+				}
+				else
+				{
+					std::size_t index = myValues.emplace(std::forward<Args>(someArgs)...);
+					UNSD auto insert = myIndices.try_emplace(hash, index);
+					assert(insert.second);
+				}
+			}
+
 			void Insert(const IDType& aID, const T& aValue);
 			void Insert(const IDType& aID, T&& aValue);
 
@@ -77,7 +105,7 @@ namespace CommonUtilities
 			void Clear() override;
 
 		private:
-			using IDIndicesMap = std::unordered_map<IDType, std::size_t, Hash>;
+			using IDIndicesMap = std::unordered_map<std::size_t, std::size_t>;
 
 			FreeVector<T>	myValues;
 			IDIndicesMap	myIndices;
@@ -117,12 +145,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::Set(const IDType& aID, T&& aValue)
 	{
-		using Type = std::decay_t<T>;
-
-		std::scoped_lock lock(myMutex);
-
-		ValueMap<Type>& map = FindValueMap<Type>();
-		map.Insert(aID, std::forward<T>(aValue));
+		Emplace<T>(aID, std::move(aValue));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
@@ -201,59 +224,41 @@ namespace CommonUtilities
 	template<typename T>
 	inline const T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID) const
 	{
-		return myValues.at(myIndices[aID]);
+		return myValues.at(myIndices[Hash{}(aID)]);
 	}
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID)
 	{
-		return myValues.at(myIndices[aID]);
+		return myValues.at(myIndices[Hash{}(aID)]);
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::ValueMap<T>::Insert(const IDType& aID, const T& aValue)
 	{
-		if (const auto it = myIndices.find(aID); it != myIndices.end())
-		{
-			myValues[it->second] = aValue;
-		}
-		else
-		{
-			std::size_t index = myValues.emplace(aValue);
-			UNSD auto insert = myIndices.try_emplace(aID, index);
-			assert(insert.second);
-		}
+		Emplace(aID, aValue);
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::ValueMap<T>::Insert(const IDType& aID, T&& aValue)
 	{
-		if (const auto it = myIndices.find(aID); it != myIndices.end())
-		{
-			myValues[it->second] = std::move(aValue);
-		}
-		else
-		{
-			std::size_t index = myValues.emplace(std::move(aValue));
-			UNSD auto insert = myIndices.try_emplace(aID, index);
-			assert(insert.second);
-		}
+		Emplace(aID, std::move(aValue));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::ValueMap<T>::Has(const IDType& aID)
 	{
-		return myIndices.find(aID) != myIndices.end();
+		return myIndices.find(Hash{}(aID)) != myIndices.end();
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::ValueMap<T>::Erase(const IDType& aID)
 	{
-		if (const auto it = myIndices.find(aID); it != myIndices.end())
+		if (const auto it = myIndices.find(Hash{}(aID)); it != myIndices.end())
 		{
 			myValues.erase(it->second);
 			myIndices.erase(it);

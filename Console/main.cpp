@@ -12,7 +12,7 @@ int main()
 	};
 
 	cu::Blackboard blackboard;
-	blackboard.Emplace<Foo>("hey", 5, "yes");
+	blackboard.Set("hey", Foo(5, "yes"));
 	Foo& test = blackboard.Get<Foo>("hey");
 	return 0;
 }

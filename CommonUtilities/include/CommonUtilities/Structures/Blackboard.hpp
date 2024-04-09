@@ -145,7 +145,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::Set(const IDType& aID, T&& aValue)
 	{
-		Emplace<T>(aID, std::move(aValue));
+		Emplace<T>(aID, std::forward<T>(aValue));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

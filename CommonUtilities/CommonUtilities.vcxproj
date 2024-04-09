@@ -172,6 +172,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\BSTSet.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Heap.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Queue.hpp" />

@@ -1,18 +1,11 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/Structures/Blackboard.hpp>
+#include <CommonUtilities/Structures/Misc/HashMap.hpp>
 
 int main()
 {
-	struct Foo
-	{
-		int yes = 5;
-		std::string work = "?";
-	};
-
-	cu::Blackboard blackboard;
-	blackboard.Emplace<Foo>("hey", Foo(85, "yes"));
-	Foo& test = blackboard.Get<Foo>("hey");
+	CommonUtilities::HashMap<std::string, int> map(-100);
+	map.Insert("wot", 5);
 	return 0;
 }

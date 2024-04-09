@@ -76,7 +76,7 @@ namespace CommonUtilities
 	template<typename Key, typename Value>
 	inline HashMap<Key, Value>::HashMap(int aCapacity) 
 		: myEntries(new Entry[aCapacity > 0 ? aCapacity : 1])
-		, myCapacity(aCapacity)
+		, myCapacity(aCapacity > 0 ? aCapacity : 1)
 	{
 
 	}

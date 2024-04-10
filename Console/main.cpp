@@ -5,7 +5,7 @@
 
 int main()
 {
-	CommonUtilities::HashMap<std::string, int> map(-100);
-	map.Insert("wot", 5);
+	CommonUtilities::HashMap<std::string, int> map(-1);
+	bool huh = map.Insert("wot", 5);
 	return 0;
 }

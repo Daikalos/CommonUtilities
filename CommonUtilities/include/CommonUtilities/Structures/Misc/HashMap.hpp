@@ -75,8 +75,8 @@ namespace CommonUtilities
 
 	template<typename Key, typename Value>
 	inline HashMap<Key, Value>::HashMap(int aCapacity) 
-		: myEntries(new Entry[aCapacity > 0 ? aCapacity : 1])
-		, myCapacity(aCapacity > 0 ? aCapacity : 1)
+		: myEntries(new Entry[aCapacity > 0 ? aCapacity : 0])
+		, myCapacity(aCapacity > 0 ? aCapacity : 0)
 	{
 
 	}
@@ -87,6 +87,9 @@ namespace CommonUtilities
 	template<typename Key, typename Value>
 	inline bool HashMap<Key, Value>::Insert(const Key& aKey, const Value& aValue)
 	{
+		if (myCapacity == 0)
+			return false;
+
 		std::uint32_t index = Hash(aKey) % myCapacity;
 
 		int iterationCount = 0;
@@ -127,6 +130,9 @@ namespace CommonUtilities
 	template<typename Key, typename Value>
 	inline bool HashMap<Key, Value>::Remove(const Key& aKey)
 	{
+		if (myCapacity == 0)
+			return false;
+
 		std::uint32_t index = Hash(aKey) % myCapacity;
 
 		int iterationCount = 0;
@@ -162,6 +168,9 @@ namespace CommonUtilities
 	template<typename Key, typename Value>
 	inline const Value* HashMap<Key, Value>::Get(const Key& aKey) const
 	{
+		if (myCapacity == 0)
+			return nullptr;
+
 		std::uint32_t index = Hash(aKey) % myCapacity;
 
 		int iterationCount = 0;

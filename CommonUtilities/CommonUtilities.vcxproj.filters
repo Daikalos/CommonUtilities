@@ -246,22 +246,25 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Heap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Algorithms\Dijkstra.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Algorithms\PriorityQueue.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\Blackboard.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Algorithms\Sort.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\CommonUtilities.pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\TGP\Source\CommonUtilities\include\CommonUtilities\Algorithms\Sort.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\TGP\Source\CommonUtilities\include\CommonUtilities\Algorithms\Dijkstra.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\TGP\Source\CommonUtilities\include\CommonUtilities\Algorithms\PriorityQueue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

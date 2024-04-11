@@ -37,7 +37,7 @@ namespace CommonUtilities
 
 		virtual void SetOrtographicProjection(float aWidth, float aHeight, float aDepth);
 		virtual void SetOrtographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar);
-		virtual void SetPerspectiveProjection(float aHorizontalFOVDeg, const Vector2f& aResolution, float aNearClip, float aFarClip);
+		virtual void SetPerspectiveProjection(float aHorizontalFOVDeg, float aAspectRatio, float aNearClip, float aFarClip);
 
 		virtual void SetTransform(const Transform3D& aTransform);
 		virtual void SetPosition(const Vector3f& aPosition);

@@ -4,7 +4,7 @@
 #include <unordered_set>
 #include <cmath>
 
-#include "PriorityQueue.hpp"
+#include "../PriorityQueue.hpp"
 
 namespace CommonUtilities
 {

@@ -282,33 +282,4 @@ namespace CommonUtilities::ctr
 		std::ranges::set_union(aFirst, aSecond, std::begin(result));
 		return result;
 	}
-
-	template<typename T>
-	constexpr void HashCombine(std::size_t& aSeed, const T& aValue)
-	{
-		aSeed ^= static_cast<std::size_t>(aValue) + 0x9e3779b9 + (aSeed << 6) + (aSeed >> 2);
-	}
-
-	template<typename T>
-	struct ContainerHash
-	{
-		NODISC constexpr std::size_t operator()(std::span<const T> someItems) const
-		{
-			std::size_t seed = someItems.size();
-
-			if (seed == 1)
-				return someItems.front(); // just return first if only one
-
-			for (auto x : someItems)
-			{
-				x = ((x >> 16) ^ x) * 0x45d9f3b;
-				x = ((x >> 16) ^ x) * 0x45d9f3b;
-				x = (x >> 16) ^ x;
-
-				HashCombine(seed, x);
-			}
-
-			return seed;
-		}
-	};
 }

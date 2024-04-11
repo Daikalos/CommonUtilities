@@ -4,7 +4,17 @@
 
 using namespace CommonUtilities;
 
-Timer::Timer() : myReferencePoint(ClockImpl::now())
+Timer::Timer()
+	: myReferencePoint(ClockImpl::now())
+	, myDeltaTime()
+	, myRealDeltaTime()
+	, myFixedDeltaTime(1.0f / (float)ourFixedFPS)
+	, myRealFixedDeltaTime(1.0f / (float)ourFixedFPS)
+	, myScaledTime(1.0f)
+	, myAlpha()
+	, myTotalTime()
+	, myTotalRunTime()
+	, myFixedFPS(ourFixedFPS)
 {
 
 }
@@ -18,7 +28,7 @@ float Timer::GetAlpha() const noexcept				{ return myAlpha; }
 long double Timer::GetTotalTime() const noexcept	{ return myTotalTime; }
 long double Timer::GetTotalRunTime() const noexcept { return myTotalRunTime; }
 int Timer::GetFPS() const							{ return (int)std::round(1.0f / GetRealDT()); }
-int Timer::GetFixedFPS() const						{ return myFixedFPS; }
+int Timer::GetFixedFPS() const noexcept				{ return myFixedFPS; }
 
 void Timer::SetScaledTime(float aValue) noexcept
 {

@@ -52,9 +52,9 @@ void Camera3D::SetOrtographicProjection(float aLeft, float aRight, float aTop, f
 {
 	myProjectionMatrix = Mat4f::CreateOrtographic(aLeft, aRight, aTop, aBottom, aNear, aFar);
 }
-void Camera3D::SetPerspectiveProjection(float aHorizontalFOVDeg, const Vector2f& aResolution, float aNearClip, float aFarClip)
+void Camera3D::SetPerspectiveProjection(float aHorizontalFOVDeg, float aAspectRatio, float aNearClip, float aFarClip)
 {
-	myProjectionMatrix = Mat4f::CreatePerspective(aHorizontalFOVDeg, aResolution.x / aResolution.y, aNearClip, aFarClip);
+	myProjectionMatrix = Mat4f::CreatePerspective(aHorizontalFOVDeg, aAspectRatio, aNearClip, aFarClip);
 
 	myNearClip = aNearClip;
 	myFarClip = aFarClip;

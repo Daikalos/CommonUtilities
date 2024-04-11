@@ -25,7 +25,7 @@ namespace CommonUtilities
 		Distribution(const Distribution<U>& aDistribution);
 
 		template<typename Func>
-		Distribution(Func&& aFunction) requires (!std::convertible_to<Func, T>&& !std::same_as<std::decay_t<Func>, Distribution>);
+		Distribution(Func&& aFunction) requires (!std::convertible_to<Func, T> && !std::same_as<std::decay_t<Func>, Distribution>);
 
 		T operator()() const;
 

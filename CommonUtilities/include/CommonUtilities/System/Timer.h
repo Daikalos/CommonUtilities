@@ -27,7 +27,7 @@ namespace CommonUtilities
 		NODISC long double GetTotalRunTime() const noexcept;
 
 		NODISC int GetFPS() const;
-		NODISC int GetFixedFPS() const;
+		NODISC int GetFixedFPS() const noexcept;
 
 		void SetScaledTime(float aValue) noexcept;
 		void SetAlpha(float aValue) noexcept;
@@ -36,22 +36,22 @@ namespace CommonUtilities
 		void Update();
 
 	private:
-		static constexpr long double ourMaxDeltaTime	= 0.075;
-		static constexpr float ourInitialFixedDeltaTime = 1.0f / 60.0f;
+		static constexpr long double	ourMaxDeltaTime	= 0.075;
+		static constexpr int			ourFixedFPS		= 60;
 
 		using ClockImpl = std::chrono::high_resolution_clock;
 
 		typename ClockImpl::time_point myReferencePoint;
 
-		float		myDeltaTime				{0.0f};			// total time it took for previous loop
+		float		myDeltaTime				{0.0f};	// total time it took for previous loop
 		float		myRealDeltaTime			{0.0f};
-		float		myFixedDeltaTime		{ourInitialFixedDeltaTime};	// fixed delta time for physics etc.
-		float		myRealFixedDeltaTime	{ourInitialFixedDeltaTime};
-		float		myScaledTime			{1.0f};			// scaled time (set to 1 as default)
+		float		myFixedDeltaTime		{0.0f};	// fixed delta time for physics etc.
+		float		myRealFixedDeltaTime	{0.0f};
+		float		myScaledTime			{0.0f};	// scaled time (set to 1 as default)
 		float		myAlpha					{0.0f};
 
-		long double	myTotalTime				{0.0};	// total time in seconds the applicaton has ran
-		long double	myTotalRunTime			{0.0};	// total time the application has ran factoring in scaled time
+		long double	myTotalTime				{0.0};	// total time in seconds the timer started in regards to scaled time
+		long double	myTotalRunTime			{0.0};	// total time the timer has ran since it started
 
 		int			myFixedFPS				{60};
 	};

@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/Structures/Misc/HashMap.hpp>
+#include <CommonUtilities/System/IDGenerator.h>
 
 int main()
 {
-	CommonUtilities::HashMap<std::string, int> map(-1);
-	bool huh = map.Insert("wot", 5);
+	int val0 = cu::id::Generator<>::Next();
+	int val1 = cu::id::Generator<>::Next();
+	int val2 = cu::id::Generator<>::Next();
+	int val4 = cu::id::Generator<>::Next();
 	return 0;
 }

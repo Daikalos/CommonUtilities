@@ -137,7 +137,7 @@ namespace CommonUtilities
 		RectFloat	myRootRect;
 
 		SizeType	myMaxElements	{8}; // max elements before subdivision
-		SizeType	myMaxDepth		{8};  // max depth before no more leaves will be created
+		SizeType	myMaxDepth		{8}; // max depth before no more leaves will be created
 
 		mutable std::vector<bool> myVisited;
 		mutable std::shared_mutex myMutex;

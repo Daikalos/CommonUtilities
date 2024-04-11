@@ -5,7 +5,7 @@ using namespace CommonUtilities;
 const Vector2f& Camera2D::GetPosition() const noexcept	{ return myPosition; }
 const Vector2f& Camera2D::GetScale() const noexcept		{ return myScale; }
 const Vector2f& Camera2D::GetSize() const noexcept		{ return mySize; }
-const float Camera2D::GetRotation() const noexcept		{ return myRotation; }
+float Camera2D::GetRotation() const noexcept			{ return myRotation; }
 
 const Mat3f& Camera2D::GetWorldMatrix() const
 {

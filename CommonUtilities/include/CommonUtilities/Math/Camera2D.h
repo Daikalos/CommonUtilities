@@ -18,7 +18,7 @@ namespace CommonUtilities
 		NODISC const Vector2f& GetPosition() const noexcept;
 		NODISC const Vector2f& GetScale() const noexcept;
 		NODISC const Vector2f& GetSize() const noexcept;
-		NODISC const float GetRotation() const noexcept;
+		NODISC float GetRotation() const noexcept;
 
 		NODISC virtual const Mat3f& GetWorldMatrix() const;
 		NODISC virtual const Mat3f& GetViewMatrix() const;

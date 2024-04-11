@@ -158,9 +158,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\CommonUtilities\Algorithms\Dijkstra.hpp" />
-    <ClInclude Include="include\CommonUtilities\Algorithms\PriorityQueue.hpp" />
-    <ClInclude Include="include\CommonUtilities\Algorithms\Sort.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\Dijkstra.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Misc\Sort.hpp" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Input\GamepadBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp" />
@@ -181,6 +180,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp" />

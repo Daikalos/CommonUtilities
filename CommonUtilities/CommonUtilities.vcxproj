@@ -180,6 +180,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
+    <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
@@ -278,6 +279,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp" />
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp" />

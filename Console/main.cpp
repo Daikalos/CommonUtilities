@@ -1,13 +1,17 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/System/IDGenerator.h>
+#include <CommonUtilities/System/BinarySerializer.h>
 
 int main()
 {
-	int val0 = cu::id::Generator<>::Next();
-	int val1 = cu::id::Generator<>::Next();
-	int val2 = cu::id::Generator<>::Next();
-	int val4 = cu::id::Generator<>::Next();
+	int test = 5;
+	BinaryWriteSerializer write;
+	write.Serialize(test);
+
+	int test2 = 0;
+	BinaryReadSerializer read(write.GetBuffer());
+	read.Serialize(test2);
+
 	return 0;
 }

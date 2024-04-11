@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonUtilities", "CommonUtilities\CommonUtilities.vcxproj", "{F3442948-63B1-46B4-AB3D-292A88869D28}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Console", "Console\Console.vcxproj", "{B360BCB8-C88A-4919-B3BF-C7E092385BFC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F3442948-63B1-46B4-AB3D-292A88869D28} = {F3442948-63B1-46B4-AB3D-292A88869D28}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Window", "Window\Window.vcxproj", "{88567090-FE9B-4338-BE9E-0109FBDA2383}"
 EndProject

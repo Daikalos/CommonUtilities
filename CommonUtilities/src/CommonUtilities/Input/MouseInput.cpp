@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/MouseInput.h>
 
 using namespace CommonUtilities;

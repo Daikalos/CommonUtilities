@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Utility/StringUtils.h>
 
 namespace CommonUtilities::st

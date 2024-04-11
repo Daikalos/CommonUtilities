@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/System/EventID.h>
 
 using namespace CommonUtilities;

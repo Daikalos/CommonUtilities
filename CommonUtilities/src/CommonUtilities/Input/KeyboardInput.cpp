@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/KeyboardInput.h>
 
 using namespace CommonUtilities;

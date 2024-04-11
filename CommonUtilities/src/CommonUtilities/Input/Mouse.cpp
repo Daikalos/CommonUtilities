@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Input/Mouse.h>
 
 #include <cassert>

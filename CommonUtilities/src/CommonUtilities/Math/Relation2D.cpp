@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Math/Relation2D.h>
 
 #include <stdexcept>

@@ -258,7 +258,7 @@
     <ClInclude Include="include\CommonUtilities\Algorithms\Sort.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\pch.h">
+    <ClInclude Include="include\CommonUtilities\CommonUtilities.pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp">
@@ -335,7 +335,7 @@
     <ClCompile Include="src\CommonUtilities\Utility\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\pch.cpp">
+    <ClCompile Include="src\CommonUtilities\CommonUtilities.pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

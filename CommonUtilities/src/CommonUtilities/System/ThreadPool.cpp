@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/System/ThreadPool.h>
 
 using namespace CommonUtilities;

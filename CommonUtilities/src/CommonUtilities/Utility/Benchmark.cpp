@@ -1,4 +1,3 @@
-#include <CommonUtilities/pch.h>
 #include <CommonUtilities/Utility/Benchmark.h>
 
 namespace CommonUtilities::bm
@@ -95,6 +94,8 @@ namespace CommonUtilities::bm
 
 				if (ram > LDBL_EPSILON) ++totalRAMSamples;
 				if (cpu > LDBL_EPSILON) ++totalCPUSamples;
+
+				std::this_thread::yield();
 			}
 
 			std::chrono::high_resolution_clock::time_point timeEnd = std::chrono::high_resolution_clock::now();

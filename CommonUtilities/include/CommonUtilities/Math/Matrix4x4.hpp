@@ -251,8 +251,8 @@ namespace CommonUtilities
 	constexpr void Matrix4x4<T>::SetScale(const Vector3<T>& aScale)
 	{
 		Vector3<T> scaleX{ myMatrix[0], myMatrix[1], myMatrix[2 ] };
-		Vector3<T> scaleY{ myMatrix[3], myMatrix[4], myMatrix[6 ] };
-		Vector3<T> scaleZ{ myMatrix[3], myMatrix[4], myMatrix[10] };
+		Vector3<T> scaleY{ myMatrix[4], myMatrix[5], myMatrix[6 ] };
+		Vector3<T> scaleZ{ myMatrix[8], myMatrix[9], myMatrix[10] };
 
 		scaleX.Normalize(aScale.x);
 		scaleY.Normalize(aScale.y);

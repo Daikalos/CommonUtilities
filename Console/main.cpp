@@ -5,13 +5,15 @@
 
 int main()
 {
-	int test = 5;
-	BinaryWriteSerializer write;
-	write.Serialize(test);
+	int test  = 5;
+	int test1 = 7;
+	cu::BinaryWriteSerializer write;
+	write.Serialize(test, test1);
 
 	int test2 = 0;
-	BinaryReadSerializer read(write.GetBuffer());
-	read.Serialize(test2);
+	int test3 = 0;
+	cu::BinaryReadSerializer read(write.GetBuffer());
+	read.Serialize(test2, test3);
 
 	return 0;
 }

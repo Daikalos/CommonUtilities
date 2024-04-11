@@ -1,5 +1,7 @@
 #include <CommonUtilities\System\BinarySerializer.h>
 
+using namespace CommonUtilities;
+
 BinarySerializer::BinarySerializer(SerializerState aState)
 	: myState(aState)
 	, myBuffer()
@@ -19,4 +21,14 @@ BinaryWriteSerializer::BinaryWriteSerializer()
 	: BinarySerializer(SerializerState::Write)
 {
 
+}
+
+void BinaryWriteSerializer::ReserveBytesToFit(std::size_t aNumBytesToFit)
+{
+	myBuffer.reserve(myBuffer.size() + aNumBytesToFit);
+}
+void BinaryWriteSerializer::FitBufferToOffset()
+{
+	myBuffer.resize(myOffset);
+	myBuffer.shrink_to_fit();
 }

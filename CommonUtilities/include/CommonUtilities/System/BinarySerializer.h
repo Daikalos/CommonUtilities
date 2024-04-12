@@ -15,10 +15,10 @@ namespace CommonUtilities
 		Write
 	};
 
-	template<typename T> requires (std::is_trivially_copyable_v<T>) // trivially copyable is required to prevent UB
+	template<typename T> requires (std::is_trivially_copyable_v<std::remove_reference_t<T>>) // trivially copyable is required to prevent UB
 	struct SerializeAsBinary
 	{
-		NODISC std::size_t operator()(SerializerState aState, T& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+		NODISC std::size_t operator()(SerializerState aState, T&& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 	};
 	class BinarySerializer
 	{
@@ -53,24 +53,24 @@ namespace CommonUtilities
 		NODISC std::span<const std::byte> GetBuffer() const noexcept { return myBuffer; }
 		NODISC const std::byte* GetBufferData() const noexcept { return myBuffer.data(); }
 
-		void ReserveBytesToFit(std::size_t aNumBytesToFit);
-		void FitBufferToOffset();
+		COMMON_UTILITIES_API void ReserveBytesToFit(std::size_t aNumBytesToFit);
+		COMMON_UTILITIES_API void FitBufferToOffset();
 	};
 
 	template<typename... Ts> requires (std::is_trivially_copyable_v<std::remove_reference_t<Ts>> && ...)
 	inline void BinarySerializer::Serialize(Ts&&... aInOutData)
 	{
-		((myOffset += SerializeAsBinary<std::remove_reference_t<Ts>>{}(myState, aInOutData, myBuffer, myOffset)), ...);
+		((myOffset += SerializeAsBinary<Ts>{}(myState, std::forward<Ts>(aInOutData), myBuffer, myOffset)), ...);
 	}
 
-	template<typename T> requires (std::is_trivially_copyable_v<T>)
-	inline std::size_t SerializeAsBinary<T>::operator()(SerializerState aState, T& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	template<typename T> requires (std::is_trivially_copyable_v<std::remove_reference_t<T>>)
+	inline std::size_t SerializeAsBinary<T>::operator()(SerializerState aState, T&& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 	{
 		static constexpr std::size_t numBytes = sizeof(T);
 
 		if (aState == SerializerState::Read)
 		{
-			if constexpr (!std::is_const_v<T>)
+			if constexpr (!std::is_const_v<std::remove_reference_t<T>>)
 			{
 				assert((aOffset + numBytes) <= aInOutBytes.size());
 				memcpy_s(&aInOutData, numBytes, aInOutBytes.data() + aOffset, numBytes);

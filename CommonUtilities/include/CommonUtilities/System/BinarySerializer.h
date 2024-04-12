@@ -70,10 +70,14 @@ namespace CommonUtilities
 
 		if (aState == SerializerState::Read)
 		{
-			if constexpr (!std::is_const_v<T>) // cannot read to const memory
+			if constexpr (!std::is_const_v<T>)
 			{
 				assert((aOffset + numBytes) <= aInOutBytes.size());
 				memcpy_s(&aInOutData, numBytes, aInOutBytes.data() + aOffset, numBytes);
+			}
+			else
+			{
+				assert(false && "Cannot copy to const memory!");
 			}
 		}
 		else

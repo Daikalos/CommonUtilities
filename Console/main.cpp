@@ -1,19 +1,13 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/System/BinarySerializer.h>
+#include <CommonUtilities/System/IDGenerator.h>
 
 int main()
 {
-	const int test  = 5;
-	int test1 = 7;
-	cu::BinaryWriteSerializer write;
-	write.Serialize(test, test1);
-
-	int test2 = 0;
-	int test3 = 0;
-	cu::BinaryReadSerializer read(write.GetBuffer());
-	read.Serialize(test2, test3);
+	int val1 = cu::id::Generator<>::Next();
+	int val2 = cu::id::Generator<>::Next();
+	int val3 = cu::id::Generator<>::Next();
 
 	return 0;
 }

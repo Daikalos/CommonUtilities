@@ -3,6 +3,8 @@
 #include <span>
 #include <string>
 
+#include <CommonUtilities\Config.h>
+
 namespace CommonUtilities::hs
 {
 	namespace details

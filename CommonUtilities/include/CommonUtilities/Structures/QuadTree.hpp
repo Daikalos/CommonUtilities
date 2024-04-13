@@ -40,7 +40,7 @@ namespace CommonUtilities
 		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
-		int Insert(const RectFloat& aRect, Args&&... someArgs);
+		auto Insert(const RectFloat& aRect, Args&&... someArgs) -> SizeType;
 
 		/// Attempts to erase element from tree.
 		/// 
@@ -152,9 +152,9 @@ namespace CommonUtilities
 
 	template<std::equality_comparable T>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	inline int QuadTree<T>::Insert(const RectFloat& aRect, Args&&... someArgs)
+	inline auto QuadTree<T>::Insert(const RectFloat& aRect, Args&&... someArgs) -> SizeType
 	{
-		std::unique_lock lock(myMutex);
+		std::scoped_lock lock(myMutex);
 
 		if (!myRootRect.Overlaps(aRect)) // dont attempt to add if outside boundary
 			return -1;
@@ -168,7 +168,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline bool QuadTree<T>::Erase(SizeType aIndex)
 	{
-		std::unique_lock lock(myMutex);
+		std::scoped_lock lock(myMutex);
 
 		const RectFloat& rect = myElements[aIndex].rect;
 		const auto& leaves = FindLeaves({ myRootRect, 0, 0 }, rect);
@@ -210,7 +210,7 @@ namespace CommonUtilities
 			}
 		}
 
-		myElements.erase(aEltIndex);
+		myElements.erase(aIndex);
 
 		return true;
 	}
@@ -219,7 +219,7 @@ namespace CommonUtilities
 	template<typename... Args> requires std::constructible_from<T, Args...>
 	inline bool QuadTree<T>::Update(SizeType aIndex, Args&&... someArgs)
 	{
-		std::unique_lock lock(myMutex);
+		std::scoped_lock lock(myMutex);
 
 		if (aIndex >= myElements.size() || !myElements.valid(aIndex))
 			return false;
@@ -292,7 +292,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void QuadTree<T>::Cleanup()
 	{
-		std::unique_lock lock(myMutex);
+		std::scoped_lock lock(myMutex);
 
 		assert(!myNodes.empty());
 

@@ -13,15 +13,36 @@ namespace CommonUtilities::id
 	/// about it here: https://skypjack.github.io/2020-03-14-ecs-baf-part-8/
 	/// 
 	template<typename T = void>
-	struct Generator
+	class Generator
 	{
+	public:
+		/// Retrieves the current ID and increments the value.
+		/// 
 		static inline std::size_t Next()
 		{
-			static std::size_t value{};
-			return value++;
+			return ID++;
 		}
+
+		/// Resets the ID counter, safe to assume that all of the older IDs are considered invalid 
+		/// after this call.
+		/// 
+		static inline void Reset(std::size_t aInitialID = 1)
+		{
+			ID = aInitialID;
+		}
+
+	private:
+		Generator() = delete;
+		~Generator() = delete;
+
+		static std::size_t ID;
 	};
 
+	template<typename T>
+	inline std::size_t Generator<T>::ID = 1; // 0 reserved for NULL
+
+	/// Generates a unique ID for a given type (as an alternative to using RTTI)
+	/// 
 	template<typename T>
 	struct Type
 	{

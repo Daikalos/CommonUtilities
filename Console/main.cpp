@@ -1,13 +1,11 @@
 #include <iostream>
 #include <string>
 
-#include <CommonUtilities/System/IDGenerator.h>
+#include <CommonUtilities/Math/Camera3D.h>
 
 int main()
 {
-	int val1 = cu::id::Generator<>::Next();
-	int val2 = cu::id::Generator<>::Next();
-	int val3 = cu::id::Generator<>::Next();
+	cu::Camera3D camera;
 
 	return 0;
 }

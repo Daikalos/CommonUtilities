@@ -53,10 +53,10 @@ namespace CommonUtilities::st
 	}
 
 	template<typename T>
-	inline T ParseString(std::string_view aString)
+	inline T ParseString(const std::string& aString)
 	{
 		T result{};
-		std::istringstream(std::string(aString)) >> result;
+		std::istringstream(aString) >> result;
 
 		return result;
 	}

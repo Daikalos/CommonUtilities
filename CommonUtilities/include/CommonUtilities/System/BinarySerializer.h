@@ -39,15 +39,13 @@ namespace CommonUtilities
 	template<typename T>
 	struct SerializeAsBinary<std::span<T>>
 	{
-		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
-			requires (std::is_trivially_copyable_v<T>);
+		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 	};
 
 	template<typename T>
 	struct SerializeAsBinary<std::span<const T>>
 	{
-		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
-			requires (std::is_trivially_copyable_v<T>);
+		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 	};
 
 	class BinarySerializer
@@ -122,7 +120,6 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
-		requires (std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;
 		for (T& item : aInOutData)
@@ -135,7 +132,6 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline std::size_t SerializeAsBinary<std::span<const T>>::operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
-		requires (std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;
 		for (const T& item : aInOutData)

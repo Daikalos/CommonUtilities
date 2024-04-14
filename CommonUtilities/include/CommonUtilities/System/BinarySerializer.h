@@ -13,8 +13,8 @@ namespace CommonUtilities
 { 
 	enum class SerializerState
 	{
-		Read,
-		Write
+		Read,	// Copies bytes from buffer onto type
+		Write	// Copes bytes from type onto buffer
 	};
 
 	template<typename T>

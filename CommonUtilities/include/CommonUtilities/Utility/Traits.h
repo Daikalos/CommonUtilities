@@ -53,6 +53,9 @@ namespace CommonUtilities::tr
     };
 
     template<typename T>
+    struct ClassTag {};
+
+    template<typename T>
     struct Base {};
 
     template<typename... Ts> 

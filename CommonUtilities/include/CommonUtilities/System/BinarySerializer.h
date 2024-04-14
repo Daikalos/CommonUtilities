@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <vector>
 #include <memory>
 #include <span>
 #include <cassert>
@@ -38,16 +37,16 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	struct SerializeAsBinary<std::vector<T>>
+	struct SerializeAsBinary<std::span<T>>
 	{
-		NODISC std::size_t operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (std::is_trivially_copyable_v<T>);
 	};
 
 	template<typename T>
-	struct SerializeAsBinary<const std::vector<T>>
+	struct SerializeAsBinary<std::span<const T>>
 	{
-		NODISC std::size_t operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (std::is_trivially_copyable_v<T>);
 	};
 
@@ -122,7 +121,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;
@@ -135,7 +134,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<const std::vector<T>>::operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::span<const T>>::operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;

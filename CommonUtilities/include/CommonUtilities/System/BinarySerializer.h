@@ -44,7 +44,7 @@ namespace CommonUtilities
 			requires (std::is_trivially_copyable_v<T>);
 
 		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
-			requires (!std::is_trivially_copyable_v<T>);
+			requires (!std::is_trivially_copyable_v<T>); // user must provide their own custom specialization for this type to work
 
 		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (!std::is_trivially_copyable_v<T>);
@@ -154,17 +154,17 @@ namespace CommonUtilities
 	{
 		static constexpr std::size_t typeSize = sizeof(T);
 
-		const std::size_t numBytes = typeSize * aInOutBytes.size();
+		const std::size_t numBytes = typeSize * aInOutData.size();
 
 		if (aState == SerializerState::Read)
 		{
 			assert((aOffset + numBytes) <= aInOutBytes.size() && "Not enough memory to read from!");
-			memcpy_s(&aInOutData, numBytes, aInOutBytes.data() + aOffset, numBytes);
+			memcpy_s(aInOutData.data(), numBytes, aInOutBytes.data() + aOffset, numBytes);
 		}
 		else
 		{
 			aInOutBytes.resize(aOffset + numBytes);
-			memcpy_s(aInOutBytes.data() + aOffset, numBytes, &aInOutData, numBytes);
+			memcpy_s(aInOutBytes.data() + aOffset, numBytes, aInOutData.data(), numBytes);
 		}
 
 		return numBytes;
@@ -176,7 +176,7 @@ namespace CommonUtilities
 	{
 		static constexpr std::size_t typeSize = sizeof(T);
 
-		const std::size_t numBytes = typeSize * aInOutBytes.size();
+		const std::size_t numBytes = typeSize * aInOutData.size();
 
 		if (aState == SerializerState::Read)
 		{
@@ -185,7 +185,7 @@ namespace CommonUtilities
 		else
 		{
 			aInOutBytes.resize(aOffset + numBytes);
-			memcpy_s(aInOutBytes.data() + aOffset, numBytes, &aInOutData, numBytes);
+			memcpy_s(aInOutBytes.data() + aOffset, numBytes, aInOutData.data(), numBytes);
 		}
 
 		return numBytes;
@@ -221,6 +221,17 @@ namespace CommonUtilities
 	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (std::is_trivially_copyable_v<T>)
 	{
+		static constexpr std::size_t typeSize = sizeof(T);
+
+		if (aState == SerializerState::Read)
+		{
+
+		}
+		else
+		{
+
+		}
+
 		return 0;
 	}
 

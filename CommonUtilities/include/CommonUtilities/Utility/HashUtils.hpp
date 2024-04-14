@@ -9,14 +9,14 @@ namespace CommonUtilities::hs
 {
 	namespace details
 	{
-		constexpr std::uint32_t JenkinsHashImpl(const std::byte* aKey, std::size_t aLength)
+		constexpr std::size_t JenkinsHashImpl(const std::byte* aKey, std::size_t aLength)
 		{
 			std::size_t i = 0;
-			std::uint32_t hash = 0;
+			std::size_t hash = 0;
 
 			while (i != aLength)
 			{
-				hash += static_cast<std::uint32_t>(aKey[i++]);
+				hash += static_cast<std::size_t>(aKey[i++]);
 				hash += hash << 10;
 				hash ^= hash >> 6;
 			}

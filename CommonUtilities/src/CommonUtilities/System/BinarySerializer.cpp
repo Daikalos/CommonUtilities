@@ -49,7 +49,7 @@ std::size_t SerializeAsBinary<std::string>::operator()(SerializerState aState, s
 	return aInOutData.length() + 1;
 }
 
-std::size_t SerializeAsBinary<const std::string>::operator()(SerializerState aState, const std::string& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+std::size_t SerializeAsBinary<std::string>::operator()(SerializerState aState, const std::string& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 {
 	if (aState == SerializerState::Read)
 	{

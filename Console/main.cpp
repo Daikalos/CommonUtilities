@@ -10,7 +10,7 @@ int main()
 	cu::BinaryWriteSerializer write;
 	write.Serialize(val0);
 
-	const std::array<int, 4> val1{};
+	std::array<int, 4> val1{};
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read.Serialize(val1);
 

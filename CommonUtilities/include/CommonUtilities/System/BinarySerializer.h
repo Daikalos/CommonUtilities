@@ -101,7 +101,7 @@ namespace CommonUtilities
 		{
 			if constexpr (!std::is_const_v<T>)
 			{
-				assert((aOffset + numBytes) <= aInOutBytes.size() && "Not enough memory to read to!");
+				assert((aOffset + numBytes) <= aInOutBytes.size() && "Not enough memory to read from!");
 				memcpy_s(&aInOutData, numBytes, aInOutBytes.data() + aOffset, numBytes);
 			}
 			else

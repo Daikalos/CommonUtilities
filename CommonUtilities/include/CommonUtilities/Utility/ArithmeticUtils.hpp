@@ -25,6 +25,15 @@ namespace CommonUtilities::au
 	template<IsFloatingPoint T = float>
 	constexpr T RAD2DEG_V = T{180.0} / PI_V<T>;
 
+	template<IsFloatingPoint T = float>
+	constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
+
+	template<IsArithmetic T>
+	constexpr T MIN_V = std::numeric_limits<T>::min();
+
+	template<IsArithmetic T>
+	constexpr T MAX_V = std::numeric_limits<T>::max();
+
 	inline constexpr float			PI			= PI_V<float>;
 	inline constexpr float			PI_2		= PI_2_V<float>;
 	inline constexpr float			PI_4		= PI_4_V<float>;
@@ -44,6 +53,10 @@ namespace CommonUtilities::au
 	inline constexpr float			RAD2DEG		= RAD2DEG_V<float>;
 	inline constexpr double			RAD2DEG_D	= RAD2DEG_V<double>;
 	inline constexpr long double	RAD2DEG_LD	= RAD2DEG_V<long double>;
+
+	inline constexpr float			EPSILON		= EPSILON_V<float>;
+	inline constexpr double			EPSILON_D	= EPSILON_V<double>;
+	inline constexpr long double	EPSILON_LD	= EPSILON_V<long double>;
 
 	template<IsFloatingPoint T>
 	NODISC constexpr T ToRadians(T aDegrees)
@@ -137,7 +150,7 @@ namespace CommonUtilities::au
 	}
 
 	template<IsFloatingPoint T>
-	NODISC constexpr auto Equal(T aFirst, T aSecond, T aEpsilon = std::numeric_limits<T>::epsilon())
+	NODISC constexpr auto Equal(T aFirst, T aSecond, T aEpsilon = EPSILON_V<T>)
 	{
 		return std::abs(aFirst - aSecond) <= aEpsilon;
 	}

@@ -220,17 +220,17 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC constexpr Vector3<T> Matrix4x4<T>::GetForward() const
+	constexpr Vector3<T> Matrix4x4<T>::GetForward() const
 	{
 		return Vector3<T>{ myMatrix[8], myMatrix[9], myMatrix[10] };
 	}
 	template<typename T>
-	NODISC constexpr Vector3<T> Matrix4x4<T>::GetUp() const 
+	constexpr Vector3<T> Matrix4x4<T>::GetUp() const 
 	{
 		return Vector3<T>{ myMatrix[4], myMatrix[5], myMatrix[6] };
 	}
 	template<typename T>
-	NODISC constexpr Vector3<T> Matrix4x4<T>::GetRight() const 
+	constexpr Vector3<T> Matrix4x4<T>::GetRight() const 
 	{
 		return Vector3<T>{ myMatrix[0], myMatrix[1], myMatrix[2] };
 	}
@@ -506,17 +506,17 @@ namespace CommonUtilities
 	// GLOBAL OPERATORS
 
 	template<typename T>
-	constexpr Matrix4x4<T> operator+(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC  Matrix4x4<T> operator+(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Add(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T> operator-(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC constexpr Matrix4x4<T> operator-(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Subtract(aRight);
 	}
 	template<typename T>
-	constexpr Matrix4x4<T> operator*(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC constexpr Matrix4x4<T> operator*(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return Matrix4x4<T>(aLeft).Combine(aRight);
 	}
@@ -538,7 +538,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector4<T> operator*(const Vector4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC constexpr Vector4<T> operator*(const Vector4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return aRight.TransformPoint(aLeft);
 	}
@@ -560,7 +560,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC constexpr bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		for (int i = 0; i < Matrix4x4<T>::COUNT; ++i)
 		{
@@ -573,7 +573,7 @@ namespace CommonUtilities
 		return true;
 	}
 	template<typename T>
-	constexpr bool operator!=(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
+	NODISC constexpr bool operator!=(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return !(aLeft == aRight);
 	}

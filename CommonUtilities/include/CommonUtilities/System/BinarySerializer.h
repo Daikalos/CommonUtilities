@@ -138,7 +138,7 @@ namespace CommonUtilities
 	{
 		static constexpr std::size_t typeSize = sizeof(T);
 
-		const std::size_t numBytes = typeSize * aInOutData.size();
+		const std::size_t numBytes = typeSize * aInOutData.size(); // user has to make sure that size matches the buffer correctly
 
 		if (aState == SerializerState::Read)
 		{

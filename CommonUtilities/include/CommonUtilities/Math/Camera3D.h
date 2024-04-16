@@ -35,8 +35,8 @@ namespace CommonUtilities
 		NODISC Vector2f NDCToScreen(const Vector3f& aNDCPosition) const;
 		NODISC Vector2f WorldToScreen(const Vector3f& aWorldPosition) const;
 
-		virtual void SetOrtographicProjection(float aWidth, float aHeight, float aDepth);
-		virtual void SetOrtographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar);
+		virtual void SetOrthographicProjection(float aWidth, float aHeight, float aDepth);
+		virtual void SetOrthographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar);
 		virtual void SetPerspectiveProjection(float aHorizontalFOVDeg, float aAspectRatio, float aNearClip, float aFarClip);
 
 		virtual void SetTransform(const Transform3D& aTransform);

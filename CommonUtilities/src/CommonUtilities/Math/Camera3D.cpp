@@ -44,13 +44,13 @@ Vector2f Camera3D::WorldToScreen(const Vector3f& aWorldPosition) const
 	return NDCToScreen(ClipToNDC(WorldToClip(aWorldPosition)));
 }
 
-void Camera3D::SetOrtographicProjection(float aWidth, float aHeight, float aDepth)
+void Camera3D::SetOrthographicProjection(float aWidth, float aHeight, float aDepth)
 {
-	myProjectionMatrix = Mat4f::CreateOrtographic(aWidth, aHeight, aDepth);
+	myProjectionMatrix = Mat4f::CreateOrthographic(aWidth, aHeight, aDepth);
 }
-void Camera3D::SetOrtographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar)
+void Camera3D::SetOrthographicProjection(float aLeft, float aRight, float aTop, float aBottom, float aNear, float aFar)
 {
-	myProjectionMatrix = Mat4f::CreateOrtographic(aLeft, aRight, aTop, aBottom, aNear, aFar);
+	myProjectionMatrix = Mat4f::CreateOrthographic(aLeft, aRight, aTop, aBottom, aNear, aFar);
 }
 void Camera3D::SetPerspectiveProjection(float aHorizontalFOVDeg, float aAspectRatio, float aNearClip, float aFarClip)
 {

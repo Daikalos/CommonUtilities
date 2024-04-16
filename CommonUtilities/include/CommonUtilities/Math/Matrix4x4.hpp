@@ -76,8 +76,8 @@ namespace CommonUtilities
 		constexpr auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
 		constexpr auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
 
-		NODISC constexpr static auto CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
-		NODISC constexpr static auto CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
+		NODISC constexpr static auto CreateOrthographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
+		NODISC constexpr static auto CreateOrthographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
 		NODISC constexpr static auto CreatePerspective(T aHorizontalFOVDeg, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 		NODISC constexpr static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aRotation, const Vector3<T>& aScale) -> Matrix4x4;
 
@@ -405,7 +405,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateOrtographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4
+	constexpr auto Matrix4x4<T>::CreateOrthographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4
 	{
 		return Matrix4x4
 		{
@@ -416,7 +416,7 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateOrtographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4
+	constexpr auto Matrix4x4<T>::CreateOrthographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4
 	{
 		const T width	= (aRight - aLeft);
 		const T height	= (aBottom - aTop);

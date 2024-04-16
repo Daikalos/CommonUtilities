@@ -38,7 +38,7 @@ namespace CommonUtilities
 
 	template<typename T>
 	constexpr Line<T>::Line(const Vector2<T>& aOrigin, const Vector2<T>& aDirection)
-		: myOrigin(aPoint0)
+		: myOrigin(aOrigin)
 		, myDirection(aDirection.GetNormalized()) // make sure it is normalized
 	{
 

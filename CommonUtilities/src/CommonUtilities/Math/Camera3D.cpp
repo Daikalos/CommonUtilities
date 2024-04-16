@@ -97,7 +97,7 @@ bool Camera3D::HandleEvent(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
 			UINT width	= LOWORD(lParam);
 			UINT height = HIWORD(lParam);
 
-			myScreenSize = Vector2f((float)width, (float)height); // update size of camera when window is resized
+			myScreenSize = Vector2f((float)width, (float)height); // mostly just for NDCToScreen to work
 
 			break;
 		}

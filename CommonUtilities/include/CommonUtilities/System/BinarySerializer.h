@@ -200,4 +200,18 @@ namespace CommonUtilities
 
 		return numBytes;
 	}
+
+	template<typename T>
+	inline BinaryWriteSerializer& operator<<(BinaryWriteSerializer& aBinaryWriteSerializer, const T& aInData)
+	{
+		aBinaryWriteSerializer.Serialize(aInData);
+		return aBinaryWriteSerializer;
+	}
+
+	template<typename T>
+	inline BinaryReadSerializer& operator>>(BinaryReadSerializer& aBinaryReadSerializer, T& aOutData)
+	{
+		aBinaryReadSerializer.Serialize(aOutData);
+		return aBinaryReadSerializer;
+	}
 }

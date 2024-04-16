@@ -32,8 +32,8 @@ namespace CommonUtilities
 
 	private:
 		Vector3<T>	myCenter;
-		T			myRadius	{T()};
-		T			myRadiusSqr	{T()};
+		T			myRadius	{};
+		T			myRadiusSqr	{};
 	};
 
 	template<typename T>

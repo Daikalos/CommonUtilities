@@ -12,7 +12,7 @@ int main()
 
 	std::array<int, 4> val1{};
 	cu::BinaryReadSerializer read(write.GetBuffer());
-	read.Serialize(val1);
+	read >> val1;
 
 	return 0;
 }

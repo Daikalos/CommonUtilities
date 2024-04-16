@@ -202,7 +202,7 @@ namespace CommonUtilities
 			return result;
 		}
 
-		if (!au::Equal<T>(distSqr, 0, std::numeric_limits<T>::epsilon() * std::numeric_limits<T>::epsilon()))
+		if (!au::Equal<T>(distSqr, 0, au::EPSILON * au::EPSILON))
 		{
 			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
 		}
@@ -363,7 +363,7 @@ namespace CommonUtilities
 		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
 
-		if (!au::Equal<T>(distance, 0, std::numeric_limits<T>::epsilon() * std::numeric_limits<T>::epsilon()))
+		if (!au::Equal<T>(distance, 0, au::EPSILON * au::EPSILON))
 		{ 
 			distance	= std::sqrt(distance);
 			normal		= normal.GetNormalized(distance, 1.0f);

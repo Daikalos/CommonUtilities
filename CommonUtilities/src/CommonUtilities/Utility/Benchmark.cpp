@@ -82,7 +82,7 @@ namespace CommonUtilities::bm
 
 			myIsReady = true;
 
-			while (myActive)
+			while (myActive.load())
 			{
 				GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
 

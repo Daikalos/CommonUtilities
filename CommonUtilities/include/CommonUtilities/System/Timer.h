@@ -29,8 +29,8 @@ namespace CommonUtilities
 		NODISC int GetFPS() const;
 		NODISC int GetFixedFPS() const noexcept;
 
-		void SetScaledTime(float aValue) noexcept;
-		void SetAlpha(float aValue) noexcept;
+		void SetScaledTime(float aValue);
+		void SetAlpha(float aValue);
 
 		void Reset();
 		void Update();

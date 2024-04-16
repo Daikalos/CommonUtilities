@@ -116,7 +116,7 @@ namespace CommonUtilities
 	};
 
 	template<typename... Args>
-	Relation3DPtr Relation3D::Instantiate(Args&&... someArgs)
+	inline Relation3DPtr Relation3D::Instantiate(Args&&... someArgs)
 	{
 		return Relation3DPtr(new Relation3D(std::forward<Args>(someArgs)...));
 	}

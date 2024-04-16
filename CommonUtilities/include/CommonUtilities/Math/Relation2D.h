@@ -119,7 +119,7 @@ namespace CommonUtilities
 	};
 
 	template<typename... Args>
-	Relation2DPtr Relation2D::Instantiate(Args&&... someArgs)
+	inline Relation2DPtr Relation2D::Instantiate(Args&&... someArgs)
 	{
 		return Relation2DPtr(new Relation2D(std::forward<Args>(someArgs)...));
 	}

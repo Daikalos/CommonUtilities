@@ -53,6 +53,6 @@ namespace CommonUtilities
 		long double	myTotalTime				{0.0};	// total time in seconds the timer started in regards to scaled time
 		long double	myTotalRunTime			{0.0};	// total time the timer has ran since it started
 
-		int			myFixedFPS				{60};
+		int			myFixedFPS				{ourFixedFPS};
 	};
 }

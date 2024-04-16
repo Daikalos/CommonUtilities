@@ -177,10 +177,17 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, UNSD WPARAM wParam, LPARAM lPar
 		{
 			if (IsConnected())
 			{
-				UINT width = LOWORD(lParam);
-				UINT height = HIWORD(lParam);
-
-				myWindowSize = Vector2i(width, height);
+				RECT rect;
+				if (GetWindowRect(myHandle, &rect))
+				{
+					myWindowSize = Vector2i(
+						rect.right - rect.left,
+						rect.bottom - rect.top);
+				}
+				else
+				{
+					assert(false && "Failed to get window rect");
+				}
 			}
 
 			GrabCursor(myIsGrabbed);

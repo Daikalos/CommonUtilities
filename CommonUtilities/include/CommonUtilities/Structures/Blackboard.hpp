@@ -58,7 +58,7 @@ namespace CommonUtilities
 		{
 		public:
 			ValueMapBase() = default;
-			virtual ~ValueMapBase() = 0;
+			virtual ~ValueMapBase() = default;
 
 			NODISC virtual bool Has(const IDType& aID) = 0;
 

@@ -238,7 +238,7 @@ namespace CommonUtilities
 		return myHandlers.back().GetID();
 	}
 
-	template<typename ...Args>
+	template<typename... Args>
 	inline evnt::IDType Event<Args...>::Add(typename HandlerType::FunctionType&& aFunc)
 	{
 		std::scoped_lock lock(myMutex);
@@ -303,6 +303,6 @@ namespace CommonUtilities
 				{
 					handler(asyncParams...);
 				}
-			}, someParams...);
+			}, someParams...); // TODO: maybe always copy arguments instead?
 	}
 }

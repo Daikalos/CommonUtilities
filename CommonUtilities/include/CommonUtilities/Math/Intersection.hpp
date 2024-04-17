@@ -181,7 +181,7 @@ namespace CommonUtilities
 
 		if (collisionFuncPtr == nullptr)
 		{
-			throw std::out_of_range("No collision algorithm is defined for these two shapes!");
+			throw std::runtime_error("No collision algorithm is defined for these two shapes!");
 		}
 
 		return collisionFuncPtr(aFirstShape, aSecondShape);

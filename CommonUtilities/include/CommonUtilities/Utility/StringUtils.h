@@ -14,10 +14,15 @@ namespace CommonUtilities::st
 	template<typename T>
 	NODISC T ParseString(std::string_view aString);
 
-	NODISC COMMON_UTILITIES_API std::string ToLower(std::string_view aString);
-	NODISC COMMON_UTILITIES_API std::string ToUpper(std::string_view aString);
+	NODISC COMMON_UTILITIES_API void ToLower(std::string& aString);
+	NODISC COMMON_UTILITIES_API void ToUpper(std::string& aString);
 
-	NODISC COMMON_UTILITIES_API std::string Capitalize(std::string_view aString);
+	NODISC COMMON_UTILITIES_API void Capitalize(std::string& aString);
+
+	NODISC COMMON_UTILITIES_API std::string ToLowerCopy(std::string_view aString);
+	NODISC COMMON_UTILITIES_API std::string ToUpperCopy(std::string_view aString);
+
+	NODISC COMMON_UTILITIES_API std::string CapitalizeCopy(std::string_view aString);
 
 	NODISC COMMON_UTILITIES_API bool Contains(std::string_view aString, std::string_view aSubString);
 	NODISC COMMON_UTILITIES_API bool Contains(std::string_view aString, const char aCharacter);

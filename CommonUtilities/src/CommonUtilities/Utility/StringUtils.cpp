@@ -2,7 +2,34 @@
 
 namespace CommonUtilities::st
 { 
-	std::string ToLower(std::string_view aString)
+	void ToLower(std::string& aString)
+	{
+		std::transform(aString.begin(), aString.end(), aString.begin(),
+			[](unsigned char aCharacter)
+			{
+				return static_cast<unsigned char>(std::tolower(aCharacter));
+			});
+	}
+	void ToUpper(std::string& aString)
+	{
+		std::transform(aString.begin(), aString.end(), aString.begin(),
+			[](unsigned char aCharacter)
+			{
+				return static_cast<unsigned char>(std::toupper(aCharacter));
+			});
+	}
+
+	void Capitalize(std::string& aString)
+	{
+		ToLower(aString);
+
+		if (!aString.empty())
+		{
+			aString.front() = static_cast<char>(std::toupper(aString.front()));
+		}
+	}
+
+	std::string ToLowerCopy(std::string_view aString)
 	{
 		std::string result{aString};
 
@@ -14,7 +41,7 @@ namespace CommonUtilities::st
 
 		return result;
 	}
-	std::string ToUpper(std::string_view aString)
+	std::string ToUpperCopy(std::string_view aString)
 	{
 		std::string result{aString};
 
@@ -27,9 +54,9 @@ namespace CommonUtilities::st
 		return result;
 	}
 
-	std::string Capitalize(std::string_view aString)
+	std::string CapitalizeCopy(std::string_view aString)
 	{
-		std::string result{ToLower(aString)};
+		std::string result{ ToLowerCopy(aString) };
 
 		if (!result.empty())
 		{
@@ -50,7 +77,7 @@ namespace CommonUtilities::st
 
 	bool CompareIgnoreCase(std::string_view aFirstString, std::string_view aSecondString)
 	{
-		return ToLower(aFirstString) == ToLower(aSecondString);
+		return ToLowerCopy(aFirstString) == ToLowerCopy(aSecondString);
 	}
 
 	void TrimLeft(std::string& aString)

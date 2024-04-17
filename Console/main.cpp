@@ -3,6 +3,7 @@
 #include <array>
 
 #include <CommonUtilities/System/BinarySerializer.h>
+#include <CommonUtilities\Utility\WinUtils.h>
 
 int main()
 {
@@ -13,6 +14,8 @@ int main()
 	std::array<int, 4> val1{};
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read >> val1;
+
+	auto& desktopResolution = cu::GetValidResolutions();
 
 	return 0;
 }

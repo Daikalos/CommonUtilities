@@ -242,6 +242,7 @@
     <ClInclude Include="include\CommonUtilities\System\Timer.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Random.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\StackVector.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\WinUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\Input\Gamepad.cpp" />
@@ -286,6 +287,7 @@
     <ClCompile Include="src\CommonUtilities\Utility\Benchmark.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Random.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\StringUtils.cpp" />
+    <ClCompile Include="src\CommonUtilities\Utility\WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

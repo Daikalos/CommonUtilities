@@ -267,6 +267,9 @@
     <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Utility\WinUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">
@@ -342,6 +345,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\Utility\WinUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

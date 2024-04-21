@@ -40,11 +40,11 @@ namespace CommonUtilities
 
 		/// \returns Distance from current to target.
 		/// 
-		NODISC constexpr static Vector3 Distance(const Vector3& aCurrent, const Vector3& aTarget);
+		NODISC constexpr static T Distance(const Vector3& aCurrent, const Vector3& aTarget);
 
 		/// \returns Distance squared from current to target.
 		/// 
-		NODISC constexpr static Vector3 DistanceSqr(const Vector3& aCurrent, const Vector3& aTarget);
+		NODISC constexpr static T DistanceSqr(const Vector3& aCurrent, const Vector3& aTarget);
 
 		/// \returns Lerped vector between current and target.
 		/// 
@@ -192,13 +192,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Vector3<T>::Distance(const Vector3& aCurrent, const Vector3& aTarget)
+	constexpr T Vector3<T>::Distance(const Vector3& aCurrent, const Vector3& aTarget)
 	{
 		return Direction(aCurrent, aTarget).Length();
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Vector3<T>::DistanceSqr(const Vector3& aCurrent, const Vector3& aTarget)
+	constexpr T Vector3<T>::DistanceSqr(const Vector3& aCurrent, const Vector3& aTarget)
 	{
 		return Direction(aCurrent, aTarget).LengthSqr();
 	}

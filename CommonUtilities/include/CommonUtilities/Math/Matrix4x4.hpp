@@ -20,6 +20,10 @@ namespace CommonUtilities
 	class Matrix4x4
 	{
 	public:
+		static constexpr int ROWS		= 4;
+		static constexpr int COLUMNS	= 4;
+		static constexpr int COUNT		= ROWS * COLUMNS;
+
 		constexpr Matrix4x4() = default;
 		constexpr ~Matrix4x4() = default;
 
@@ -28,6 +32,10 @@ namespace CommonUtilities
 			T a01, T a11, T a21, T a31,
 			T a02, T a12, T a22, T a32,
 			T a03, T a13, T a23, T a33);
+
+		constexpr Matrix4x4(const std::array<T, COUNT>& aArray);
+
+		constexpr Matrix4x4(const T(&aArray)[COUNT]);
 
 		constexpr Matrix4x4(const Matrix3x3<T>& aMatrix);
 
@@ -85,10 +93,6 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateRotationAroundY(T aRadians) -> Matrix4x4;
 		NODISC constexpr static auto CreateRotationAroundZ(T aRadians) -> Matrix4x4;
 
-		static constexpr int ROWS		= 4;
-		static constexpr int COLUMNS	= 4;
-		static constexpr int COUNT		= ROWS * COLUMNS;
-
 		static const Matrix4x4 IDENTITY;
 
 	private:
@@ -111,6 +115,20 @@ namespace CommonUtilities
 					a01, a11, a21, a31,
 					a02, a12, a22, a32, 
 					a03, a13, a23, a33 }
+	{
+
+	}
+
+	template<typename T>
+	inline constexpr Matrix4x4<T>::Matrix4x4(const std::array<T, COUNT>& aArray)
+		: myMatrix{ aArray }
+	{
+
+	}
+
+	template<typename T>
+	inline constexpr Matrix4x4<T>::Matrix4x4(const T(&aArray)[COUNT])
+		: myMatrix{ std::to_array(aArray) }
 	{
 
 	}

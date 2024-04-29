@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Dijkstra.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Sort.hpp" />
     <ClInclude Include="include\CommonUtilities\Config.h" />

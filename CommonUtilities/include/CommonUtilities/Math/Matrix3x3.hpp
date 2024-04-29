@@ -19,6 +19,10 @@ namespace CommonUtilities
 	class Matrix3x3
 	{
 	public:
+		static constexpr int ROWS		= 3;
+		static constexpr int COLUMNS	= 3;
+		static constexpr int COUNT		= ROWS * COLUMNS;
+
 		constexpr Matrix3x3() = default;
 		constexpr ~Matrix3x3() = default;
 
@@ -26,6 +30,10 @@ namespace CommonUtilities
 			T a00, T a10, T a20,
 			T a01, T a11, T a21,
 			T a02, T a12, T a22);
+
+		constexpr Matrix3x3(const std::array<T, COUNT>& aArray);
+
+		constexpr Matrix3x3(const T(&aArray)[COUNT]);
 
 		constexpr Matrix3x3(const Matrix4x4<T>& aMatrix);
 
@@ -77,10 +85,6 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateRotationAroundY(T aRadians) -> Matrix3x3;
 		NODISC constexpr static auto CreateRotationAroundZ(T aRadians) -> Matrix3x3;
 
-		static constexpr int ROWS		= 3;
-		static constexpr int COLUMNS	= 3;
-		static constexpr int COUNT		= ROWS * COLUMNS;
-
 		static const Matrix3x3 IDENTITY;
 
 	private:
@@ -100,6 +104,20 @@ namespace CommonUtilities
 		: myMatrix{ a00, a10, a20, 
 					a01, a11, a21, 
 					a02, a12, a22 }
+	{
+
+	}
+
+	template<typename T>
+	constexpr Matrix3x3<T>::Matrix3x3(const std::array<T, COUNT>& aArray)
+		: myMatrix{ aArray }
+	{
+
+	}
+
+	template<typename T>
+	constexpr Matrix3x3<T>::Matrix3x3(const T(&aArray)[COUNT])
+		: myMatrix{ std::to_array(aArray) }
 	{
 
 	}

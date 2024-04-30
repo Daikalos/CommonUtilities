@@ -533,6 +533,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4
 	{
+		// assumes the quaternion to be normalized
+
 		T xx = aQuaternion.x * aQuaternion.x;
 		T xy = aQuaternion.x * aQuaternion.y;
 		T xz = aQuaternion.x * aQuaternion.z;

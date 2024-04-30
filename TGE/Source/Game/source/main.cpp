@@ -74,18 +74,14 @@ void Go()
 		return;
 	}
 
-	cu::Vector3f rot{ -0.5f, 0.2f, 1.0f };
 
-	cu::Mat4f cuMat;
-	cuMat.SetRotation(rot);
+	cu::Vector3f vec1(2.0f, -0.4f, 5.0f);
+	cu::Quatf quat1(cu::Vector3f(0.0f, 1.0f, -0.5f), 1.0f);
+	vec1 = cu::Quatf::RotateVectorByQuaternion(quat1, vec1);
 
-	Tga::Vector3f tgaRot = (Tga::Vector3f)(rot * cu::au::RAD2DEG);
-	//tgaRot = (tgaRot.z, tgaRot.y, tgaRot.x);
-
-	Tga::Matrix4x4f tgaMat;
-	tgaMat.SetRotation(tgaRot);
-
-	cu::Vector3f extrRot = cuMat.GetRotation();
+	Tga::Vector3f vec2(2.0f, -0.4f, 5.0f);
+	Tga::Quatf quat2(Tga::Vector3f(0.0f, 1.0f, -0.5f), 1.0f);
+	vec2 = Tga::Quatf::RotateVectorByQuaternion(quat2, vec2);
 
 	std::cin.get();
 

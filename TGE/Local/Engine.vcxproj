@@ -404,10 +404,6 @@
       <ShaderType>Vertex</ShaderType>
       <ObjectFileOutput>../Bin/Shaders/model_shader_VS.cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="..\Source\Engine\tge\shaders\sprite_shader_PS.hlsl">
-      <ShaderType>Pixel</ShaderType>
-      <ObjectFileOutput>../Bin/Shaders/sprite_shader_PS.cso</ObjectFileOutput>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Engine\tge\shaders\PBRFunctions.hlsli" />

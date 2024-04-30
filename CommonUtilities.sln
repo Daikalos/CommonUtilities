@@ -15,6 +15,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{4249EC33-E6FD-4E00-BB0C-86EE41EF9C6B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "TGE\Local\Game.vcxproj", "{7FA9857C-6BE0-860D-14CD-6C1000E3020F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F3442948-63B1-46B4-AB3D-292A88869D28} = {F3442948-63B1-46B4-AB3D-292A88869D28}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "TGE\Local\Engine.vcxproj", "{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}"
 EndProject

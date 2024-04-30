@@ -3,8 +3,6 @@
 #include <tge/sprite/sprite.h>
 
 #include <CommonUtilities/Input/InputHolder.h>
-#include <CommonUtilities/Input/InputBind.hpp>
-#include <CommonUtilities/Input/GamepadInput.h>
 
 enum class GameActions
 {
@@ -25,7 +23,6 @@ public:
 	void Render();
 
 private:
-	cu::InputBind<GameActions> myInputBind;
 	Tga::Sprite3DInstanceData mySpriteInstance;
 	Tga::SpriteSharedData mySpriteSharedData;
 };

@@ -594,9 +594,6 @@
     <FxCompile Include="..\Source\Engine\tge\shaders\model_shader_VS.hlsl">
       <Filter>tge\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\Source\Engine\tge\shaders\sprite_shader_PS.hlsl">
-      <Filter>tge\shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Engine\tge\shaders\PBRFunctions.hlsli">

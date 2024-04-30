@@ -4,6 +4,9 @@
 #include <CommonUtilities/Input/InputHandler.h>
 #include <CommonUtilities/System/Timer.h>
 
+#include <tge/math/Matrix4x4.h>
+#include <CommonUtilities/Math/Matrix4x4.hpp>
+
 cu::InputHolder globalInputHolder;
 
 void Go(void);
@@ -70,7 +73,20 @@ void Go()
 		system("pause");
 		return;
 	}
-	
+
+	cu::Vector3f rot{ -0.5f, 0.2f, 1.0f };
+
+	cu::Mat4f cuMat;
+	cuMat.SetRotation(rot);
+
+	Tga::Vector3f tgaRot = (Tga::Vector3f)(rot * cu::au::RAD2DEG);
+	//tgaRot = (tgaRot.z, tgaRot.y, tgaRot.x);
+
+	Tga::Matrix4x4f tgaMat;
+	tgaMat.SetRotation(tgaRot);
+
+	std::cin.get();
+
 	{
 		cu::Timer timer;
 

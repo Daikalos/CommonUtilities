@@ -2,20 +2,18 @@
 #include <string>
 #include <array>
 
-#include <CommonUtilities/System/BinarySerializer.h>
+#include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities\Utility\WinUtils.h>
 
 int main()
 {
-	const std::array<int, 4> val0{ 1, 2, 3, 4 };
-	cu::BinaryWriteSerializer write;
-	write.Serialize(val0);
+	cu::Vector3f rot { 0.2f, -0.5f, 0.1f };
 
-	std::array<int, 4> val1{};
-	cu::BinaryReadSerializer read(write.GetBuffer());
-	read >> val1;
+	cu::Mat4f mat;
+	mat.SetRotation(rot);
 
-	auto& desktopResolution = cu::GetValidResolutions();
+	cu::Vector3f extrRot = mat.GetRotation();
+	cu::Vector3f extrScale = mat.GetScale();
 
 	return 0;
 }

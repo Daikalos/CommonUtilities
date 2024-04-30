@@ -546,15 +546,15 @@ namespace CommonUtilities
 		T zw = aQuaternion.z * aQuaternion.w;
 
 		T a00 = T(1) - T(2) * (yy + zz);
-		T a01 = T(2) * (xy - zw);
-		T a02 = T(2) * (xz + yw);
+		T a01 = T(2) * (xy + zw);
+		T a02 = T(2) * (xz - yw);
 
-		T a10 = T(2) * (xy + zw);
+		T a10 = T(2) * (xy - zw);
 		T a11 = T(1) - T(2) * (xx + zz);
-		T a12 = T(2) * (yz - xw);
+		T a12 = T(2) * (yz + xw);
 
-		T a20 = T(2) * (xz - yw);
-		T a21 = T(2) * (yz + xw);
+		T a20 = T(2) * (xz + yw);
+		T a21 = T(2) * (yz - xw);
 		T a22 = T(1) - T(2) * (xx + yy);
 
 		return Matrix4x4<T> 

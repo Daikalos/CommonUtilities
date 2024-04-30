@@ -85,6 +85,8 @@ void Go()
 	Tga::Matrix4x4f tgaMat;
 	tgaMat.SetRotation(tgaRot);
 
+	cu::Vector3f extrRot = cuMat.GetRotation();
+
 	std::cin.get();
 
 	{

@@ -106,9 +106,9 @@ namespace CommonUtilities
 		x = std::sqrt(std::max(T(0), T(1) + aMatrix[0] - aMatrix[5] - aMatrix[10])) * T(0.5);
 		y = std::sqrt(std::max(T(0), T(1) - aMatrix[0] + aMatrix[5] - aMatrix[10])) * T(0.5);
 		z = std::sqrt(std::max(T(0), T(1) - aMatrix[0] - aMatrix[5] + aMatrix[10])) * T(0.5);
-		x = std::copysign(x, aMatrix[9] - aMatrix[6]);
-		y = std::copysign(y, aMatrix[2] - aMatrix[8]);
-		z = std::copysign(z, aMatrix[4] - aMatrix[1]);
+		x = std::copysign(x, aMatrix[6] - aMatrix[9]);
+		y = std::copysign(y, aMatrix[8] - aMatrix[2]);
+		z = std::copysign(z, aMatrix[1] - aMatrix[4]);
 	}
 
 	using Quatf = Quaternion<float>;

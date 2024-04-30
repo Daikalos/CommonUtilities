@@ -218,9 +218,6 @@ namespace CommonUtilities
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
-	inline Blackboard<IDType, Hash>::ValueMapBase::~ValueMapBase() = default;
-
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline const T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID) const
 	{

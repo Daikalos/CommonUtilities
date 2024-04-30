@@ -29,10 +29,10 @@ namespace CommonUtilities::au
 	constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
 
 	template<IsArithmetic T>
-	constexpr T MIN_V = std::numeric_limits<T>::min();
+	constexpr T MIN_V = (std::numeric_limits<T>::min)();
 
 	template<IsArithmetic T>
-	constexpr T MAX_V = std::numeric_limits<T>::max();
+	constexpr T MAX_V = (std::numeric_limits<T>::max)();
 
 	inline constexpr float			PI			= PI_V<float>;
 	inline constexpr float			PI_2		= PI_2_V<float>;

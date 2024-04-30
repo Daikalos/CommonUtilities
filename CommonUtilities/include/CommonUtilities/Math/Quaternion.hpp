@@ -102,10 +102,10 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T>::Quaternion(const Matrix4x4<T>& aMatrix)
 	{
-		w = std::sqrt(std::max(T(0), T(1) + aMatrix[0] + aMatrix[5] + aMatrix[10])) * T(0.5);
-		x = std::sqrt(std::max(T(0), T(1) + aMatrix[0] - aMatrix[5] - aMatrix[10])) * T(0.5);
-		y = std::sqrt(std::max(T(0), T(1) - aMatrix[0] + aMatrix[5] - aMatrix[10])) * T(0.5);
-		z = std::sqrt(std::max(T(0), T(1) - aMatrix[0] - aMatrix[5] + aMatrix[10])) * T(0.5);
+		w = std::sqrt((std::max)(T(0), T(1) + aMatrix[0] + aMatrix[5] + aMatrix[10])) * T(0.5);
+		x = std::sqrt((std::max)(T(0), T(1) + aMatrix[0] - aMatrix[5] - aMatrix[10])) * T(0.5);
+		y = std::sqrt((std::max)(T(0), T(1) - aMatrix[0] + aMatrix[5] - aMatrix[10])) * T(0.5);
+		z = std::sqrt((std::max)(T(0), T(1) - aMatrix[0] - aMatrix[5] + aMatrix[10])) * T(0.5);
 		x = std::copysign(x, aMatrix[6] - aMatrix[9]);
 		y = std::copysign(y, aMatrix[8] - aMatrix[2]);
 		z = std::copysign(z, aMatrix[1] - aMatrix[4]);

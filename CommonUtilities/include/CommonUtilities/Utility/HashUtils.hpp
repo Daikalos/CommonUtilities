@@ -45,15 +45,15 @@ namespace CommonUtilities::hs
 	}
 
 	template<typename T>
-	constexpr std::uint32_t JenkinsHash(const T& aKey)
+	constexpr std::size_t JenkinsHash(const T& aKey)
 	{
 		return details::JenkinsHashImpl(reinterpret_cast<const std::byte*>(&aKey), sizeof(T));
 	}
 
 	template<>
-	constexpr std::uint32_t JenkinsHash<std::string>(const std::string& aKey)
+	constexpr std::size_t JenkinsHash<std::string>(const std::string& aKey)
 	{
-		return  details::JenkinsHashImpl(reinterpret_cast<const std::byte*>(aKey.c_str()), aKey.size());
+		return details::JenkinsHashImpl(reinterpret_cast<const std::byte*>(aKey.c_str()), aKey.size());
 	}
 
 	template<typename T>

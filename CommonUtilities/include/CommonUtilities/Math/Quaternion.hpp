@@ -228,17 +228,17 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetRight() const
 	{
-
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 1, 0, 0 });;
 	}
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetUp() const 
 	{
-
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 1, 0 });;
 	}
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetForward() const 
 	{
-
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 0, 1 });;
 	}
 
 	template<typename T>
@@ -290,12 +290,45 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::Lerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta)
 	{
+		Quaternion<T> result;
 
+		// basically just a normal vec4 lerp
+
+		T deltaInv = T(1) - aDelta;
+		result.w = deltaInv * aQuatA.w + aDelta * aQuatB.w;
+		result.x = deltaInv * aQuatA.x + aDelta * aQuatB.x;
+		result.y = deltaInv * aQuatA.y + aDelta * aQuatB.y;
+		result.z = deltaInv * aQuatA.z + aDelta * aQuatB.z;
+		result.Normalize();
+
+		return result;
 	}
 	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::Slerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta)
 	{
+		Quaternion<T> qz = aQuatB;
 
+		T cosTheta = aQuatA.Dot(aQuatB);
+
+		// If cosTheta < 0, the interpolation will take the long way around the sphere. 
+		// To fix this, one quat must be negated.
+		if (cosTheta < T(0))
+		{
+			cosTheta = -cosTheta;
+			qz = -qz;
+		}
+
+		// Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
+		if (cosTheta > T(1) - T(0.9995))
+		{
+			// Linear interpolation
+			return Lerp(aQuatA, qz, aDelta);
+		}
+
+		// Essential Mathematics, page 467
+
+		T angle = std::acos(cosTheta);
+		return (std::sin((T(1) - aDelta) * angle) * aQuatA + std::sin(aDelta * angle) * qz) / std::sin(angle);
 	}
 
 	template<typename T>

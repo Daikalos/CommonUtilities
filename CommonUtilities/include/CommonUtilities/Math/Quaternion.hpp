@@ -3,6 +3,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+
 #include "Vector3.hpp"
 
 namespace CommonUtilities
@@ -30,7 +32,6 @@ namespace CommonUtilities
 		constexpr void Normalize(T aNormLength = static_cast<T>(1));
 
 		constexpr void RotateWithEuler(const Vector3<T>& aEuler);
-		constexpr void RotateWithRadians(const Vector3<T>& aRadians);
 
 		NODISC constexpr T Dot(const Quaternion<T>& aQuat) const;
 
@@ -42,20 +43,25 @@ namespace CommonUtilities
 		NODISC constexpr Quaternion<T> GetNormalized(T aNormLength = static_cast<T>(1)) const;
 		NODISC constexpr Quaternion<T> GetConjugate() const;
 
-		NODISC constexpr Vector3<T> GetEulerAnglesRadians() const;
-		NODISC constexpr Vector3<T> GetEulerAnglesRadiansd() const;
-		NODISC constexpr Vector3<T> GetEulerAnglesDegrees() const;
+		NODISC constexpr Vector3<T> GetEulerAngles() const;
+		NODISC constexpr Vector3<T> GetEulerAnglesDetect() const;
 
 		NODISC constexpr Vector3<T> GetRight() const;
 		NODISC constexpr Vector3<T> GetUp() const;
 		NODISC constexpr Vector3<T> GetForward() const;
 
+		NODISC constexpr Vector4<T> ToVec() const;
+
 		NODISC constexpr Quaternion<T> GetInverse() const;
+
+		constexpr Quaternion<T>& Add(const Quaternion& aRight);
+		constexpr Quaternion<T>& Subtract(const Quaternion& aRight);
+		constexpr Quaternion<T>& Combine(const Quaternion& aRight);
 
 		NODISC constexpr static Quaternion<T> Lerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta);
 		NODISC constexpr static Quaternion<T> Slerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta);
 
-		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3f& aVectorToRotate);
+		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3<T>& aVectorToRotate);
 	};
 
 	template<typename T>
@@ -122,12 +128,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr void Quaternion<T>::RotateWithEuler(const Vector3<T>& aEuler)
 	{
-
-	}
-	template<typename T>
-	constexpr void Quaternion<T>::RotateWithRadians(const Vector3<T>& aRadians)
-	{
-
+		*this *= Quaternion(aEuler);
 	}
 
 	template<typename T>
@@ -161,19 +162,67 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::GetEulerAnglesRadians() const
+	constexpr Vector3<T> Quaternion<T>::GetEulerAngles() const
 	{
+		// Read more about it here: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
+		// pitch (x-axis rotation)
+		const T sinp	= T(2) * (w * x + y * z);
+		const T cosp	= T(1) - T(2) * (x * x + y * y);
+		const T pitch	= std::atan2(sinp, cosp);// roll
+
+		// yaw (y-axis rotation)
+		const T siny = T(2) * (w * y - z * x);
+		const T yaw  = T(0);
+		if (std::abs(siny) >= T(1))
+		{
+			yaw = std::copysign(au::PI_V<T> * T(0.5), siny); // use 90 degrees if out of range
+		}
+		else
+		{
+			yaw = std::asin(siny); // yaw
+		}
+
+		// yaw (y-axis rotation)
+		const T sinr = T(2) * (w * z + x * y);
+		const T cosr = T(1) - T(2) * (y * y + z * z);
+		const T roll = std::atan2(sinr, cosr); // roll
+
+		return Vector3<T>(pitch, yaw, roll);
 	}
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::GetEulerAnglesRadiansd() const 
+	constexpr Vector3<T> Quaternion<T>::GetEulerAnglesDetect() const
 	{
+		// Read more about it here: https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
-	}
-	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::GetEulerAnglesDegrees() const
-	{
+		const T test = x * y + z * w;
+		if (test > T(0.499)) // singularity at north pole
+		{ 
+			const T yaw		= T(2) * std::atan2(x, w);
+			const T roll	= au::PI_2_V<T>;
+			const T pitch	= 0;
 
+			return Vector3<T>{ pitch, yaw, roll };
+		}
+
+		if (test < -T(0.499)) // singularity at south pole
+		{ 
+			const T yaw		= -T(2) * std::atan2(x, w);
+			const T roll	= -au::PI_2_V<T>;
+			const T pitch	= 0;
+
+			return Vector3<T>{ pitch, yaw, roll };
+		}
+
+		const T sqx = x * x;
+		const T sqy = y * y;
+		const T sqz = z * z;
+
+		const T yaw		= std::atan2(T(2) * y * w - T(2) * x * z, T(1) - T(2) * sqy - T(2) * sqz);
+		const T roll	= std::asin(T(2) * test);
+		const T pitch	= std::atan2(T(2) * x * w - T(2) * y * z, T(1) - T(2) * sqx - T(2) * sqz);
+
+		return Vector3<T>{ pitch, yaw, roll };
 	}
 
 	template<typename T>
@@ -193,9 +242,49 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline constexpr Vector4<T> Quaternion<T>::ToVec() const
+	{
+		return Vector4<T>(x, y, z, w);
+	}
+
+	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::GetInverse() const
 	{
 		return GetConjugate() / Length();
+	}
+
+	template<typename T>
+	constexpr Quaternion<T>& Quaternion<T>::Add(const Quaternion& aRight)
+	{
+		w += aRight.w;
+		x += aRight.x;
+		y += aRight.y;
+		z += aRight.z;
+
+		return *this;
+	}
+	template<typename T>
+	constexpr Quaternion<T>& Quaternion<T>::Subtract(const Quaternion& aRight)
+	{
+		w -= aRight.w;
+		x -= aRight.x;
+		y -= aRight.y;
+		z -= aRight.z;
+
+		return *this;
+	}
+	template<typename T>
+	constexpr Quaternion<T>& Quaternion<T>::Combine(const Quaternion& aRight)
+	{
+		*this = Quaternion<T>
+		(
+			(aRight.w * w) - (aRight.x * x) - (aRight.y * y) - (aRight.z *z),
+			(aRight.w * x) + (aRight.x * w) + (aRight.y * z) - (aRight.z *y),
+			(aRight.w * y) + (aRight.y * w) + (aRight.z * x) - (aRight.x *z),
+			(aRight.w * z) + (aRight.z * w) + (aRight.x * y) - (aRight.y *x)
+		);
+
+		return *this;
 	}
 
 	template<typename T>
@@ -210,10 +299,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3f& aVectorToRotate)
+	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3<T>& aVectorToRotate)
 	{
-		Quaternion<T> rVec = ((aQuaternion * Quaternion<T>(0, aVectorToRotate.x, aVectorToRotate.y, aVectorToRotate.z)) * aQuaternion.GetConjugate());
-		return Vector3<T>(rVec.x, rVec.y, rVec.z);
+		const Vector3<T> v(aQuaternion.x, aQuaternion.y, aQuaternion.z);
+		const T s = aQuaternion.w;
+
+		return 2.0f * v.Dot(aVectorToRotate) * v
+			+ (s * s - v.Dot(v)) * aVectorToRotate
+			+ 2.0f * s * v.Cross(aVectorToRotate);
 	}
 
 	// GLOBAL OPERATORS
@@ -225,95 +318,64 @@ namespace CommonUtilities
 	}
 
 	template <typename T>
-	NODISC constexpr Quaternion<T> operator+(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
+	NODISC constexpr Quaternion<T> operator+(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
 	{
-		return Quaternion<T>(aQuatA.w + aQuatB.w, aQuatA.x + aQuatB.x, aQuatA.y + aQuatB.y, aQuatA.z + aQuatB.z);
+		return Quaternion<T>(aLeft).Add(aRight);
+	}
+	template <typename T>
+	NODISC constexpr Quaternion<T> operator-(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return Quaternion<T>(aLeft).Subtract(aRight);
+	}
+	template <typename T>
+	NODISC constexpr Quaternion<T> operator*(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return Quaternion<T>(aLeft).Combine(aRight);
 	}
 
 	template <typename T>
-	NODISC constexpr Quaternion<T> operator-(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
+	NODISC constexpr Quaternion<T> operator*(const Quaternion<T>& aLeft, T aRight)
 	{
-		return Quaternion<T>(aQuatA.w - aQuatB.w, aQuatA.x - aQuatB.x, aQuatA.y - aQuatB.y, aQuatA.z - aQuatB.z);
+		return Quaternion<T>(aLeft.w * aRight, aLeft.x * aRight, aLeft.y * aRight, aLeft.z * aRight);
+	}
+	template <typename T>
+	NODISC constexpr Quaternion<T> operator*(T aLeft, const Quaternion<T>& aRight)
+	{
+		return aRight * aLeft;
 	}
 
 	template <typename T>
-	NODISC constexpr Quaternion<T> operator*(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
+	NODISC constexpr Quaternion<T> operator/(const Quaternion<T>& aLeft, T aRight)
 	{
-		return Quaternion<T>
-		(
-			(aQuatB.w * aQuatA.w) - (aQuatB.x * aQuatA.x) - (aQuatB.y * aQuatA.y) - (aQuatB.z * aQuatA.z),
-			(aQuatB.w * aQuatA.x) + (aQuatB.x * aQuatA.w) + (aQuatB.y * aQuatA.z) - (aQuatB.z * aQuatA.y),
-			(aQuatB.w * aQuatA.y) + (aQuatB.y * aQuatA.w) + (aQuatB.z * aQuatA.x) - (aQuatB.x * aQuatA.z),
-			(aQuatB.w * aQuatA.z) + (aQuatB.z * aQuatA.w) + (aQuatB.x * aQuatA.y) - (aQuatB.y * aQuatA.x)
-		);
+		assert(aRight != 0 && "Trying to divide by zero!");
+		return Quaternion<T>(aLeft.w / aRight, aLeft.x / aRight, aLeft.y / aRight, aLeft.z / aRight);
 	}
 
 	template <typename T>
-	NODISC constexpr Quaternion<T> operator*(const Quaternion<T>& aQuat, T aScalar)
+	constexpr Quaternion<T>& operator+=(Quaternion<T>& aLeft, const Quaternion<T>& aRight)
 	{
-		return Quaternion<T>(aQuat.w * aScalar, aQuat.x * aScalar, aQuat.y * aScalar, aQuat.z * aScalar);
+		return aLeft.Add(aRight);
+	}
+	template <typename T>
+	constexpr Quaternion<T>& operator-=(Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return aLeft.Subtract(aRight);
+	}
+	template <typename T>
+	constexpr Quaternion<T>& operator*=(Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return aLeft.Combine(aRight);
 	}
 
 	template <typename T>
-	NODISC constexpr Quaternion<T> operator*(T aScalar, const Quaternion<T>& aQuat)
+	constexpr Quaternion<T>& operator*=(Quaternion<T>& aLeft, T aRight)
 	{
-		return Quaternion<T>(aQuat.w * aScalar, aQuat.x * aScalar, aQuat.y * aScalar, aQuat.z * aScalar);
-	}
+		aLeft.w *= aRight;
+		aLeft.x *= aRight;
+		aLeft.y *= aRight;
+		aLeft.z *= aRight;
 
-	template <typename T>
-	NODISC constexpr Quaternion<T> operator/(const Quaternion<T>& aQuat, T aScalar)
-	{
-		assert(aScalar != 0 && "Trying to divide by zero!");
-		return Quaternion<T>(aQuat.w / aScalar, aQuat.x / aScalar, aQuat.y / aScalar, aQuat.z / aScalar);
-	}
-
-	template <typename T>
-	constexpr Quaternion<T>& operator+=(Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
-	{
-		aQuatA.w += aQuatB.w;
-		aQuatA.x += aQuatB.x;
-		aQuatA.y += aQuatB.y;
-		aQuatA.z += aQuatB.z;
-
-		return aQuatA;
-	}
-
-	template <typename T>
-	constexpr Quaternion<T>& operator-=(Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
-	{
-		aQuatA.w -= aQuatB.w;
-		aQuatA.x -= aQuatB.x;
-		aQuatA.y -= aQuatB.y;
-		aQuatA.z -= aQuatB.z;
-
-		return aQuatA;
-	}
-
-	template <typename T>
-	constexpr Quaternion<T>& operator*=(Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB)
-	{
-		T w = aQuatA.w;
-		T x = aQuatA.x;
-		T y = aQuatA.y;
-		T z = aQuatA.z;
-
-		aQuatA.w = (aQuatB.w * w) - (aQuatB.x * x) - (aQuatB.y * y) - (aQuatB.z * z);
-		aQuatA.x = (aQuatB.w * x) + (aQuatB.x * w) + (aQuatB.y * z) - (aQuatB.z * y);
-		aQuatA.y = (aQuatB.w * y) + (aQuatB.y * w) + (aQuatB.z * x) - (aQuatB.x * z);
-		aQuatA.z = (aQuatB.w * z) + (aQuatB.z * w) + (aQuatB.x * y) - (aQuatB.y * x);
-
-		return aQuatA;
-	}
-
-	template <typename T>
-	constexpr Quaternion<T>& operator*=(Quaternion<T>& aQuat, const T& aScalar)
-	{
-		aQuat.w *= aScalar;
-		aQuat.x *= aScalar;
-		aQuat.y *= aScalar;
-		aQuat.z *= aScalar;
-
-		return aQuat;
+		return aLeft;
 	}
 
 	using Quatf = Quaternion<float>;

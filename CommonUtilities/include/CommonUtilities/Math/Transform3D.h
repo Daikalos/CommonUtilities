@@ -2,6 +2,7 @@
 
 #include "Matrix4x4.hpp"
 #include "Vector3.hpp"
+#include "Quaternion.hpp"
 
 #include <CommonUtilities/Config.h>
 
@@ -23,6 +24,8 @@ namespace CommonUtilities
 		NODISC const Vector3f& GetPosition() const noexcept;
 		NODISC const Vector3f& GetRotation() const noexcept;
 		NODISC const Vector3f& GetScale() const noexcept;
+
+		NODISC Quatf GetQuaternion() const;
 
 		NODISC Vector3f ModelToWorld(const Vector3f& aModelPosition) const;
 		NODISC Vector3f WorldToModel(const Vector3f& aWorldPosition) const;

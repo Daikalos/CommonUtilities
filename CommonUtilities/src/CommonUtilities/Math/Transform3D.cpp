@@ -54,6 +54,11 @@ const Vector3f& Transform3D::GetScale() const noexcept
 	return myScale;
 }
 
+Quatf Transform3D::GetQuaternion() const
+{
+	return Quatf(GetMatrix());
+}
+
 Vector3f Transform3D::ModelToWorld(const Vector3f& aModelPosition) const
 {
 	return GetMatrix() * aModelPosition;

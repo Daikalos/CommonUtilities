@@ -173,7 +173,7 @@ namespace CommonUtilities
 
 		// yaw (y-axis rotation)
 		const T siny = T(2) * (w * y - z * x);
-		const T yaw  = T(0);
+		T yaw  = T(0);
 		if (std::abs(siny) >= T(1))
 		{
 			yaw = std::copysign(au::PI_V<T> * T(0.5), siny); // use 90 degrees if out of range

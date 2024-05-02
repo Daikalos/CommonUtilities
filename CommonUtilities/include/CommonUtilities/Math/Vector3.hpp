@@ -209,7 +209,7 @@ namespace CommonUtilities
 		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
-		return Vector2<T>
+		return Vector3<T>
 		{
 			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x)), (std::min)(aCurrent.x, aTarget.x), (std::max)(aCurrent.x, aTarget.x))),
 			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y)), (std::min)(aCurrent.y, aTarget.y), (std::max)(aCurrent.y, aTarget.y))),

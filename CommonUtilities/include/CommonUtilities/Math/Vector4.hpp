@@ -126,14 +126,15 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
+		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
 
 		return Vector4<T>
 		{
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x))),
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y))),
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.z), static_cast<float>(aTarget.z))),
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.w), static_cast<float>(aTarget.w)))
+			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x)), (std::min)(aCurrent.x, aTarget.x), (std::max)(aCurrent.x, aTarget.x))),
+			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y)), (std::min)(aCurrent.y, aTarget.y), (std::max)(aCurrent.y, aTarget.y))),
+			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.z), static_cast<float>(aTarget.z)), (std::min)(aCurrent.z, aTarget.z), (std::max)(aCurrent.z, aTarget.z))),
+			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.w), static_cast<float>(aTarget.w)), (std::min)(aCurrent.w, aTarget.w), (std::max)(aCurrent.w, aTarget.w))),
 		};
 	}
 

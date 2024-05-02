@@ -341,7 +341,7 @@ namespace CommonUtilities
 		const Vector3<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");
 
-		const Vector3<T> is = static_cast<T>(1) / s;
+		const Vector3<T> is = T(1) / s;
 		const Vector3<T> ip = -GetTranslation();
 
 		Matrix4x4 inverseMatrix

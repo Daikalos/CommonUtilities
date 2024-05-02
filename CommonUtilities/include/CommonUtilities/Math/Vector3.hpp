@@ -50,6 +50,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr static Vector3 Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
 
+		/// \returns Clamped lerped vector between current and target.
+		/// 
+		NODISC constexpr static Vector3 CLerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
+
 		/// \returns Slerped vector between current and target.
 		/// 
 		NODISC constexpr static Vector3 Slerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
@@ -205,6 +209,19 @@ namespace CommonUtilities
 
 	template<typename T>
 	constexpr Vector3<T> Vector3<T>::Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
+	{
+		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
+
+		return Vector3<T>
+		{
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y))),
+			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.z), static_cast<float>(aTarget.z)))
+		};
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::CLerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
 	{
 		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };

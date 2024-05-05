@@ -56,8 +56,7 @@ namespace CommonUtilities::ctr
 		if (it == aVector.end())
 			return false;
 
-		*it = std::move(aVector.back());
-		aVector.pop_back();
+		EraseCyclicAt(aVector, it);
 
 		return true;
 	}
@@ -70,8 +69,7 @@ namespace CommonUtilities::ctr
 		if (it == aVector.end())
 			return false;
 
-		*it = std::move(aVector.back());
-		aVector.pop_back();
+		EraseCyclicAt(aVector, it);
 
 		return true;
 	}
@@ -81,7 +79,24 @@ namespace CommonUtilities::ctr
 	{
 		assert(aIndex < aContainer.size());
 
-		aContainer[aIndex] = std::move(aContainer.back());
+		if (aIndex != aContainer.size() - 1)
+		{
+			aContainer[aIndex] = std::move(aContainer.back());
+		}
+
+		aContainer.pop_back();
+	}
+
+	template<typename T, typename Iter>
+	inline void EraseCyclicAt(T& aContainer, Iter aIterator)
+	{
+		assert(aIterator != aContainer.end());
+
+		if (aIterator != aContainer.end() - 1)
+		{
+			*aIterator = std::move(aContainer.back());
+		}
+
 		aContainer.pop_back();
 	}
 

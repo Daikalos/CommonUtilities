@@ -112,11 +112,14 @@ namespace CommonUtilities
 		};
 
 		template<typename T>
+		NODISC auto FindValueMap() const -> const ValueMap<T>&;
+
+		template<typename T>
 		NODISC auto FindValueMap() -> ValueMap<T>&;
 
 		using TypeValueMap = std::unordered_map<std::size_t, std::unique_ptr<ValueMapBase>>;
 
-		TypeValueMap myData;
+		mutable TypeValueMap myData;
 		mutable std::shared_mutex myMutex;
 	};
 
@@ -127,7 +130,7 @@ namespace CommonUtilities
 	{
 		std::shared_lock lock(myMutex);
 
-		ValueMap<T>& map = FindValueMap<T>();
+		const ValueMap<T>& map = FindValueMap<T>();
 		return map.Get(aID);
 	}
 
@@ -200,9 +203,10 @@ namespace CommonUtilities
 		}
 	}
 
+
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
-	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
+	inline auto Blackboard<IDType, Hash>::FindValueMap() const -> const ValueMap<T>&
 	{
 		static constexpr std::size_t key = id::Type<T>::ID();
 
@@ -219,15 +223,22 @@ namespace CommonUtilities
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
+	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
+	{
+		return const_cast<ValueMap<T>&>(std::as_const(*this).FindValueMap<T>());
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename T>
 	inline const T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID) const
 	{
-		return myValues.at(myIndices[Hash{}(aID)]);
+		return myValues.at(myIndices.at(Hash{}(aID)));
 	}
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
 	inline T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID)
 	{
-		return myValues.at(myIndices[Hash{}(aID)]);
+		return myValues.at(myIndices.at(Hash{}(aID)));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

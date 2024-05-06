@@ -103,6 +103,8 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateRotationAroundY(T aRadians) -> Matrix4x4;
 		NODISC constexpr static auto CreateRotationAroundZ(T aRadians) -> Matrix4x4;
 
+		NODISC constexpr static auto CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp = Vector3<T>(0, 1, 0));
+
 		NODISC constexpr static auto CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 
 		static const Matrix4x4 IDENTITY;
@@ -584,6 +586,21 @@ namespace CommonUtilities
 			-s,  c,  0,  0,
 			 0,  0,  1,  0,
 			 0,  0,  0,  1
+		};
+	}
+
+	template<typename T>
+	inline constexpr auto Matrix4x4<T>::CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp)
+	{
+		Vector3<T> xAxis = aUp.Cross(aDirection).GetNormalized();
+		Vector3<T> yAxis = aDirection.Cross(xAxis);
+
+		return Matrix4x4<T>
+		{
+			xAxis.x,					yAxis.x,					aDirection.x,					0,
+			xAxis.y,					yAxis.y,					aDirection.y,					0,
+			xAxis.z,					yAxis.z,					aDirection.z,					0,
+			-xAxis.Dot(aEyePosition),	-yAxis.Dot(aEyePosition),	-aDirection.Dot(aEyePosition),	1
 		};
 	}
 

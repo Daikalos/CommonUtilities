@@ -182,6 +182,9 @@
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h" />
+    <ClInclude Include="include\CommonUtilities\System\StopWatch.h" />
+    <ClInclude Include="include\CommonUtilities\System\TimedEvent.h" />
+    <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
@@ -283,9 +286,12 @@
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp" />
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp" />
+    <ClCompile Include="src\CommonUtilities\System\StopWatch.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />
+    <ClCompile Include="src\CommonUtilities\System\TimedEvent.cpp" />
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Benchmark.cpp" />
+    <ClCompile Include="src\CommonUtilities\Utility\FileUtils.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Random.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\StringUtils.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\WinUtils.cpp" />

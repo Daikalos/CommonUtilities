@@ -273,6 +273,15 @@
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\StopWatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\TimedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">
@@ -351,6 +360,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Utility\WinUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\Utility\FileUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\System\StopWatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\System\TimedEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

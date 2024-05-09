@@ -5,8 +5,13 @@
 #include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities\Utility\WinUtils.h>
 
+#include <CommonUtilities/System/TimedEvent.h>
+
 int main()
 {
+	cu::TimedEvent timedEvent;
+	timedEvent.Add([]() {});
+
 	cu::Quatf rot(0.2f, -0.5f, 0.1f);
 	rot.Normalize();
 

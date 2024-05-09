@@ -6,6 +6,8 @@
 #include <memory>
 #include <thread>
 #include <utility>
+#include <filesystem>
+#include <cmath>
 
 #include <vector>
 #include <stack>

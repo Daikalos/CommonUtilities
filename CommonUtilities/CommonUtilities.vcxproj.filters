@@ -249,9 +249,6 @@
     <ClInclude Include="include\CommonUtilities\Structures\Blackboard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\CommonUtilities.pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -280,6 +277,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\TimedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonUtilities.pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -353,9 +353,6 @@
     <ClCompile Include="src\CommonUtilities\Utility\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\CommonUtilities.pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -369,6 +366,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\TimedEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonUtilities.pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

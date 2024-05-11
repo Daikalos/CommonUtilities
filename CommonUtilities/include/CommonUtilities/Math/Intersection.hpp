@@ -256,21 +256,21 @@ namespace CommonUtilities
 						result.collided		= true;
 					}
 				}
-				else // 2D collision
-				{
-					if (xOverlap < yOverlap) // x-axis
-					{
-						result.normal = (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
-						result.penetration = xOverlap;
-						result.collided = true;
-					}
-					else  // y-axis
-					{
-						result.normal = (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
-						result.penetration = yOverlap;
-						result.collided = true;
-					}
-				}
+				//else // 2D collision
+				//{
+				//	if (xOverlap < yOverlap) // x-axis
+				//	{
+				//		result.normal = (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
+				//		result.penetration = xOverlap;
+				//		result.collided = true;
+				//	}
+				//	else  // y-axis
+				//	{
+				//		result.normal = (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
+				//		result.penetration = yOverlap;
+				//		result.collided = true;
+				//	}
+				//}
 			}
 		}
 
@@ -339,9 +339,9 @@ namespace CommonUtilities
 
 			inside = true;
 
-			const T x = static_cast<T>(std::abs(dir.x));
-			const T y = static_cast<T>(std::abs(dir.y));
-			const T z = static_cast<T>(std::abs(dir.z));
+			const T x = T(std::abs(dir.x));
+			const T y = T(std::abs(dir.y));
+			const T z = T(std::abs(dir.z));
 
 			if (x > y && x > z)
 			{

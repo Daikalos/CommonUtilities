@@ -359,7 +359,7 @@ namespace CommonUtilities
 		{
 			Vector3<T> axis(1, 0, 0);
 			axis = axis.Cross(aFrom);
-			if (axis.LengthSqr() == T(0))
+			if (axis == Vector3<T>::Zero)
 			{
 				axis = Vector3<T>(0, 1, 0);
 				axis = axis.Cross(aFrom);

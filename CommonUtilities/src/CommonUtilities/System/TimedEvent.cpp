@@ -4,6 +4,15 @@
 
 using namespace CommonUtilities;
 
+TimedEvent::TimedEvent(float aCallTime, bool aIsLooping)
+	: myEvent()
+	, myCallTime(aCallTime)
+	, myStopWatch()
+	, myIsLooping(aIsLooping)
+{
+
+}
+
 TimedEvent::operator bool() const
 {
 	return static_cast<bool>(myEvent);

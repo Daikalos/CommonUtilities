@@ -24,8 +24,8 @@ namespace CommonUtilities
 		void Update(const Timer& aTimer);
 
 	private:
-		float	myDuration		= 0.0;
-		float	myRealDuration	= 0.0;
+		float	myElapsed		= 0.0;
+		float	myRealElapsed	= 0.0;
 		bool	myIsRunning		= false;
 	};
 }

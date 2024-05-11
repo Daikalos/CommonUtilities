@@ -144,6 +144,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector4<T> XYZW(T aW = T{}) const;
 
 		static const Vector3 Zero;
+		static const Vector3 One;
 		static const Vector3 Up;
 		static const Vector3 Down;
 		static const Vector3 Right;
@@ -154,6 +155,9 @@ namespace CommonUtilities
 
 	template <typename T>
 	const Vector3<T> Vector3<T>::Zero(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0));
+
+	template <typename T>
+	const Vector3<T> Vector3<T>::One(static_cast<T>(1), static_cast<T>(1), static_cast<T>(1));
 
 	template <typename T>
 	const Vector3<T> Vector3<T>::Up(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0));

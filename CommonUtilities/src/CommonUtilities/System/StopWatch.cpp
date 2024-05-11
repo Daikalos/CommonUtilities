@@ -15,11 +15,11 @@ StopWatch::~StopWatch() = default;
 
 float StopWatch::GetElapsed() const noexcept
 {
-	return myDuration;
+	return myElapsed;
 }
 float StopWatch::GetRealElapsed() const noexcept
 {
-	return myRealDuration;
+	return myRealElapsed;
 }
 bool StopWatch::IsRunning() const noexcept
 {
@@ -36,8 +36,8 @@ void StopWatch::Stop()
 }
 void StopWatch::Reset(float aHeadStart)
 {
-	myDuration		= aHeadStart;
-	myRealDuration	= aHeadStart;
+	myElapsed		= aHeadStart;
+	myRealElapsed	= aHeadStart;
 	myIsRunning		= false;
 }
 
@@ -45,7 +45,7 @@ void StopWatch::Update(const Timer& aTimer)
 {
 	if (myIsRunning)
 	{
-		myDuration		+= aTimer.GetDT();
-		myRealDuration	+= aTimer.GetRealDT();
+		myElapsed		+= aTimer.GetDT();
+		myRealElapsed	+= aTimer.GetRealDT();
 	}
 }

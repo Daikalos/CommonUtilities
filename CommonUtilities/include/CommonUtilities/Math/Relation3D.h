@@ -33,7 +33,7 @@ namespace CommonUtilities
 
 		/// Creates a shared pointer of Relation3D.
 		/// 
-		/// \param someArgs: Additional constructor arguments (look at Transform2D for possible options)
+		/// \param someArgs: Additional constructor arguments (look at Transform3D for possible options)
 		/// 
 		template<typename... Args>
 		NODISC static Relation3DPtr Instantiate(Args&&... someArgs);

@@ -10,6 +10,8 @@ namespace CommonUtilities
 	public:
 		using HandlerType = typename Event<>::HandlerType;
 
+		TimedEvent(float aCallTime, bool aIsLooping = false);
+
 		TimedEvent() = default;
 		~TimedEvent() = default;
 

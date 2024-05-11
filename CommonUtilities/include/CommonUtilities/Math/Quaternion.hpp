@@ -29,7 +29,7 @@ namespace CommonUtilities
 		constexpr Quaternion(const Vector3<T>& aVector, T aAngle);
 		constexpr Quaternion(const Matrix4x4<T>& aMatrix);
 
-		constexpr void Normalize(T aNormLength = static_cast<T>(1));
+		constexpr void Normalize(T aNormLength = T(1));
 
 		constexpr void RotateWithEuler(const Vector3<T>& aEuler);
 
@@ -359,7 +359,7 @@ namespace CommonUtilities
 		{
 			Vector3<T> axis(1, 0, 0);
 			axis = axis.Cross(aFrom);
-			if (axis.Length() == T(0))
+			if (axis.LengthSqr() == T(0))
 			{
 				axis = Vector3<T>(0, 1, 0);
 				axis = axis.Cross(aFrom);
@@ -368,9 +368,9 @@ namespace CommonUtilities
 			return Quaternion(axis.x, axis.y, axis.z, T(0)).GetNormalized();
 		}
 
-		const T s		= std::sqrt((T(1) + d) * T(2));
-		const T invs	= T(1) / s;
-		const Vector3<T> c = aFrom.Cross(aTo) * invs;
+		const T s			= std::sqrt((T(1) + d) * T(2));
+		const T invs		= T(1) / s;
+		const Vector3<T> c	= aFrom.Cross(aTo) * invs;
 
 		return Quaternion(c.x, c.y, c.z, s * T(0.5)).GetNormalized();
 	}

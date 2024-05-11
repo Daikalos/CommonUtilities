@@ -15,7 +15,7 @@ int main()
 	cu::Mat4f mat;
 	mat.SetRotation(rot);
 
-	cu::Vector3f extrRot = rot.GetEulerAnglesDetect();
+	cu::Vector3f extrRot = rot.GetEulerAngles();
 	cu::Vector3f extrScale = mat.GetScale();
 
 	return 0;

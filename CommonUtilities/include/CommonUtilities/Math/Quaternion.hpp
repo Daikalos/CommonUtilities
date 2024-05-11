@@ -25,7 +25,7 @@ namespace CommonUtilities
 
 		constexpr Quaternion(T aW, T aX, T aY, T aZ);
 		constexpr Quaternion(T aYaw, T aPitch, T aRoll);
-		constexpr Quaternion(const Vector3<T>& aYawPitchRoll);
+		constexpr Quaternion(const Vector3<T>& aPitchYawRoll);
 		constexpr Quaternion(const Vector3<T>& aVector, T aAngle);
 		constexpr Quaternion(const Matrix4x4<T>& aMatrix);
 
@@ -90,8 +90,8 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Quaternion<T>::Quaternion(const Vector3<T>& aYawPitchRoll)
-		: Quaternion(aYawPitchRoll.x, aYawPitchRoll.y, aYawPitchRoll.z)
+	constexpr Quaternion<T>::Quaternion(const Vector3<T>& aPitchYawRoll)
+		: Quaternion(aPitchYawRoll.y, aPitchYawRoll.x, aPitchYawRoll.z)
 	{
 
 	}

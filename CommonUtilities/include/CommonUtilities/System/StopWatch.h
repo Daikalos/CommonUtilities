@@ -13,9 +13,9 @@ namespace CommonUtilities
 		StopWatch();
 		~StopWatch();
 
-		float GetElapsed() const noexcept;
-		float GetRealElapsed() const noexcept;
-		bool IsRunning() const noexcept;
+		NODISC float GetElapsed() const noexcept;
+		NODISC float GetRealElapsed() const noexcept;
+		NODISC bool IsRunning() const noexcept;
 
 		void Start();
 		void Stop();

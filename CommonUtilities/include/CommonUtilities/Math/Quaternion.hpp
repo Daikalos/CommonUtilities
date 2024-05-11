@@ -16,7 +16,7 @@ namespace CommonUtilities
 	class Quaternion
 	{
 	public:
-		T w{}; // scalar
+		T w{1}; // scalar
 		T x{};
 		T y{};
 		T z{};
@@ -40,8 +40,8 @@ namespace CommonUtilities
 		NODISC constexpr T Length() const;
 		NODISC constexpr T LengthSqr() const;
 
-		NODISC constexpr Quaternion<T> GetNormalized(T aNormLength = static_cast<T>(1)) const;
-		NODISC constexpr Quaternion<T> GetConjugate() const;
+		NODISC constexpr Quaternion GetNormalized(T aNormLength = static_cast<T>(1)) const;
+		NODISC constexpr Quaternion GetConjugate() const;
 
 		NODISC constexpr Vector3<T> GetEulerAngles() const;
 		NODISC constexpr Vector3<T> GetEulerAnglesDetect() const;
@@ -52,16 +52,19 @@ namespace CommonUtilities
 
 		NODISC constexpr Vector4<T> ToVec() const;
 
-		NODISC constexpr Quaternion<T> GetInverse() const;
+		NODISC constexpr Quaternion GetInverse() const;
 
-		constexpr Quaternion<T>& Add(const Quaternion& aRight);
-		constexpr Quaternion<T>& Subtract(const Quaternion& aRight);
-		constexpr Quaternion<T>& Combine(const Quaternion& aRight);
+		constexpr Quaternion& Add(const Quaternion& aRight);
+		constexpr Quaternion& Subtract(const Quaternion& aRight);
+		constexpr Quaternion& Combine(const Quaternion& aRight);
 
-		NODISC constexpr static Quaternion<T> Lerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta);
-		NODISC constexpr static Quaternion<T> Slerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta);
+		NODISC constexpr static Quaternion Lerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
+		NODISC constexpr static Quaternion Slerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 
-		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3<T>& aVectorToRotate);
+		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate);
+		NODISC constexpr static Quaternion RotationFromTo(Vector3<T> aFrom, Vector3<T> aTo);
+
+		static const Quaternion IDENTITY;
 	};
 
 	template<typename T>
@@ -145,7 +148,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr T Quaternion<T>::Dot(const Quaternion<T>& aQuat) const
+	constexpr T Quaternion<T>::Dot(const Quaternion& aQuat) const
 	{
 		return x * aQuat.x + y * aQuat.y + z * aQuat.z + w * aQuat.w;
 	}
@@ -166,27 +169,24 @@ namespace CommonUtilities
 	{
 		// Read more about it here: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
+		const T sqx = x * x;
+		const T sqy = y * y;
+		const T sqz = z * z;
+
 		// pitch (x-axis rotation)
-		const T sinp	= T(2) * (w * x + y * z);
-		const T cosp	= T(1) - T(2) * (x * x + y * y);
-		const T pitch	= std::atan2(sinp, cosp);// roll
+		const T sinp	= T(2) * (w * z + x * y);
+		const T cosp	= T(1) - T(2) * (sqy + sqz);
+		const T pitch	= std::atan2(sinp, cosp);
 
 		// yaw (y-axis rotation)
 		const T siny = T(2) * (w * y - z * x);
-		T yaw  = T(0);
-		if (std::abs(siny) >= T(1))
-		{
-			yaw = std::copysign(au::PI_V<T> * T(0.5), siny); // use 90 degrees if out of range
-		}
-		else
-		{
-			yaw = std::asin(siny); // yaw
-		}
 
-		// yaw (y-axis rotation)
-		const T sinr = T(2) * (w * z + x * y);
-		const T cosr = T(1) - T(2) * (y * y + z * z);
-		const T roll = std::atan2(sinr, cosr); // roll
+		T yaw = (std::abs(siny) > T(0.99999) ? std::copysign(au::PI_2_V<T>, siny) : std::asin(siny));
+
+		// roll (z-axis rotation)
+		const T sinr	= T(2) * (w * x + y * z);
+		const T cosr	= T(1) - T(2) * (sqx + sqy);
+		const T roll	= std::atan2(sinr, cosr);
 
 		return Vector3<T>(pitch, yaw, roll);
 	}
@@ -195,32 +195,34 @@ namespace CommonUtilities
 	{
 		// Read more about it here: https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
-		const T test = x * y + z * w;
-		if (test > T(0.499)) // singularity at north pole
+		const T test = T(2) * (w * y - z * x);
+
+		if (test > T(0.99999)) // singularity at north pole
 		{ 
-			const T yaw		= T(2) * std::atan2(x, w);
-			const T roll	= au::PI_2_V<T>;
-			const T pitch	= 0;
+			const T pitch	= -T(2) * std::atan2(x, w);
+			const T yaw		= au::PI_2_V<T>;
+			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
-		if (test < -T(0.499)) // singularity at south pole
+		if (test < -T(0.99999)) // singularity at south pole
 		{ 
-			const T yaw		= -T(2) * std::atan2(x, w);
-			const T roll	= -au::PI_2_V<T>;
-			const T pitch	= 0;
+			const T pitch	= T(2) * std::atan2(x, w);
+			const T yaw		= -au::PI_2_V<T>;;
+			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
+		const T sqw = w * w;
 		const T sqx = x * x;
 		const T sqy = y * y;
 		const T sqz = z * z;
 
-		const T yaw		= std::atan2(T(2) * y * w - T(2) * x * z, T(1) - T(2) * sqy - T(2) * sqz);
-		const T roll	= std::asin(T(2) * test);
-		const T pitch	= std::atan2(T(2) * x * w - T(2) * y * z, T(1) - T(2) * sqx - T(2) * sqz);
+		const T pitch	= std::atan2(T(2) * (w * z + x * y), sqx - sqy - sqz + sqw);
+		const T yaw		= std::asin(test);
+		const T roll	= std::atan2(T(2) * (w * x + y * z), -sqx - sqy + sqz + sqw);
 
 		return Vector3<T>{ pitch, yaw, roll };
 	}
@@ -288,7 +290,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Quaternion<T> Quaternion<T>::Lerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta)
+	constexpr Quaternion<T> Quaternion<T>::Lerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta)
 	{
 		Quaternion<T> result;
 
@@ -304,7 +306,7 @@ namespace CommonUtilities
 		return result;
 	}
 	template<typename T>
-	constexpr Quaternion<T> Quaternion<T>::Slerp(const Quaternion<T>& aQuatA, const Quaternion<T>& aQuatB, T aDelta)
+	constexpr Quaternion<T> Quaternion<T>::Slerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta)
 	{
 		Quaternion<T> qz = aQuatB;
 
@@ -332,7 +334,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion<T>& aQuaternion, const Vector3<T>& aVectorToRotate)
+	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate)
 	{
 		const Vector3<T> v(aQuaternion.x, aQuaternion.y, aQuaternion.z);
 		const T s = aQuaternion.w;
@@ -340,6 +342,37 @@ namespace CommonUtilities
 		return 2.0f * v.Dot(aVectorToRotate) * v
 			+ (s * s - v.Dot(v)) * aVectorToRotate
 			+ 2.0f * s * v.Cross(aVectorToRotate);
+	}
+
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::RotationFromTo(Vector3<T> aFrom, Vector3<T> aTo)
+	{
+		aFrom.Normalize();
+		aTo.Normalize();
+
+		const float d = aFrom.Dot(aTo);
+		if (d >= T(1)) // same direction
+		{
+			return IDENTITY; 
+		}
+		else if (d >= -T(1)) // opposites
+		{
+			Vector3<T> axis(1, 0, 0);
+			axis = axis.Cross(aFrom);
+			if (axis.Length() == T(0))
+			{
+				axis = Vector3<T>(0, 1, 0);
+				axis = axis.Cross(aFrom);
+			}
+
+			return Quaternion(axis.x, axis.y, axis.z, T(0)).GetNormalized();
+		}
+
+		const T s		= std::sqrt((T(1) + d) * T(2));
+		const T invs	= T(1) / s;
+		const Vector3<T> c = aFrom.Cross(aTo) * invs;
+
+		return Quaternion(c.x, c.y, c.z, s * T(0.5)).GetNormalized();
 	}
 
 	// GLOBAL OPERATORS
@@ -410,6 +443,9 @@ namespace CommonUtilities
 
 		return aLeft;
 	}
+
+	template<typename T>
+	inline const Quaternion<T> Quaternion<T>::IDENTITY;
 
 	using Quatf = Quaternion<float>;
 	using Quatd = Quaternion<double>;

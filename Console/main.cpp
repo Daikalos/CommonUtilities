@@ -9,9 +9,6 @@
 
 int main()
 {
-	cu::TimedEvent timedEvent;
-	timedEvent.Add([]() {});
-
 	cu::Quatf rot(0.2f, -0.5f, 0.1f);
 	rot.Normalize();
 

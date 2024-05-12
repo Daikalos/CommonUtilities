@@ -23,11 +23,11 @@ namespace CommonUtilities
 
 		constexpr Quaternion() = default;
 
-		constexpr Quaternion(T aW, T aX, T aY, T aZ);
-		constexpr Quaternion(T aYaw, T aPitch, T aRoll);
-		constexpr Quaternion(const Vector3<T>& aPitchYawRoll);
-		constexpr Quaternion(const Vector3<T>& aVector, T aAngle);
-		constexpr Quaternion(const Matrix4x4<T>& aMatrix);
+		constexpr explicit Quaternion(T aW, T aX, T aY, T aZ);
+		constexpr explicit Quaternion(T aYaw, T aPitch, T aRoll);
+		constexpr explicit Quaternion(const Vector3<T>& aPitchYawRoll);
+		constexpr explicit Quaternion(const Vector3<T>& aVector, T aAngle);
+		constexpr explicit Quaternion(const Matrix4x4<T>& aMatrix);
 
 		constexpr void Normalize(T aNormLength = T(1));
 
@@ -76,17 +76,17 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T>::Quaternion(T aYaw, T aPitch, T aRoll)
 	{
-		T cr = std::cos(aRoll  * T(0.5));
-		T sr = std::sin(aRoll  * T(0.5));
-		T cy = std::cos(aYaw   * T(0.5));
-		T sy = std::sin(aYaw   * T(0.5));
-		T cp = std::cos(aPitch * T(0.5));
-		T sp = std::sin(aPitch * T(0.5));
+		T cx = std::cos(aPitch	* T(0.5));
+		T sx = std::sin(aPitch	* T(0.5));
+		T cy = std::cos(aYaw	* T(0.5));
+		T sy = std::sin(aYaw	* T(0.5));
+		T cz = std::cos(aRoll	* T(0.5));
+		T sz = std::sin(aRoll	* T(0.5));
 
-		w = cy * cr * cp + sy * sr * sp;
-		x = cy * sr * cp - sy * cr * sp;
-		y = cy * cr * sp + sy * sr * cp;
-		z = sy * cr * cp - cy * sr * sp;
+		w = cx * cy * cz + sx * sy * sz;
+		x = sx * cy * cz - cx * sy * sz;
+		y = cx * sy * cz + sx * cy * sz;
+		z = cx * cy * sz - sx * sy * cz;
 	}
 
 	template<typename T>
@@ -174,8 +174,8 @@ namespace CommonUtilities
 		const T sqz = z * z;
 
 		// pitch (x-axis rotation)
-		const T sinp	= T(2) * (w * z + x * y);
-		const T cosp	= T(1) - T(2) * (sqy + sqz);
+		const T sinp	= T(2) * (w * x + y * z);
+		const T cosp	= T(1) - T(2) * (sqx + sqy);
 		const T pitch	= std::atan2(sinp, cosp);
 
 		// yaw (y-axis rotation)
@@ -184,8 +184,8 @@ namespace CommonUtilities
 		T yaw = (std::abs(siny) > T(0.99999) ? std::copysign(au::PI_2_V<T>, siny) : std::asin(siny));
 
 		// roll (z-axis rotation)
-		const T sinr	= T(2) * (w * x + y * z);
-		const T cosr	= T(1) - T(2) * (sqx + sqy);
+		const T sinr	= T(2) * (w * z + x * y);
+		const T cosr	= T(1) - T(2) * (sqy + sqz);
 		const T roll	= std::atan2(sinr, cosr);
 
 		return Vector3<T>(pitch, yaw, roll);
@@ -199,18 +199,18 @@ namespace CommonUtilities
 
 		if (test > T(0.99999)) // singularity at north pole
 		{ 
-			const T pitch	= -T(2) * std::atan2(x, w);
+			const T pitch	= 0;
 			const T yaw		= au::PI_2_V<T>;
-			const T roll	= 0;
+			const T roll	= -T(2) * std::atan2(x, w);
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
 		if (test < -T(0.99999)) // singularity at south pole
 		{ 
-			const T pitch	= T(2) * std::atan2(x, w);
+			const T pitch	= 0;
 			const T yaw		= -au::PI_2_V<T>;;
-			const T roll	= 0;
+			const T roll	= T(2) * std::atan2(x, w);
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
@@ -220,9 +220,9 @@ namespace CommonUtilities
 		const T sqy = y * y;
 		const T sqz = z * z;
 
-		const T pitch	= std::atan2(T(2) * (w * z + x * y), sqx - sqy - sqz + sqw);
+		const T pitch	= std::atan2(T(2) * (w * x + y * z), -sqx - sqy + sqz + sqw);
 		const T yaw		= std::asin(test);
-		const T roll	= std::atan2(T(2) * (w * x + y * z), -sqx - sqy + sqz + sqw);
+		const T roll	= std::atan2(T(2) * (w * z + x * y), sqx - sqy - sqz + sqw);
 
 		return Vector3<T>{ pitch, yaw, roll };
 	}
@@ -365,14 +365,14 @@ namespace CommonUtilities
 				axis = axis.Cross(aFrom);
 			}
 
-			return Quaternion(axis.x, axis.y, axis.z, T(0)).GetNormalized();
+			return Quaternion(T(0), axis.x, axis.y, axis.z).GetNormalized();
 		}
 
 		const T s			= std::sqrt((T(1) + d) * T(2));
 		const T invs		= T(1) / s;
 		const Vector3<T> c	= aFrom.Cross(aTo) * invs;
 
-		return Quaternion(c.x, c.y, c.z, s * T(0.5)).GetNormalized();
+		return Quaternion(s * T(0.5), c.x, c.y, c.z).GetNormalized();
 	}
 
 	// GLOBAL OPERATORS

@@ -390,7 +390,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::Rotate(const Vector3<T>& aPitchYawRoll) -> Matrix4x4&
 	{
-		return Rotate(Quaternion<T>(aPitchYawRoll.y, aPitchYawRoll.x, aPitchYawRoll.z));
+		return Rotate(Quaternion<T>(aPitchYawRoll));
 	}
 	template<typename T>
 	constexpr auto Matrix4x4<T>::Rotate(T aYaw, T aPitch, T aRoll) -> Matrix4x4&

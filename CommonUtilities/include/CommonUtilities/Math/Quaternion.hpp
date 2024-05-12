@@ -199,18 +199,18 @@ namespace CommonUtilities
 
 		if (test > T(0.99999)) // singularity at north pole
 		{ 
-			const T pitch	= 0;
+			const T pitch	= -T(2) * std::atan2(x, w);
 			const T yaw		= au::PI_2_V<T>;
-			const T roll	= -T(2) * std::atan2(x, w);
+			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
 		if (test < -T(0.99999)) // singularity at south pole
 		{ 
-			const T pitch	= 0;
+			const T pitch	= T(2) * std::atan2(x, w);
 			const T yaw		= -au::PI_2_V<T>;;
-			const T roll	= T(2) * std::atan2(x, w);
+			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}

@@ -7,16 +7,23 @@
 
 #include <CommonUtilities/System/TimedEvent.h>
 
+#include <CommonUtilities/Structures/Blackboard.hpp>
+
 int main()
 {
-	cu::Quatf rot(0.2f, -0.5f, 0.1f);
-	rot.Normalize();
+	cu::Mat4f m1;
+	cu::Mat4f m2;
 
-	cu::Mat4f mat;
-	mat.SetRotation(rot);
+	cu::Blackboard<> blackboard;
+	blackboard.Set("hey", 5);
+	int* val = blackboard.TryGet<int>("hey");
 
-	cu::Vector3f extrRot = rot.GetEulerAngles();
-	cu::Vector3f extrScale = mat.GetScale();
+	m1.SetRotation(cu::Vector3f(-cu::au::PI_2, 0.0f, 0.0f));
+	m2.SetRotation(cu::Vector3f(0.0, cu::au::PI_2, 0.0f));
+
+	cu::Mat4f m3 = m1 * m2;
+
+	cu::Vector3f rot = m3.GetRotation();
 
 	return 0;
 }

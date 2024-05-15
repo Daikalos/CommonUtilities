@@ -27,6 +27,12 @@ namespace CommonUtilities
 		NODISC T& Get(const IDType& aID);
 
 		template<typename T>
+		NODISC const T* TryGet(const IDType& aID) const;
+
+		template<typename T>
+		NODISC T* TryGet(const IDType& aID);
+
+		template<typename T>
 		void Set(const IDType& aID, T&& aValue);
 
 		template<typename T, typename... Args> requires std::constructible_from<T, Args...>
@@ -78,6 +84,9 @@ namespace CommonUtilities
 
 			NODISC const T& Get(const IDType& aID) const;
 			NODISC T& Get(const IDType& aID);
+
+			NODISC const T* TryGet(const IDType& aID) const;
+			NODISC T* TryGet(const IDType& aID);
 
 			template<typename... Args>
 			void Emplace(const IDType& aID, Args&&... someArgs)
@@ -142,6 +151,26 @@ namespace CommonUtilities
 
 		ValueMap<T>& map = FindValueMap<T>();
 		return map.Get(aID);
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename T>
+	inline const T* Blackboard<IDType, Hash>::TryGet(const IDType& aID) const
+	{
+		std::scoped_lock lock(myMutex);
+
+		ValueMap<T>& map = FindValueMap<T>();
+		return map.TryGet(aID);
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename T>
+	inline T* Blackboard<IDType, Hash>::TryGet(const IDType& aID)
+	{
+		std::scoped_lock lock(myMutex);
+
+		ValueMap<T>& map = FindValueMap<T>();
+		return map.TryGet(aID);
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
@@ -239,6 +268,25 @@ namespace CommonUtilities
 	inline T& Blackboard<IDType, Hash>::ValueMap<T>::Get(const IDType& aID)
 	{
 		return myValues.at(myIndices.at(Hash{}(aID)));
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename T>
+	inline const T* Blackboard<IDType, Hash>::ValueMap<T>::TryGet(const IDType& aID) const
+	{
+		if (auto it = myIndices.find(Hash{}(aID)); it != myIndices.end())
+		{
+			return &myValues.at(it->second);
+		}
+
+		return nullptr;
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename T>
+	inline T* Blackboard<IDType, Hash>::ValueMap<T>::TryGet(const IDType& aID)
+	{
+		return const_cast<T*>(std::as_const(*this).TryGet(aID));
 	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>

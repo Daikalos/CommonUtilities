@@ -14,9 +14,8 @@ int main()
 	cu::Mat4f m1;
 	cu::Mat4f m2;
 
-	cu::Blackboard<> blackboard;
-	blackboard.Set("hey", 5);
-	int* val = blackboard.TryGet<int>("hey");
+	const cu::Blackboard<> blackboard;
+	const int* val = blackboard.TryGet<int>("hey");
 
 	m1.SetRotation(cu::Vector3f(-cu::au::PI_2, 0.0f, 0.0f));
 	m2.SetRotation(cu::Vector3f(0.0, cu::au::PI_2, 0.0f));

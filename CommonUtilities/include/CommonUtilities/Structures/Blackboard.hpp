@@ -159,7 +159,7 @@ namespace CommonUtilities
 	{
 		std::scoped_lock lock(myMutex);
 
-		ValueMap<T>& map = FindValueMap<T>();
+		const ValueMap<T>& map = FindValueMap<T>();
 		return map.TryGet(aID);
 	}
 
@@ -196,7 +196,7 @@ namespace CommonUtilities
 	{
 		std::shared_lock lock(myMutex);
 
-		ValueMap<T>& map = FindValueMap<T>();
+		const ValueMap<T>& map = FindValueMap<T>();
 		return map.Has(aID);
 	}
 

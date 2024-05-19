@@ -11,6 +11,8 @@
 
 int main()
 {
+	cu::Quatf quat(0.0f, 1.0f, 0.0f);
+
 	cu::Mat4f m1;
 	cu::Mat4f m2;
 

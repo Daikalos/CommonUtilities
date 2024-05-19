@@ -72,6 +72,9 @@ namespace CommonUtilities::tr
         using Ts::operator() ...;
     };
 
+    template<class T> 
+    struct DependentFalse : std::false_type {};
+
 #ifndef C20_SUPPORT
     /// Deduction guide for compiler on how to specify argument template parameters.
     /// 

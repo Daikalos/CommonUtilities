@@ -4,11 +4,24 @@
 #include <cassert>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+#include <CommonUtilities/Utility/Traits.h>
 
 #include "Vector3.hpp"
 
 namespace CommonUtilities
 {
+	enum class AxisOrder
+	{
+		XYZ,
+		XZY,
+		YXZ,
+		YZX,
+		ZXY,
+		ZYX
+	};
+
+	inline constexpr AxisOrder RotationOrder = AxisOrder::ZXY;
+
 	template <class T>
 	class Matrix4x4;
 
@@ -76,17 +89,24 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T>::Quaternion(T aYaw, T aPitch, T aRoll)
 	{
-		T cx = std::cos(aPitch	* T(0.5));
-		T sx = std::sin(aPitch	* T(0.5));
-		T cy = std::cos(aYaw	* T(0.5));
-		T sy = std::sin(aYaw	* T(0.5));
-		T cz = std::cos(aRoll	* T(0.5));
-		T sz = std::sin(aRoll	* T(0.5));
+		Quaternion xRot(Vector3<T>(1, 0, 0), aPitch);
+		Quaternion yRot(Vector3<T>(0, 1, 0), aYaw);
+		Quaternion zRot(Vector3<T>(0, 0, 1), aRoll);
 
-		w = cx * cy * cz + sx * sy * sz;
-		x = sx * cy * cz - cx * sy * sz;
-		y = cx * sy * cz + sx * cy * sz;
-		z = cx * cy * sz - sx * sy * cz;
+		if constexpr (RotationOrder == AxisOrder::XYZ)
+			*this = xRot * yRot * zRot;
+		else if constexpr (RotationOrder == AxisOrder::XZY)
+			*this = xRot * zRot * yRot;
+		else if constexpr (RotationOrder == AxisOrder::YXZ)
+			*this = yRot * xRot * zRot;
+		else if constexpr (RotationOrder == AxisOrder::YZX)
+			*this = yRot * zRot * xRot;
+		else if constexpr (RotationOrder == AxisOrder::ZXY)
+			*this = zRot * xRot * yRot;
+		else if constexpr (RotationOrder == AxisOrder::ZYX)
+			*this = zRot * yRot * xRot;
+		else
+			static_assert(tr::DependentFalse<T>::value, "Invalid rotation order selected");
 	}
 
 	template<typename T>

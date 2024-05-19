@@ -590,8 +590,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline constexpr auto Matrix4x4<T>::CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp)
 	{
-		Vector3<T> xAxis = aUp.Cross(aDirection).GetNormalized();
-		Vector3<T> yAxis = aDirection.Cross(xAxis);
+		const Vector3<T> xAxis = aUp.Cross(aDirection).GetNormalized();
+		const Vector3<T> yAxis = aDirection.Cross(xAxis);
 
 		return Matrix4x4<T>
 		{
@@ -607,29 +607,29 @@ namespace CommonUtilities
 	{
 		// assumes the quaternion to be normalized
 
-		T xx = aQuaternion.x * aQuaternion.x;
-		T xy = aQuaternion.x * aQuaternion.y;
-		T xz = aQuaternion.x * aQuaternion.z;
-		T xw = aQuaternion.x * aQuaternion.w;
-
-		T yy = aQuaternion.y * aQuaternion.y;
-		T yz = aQuaternion.y * aQuaternion.z;
-		T yw = aQuaternion.y * aQuaternion.w;
-
-		T zz = aQuaternion.z * aQuaternion.z;
-		T zw = aQuaternion.z * aQuaternion.w;
-
-		T a00 = T(1) - T(2) * (yy + zz);
-		T a01 = T(2) * (xy + zw);
-		T a02 = T(2) * (xz - yw);
-
-		T a10 = T(2) * (xy - zw);
-		T a11 = T(1) - T(2) * (xx + zz);
-		T a12 = T(2) * (yz + xw);
-
-		T a20 = T(2) * (xz + yw);
-		T a21 = T(2) * (yz - xw);
-		T a22 = T(1) - T(2) * (xx + yy);
+		const T xx = aQuaternion.x * aQuaternion.x;
+		const T xy = aQuaternion.x * aQuaternion.y;
+		const T xz = aQuaternion.x * aQuaternion.z;
+		const T xw = aQuaternion.x * aQuaternion.w;
+		
+		const T yy = aQuaternion.y * aQuaternion.y;
+		const T yz = aQuaternion.y * aQuaternion.z;
+		const T yw = aQuaternion.y * aQuaternion.w;
+		
+		const T zz = aQuaternion.z * aQuaternion.z;
+		const T zw = aQuaternion.z * aQuaternion.w;
+		
+		const T a00 = T(1) - T(2) * (yy + zz);
+		const T a01 = T(2) * (xy + zw);
+		const T a02 = T(2) * (xz - yw);
+		 
+		const T a10 = T(2) * (xy - zw);
+		const T a11 = T(1) - T(2) * (xx + zz);
+		const T a12 = T(2) * (yz + xw);
+		
+		const T a20 = T(2) * (xz + yw);
+		const T a21 = T(2) * (yz - xw);
+		const T a22 = T(1) - T(2) * (xx + yy);
 
 		return Matrix4x4<T> 
 		{

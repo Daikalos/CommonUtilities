@@ -105,6 +105,7 @@ namespace CommonUtilities
 
 		NODISC constexpr static auto CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp = Vector3<T>(0, 1, 0));
 
+		NODISC constexpr static auto CreateRotationMatrixFromQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 		NODISC constexpr static auto CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 
 		static const Matrix4x4 IDENTITY;
@@ -603,6 +604,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr auto Matrix4x4<T>::CreateRotationMatrixFromQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4
+	{
+		return CreateRotationMatrixFromNormalizedQuaternion(aQuaternion.GetNormalized());
+	}
+	template<typename T>
 	constexpr auto Matrix4x4<T>::CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4
 	{
 		// assumes the quaternion to be normalized
@@ -723,5 +729,5 @@ namespace CommonUtilities
 	using Mat4f = Matrix4x4<float>;
 	using Mat4d = Matrix4x4<double>;
 	using Mat4i = Matrix4x4<int>;
-	using Mat4u = Matrix4x4<unsigned int>;
+	using Mat4u = Matrix4x4<unsigned>;
 }

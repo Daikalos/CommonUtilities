@@ -150,9 +150,9 @@ namespace CommonUtilities::au
 	}
 
 	template<IsFloatingPoint T>
-	NODISC constexpr auto Equal(T aFirst, T aSecond, T aEpsilon = EPSILON_V<T>)
+	NODISC constexpr auto Equal(T aFirst, T aSecond, T aTolerance = EPSILON_V<T>)
 	{
-		return std::abs(aFirst - aSecond) <= aEpsilon;
+		return std::abs(aFirst - aSecond) <= aTolerance;
 	}
 
 	template<IsArithmetic T>

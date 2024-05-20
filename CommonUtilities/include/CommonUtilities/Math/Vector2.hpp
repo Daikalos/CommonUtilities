@@ -25,6 +25,7 @@ namespace CommonUtilities
 		constexpr Vector2() = default;
 		constexpr ~Vector2() = default;
 
+		constexpr Vector2(T aValue);
 		constexpr Vector2(T aX, T aY);
 
 		template <typename U>
@@ -38,34 +39,6 @@ namespace CommonUtilities
 
 		template<class OtherVector>
 		NODISC constexpr explicit operator OtherVector() const;
-
-		/// \returns Directional vector pointing from current to target.
-		/// 
-		NODISC constexpr static Vector2 Direction(const Vector2& aCurrent, const Vector2& aTarget);
-
-		/// \returns Distance from current to target.
-		/// 
-		NODISC constexpr static T Distance(const Vector2& aCurrent, const Vector2& aTarget);
-
-		/// \returns Distance squared from current to target.
-		/// 
-		NODISC constexpr static T DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget);
-
-		/// \returns Lerped vector between current and target.
-		/// 
-		NODISC constexpr static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
-
-		/// \returns Clamped lerped vector between current and target.
-		/// 
-		NODISC constexpr static Vector2 CLerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
-
-		/// \returns Slerped vector between current and target.
-		/// 
-		NODISC constexpr static Vector2 Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
-
-		/// \returns Moved vector going from current towards target.
-		/// 
-		NODISC constexpr static Vector2 MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance);
 
 		///	Length of the vector.
 		/// 
@@ -81,7 +54,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC constexpr Vector2<T> GetNormalized(T aRadius = static_cast<T>(1)) const;
+		NODISC constexpr Vector2<T> GetNormalized(T aRadius = T(1)) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -96,7 +69,7 @@ namespace CommonUtilities
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
-		constexpr void Normalize(T aRadius = static_cast<T>(1));
+		constexpr void Normalize(T aRadius = T(1)) &;
 
 		/// Dot product of two vectors.
 		/// 
@@ -134,6 +107,34 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector4<T> XYZW(T aZ = T{}, T aW = T{}) const;
 
+		/// \returns Directional vector pointing from current to target.
+		/// 
+		NODISC constexpr static Vector2 Direction(const Vector2& aCurrent, const Vector2& aTarget);
+
+		/// \returns Distance from current to target.
+		/// 
+		NODISC constexpr static T Distance(const Vector2& aCurrent, const Vector2& aTarget);
+
+		/// \returns Distance squared from current to target.
+		/// 
+		NODISC constexpr static T DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget);
+
+		/// \returns Lerped vector between current and target.
+		/// 
+		NODISC constexpr static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage);
+
+		/// \returns Clamped lerped vector between current and target.
+		/// 
+		NODISC constexpr static Vector2 CLerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage);
+
+		/// \returns Moved vector going from current towards target.
+		/// 
+		NODISC constexpr static Vector2 MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, T aDistance);
+
+		/// \returns Whether left equals right vector within a tolerance
+		/// 
+		NODISC constexpr static bool Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance = au::EPSILON_V<T>);
+
 		static const Vector2 Zero;
 		static const Vector2 One;
 		static const Vector2 Right;
@@ -159,6 +160,10 @@ namespace CommonUtilities
 
 	template <typename T>
 	const Vector2<T> Vector2<T>::Down(static_cast<T>(0), static_cast<T>(-1));
+
+	template<typename T>
+	constexpr Vector2<T>::Vector2(T aValue)
+		: x(aValue), y(aValue) {}
 
 	template<typename T>
 	constexpr Vector2<T>::Vector2(T aX, T aY)
@@ -187,85 +192,6 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector2<T> Vector2<T>::Direction(const Vector2& aCurrent, const Vector2& aTarget)
-	{
-		return Vector2<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y);
-	}
-
-	template<typename T>
-	constexpr T Vector2<T>::Distance(const Vector2& aCurrent, const Vector2& aTarget)
-	{
-		return Direction(aCurrent, aTarget).Length();
-	}
-
-	template<typename T>
-	constexpr T Vector2<T>::DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget)
-	{
-		return Direction(aCurrent, aTarget).LengthSqr();
-	}
-
-	template<typename T>
-	constexpr Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
-	{
-		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
-
-		return Vector2<T>
-		{
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x))),
-			static_cast<T>(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y)))
-		};
-	}
-
-	template<typename T>
-	constexpr Vector2<T> Vector2<T>::CLerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
-	{
-		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
-		const auto LerpFloat = [aPercentage](float aStart, float aEnd) { return aStart + aPercentage * (aEnd - aStart); };
-
-		return Vector2<T>
-		{
-			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.x), static_cast<float>(aTarget.x)), (std::min)(aCurrent.x, aTarget.x), (std::max)(aCurrent.x, aTarget.x))),
-			static_cast<T>(ClampFloat(LerpFloat(static_cast<float>(aCurrent.y), static_cast<float>(aTarget.y)), (std::min)(aCurrent.y, aTarget.y), (std::max)(aCurrent.y, aTarget.y)))
-		};
-	}
-
-	template<typename T>
-	constexpr Vector2<T> Vector2<T>::Slerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
-	{
-		const auto ClampFloat = [](float aValue, float aMin, float aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
-
-		const float dot = ClampFloat(static_cast<float>(aCurrent.Dot(aTarget)), -1.0f, 1.0f);
-
-		const Vector2<T> relativeVec = (aTarget - aCurrent * dot).GetNormalized();
-		const float theta = std::acos(dot) * aPercentage;
-
-		return aCurrent * std::cos(theta) + relativeVec * std::sin(theta);
-	}
-
-	template<typename T>
-	constexpr Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, float aDistance)
-	{
-		if (Vector2<T> dir = Vector2<T>::Direction(aCurrent, aTarget); dir != Vector2<T>::Zero)
-		{
-			const T lenSqr	= dir.LengthSqr();
-			const T distSqr = aDistance * aDistance;
-
-			if (distSqr > lenSqr)
-			{
-				return aTarget;
-			}
-			else if (distSqr < 0.0f)
-			{
-				return aCurrent;
-			}
-
-			return aCurrent + dir.GetNormalized(std::sqrt(distSqr)) * aDistance;
-		}
-
-		return aCurrent;
-	}
-
-	template<typename T>
 	constexpr T Vector2<T>::Length() const
 	{
 		return static_cast<T>(std::sqrt(LengthSqr()));
@@ -290,7 +216,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Vector2<T>::Normalize(T aRadius)
+	constexpr void Vector2<T>::Normalize(T aRadius) &
 	{
 		*this = GetNormalized(aRadius);
 	}
@@ -333,6 +259,79 @@ namespace CommonUtilities
 	constexpr Vector4<T> Vector2<T>::XYZW(T aZ, T aW) const
 	{
 		return Vector4<T>(x, y, aZ, aW);
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::Direction(const Vector2& aCurrent, const Vector2& aTarget)
+	{
+		return Vector2<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y);
+	}
+
+	template<typename T>
+	constexpr T Vector2<T>::Distance(const Vector2& aCurrent, const Vector2& aTarget)
+	{
+		return Direction(aCurrent, aTarget).Length();
+	}
+
+	template<typename T>
+	constexpr T Vector2<T>::DistanceSqr(const Vector2& aCurrent, const Vector2& aTarget)
+	{
+		return Direction(aCurrent, aTarget).LengthSqr();
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage)
+	{
+		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+
+		return Vector2<T>
+		{
+			Lerp(aCurrent.x, aTarget.x, aPercentage),
+			Lerp(aCurrent.y, aTarget.y, aPercentage)
+		};
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::CLerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage)
+	{
+		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
+		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+
+		return Vector2<T>
+		{
+			Clamp(Lerp(aCurrent.x, aTarget.x, aPercentage), (std::min)(aCurrent.x, aTarget.x), (std::max)(aCurrent.x, aTarget.x)),
+			Clamp(Lerp(aCurrent.y, aTarget.y, aPercentage), (std::min)(aCurrent.y, aTarget.y), (std::max)(aCurrent.y, aTarget.y))
+		};
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::MoveTowards(const Vector2& aCurrent, const Vector2& aTarget, T aDistance)
+	{
+		if (Vector2<T> dir = Vector2<T>::Direction(aCurrent, aTarget); dir != Vector2<T>::Zero)
+		{
+			const T lenSqr	= dir.LengthSqr();
+			const T distSqr = aDistance * aDistance;
+
+			if (distSqr > lenSqr)
+			{
+				return aTarget;
+			}
+			else if (distSqr < 0.0f)
+			{
+				return aCurrent;
+			}
+
+			return aCurrent + dir.GetNormalized(std::sqrt(distSqr)) * aDistance;
+		}
+
+		return aCurrent;
+	}
+
+	template<typename T>
+	constexpr bool Vector2<T>::Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance)
+	{
+		return	au::Equal(aLeft.x, aRight.x, aTolerance) &&
+				au::Equal(aLeft.y, aRight.y, aTolerance);
 	}
 
 	// GLOBAL OPERATORS
@@ -461,5 +460,5 @@ namespace CommonUtilities
 	using Vector2f = Vector2<float>;
 	using Vector2d = Vector2<double>;
 	using Vector2i = Vector2<int>;
-	using Vector2u = Vector2<unsigned int>;
+	using Vector2u = Vector2<unsigned>;
 }

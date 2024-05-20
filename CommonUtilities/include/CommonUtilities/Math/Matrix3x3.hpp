@@ -521,5 +521,5 @@ namespace CommonUtilities
 	using Mat3f = Matrix3x3<float>;
 	using Mat3d = Matrix3x3<double>;
 	using Mat3i = Matrix3x3<int>;
-	using Mat3u = Matrix3x3<unsigned int>;
+	using Mat3u = Matrix3x3<unsigned>;
 }

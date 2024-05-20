@@ -10,6 +10,12 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class Vector2;
+
+	template<typename T>
+	class Vector3;
+
+	template<typename T>
 	class Vector4
 	{
 	public:
@@ -24,7 +30,13 @@ namespace CommonUtilities
 		constexpr Vector4(T aX, T aY, T aZ, T aW);
 
 		template <typename U>
-		NODISC constexpr explicit Vector4(const Vector4<U>& aVector);
+		constexpr explicit Vector4(const Vector2<U>& aVector);
+
+		template <typename U>
+		constexpr explicit Vector4(const Vector3<U>& aVector);
+
+		template <typename U>
+		constexpr explicit Vector4(const Vector4<U>& aVector);
 
 		template<class OtherVector>
 		NODISC constexpr explicit operator OtherVector() const;
@@ -91,11 +103,29 @@ namespace CommonUtilities
 		/// Dot product of two vectors.
 		/// 
 		NODISC constexpr T Dot(const Vector4& aVector) const;
+
+		/// \returns Converts this 4D vector to a 2D one.
+		/// 
+		NODISC constexpr Vector2<T> XY() const;
+
+		/// \returns Converts this 4D vector to a 3D one.
+		/// 
+		NODISC constexpr Vector3<T> XYZ() const;
 	};
 
 	template<typename T>
 	constexpr Vector4<T>::Vector4(T aX, T aY, T aZ, T aW)
 		: x(aX), y(aY), z(aZ), w(aW) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector4<T>::Vector4(const Vector2<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(T(0)), w(T(0)) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector4<T>::Vector4(const Vector3<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(static_cast<T>(aVector.z)), w(T(0)) {}
 
 	template<typename T>
 	template<typename U>
@@ -209,6 +239,17 @@ namespace CommonUtilities
 	constexpr T Vector4<T>::Dot(const Vector4& aVector) const
 	{
 		return x * aVector.x + y * aVector.y + z * aVector.z + w * aVector.w;
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector4<T>::XY() const
+	{
+		return Vector2<T>(x, y);
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector4<T>::XYZ() const
+	{
+		return Vector3<T>(x, y, z);
 	}
 
 	// GLOBAL OPERATORS

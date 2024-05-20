@@ -29,7 +29,13 @@ namespace CommonUtilities
 		constexpr Vector3(T aX, T aY, T aZ);
 
 		template <typename U>
-		NODISC constexpr explicit Vector3(const Vector3<U>& aVector);
+		constexpr explicit Vector3(const Vector2<U>& aVector);
+
+		template <typename U>
+		constexpr explicit Vector3(const Vector4<U>& aVector);
+
+		template <typename U>
+		constexpr explicit Vector3(const Vector3<U>& aVector);
 
 		template<class OtherVector>
 		NODISC constexpr explicit operator OtherVector() const;
@@ -180,6 +186,16 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T>::Vector3(T aX, T aY, T aZ)
 		: x(aX), y(aY), z(aZ) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector3<T>::Vector3(const Vector2<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(T(0)) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector3<T>::Vector3(const Vector4<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(static_cast<T>(aVector.z)) {}
 
 	template<typename T>
 	template<typename U>

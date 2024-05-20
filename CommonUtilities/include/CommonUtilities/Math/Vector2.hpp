@@ -13,6 +13,9 @@ namespace CommonUtilities
 	class Vector3;
 
 	template<typename T>
+	class Vector4;
+
+	template<typename T>
 	class Vector2
 	{
 	public:
@@ -23,6 +26,12 @@ namespace CommonUtilities
 		constexpr ~Vector2() = default;
 
 		constexpr Vector2(T aX, T aY);
+
+		template <typename U>
+		constexpr explicit Vector2(const Vector3<U>& aVector);
+
+		template <typename U>
+		constexpr explicit Vector2(const Vector4<U>& aVector);
 
 		template <typename U>
 		constexpr explicit Vector2(const Vector2<U>& aVector);
@@ -121,6 +130,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector3<T> YZX(T aX = T{}) const;
 
+		/// \returns Converts this 2D vector to a 4D one.
+		/// 
+		NODISC constexpr Vector4<T> XYZW(T aZ = T{}, T aW = T{}) const;
+
 		static const Vector2 Zero;
 		static const Vector2 One;
 		static const Vector2 Right;
@@ -150,6 +163,16 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector2<T>::Vector2(T aX, T aY)
 		: x(aX), y(aY) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector2<T>::Vector2(const Vector3<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)) {}
+
+	template<typename T>
+	template<typename U>
+	constexpr Vector2<T>::Vector2(const Vector4<U>& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)) {}
 
 	template<typename T>
 	template<typename U>
@@ -296,17 +319,20 @@ namespace CommonUtilities
 	{
 		return Vector3<T>(x, y, aZ);
 	}
-
 	template<typename T>
 	constexpr Vector3<T> Vector2<T>::XZY(T aY) const
 	{
 		return Vector3<T>(x, aY, y);
 	}
-
 	template<typename T>
 	constexpr Vector3<T> Vector2<T>::YZX(T aX) const
 	{
 		return Vector3<T>(aX, x, y);
+	}
+	template<typename T>
+	constexpr Vector4<T> Vector2<T>::XYZW(T aZ, T aW) const
+	{
+		return Vector4<T>(x, y, aZ, aW);
 	}
 
 	// GLOBAL OPERATORS

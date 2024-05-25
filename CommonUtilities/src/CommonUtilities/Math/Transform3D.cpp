@@ -23,6 +23,12 @@ Transform3D::Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder)
 
 }
 
+Transform3D::Transform3D(AxisOrder aRotationOrder)
+	: Transform3D(cu::Vector3f(), cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
+{
+
+}
+
 const Mat4f& Transform3D::GetMatrix() const
 {
 	if (myUpdateMatrix)

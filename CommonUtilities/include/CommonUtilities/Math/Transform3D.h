@@ -17,6 +17,7 @@ namespace CommonUtilities
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder = RotationOrder);
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, AxisOrder aRotationOrder = RotationOrder);
 		Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder = RotationOrder);
+		Transform3D(AxisOrder aRotationOrder);
 
 		NODISC const Mat4f& GetMatrix() const;
 		NODISC const Mat4f& GetInverseMatrix() const;

@@ -38,7 +38,9 @@ namespace CommonUtilities
 
 		constexpr explicit Quaternion(T aW, T aX, T aY, T aZ);
 		constexpr explicit Quaternion(T aYaw, T aPitch, T aRoll);
+		constexpr explicit Quaternion(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder);
 		constexpr explicit Quaternion(const Vector3<T>& aPitchYawRoll);
+		constexpr explicit Quaternion(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder);
 		constexpr explicit Quaternion(const Vector3<T>& aVector, T aAngle);
 		constexpr explicit Quaternion(const Matrix4x4<T>& aMatrix);
 
@@ -110,8 +112,36 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr Quaternion<T>::Quaternion(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder)
+	{
+		Quaternion xRot(Vector3<T>(1, 0, 0), aPitch);
+		Quaternion yRot(Vector3<T>(0, 1, 0), aYaw);
+		Quaternion zRot(Vector3<T>(0, 0, 1), aRoll);
+
+		switch (aRotationOrder)
+		{
+			case AxisOrder::XYZ: *this = xRot * yRot * zRot; break;
+			case AxisOrder::XZY: *this = xRot * zRot * yRot; break;
+			case AxisOrder::YXZ: *this = yRot * xRot * zRot; break;
+			case AxisOrder::YZX: *this = yRot * zRot * xRot; break;
+			case AxisOrder::ZXY: *this = zRot * xRot * yRot; break;
+			case AxisOrder::ZYX: *this = zRot * yRot * xRot; break;
+			[[unlikely]] default: 
+				assert(false && "Invalid rotation order selected"); 
+				break;
+		}
+	}
+
+	template<typename T>
 	constexpr Quaternion<T>::Quaternion(const Vector3<T>& aPitchYawRoll)
 		: Quaternion(aPitchYawRoll.y, aPitchYawRoll.x, aPitchYawRoll.z)
+	{
+
+	}
+
+	template<typename T>
+	constexpr Quaternion<T>::Quaternion(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder)
+		: Quaternion(aPitchYawRoll.y, aPitchYawRoll.x, aPitchYawRoll.z, aRotationOrder)
 	{
 
 	}

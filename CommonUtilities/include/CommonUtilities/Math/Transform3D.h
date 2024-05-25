@@ -14,9 +14,9 @@ namespace CommonUtilities
 		Transform3D() = default;
 		virtual ~Transform3D() = default;
 
-		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale);
-		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation);
-		Transform3D(const Vector3f& aPosition);
+		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder = RotationOrder);
+		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, AxisOrder aRotationOrder = RotationOrder);
+		Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder = RotationOrder);
 
 		NODISC const Mat4f& GetMatrix() const;
 		NODISC const Mat4f& GetInverseMatrix() const;
@@ -24,6 +24,7 @@ namespace CommonUtilities
 		NODISC const Vector3f& GetPosition() const noexcept;
 		NODISC const Vector3f& GetRotation() const noexcept;
 		NODISC const Vector3f& GetScale() const noexcept;
+		NODISC AxisOrder GetRotationOrder() const noexcept;
 
 		NODISC Quatf GetQuaternion() const;
 
@@ -33,6 +34,7 @@ namespace CommonUtilities
 		virtual void SetPosition(const Vector3f& aPosition);
 		virtual void SetRotation(const Vector3f& aRotation);
 		virtual void SetScale(const Vector3f& aScale);
+		void SetRotationOrder(AxisOrder aRotationOrder);
 
 		void Move(const Vector3f& aPosition);
 		void Rotate(const Vector3f& aRotation);
@@ -42,6 +44,7 @@ namespace CommonUtilities
 		Vector3f		myPosition;
 		Vector3f		myRotation; // TODO: switch to quaternion in the future
 		Vector3f		myScale					{1.0f, 1.0f, 1.0f};
+		AxisOrder		myRotationOrder			{RotationOrder};
 		mutable Mat4f	myMatrix;
 		mutable Mat4f	myInverseMatrix;
 		mutable bool	myUpdateMatrix			{true};

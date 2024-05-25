@@ -133,7 +133,7 @@ namespace CommonUtilities
 
 		/// \returns Whether left equals right vector within a tolerance
 		/// 
-		NODISC constexpr static bool Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance = au::EPSILON_V<T>);
+		NODISC constexpr static bool Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance = au::EPSILON_V<T>) requires IsFloatingPoint<T>;
 
 		static const Vector2 Zero;
 		static const Vector2 One;
@@ -328,7 +328,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr bool Vector2<T>::Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance)
+	constexpr bool Vector2<T>::Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance) requires IsFloatingPoint<T>
 	{
 		return	au::Equal(aLeft.x, aRight.x, aTolerance) &&
 				au::Equal(aLeft.y, aRight.y, aTolerance);

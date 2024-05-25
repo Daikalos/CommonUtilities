@@ -65,10 +65,11 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetRight() const;
 
 		constexpr void DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale);
+		constexpr void DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale);
 
 		constexpr void SetTranslation(const Vector3<T>& aTranslation);
-		constexpr void SetRotation(const Vector3<T>& aPitchYawRoll);
-		constexpr void SetRotation(T aYaw, T aPitch, T aRoll);
+		constexpr void SetRotation(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder = RotationOrder);
+		constexpr void SetRotation(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder = RotationOrder);
 		constexpr void SetRotation(const Quaternion<T>& aQuaternion);
 		constexpr void SetScale(const Vector3<T>& aScale);
 
@@ -77,8 +78,8 @@ namespace CommonUtilities
 
 		constexpr auto Translate(const Vector3<T>& aTranslation) -> Matrix4x4&;
 		constexpr auto Scale(const Vector3<T>& someFactors) -> Matrix4x4&;
-		constexpr auto Rotate(const Vector3<T>& aPitchYawRoll) -> Matrix4x4&;
-		constexpr auto Rotate(T aYaw, T aPitch, T aRoll) -> Matrix4x4&;
+		constexpr auto Rotate(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder = RotationOrder) -> Matrix4x4&;
+		constexpr auto Rotate(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder = RotationOrder) -> Matrix4x4&;
 		constexpr auto Rotate(const Quaternion<T>& aQuaternion) -> Matrix4x4&;
 
 		constexpr auto RotateRoll(T aRoll) -> Matrix4x4&;
@@ -96,7 +97,7 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateOrthographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
 		NODISC constexpr static auto CreatePerspective(T aHorizontalFOVDeg, T aAspectRatio, T aNearClip, T aFarClip) -> Matrix4x4;
 
-		NODISC constexpr static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aPitchYawRoll, const Vector3<T>& aScale) -> Matrix4x4;
+		NODISC constexpr static auto CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aPitchYawRoll, const Vector3<T>& aScale, AxisOrder aRotationOrder = RotationOrder) -> Matrix4x4;
 		NODISC constexpr static auto CreateTRS(const Vector3<T>& aPosition, const Quaternion<T>& aQuaternion, const Vector3<T>& aScale) -> Matrix4x4;
 
 		NODISC constexpr static auto CreateRotationAroundX(T aRadians) -> Matrix4x4;
@@ -291,6 +292,21 @@ namespace CommonUtilities
 		outRotation.y = std::atan2f(-right.z, std::sqrtf(up.z * up.z + forward.z * forward.z));
 		outRotation.z = std::atan2f(right.y, right.x);
 	}
+	template<typename T>
+	constexpr void Matrix4x4<T>::DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale)
+	{
+		outPosition = GetTranslation();
+
+		outQuaternion = Quaternion<T>(*this);
+
+		cu::Vector3<T> right	= GetRight();
+		cu::Vector3<T> up		= GetUp();
+		cu::Vector3<T> forward	= GetForward();
+
+		outScale.x = right.Length();
+		outScale.y = up.Length();
+		outScale.z = forward.Length();
+	}
 
 	template<typename T>
 	constexpr void Matrix4x4<T>::SetTranslation(const Vector3<T>& aTranslation)
@@ -300,14 +316,14 @@ namespace CommonUtilities
 		myMatrix[14] = aTranslation.z;
 	}
 	template<typename T>
-	constexpr void Matrix4x4<T>::SetRotation(const Vector3<T>& aPitchYawRoll)
+	constexpr void Matrix4x4<T>::SetRotation(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder)
 	{
-		*this = CreateTRS(GetTranslation(), aPitchYawRoll, GetScale());
+		*this = CreateTRS(GetTranslation(), aPitchYawRoll, GetScale(), aRotationOrder);
 	}
 	template<typename T>
-	constexpr void Matrix4x4<T>::SetRotation(T aYaw, T aPitch, T aRoll)
+	constexpr void Matrix4x4<T>::SetRotation(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder)
 	{
-		SetRotation(Vector3<T>(aPitch, aYaw, aRoll));
+		SetRotation(Vector3<T>(aPitch, aYaw, aRoll), aRotationOrder);
 	}
 	template<typename T>
 	constexpr void Matrix4x4<T>::SetRotation(const Quaternion<T>& aQuaternion)
@@ -389,14 +405,14 @@ namespace CommonUtilities
 		return Combine(scaling);
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Rotate(const Vector3<T>& aPitchYawRoll) -> Matrix4x4&
+	constexpr auto Matrix4x4<T>::Rotate(const Vector3<T>& aPitchYawRoll, AxisOrder aRotationOrder) -> Matrix4x4&
 	{
-		return Rotate(Quaternion<T>(aPitchYawRoll));
+		return Rotate(Quaternion<T>(aPitchYawRoll, aRotationOrder));
 	}
 	template<typename T>
-	constexpr auto Matrix4x4<T>::Rotate(T aYaw, T aPitch, T aRoll) -> Matrix4x4&
+	constexpr auto Matrix4x4<T>::Rotate(T aYaw, T aPitch, T aRoll, AxisOrder aRotationOrder) -> Matrix4x4&
 	{
-		return Rotate(Vector3<T>(aPitch, aYaw, aRoll));
+		return Rotate(Vector3<T>(aPitch, aYaw, aRoll), aRotationOrder);
 	}
 	template<typename T>
 	constexpr auto Matrix4x4<T>::Rotate(const Quaternion<T>& aQuaternion) -> Matrix4x4&
@@ -529,11 +545,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aPitchYawRoll, const Vector3<T>& aScale) -> Matrix4x4
+	constexpr auto Matrix4x4<T>::CreateTRS(const Vector3<T>& aPosition, const Vector3<T>& aPitchYawRoll, const Vector3<T>& aScale, AxisOrder aRotationOrder) -> Matrix4x4
 	{
 		return Matrix4x4()
 			.Scale(aScale)
-			.Rotate(aPitchYawRoll)
+			.Rotate(aPitchYawRoll, aRotationOrder)
 			.Translate(aPosition);
 	}
 	template<typename T>

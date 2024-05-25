@@ -2,22 +2,23 @@
 
 using namespace CommonUtilities;
 
-Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale)
+Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder)
 	: myPosition(aPosition)
 	, myRotation(aRotation)
 	, myScale(aScale)
+	, myRotationOrder(aRotationOrder)
 {
 
 }
 
-Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation)
-	: Transform3D(aPosition, aRotation, cu::Vector3f(1.0f, 1.0f, 1.0f))
+Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, AxisOrder aRotationOrder)
+	: Transform3D(aPosition, aRotation, cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
 {
 
 }
 
-Transform3D::Transform3D(const Vector3f& aPosition)
-	: Transform3D(aPosition, cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f))
+Transform3D::Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder)
+	: Transform3D(aPosition, cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
 {
 
 }
@@ -26,7 +27,7 @@ const Mat4f& Transform3D::GetMatrix() const
 {
 	if (myUpdateMatrix)
 	{
-		myMatrix = Mat4f::CreateTRS(myPosition, myRotation, myScale);
+		myMatrix = Mat4f::CreateTRS(myPosition, myRotation, myScale, myRotationOrder);
 		myUpdateMatrix = false;
 	}
 	return myMatrix;
@@ -52,6 +53,10 @@ const Vector3f& Transform3D::GetRotation() const noexcept
 const Vector3f& Transform3D::GetScale() const noexcept
 {
 	return myScale;
+}
+AxisOrder Transform3D::GetRotationOrder() const noexcept
+{
+	return myRotationOrder;
 }
 
 Quatf Transform3D::GetQuaternion() const
@@ -94,6 +99,10 @@ void Transform3D::SetScale(const Vector3f& aScale)
 		myUpdateMatrix			= true;
 		myUpdateInverseMatrix	= true;
 	}
+}
+void Transform3D::SetRotationOrder(AxisOrder aRotationOrder)
+{
+	myRotationOrder = aRotationOrder;
 }
 
 void Transform3D::Move(const Vector3f& aPosition)

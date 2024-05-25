@@ -10,22 +10,22 @@
 
 namespace CommonUtilities::au
 {
-	template<IsFloatingPoint T = float>
+	template<typename T = float>
 	constexpr T PI_V = std::numbers::pi_v<T>;
 
-	template<IsFloatingPoint T = float>
+	template<typename T = float>
 	constexpr T PI_2_V = PI_V<T> / T{2};
 
-	template<IsFloatingPoint T = float>
+	template<typename T = float>
 	constexpr T PI_4_V = PI_2_V<T> / T{2};
 
-	template<IsFloatingPoint T = float> 
+	template<typename T = float>
 	constexpr T DEG2RAD_V = PI_V<T> / T{180.0};
 
-	template<IsFloatingPoint T = float>
+	template<typename T = float>
 	constexpr T RAD2DEG_V = T{180.0} / PI_V<T>;
 
-	template<IsFloatingPoint T = float>
+	template<typename T = float>
 	constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
 
 	template<IsArithmetic T>
@@ -58,13 +58,13 @@ namespace CommonUtilities::au
 	inline constexpr double			EPSILON_D	= EPSILON_V<double>;
 	inline constexpr long double	EPSILON_LD	= EPSILON_V<long double>;
 
-	template<IsFloatingPoint T>
+	template<typename T>
 	NODISC constexpr T ToRadians(T aDegrees)
 	{
 		return aDegrees * DEG2RAD_V<T>;
 	}
 
-	template<IsFloatingPoint T>
+	template<typename T>
 	NODISC constexpr T ToDegrees(T aRadians)
 	{
 		return aRadians * RAD2DEG_V<T>;

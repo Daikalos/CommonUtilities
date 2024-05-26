@@ -9,7 +9,7 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	class Plane : public Clonable<Shape, Plane>
+	class Plane : public Clonable<Shape, Plane<T>>
 	{
 	public:
 		constexpr Plane() = default;

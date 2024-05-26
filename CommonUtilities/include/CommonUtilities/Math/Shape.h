@@ -15,7 +15,7 @@ namespace CommonUtilities
 		enum class Type // explicitly stated to prevent any human-error
 		{
 			None		= -1,
-			AABB3D		= 0,
+			AABB		= 0,
 			Sphere		= 1,
 			Line		= 2,
 			LineVolume	= 3,
@@ -25,7 +25,7 @@ namespace CommonUtilities
 			Count		= 7
 		};
 
-		NODISC constexpr virtual auto GetType() const noexcept -> Type = 0;
+		NODISC constexpr virtual Type GetType() const noexcept = 0;
 		NODISC constexpr virtual std::unique_ptr<Shape> Clone() const = 0;
 	};
 }

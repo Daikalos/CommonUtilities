@@ -3,12 +3,13 @@
 #include "Vector2.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Utility/Clonable.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Line final : public Shape
+	class Line final : public Clonable<Shape, Line<T>>
 	{
 	public:
 		constexpr Line() = default;
@@ -28,8 +29,7 @@ namespace CommonUtilities
 
 		NODISC constexpr bool IsInside(const Vector2<T>& aPosition) const;
 
-		NODISC constexpr auto GetType() const noexcept -> Type override;
-		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
+		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
 		Vector2<T> myOrigin;
@@ -89,14 +89,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Line<T>::GetType() const noexcept -> Type
+	constexpr Shape::Type Line<T>::GetType() const noexcept
 	{
-		return Type::Line;
-	}
-	template<typename T>
-	constexpr std::unique_ptr<Shape> Line<T>::Clone() const
-	{
-		return std::make_unique<Line<T>>(*this);
+		return Shape::Type::Line;
 	}
 
 	// using declarations

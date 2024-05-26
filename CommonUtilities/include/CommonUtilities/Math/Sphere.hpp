@@ -3,12 +3,13 @@
 #include "Vector3.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Utility/Clonable.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Sphere final : public Shape
+	class Sphere final : public Clonable<Shape, Sphere<T>>
 	{
 	public:
 		constexpr Sphere() = default;
@@ -27,8 +28,7 @@ namespace CommonUtilities
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
-		NODISC constexpr auto GetType() const noexcept -> Type override;
-		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
+		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
 		Vector3<T>	myCenter;
@@ -84,14 +84,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Sphere<T>::GetType() const noexcept -> Type
+	constexpr Shape::Type Sphere<T>::GetType() const noexcept
 	{
-		return Type::Sphere;
-	}
-	template<typename T>
-	constexpr std::unique_ptr<Shape> Sphere<T>::Clone() const
-	{
-		return std::make_unique<Sphere<T>>(*this);
+		return Shape::Type::Sphere;
 	}
 
 	using SphereFloat	= Sphere<float>;

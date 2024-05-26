@@ -15,7 +15,7 @@
 #include "Plane.hpp"
 #include "Ray.hpp"
 #include "Sphere.hpp"
-#include "AABB3D.hpp"
+#include "AABB.hpp"
 #include "Vector3.hpp"
 
 namespace CommonUtilities
@@ -28,7 +28,7 @@ namespace CommonUtilities
 		T			penetration		{0};
 		bool		collided		{false};
 
-		operator bool() const noexcept // implicitly convertable to boolean
+		operator bool() const noexcept // implicitly convertible to boolean
 		{
 			return collided;
 		}
@@ -38,16 +38,16 @@ namespace CommonUtilities
 	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB);
+	inline CollisionResult<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D);
+	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay);
+	inline CollisionResult<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
@@ -65,8 +65,8 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBAABB<T>(
-				DownCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D), 
-				DownCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB), 
+				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 
 		template<typename T>
@@ -95,7 +95,7 @@ namespace CommonUtilities
 		{
 			return IntersectionSphereAABB<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
-				DownCastTo<AABB3D<T>>(aS2, Shape::Type::AABB3D));
+				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 		template<typename T>
 		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
@@ -110,7 +110,7 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBRay<T>(
-				DownCastTo<AABB3D<T>>(aS1, Shape::Type::AABB3D),
+				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
@@ -219,7 +219,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	CollisionResult<T> IntersectionAABBAABB(const AABB3D<T>& aFirstAABB, const AABB3D<T>& aSecondAABB)
+	CollisionResult<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB)
 	{
 		CollisionResult<T> result{};
 
@@ -315,20 +315,20 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB3D<T>& aAABB3D)
+	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB)
 	{
 		CollisionResult<T> result{};
 
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
-		Vector3<T> aabbCenter = aAABB3D.GetMin() + (aAABB3D.GetMax() / T{2});
+		Vector3<T> aabbCenter = aAABB.GetCenter();
 		Vector3<T> dir = Vector3<T>::Direction(aabbCenter, aSphere.GetCenter());
 
 		Vector3<T> pointOnEdge
 		{
-			Clamp(aSphere.GetCenter().x, aAABB3D.GetMin().x, aAABB3D.GetMax().x),
-			Clamp(aSphere.GetCenter().y, aAABB3D.GetMin().y, aAABB3D.GetMax().y),
-			Clamp(aSphere.GetCenter().z, aAABB3D.GetMin().z, aAABB3D.GetMax().z)
+			Clamp(aSphere.GetCenter().x, aAABB.GetMin().x, aAABB.GetMax().x),
+			Clamp(aSphere.GetCenter().y, aAABB.GetMin().y, aAABB.GetMax().y),
+			Clamp(aSphere.GetCenter().z, aAABB.GetMin().z, aAABB.GetMax().z)
 		};
 
 		bool inside = false;
@@ -345,15 +345,15 @@ namespace CommonUtilities
 
 			if (x > y && x > z)
 			{
-				pointOnEdge.x = (pointOnEdge.x > 0) ? aAABB3D.GetMax().x : aAABB3D.GetMin().x;
+				pointOnEdge.x = (pointOnEdge.x > 0) ? aAABB.GetMax().x : aAABB.GetMin().x;
 			}
 			else if (y > x && y > z)
 			{
-				pointOnEdge.y = (pointOnEdge.y > 0) ? aAABB3D.GetMax().y : aAABB3D.GetMin().y;
+				pointOnEdge.y = (pointOnEdge.y > 0) ? aAABB.GetMax().y : aAABB.GetMin().y;
 			}
 			else
 			{
-				pointOnEdge.z = (pointOnEdge.z > 0) ? aAABB3D.GetMax().z : aAABB3D.GetMin().z;
+				pointOnEdge.z = (pointOnEdge.z > 0) ? aAABB.GetMax().z : aAABB.GetMin().z;
 			}
 		}
 
@@ -378,11 +378,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBRay(const AABB3D<T>& aAABB3D, const Ray<T>& aRay)
+	inline CollisionResult<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay)
 	{
 		CollisionResult<T> result{};
 
-		if (aAABB3D.IsInside(aRay.GetOrigin()))
+		if (aAABB.IsInside(aRay.GetOrigin()))
 		{
 			const T x = static_cast<T>(std::abs(aRay.GetDirection().x));
 			const T y = static_cast<T>(std::abs(aRay.GetDirection().y));
@@ -411,9 +411,9 @@ namespace CommonUtilities
 
 		Vector3<T> t; // get vector from best corner to ray's origin
 
-		t.x = ((aRay.GetDirection().x > 0 ? aAABB3D.GetMin().x : aAABB3D.GetMax().x) - aRay.GetOrigin().x);
-		t.y = ((aRay.GetDirection().y > 0 ? aAABB3D.GetMin().y : aAABB3D.GetMax().y) - aRay.GetOrigin().y);
-		t.z = ((aRay.GetDirection().z > 0 ? aAABB3D.GetMin().z : aAABB3D.GetMax().z) - aRay.GetOrigin().z);
+		t.x = ((aRay.GetDirection().x > 0 ? aAABB.GetMin().x : aAABB.GetMax().x) - aRay.GetOrigin().x);
+		t.y = ((aRay.GetDirection().y > 0 ? aAABB.GetMin().y : aAABB.GetMax().y) - aRay.GetOrigin().y);
+		t.z = ((aRay.GetDirection().z > 0 ? aAABB.GetMin().z : aAABB.GetMax().z) - aRay.GetOrigin().z);
 
 		if (aRay.GetDirection().x != 0) t.x /= aRay.GetDirection().x;
 		if (aRay.GetDirection().y != 0) t.y /= aRay.GetDirection().y;
@@ -445,13 +445,13 @@ namespace CommonUtilities
 			case Plane::YZ:
 			{
 				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
-				if (y < aAABB3D.GetMin().y || y > aAABB3D.GetMax().y)
+				if (y < aAABB.GetMin().y || y > aAABB.GetMax().y)
 				{
 					return result;
 				}
 
 				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
-				if (z < aAABB3D.GetMin().z || z > aAABB3D.GetMax().z)
+				if (z < aAABB.GetMin().z || z > aAABB.GetMax().z)
 				{
 					return result;
 				}
@@ -463,13 +463,13 @@ namespace CommonUtilities
 			case Plane::XZ:
 			{
 				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
-				if (x < aAABB3D.GetMin().x || x > aAABB3D.GetMax().x)
+				if (x < aAABB.GetMin().x || x > aAABB.GetMax().x)
 				{
 					return result;
 				}
 
 				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
-				if (z < aAABB3D.GetMin().z || z > aAABB3D.GetMax().z)
+				if (z < aAABB.GetMin().z || z > aAABB.GetMax().z)
 				{
 					return result;
 				}
@@ -481,13 +481,13 @@ namespace CommonUtilities
 			case Plane::XY:
 			{
 				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
-				if (x < aAABB3D.GetMin().x || x > aAABB3D.GetMax().x)
+				if (x < aAABB.GetMin().x || x > aAABB.GetMax().x)
 				{
 					return result;
 				}
 
 				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
-				if (y < aAABB3D.GetMin().y || y > aAABB3D.GetMax().y)
+				if (y < aAABB.GetMin().y || y > aAABB.GetMax().y)
 				{
 					return result;
 				}

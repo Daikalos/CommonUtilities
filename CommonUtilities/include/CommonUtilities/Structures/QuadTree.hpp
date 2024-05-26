@@ -4,7 +4,7 @@
 #include <shared_mutex>
 #include <concepts>
 
-#include <CommonUtilities/Math/Rectangle.hpp>
+#include <CommonUtilities/Math/Rect.hpp>
 #include <CommonUtilities/Math/Vector2.hpp>
 #include <CommonUtilities/Config.h>
 
@@ -26,11 +26,11 @@ namespace CommonUtilities
 
 		struct Element
 		{		
-			RectFloat rect;	// rectangle encompassing the item
-			ValueType item;
+			Rectf		rect;	// rectangle encompassing the item
+			ValueType	item;
 		};
 
-		QuadTree(const RectFloat& aRootRect, int aMaxElements = 8, int aMaxDepth = 8);
+		QuadTree(const Rectf& aRootRect, int aMaxElements = 8, int aMaxDepth = 8);
 
 		/// Inserts given element into the quadtree.
 		/// 
@@ -40,7 +40,7 @@ namespace CommonUtilities
 		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
-		auto Insert(const RectFloat& aRect, Args&&... someArgs) -> SizeType;
+		auto Insert(const Rectf& aRect, Args&&... someArgs) -> SizeType;
 
 		/// Attempts to erase element from tree.
 		/// 
@@ -76,7 +76,7 @@ namespace CommonUtilities
 		/// 
 		/// \param Index: index to item.
 		/// 
-		NODISC auto GetRect(SizeType aIndex) const -> const RectFloat&;
+		NODISC auto GetRect(SizeType aIndex) const -> const Rectf&;
 
 		/// Queries the tree for elements.
 		/// 
@@ -84,7 +84,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns List of entities contained within the bounding rectangle
 		/// 
-		NODISC auto Query(const RectFloat& aRect) const -> std::vector<SizeType>;
+		NODISC auto Query(const Rectf& aRect) const -> std::vector<SizeType>;
 
 		/// Queries the tree for elements.
 		/// 
@@ -111,7 +111,7 @@ namespace CommonUtilities
 
 		struct NodeReg
 		{
-			RectFloat rect;
+			Rectf rect;
 			SizeType index {0};
 			SizeType depth {0};
 		};
@@ -125,7 +125,7 @@ namespace CommonUtilities
 		void NodeInsert(const NodeReg& aNode, SizeType aEltIndex);
 		void LeafInsert(const NodeReg& aNode, SizeType aEltIndex);
 
-		auto FindLeaves(const NodeReg& aNode, const RectFloat& aRect) const -> std::vector<NodeReg>;
+		auto FindLeaves(const NodeReg& aNode, const Rectf& aRect) const -> std::vector<NodeReg>;
 
 		static bool IsLeaf(const Node& aNode);
 		static bool IsBranch(const Node& aNode);
@@ -134,7 +134,7 @@ namespace CommonUtilities
 		FreeVector<ElementPtr>	myElementsPtr;	// all the element ptrs
 		FreeVector<Node>		myNodes;
 
-		RectFloat	myRootRect;
+		Rectf	myRootRect;
 
 		SizeType	myMaxElements	{8}; // max elements before subdivision
 		SizeType	myMaxDepth		{8}; // max depth before no more leaves will be created
@@ -144,7 +144,7 @@ namespace CommonUtilities
 	};
 
 	template<std::equality_comparable T>
-	inline QuadTree<T>::QuadTree(const RectFloat& aRootRect, int aMaxElements, int aMaxDepth)
+	inline QuadTree<T>::QuadTree(const Rectf& aRootRect, int aMaxElements, int aMaxDepth)
 		: myRootRect(aRootRect), myMaxElements(aMaxElements), myMaxDepth(aMaxDepth)
 	{
 		myNodes.emplace();
@@ -152,7 +152,7 @@ namespace CommonUtilities
 
 	template<std::equality_comparable T>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	inline auto QuadTree<T>::Insert(const RectFloat& aRect, Args&&... someArgs) -> SizeType
+	inline auto QuadTree<T>::Insert(const Rectf& aRect, Args&&... someArgs) -> SizeType
 	{
 		std::scoped_lock lock(myMutex);
 
@@ -170,7 +170,7 @@ namespace CommonUtilities
 	{
 		std::scoped_lock lock(myMutex);
 
-		const RectFloat& rect = myElements[aIndex].rect;
+		const Rectf& rect = myElements[aIndex].rect;
 		const auto& leaves = FindLeaves({ myRootRect, 0, 0 }, rect);
 
 		if (leaves.empty())
@@ -242,13 +242,13 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::GetRect(SizeType aIndex) const -> const RectFloat&
+	inline auto QuadTree<T>::GetRect(SizeType aIndex) const -> const Rectf&
 	{
 		return myElements[aIndex].rect;
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::Query(const RectFloat& aRect) const -> std::vector<SizeType>
+	inline auto QuadTree<T>::Query(const Rectf& aRect) const -> std::vector<SizeType>
 	{
 		std::shared_lock lock(myMutex);
 
@@ -286,7 +286,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline auto QuadTree<T>::Query(const Vector2f& aPoint) const -> std::vector<SizeType>
 	{
-		return Query(RectFloat(aPoint.x, aPoint.y, 0.f, 0.f));
+		return Query(Rectf(aPoint.x, aPoint.y, aPoint.x, aPoint.y);
 	}
 
 	template<std::equality_comparable T>
@@ -346,7 +346,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void QuadTree<T>::NodeInsert(const NodeReg& aNode, SizeType aEltIndex)
 	{
-		const RectFloat& rect = myElements[aEltIndex].rect;
+		const Rectf& rect = myElements[aEltIndex].rect;
 		for (const auto& leaf : FindLeaves(aNode, rect))
 		{
 			LeafInsert(leaf, aEltIndex);
@@ -393,7 +393,7 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline auto QuadTree<T>::FindLeaves(const NodeReg& aNode, const RectFloat& aRect) const -> std::vector<NodeReg>
+	inline auto QuadTree<T>::FindLeaves(const NodeReg& aNode, const Rectf& aRect) const -> std::vector<NodeReg>
 	{
 		std::vector<NodeReg> leaves;
 		std::vector<NodeReg> toProcess;
@@ -412,26 +412,27 @@ namespace CommonUtilities
 			else
 			{
 				const auto fc	= myNodes[nd.index].firstChild;
-				const auto hx	= nd.rect.width / 2.0f;
-				const auto hy	= nd.rect.height / 2.0f;
-				const auto l	= nd.rect.left - hx;
-				const auto t	= nd.rect.top - hy;
+				const auto c	= nd.rect.GetCenter();
+				const auto hx	= nd.rect.Width() / 2.0f;
+				const auto hy	= nd.rect.Height() / 2.0f;
+				const auto l	= nd.rect.left;
+				const auto b	= nd.rect.bottom;
 				const auto r	= nd.rect.left + hx;
-				const auto b	= nd.rect.top + hy;
+				const auto t	= nd.rect.bottom + hy;
 
-				if (aRect.top <= nd.rect.top)
+				if (aRect.top >= c.y)
 				{
-					if (aRect.left <= nd.rect.left)
-						toProcess.emplace_back(RectFloat(l, t, hx, hy), fc + 0, nd.depth + 1);
-					if (aRect.Right() > nd.rect.left)
-						toProcess.emplace_back(RectFloat(r, t, hx, hy), fc + 1, nd.depth + 1);
+					if (aRect.left <= c.x)
+						toProcess.emplace_back(Rectf(l, t, l + hx, t + hy), fc + 0, nd.depth + 1);
+					if (aRect.right > c.x)
+						toProcess.emplace_back(Rectf(r, t, r + hx, t + hy), fc + 1, nd.depth + 1);
 				}
-				if (aRect.Bottom() > nd.rect.top)
+				if (aRect.bottom < c.y)
 				{
-					if (aRect.left <= nd.rect.left)
-						toProcess.emplace_back(RectFloat(l, b, hx, hy), fc + 2, nd.depth + 1);
-					if (aRect.Right() > nd.rect.left)
-						toProcess.emplace_back(RectFloat(r, b, hx, hy), fc + 3, nd.depth + 1);
+					if (aRect.left <= c.x)
+						toProcess.emplace_back(Rectf(l, b, l + hx, b + hy), fc + 2, nd.depth + 1);
+					if (aRect.right > c.x)
+						toProcess.emplace_back(Rectf(r, b, r + hx, b + hy), fc + 3, nd.depth + 1);
 				}
 			}
 		}

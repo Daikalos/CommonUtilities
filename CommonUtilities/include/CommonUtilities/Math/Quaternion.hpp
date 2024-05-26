@@ -20,7 +20,7 @@ namespace CommonUtilities
 		ZYX
 	};
 
-	inline constexpr AxisOrder RotationOrder = AxisOrder::ZXY;
+	inline constexpr AxisOrder RotationOrder = AxisOrder::XYZ;
 
 	template <class T>
 	class Matrix4x4;

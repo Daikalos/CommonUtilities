@@ -5,12 +5,13 @@
 #include "Line.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Utility/Clonable.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class LineVolume final : public Shape
+	class LineVolume final : public Clonable<Shape, LineVolume<T>>
 	{
 	public:
 		constexpr LineVolume() = default;
@@ -38,8 +39,7 @@ namespace CommonUtilities
 
 		constexpr void Clear();
 
-		NODISC constexpr auto GetType() const noexcept -> Type override;
-		NODISC constexpr std::unique_ptr<LineVolume<T>> Clone() const override;
+		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
 		std::vector<Line<T>> myLines;
@@ -131,14 +131,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto LineVolume<T>::GetType() const noexcept -> Type
+	constexpr Shape::Type LineVolume<T>::GetType() const noexcept
 	{
-		return Type::LineVolume;
-	}
-	template<typename T>
-	constexpr std::unique_ptr<LineVolume<T>> LineVolume<T>::Clone() const
-	{
-		return std::make_unique<LineVolume<T>>(*this);
+		return Shape::Type::LineVolume;
 	}
 
 	using LineVolumeFloat	= LineVolume<float>;

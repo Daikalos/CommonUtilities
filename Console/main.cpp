@@ -9,22 +9,14 @@
 
 #include <CommonUtilities/Structures/Blackboard.hpp>
 
+#include <CommonUtilities/Math/AABB.hpp>
+
 int main()
 {
-	cu::Quatf quat(0.0f, 1.0f, 0.0f);
+	constexpr cu::AABBf aabb1(cu::Vector3f(0, 0, -1.0f), cu::Vector3f(10.0f, 10.0f, 10.0f));
+	constexpr cu::AABBf aabb2(cu::Vector3f(-1.0f, 0, -5.0f), cu::Vector3f(2.0f, 2.0f, 2.0f));
 
-	cu::Mat4f m1;
-	cu::Mat4f m2;
-
-	const cu::Blackboard<> blackboard;
-	const int* val = blackboard.TryGet<int>("hey");
-
-	m1.SetRotation(cu::Vector3f(-cu::au::PI_2, 0.0f, 0.0f));
-	m2.SetRotation(cu::Vector3f(0.0, cu::au::PI_2, 0.0f));
-
-	cu::Mat4f m3 = m1 * m2;
-
-	cu::Vector3f rot = m3.GetRotation();
+	constexpr cu::AABBf inter = aabb1.Union(aabb2);
 
 	return 0;
 }

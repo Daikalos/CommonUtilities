@@ -81,7 +81,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\SmallVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Math\Rectangle.hpp">
+    <ClInclude Include="include\CommonUtilities\Math\Rect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\ArithmeticUtils.hpp">
@@ -123,7 +123,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Sphere.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Math\AABB3D.hpp">
+    <ClInclude Include="include\CommonUtilities\Math\AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Ray.hpp">
@@ -280,6 +280,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonUtilities.pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

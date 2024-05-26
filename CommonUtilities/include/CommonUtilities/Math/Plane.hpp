@@ -3,12 +3,13 @@
 #include "Vector3.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Utility/Clonable.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Plane : public Shape
+	class Plane : public Clonable<Shape, Plane>
 	{
 	public:
 		constexpr Plane() = default;
@@ -29,8 +30,7 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, T aRadius) const;
 
-		NODISC constexpr auto GetType() const noexcept -> Type override;
-		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
+		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
 		Vector3<T> myOrigin;
@@ -96,14 +96,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Plane<T>::GetType() const noexcept -> Type
+	constexpr Shape::Type Plane<T>::GetType() const noexcept
 	{
-		return Type::Plane;
-	}
-	template<typename T>
-	constexpr std::unique_ptr<Shape> Plane<T>::Clone() const
-	{
-		return std::make_unique<Plane<T>>(*this);
+		return Shape::Type::Plane;
 	}
 
 	// using declarations

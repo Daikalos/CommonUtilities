@@ -3,12 +3,13 @@
 #include "Vector3.hpp"
 #include "Shape.h"
 
+#include <CommonUtilities/Utility/Clonable.hpp>
 #include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {
 	template<typename T>
-	class Ray final : public Shape
+	class Ray final : public Clonable<Shape, Ray<T>>
 	{
 	public:
 		constexpr Ray() = default;
@@ -25,8 +26,7 @@ namespace CommonUtilities
 		constexpr void SetOrigin(const Vector3<T>& aOrigin);
 		constexpr void SetDirection(const Vector3<T>& aDirection);
 
-		NODISC constexpr auto GetType() const noexcept -> Type override;
-		NODISC constexpr std::unique_ptr<Shape> Clone() const override;
+		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
 		Vector3<T> myOrigin;
@@ -75,14 +75,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr auto Ray<T>::GetType() const noexcept -> Type
+	constexpr Shape::Type Ray<T>::GetType() const noexcept
 	{
-		return Type::Ray;
-	}
-	template<typename T>
-	constexpr std::unique_ptr<Shape> Ray<T>::Clone() const
-	{
-		return std::make_unique<Ray<T>>(*this);
+		return Shape::Type::Ray;
 	}
 
 	using RayFloat	= Ray<float>;

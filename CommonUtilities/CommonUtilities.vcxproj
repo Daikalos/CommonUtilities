@@ -184,6 +184,7 @@
     <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h" />
     <ClInclude Include="include\CommonUtilities\System\StopWatch.h" />
     <ClInclude Include="include\CommonUtilities\System\TimedEvent.h" />
+    <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
@@ -193,7 +194,7 @@
     <ClInclude Include="include\CommonUtilities\Input\Gamepad.h" />
     <ClInclude Include="include\CommonUtilities\Input\KeyboardBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\MouseBind.hpp" />
-    <ClInclude Include="include\CommonUtilities\Math\AABB3D.hpp" />
+    <ClInclude Include="include\CommonUtilities\Math\AABB.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Intersection.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Line.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\LineVolume.hpp" />
@@ -228,7 +229,7 @@
     <ClInclude Include="include\CommonUtilities\System\EventID.h" />
     <ClInclude Include="include\CommonUtilities\System\EventIdentifiers.h" />
     <ClInclude Include="include\CommonUtilities\System\IDGenerator.h" />
-    <ClInclude Include="include\CommonUtilities\Math\Rectangle.hpp" />
+    <ClInclude Include="include\CommonUtilities\Math\Rect.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Vector.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Vector3.hpp" />
     <ClInclude Include="include\CommonUtilities\System\IEvent.h" />

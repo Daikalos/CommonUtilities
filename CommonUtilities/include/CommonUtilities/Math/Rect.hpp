@@ -107,20 +107,20 @@ namespace CommonUtilities
 		const Vector3<T> center		= GetCenter();
 		const Vector2<T> extends	= aSize / 2.0f;
 
-		left	= center.x - extends;
-		bottom	= center.y - extends;
-		right	= center.x + extends;
-		top		= center.y + extends;
+		left	= center.x - extends.x;
+		bottom	= center.y - extends.y;
+		right	= center.x + extends.x;
+		top		= center.y + extends.y;
 	}
 	template<IsArithmetic T>
 	constexpr void Rect<T>::SetCenter(const Vector2<T>& aCenter)
 	{
 		const Vector2<T> extends = GetSize() / 2.0f;
 
-		left	= aCenter.x - extends;
-		bottom	= aCenter.y - extends;
-		right	= aCenter.x + extends;
-		top		= aCenter.y + extends;
+		left	= aCenter.x - extends.x;
+		bottom	= aCenter.y - extends.y;
+		right	= aCenter.x + extends.x;
+		top		= aCenter.y + extends.y;
 	}
 
 	template<IsArithmetic T>

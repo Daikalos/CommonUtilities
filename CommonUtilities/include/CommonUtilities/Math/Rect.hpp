@@ -104,7 +104,7 @@ namespace CommonUtilities
 	template<IsArithmetic T>
 	constexpr void Rect<T>::SetSize(const Vector2<T>& aSize)
 	{
-		const Vector3<T> center		= GetCenter();
+		const Vector2<T> center		= GetCenter();
 		const Vector2<T> extends	= aSize / 2.0f;
 
 		left	= center.x - extends.x;

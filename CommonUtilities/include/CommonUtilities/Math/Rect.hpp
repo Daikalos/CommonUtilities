@@ -21,6 +21,9 @@ namespace CommonUtilities
 		constexpr Rect(T aLeft, T aBottom, T aRight, T aTop);
 		constexpr Rect(const Vector2<T>& aLeftBot, const Vector2<T>& aRightTop);
 
+		NODISC constexpr static Rect InitWithMinAndMax(const Vector2<T>& aMin, const Vector2<T>& aMax);
+		NODISC constexpr static Rect InitWithCenterAndSize(const Vector2<T>& aCenter, const Vector2<T>& aSize);
+
 		template<IsArithmetic U>
 		constexpr explicit Rect(const Rect<U>& aRhs);
 
@@ -58,6 +61,18 @@ namespace CommonUtilities
 		: Rect(aLeftBot.x, aLeftBot.y, aRightTop.x, aRightTop.y)
 	{
 
+	}
+
+	template<IsArithmetic T>
+	constexpr Rect<T> Rect<T>::InitWithMinAndMax(const Vector2<T>& aMin, const Vector2<T>& aMax)
+	{
+		return Rect<T>(aMin, aMax);
+	}
+	template<IsArithmetic T>
+	constexpr Rect<T> Rect<T>::InitWithCenterAndSize(const Vector2<T>& aCenter, const Vector2<T>& aSize)
+	{
+		const Vector2<T> extends = aSize / 2.0f;
+		return Rect<T>(aCenter - extends, aCenter + extends);
 	}
 
 	template<IsArithmetic T>

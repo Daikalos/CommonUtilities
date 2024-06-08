@@ -16,7 +16,7 @@ namespace CommonUtilities::bm
 		auto& benchmark = priv::globalBenchmarks.emplace(std::move(aMessage));
 		benchmark.Start();
 
-		while (!benchmark.myIsReady);
+		while (!benchmark.myIsReady.load());
 	}
 
 	void End()

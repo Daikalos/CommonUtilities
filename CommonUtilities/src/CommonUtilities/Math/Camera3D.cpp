@@ -87,20 +87,3 @@ void Camera3D::SetScreenSize(const Vector2f& aScreenSize)
 {
 	myScreenSize = aScreenSize;
 }
-
-bool Camera3D::HandleEvent(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
-{
-	switch (aMessage)
-	{
-		case WM_SIZE:
-		{
-			UINT width	= LOWORD(lParam);
-			UINT height = HIWORD(lParam);
-
-			myScreenSize = Vector2f((float)width, (float)height); // mostly just for NDCToScreen to work
-
-			break;
-		}
-	}
-	return false;
-}

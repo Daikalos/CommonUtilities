@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Windows.h>
 #include <tuple>
 
 #include <CommonUtilities/System/Timer.h>
@@ -47,8 +46,6 @@ namespace CommonUtilities
 		virtual void Rotate(const Vector3f& aRotation);
 
 		virtual void SetScreenSize(const Vector2f& aScreenSize);
-
-		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		Transform3D myTransform;

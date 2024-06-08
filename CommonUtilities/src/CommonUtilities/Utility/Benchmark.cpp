@@ -1,5 +1,16 @@
 #include <CommonUtilities/Utility/Benchmark.h>
 
+#include <iostream>
+#include <iomanip>
+#include <functional>
+#include <chrono>
+
+#include <Windows.h>
+#include <Psapi.h>
+#include <Pdh.h>
+
+#include <CommonUtilities/Utility/WinUtils.h>
+
 namespace CommonUtilities::bm
 {
 	void Begin(std::string aMessage)
@@ -31,10 +42,6 @@ namespace CommonUtilities::bm
 			, myActive(false)
 			, myIsReady(false)
 			, myThread()
-			, myLastCPU()
-			, myLastSysCPU()
-			, myLastUserCPU()
-			, myNumProcessors()
 		{
 
 		}
@@ -46,10 +53,6 @@ namespace CommonUtilities::bm
 
 		void Benchmark::Start()
 		{
-			SYSTEM_INFO systemInfo;
-			GetSystemInfo(&systemInfo);
-			myNumProcessors = systemInfo.dwNumberOfProcessors;
-
 			myActive = true;
 			myThread = std::jthread(&Benchmark::Loop, this);
 		}
@@ -76,7 +79,7 @@ namespace CommonUtilities::bm
 			GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
 
 			const std::size_t initialRAM = pmc.WorkingSetSize;
-			const long double initialCPU = GetCPU();
+			const long double initialCPU = Get_CPU_Usage();
 
 			std::chrono::high_resolution_clock::time_point timeBegin = std::chrono::high_resolution_clock::now();
 
@@ -87,7 +90,7 @@ namespace CommonUtilities::bm
 				GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
 
 				const std::size_t ram = pmc.WorkingSetSize;
-				const long double cpu = GetCPU();
+				const long double cpu = Get_CPU_Usage();
 
 				totalRAMUsage += ram;
 				totalCPUUsage += cpu;
@@ -151,33 +154,6 @@ namespace CommonUtilities::bm
 
 				std::puts("---------------------");
 			}
-		}
-
-		long double Benchmark::GetCPU()
-		{
-			FILETIME fileTime, fileSystem, fileUser;
-			ULARGE_INTEGER now, sys, user;
-			long double percent;
-
-			GetSystemTimeAsFileTime(&fileTime);
-			memcpy(&now, &fileTime, sizeof(FILETIME));
-
-			GetProcessTimes(GetCurrentProcess(), &fileTime, &fileTime, &fileSystem, &fileUser);
-			memcpy(&sys, &fileSystem, sizeof(FILETIME));
-			memcpy(&user, &fileUser, sizeof(FILETIME));
-
-			percent = static_cast<long double>((sys.QuadPart - myLastSysCPU.QuadPart) + (user.QuadPart - myLastUserCPU.QuadPart));
-			percent /= static_cast<long double>(now.QuadPart - myLastCPU.QuadPart);
-			percent /= myNumProcessors;
-
-			myLastCPU = now;
-			myLastUserCPU = user;
-			myLastSysCPU = sys;
-
-			if (isnan(percent) || isinf(percent))
-				return 0.0;
-
-			return percent;
 		}
 	}
 }

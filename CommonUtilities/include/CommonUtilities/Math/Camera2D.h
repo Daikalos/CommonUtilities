@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Windows.h>
-
 #include <CommonUtilities/Config.h>
 
 #include "Matrix3x3.hpp"
@@ -34,8 +32,6 @@ namespace CommonUtilities
 		virtual void Move(const Vector2f& aPosition);
 		virtual void Scale(const Vector2f& aScale);
 		virtual void Rotate(float aRotation);
-
-		virtual bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:	
 		Vector2f		myPosition;

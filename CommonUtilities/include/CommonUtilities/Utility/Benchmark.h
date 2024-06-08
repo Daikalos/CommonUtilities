@@ -1,19 +1,11 @@
 #pragma once
 
 #include <memory>
-#include <functional>
-#include <chrono>
-#include <iostream>
 #include <thread>
 #include <queue>
 #include <shared_mutex>
 #include <mutex>
 #include <string>
-#include <iomanip>
-
-#include <Windows.h>
-#include <Psapi.h>
-#include <Pdh.h>
 
 #include <CommonUtilities/Utility/StringUtils.h>
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
@@ -52,19 +44,14 @@ namespace CommonUtilities::bm
 			~Benchmark();
 
 			void Start();
-			void Loop();
-			long double GetCPU();
 
 		private:
+			void Loop();
+
 			std::string			myMessage;
 			std::atomic<bool>	myActive;
 			std::atomic<bool>	myIsReady;
 			std::jthread		myThread;
-
-			ULARGE_INTEGER	myLastCPU;
-			ULARGE_INTEGER	myLastSysCPU;
-			ULARGE_INTEGER	myLastUserCPU;
-			int				myNumProcessors;
 
 			friend void CommonUtilities::bm::Begin(std::string aMessage);
 		};

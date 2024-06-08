@@ -101,20 +101,3 @@ void Camera2D::Rotate(float aRotation)
 {
 	SetRotation(GetRotation() + aRotation);
 }
-
-bool Camera2D::HandleEvent(UINT aMessage, UNSD WPARAM wParam, LPARAM lParam)
-{
-	switch (aMessage)
-	{
-		case WM_SIZE:
-		{
-			UINT width	= LOWORD(lParam);
-			UINT height = HIWORD(lParam);
-
-			SetSize(Vector2f((float)width, (float)height)); // update size of camera when window is resized
-
-			break;
-		}
-	}
-	return false;
-}

@@ -102,9 +102,17 @@ long double CommonUtilities::Get_CPU_Usage()
 	percent /= static_cast<long double>(now.QuadPart - lastRef.QuadPart);
 	percent /= numProcessors;
 
-	lastRef = now;
+	lastRef		= now;
 	lastUserCPU = user;
 	lastSysCPU	= sys;
 
 	return percent;
+}
+
+std::size_t CommonUtilities::Get_RAM_Usage()
+{
+	PROCESS_MEMORY_COUNTERS_EX pmc{};
+	GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+
+	return (std::size_t)pmc.WorkingSetSize;
 }

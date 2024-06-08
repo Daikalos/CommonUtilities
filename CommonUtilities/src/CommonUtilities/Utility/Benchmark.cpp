@@ -5,10 +5,6 @@
 #include <functional>
 #include <chrono>
 
-#include <Windows.h>
-#include <Psapi.h>
-#include <Pdh.h>
-
 #include <CommonUtilities/Utility/WinUtils.h>
 
 namespace CommonUtilities::bm
@@ -59,8 +55,6 @@ namespace CommonUtilities::bm
 
 		void Benchmark::Loop()
 		{
-			HANDLE currentProcess = GetCurrentProcess();
-
 			std::size_t totalRAMUsage	= 0;
 			long double totalCPUUsage	= 0.0L;
 
@@ -75,10 +69,7 @@ namespace CommonUtilities::bm
 			std::size_t totalRAMSamples = 0;
 			std::size_t totalCPUSamples = 0;
 
-			PROCESS_MEMORY_COUNTERS_EX pmc{};
-			GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-
-			const std::size_t initialRAM = pmc.WorkingSetSize;
+			const std::size_t initialRAM = Get_RAM_Usage();
 			const long double initialCPU = Get_CPU_Usage();
 
 			std::chrono::high_resolution_clock::time_point timeBegin = std::chrono::high_resolution_clock::now();
@@ -87,15 +78,13 @@ namespace CommonUtilities::bm
 
 			while (myActive.load())
 			{
-				GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-
-				const std::size_t ram = pmc.WorkingSetSize;
+				const std::size_t ram = Get_RAM_Usage();
 				const long double cpu = Get_CPU_Usage();
 
 				totalRAMUsage += ram;
 				totalCPUUsage += cpu;
 
-				if (ram > LDBL_EPSILON) ++totalRAMSamples;
+				if (ram > 0) ++totalRAMSamples;
 				if (cpu > LDBL_EPSILON) ++totalCPUSamples;
 
 				std::this_thread::yield();
@@ -113,8 +102,7 @@ namespace CommonUtilities::bm
 			cpuAverage = (totalCPUSamples != 0) ? (totalCPUUsage / totalCPUSamples) : 0.0L;
 			cpuUsage = cpuAverage - initialCPU;
 
-			GetProcessMemoryInfo(currentProcess, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-			ramCurr = pmc.WorkingSetSize;
+			ramCurr = Get_RAM_Usage();
 			ramDiff = ramCurr - initialRAM;
 
 			// -- print information --

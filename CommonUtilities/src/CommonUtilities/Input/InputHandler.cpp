@@ -35,9 +35,12 @@ bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_KILLFOCUS:
 		{
-			if (myFocusInput && myInFocus)
+			if (myInFocus)
 			{
-				ResetTentativeState();
+				if (myFocusInput)
+				{
+					ResetTentativeState();
+				}
 				myInFocus = false;
 			}
 			return false;

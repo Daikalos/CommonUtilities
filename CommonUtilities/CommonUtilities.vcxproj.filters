@@ -264,7 +264,7 @@
     <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\WinUtils.h">
+    <ClInclude Include="include\CommonUtilities\Utility\Win32Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp">

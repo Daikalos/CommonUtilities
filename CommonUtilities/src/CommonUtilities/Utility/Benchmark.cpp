@@ -5,7 +5,7 @@
 #include <functional>
 #include <chrono>
 
-#include <CommonUtilities/Utility/WinUtils.h>
+#include <CommonUtilities/Utility/Win32Utils.h>
 
 namespace CommonUtilities::bm
 {

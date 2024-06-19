@@ -4,7 +4,7 @@
 
 #include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities/Utility/Benchmark.h>
-#include <CommonUtilities\Utility\WinUtils.h>
+#include <CommonUtilities\Utility\Win32Utils.h>
 
 #include <CommonUtilities/System/TimedEvent.h>
 
@@ -27,6 +27,9 @@ int main()
 	constexpr cu::AABBf aabb2(cu::Vector3f(-1.0f, 0, -5.0f), cu::Vector3f(2.0f, 2.0f, 2.0f));
 
 	constexpr cu::AABBf inter = aabb1.Union(aabb2);
+
+	cu::Vector2f vec(123.43423f, -3214.62345f);
+	cu::Vector2f test = vec.GetFrac();
 
 	return 0;
 }

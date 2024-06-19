@@ -1,4 +1,4 @@
-#include <CommonUtilities\Utility\WinUtils.h>
+#include <CommonUtilities\Utility\Win32Utils.h>
 
 #include <Psapi.h>
 #include <Pdh.h>

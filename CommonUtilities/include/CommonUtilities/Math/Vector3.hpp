@@ -106,6 +106,52 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr T AngleTo(const Vector3& aVector) const;
 
+		/// Computes the fractional part of each member
+		/// 
+		/// \returns Vector with only the fractional values left
+		/// 
+		constexpr Vector3<T> GetFrac() const requires IsFloatingPoint<T>;
+
+		/// Computes the ceil of each member
+		/// 
+		/// \returns Vector whose values have been rounded up
+		/// 
+		constexpr Vector3<T> GetCeil() const requires IsFloatingPoint<T>;
+
+		/// Computes the floor of each member
+		/// 
+		/// \returns Vector whose values have been rounded down
+		/// 
+		constexpr Vector3<T> GetFloor() const requires IsFloatingPoint<T>;
+
+		/// Computes the trunc of each member
+		/// 
+		/// \returns Vector whose values have been truncated
+		/// 
+		constexpr Vector3<T> GetTrunc() const requires IsFloatingPoint<T>;
+
+		/// Computes the round of each member
+		/// 
+		/// \returns Vector whose values have been rounded to nearest
+		/// 
+		constexpr Vector3<T> GetRound() const requires IsFloatingPoint<T>;
+
+		/// Rounds the vector values up
+		/// 
+		constexpr void Ceil() requires IsFloatingPoint<T>;
+
+		/// Rounds the vector values down
+		/// 
+		constexpr void Floor() requires IsFloatingPoint<T>;
+
+		/// Truncates the vector values
+		/// 
+		constexpr void Trunc() requires IsFloatingPoint<T>;
+
+		/// Rounds the vector values
+		/// 
+		constexpr void Round() requires IsFloatingPoint<T>;
+
 		/// \returns Converts this 3D vector to a 2D one.
 		/// 
 		NODISC constexpr Vector2<T> XY() const;
@@ -279,6 +325,53 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetFrac() const requires IsFloatingPoint<T>
+	{
+		return (*this - GetFloor());
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetCeil() const requires IsFloatingPoint<T>
+	{
+		return Vector3<T>(std::ceil(x), std::ceil(y), std::ceil(z));
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetFloor() const requires IsFloatingPoint<T>
+	{
+		return Vector3<T>(std::floor(x), std::floor(y), std::floor(z));
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetTrunc() const requires IsFloatingPoint<T>
+	{
+		return Vector3<T>(std::trunc(x), std::trunc(y), std::trunc(z));
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetRound() const requires IsFloatingPoint<T>
+	{
+		return Vector3<T>(std::round(x), std::round(y), std::round(z));
+	}
+
+	template<typename T>
+	constexpr void Vector3<T>::Ceil() requires IsFloatingPoint<T>
+	{
+		*this = GetCeil();
+	}
+	template<typename T>
+	constexpr void Vector3<T>::Floor() requires IsFloatingPoint<T>
+	{
+		*this = GetFloor();
+	}
+	template<typename T>
+	constexpr void Vector3<T>::Trunc() requires IsFloatingPoint<T>
+	{
+		*this = GetTrunc();
+	}
+	template<typename T>
+	constexpr void Vector3<T>::Round() requires IsFloatingPoint<T>
+	{
+		*this = GetRound();
+	}
+
+	template<typename T>
 	constexpr Vector2<T> Vector3<T>::XY() const
 	{
 		return Vector2<T>(x, y);
@@ -401,6 +494,37 @@ namespace CommonUtilities
 
 		return aLeft;
 	}
+	template<typename T>
+	constexpr Vector3<T>& operator*=(Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		aLeft.x *= aRight.x;
+		aLeft.y *= aRight.y;
+		aLeft.z *= aRight.z;
+
+		return aLeft;
+	}
+	template<typename T>
+	constexpr Vector3<T>& operator/=(Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot divide by zero");
+
+		aLeft.x /= aRight.x;
+		aLeft.y /= aRight.y;
+		aLeft.z /= aRight.z;
+
+		return aLeft;
+	}
+	template<typename T>
+	constexpr Vector3<T>& operator%=(Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot modulo by zero");
+
+		aLeft.x %= aRight.x;
+		aLeft.y %= aRight.y;
+		aLeft.z %= aRight.z;
+
+		return aLeft;
+	}
 
 	template<typename T>
 	constexpr Vector3<T>& operator*=(Vector3<T>& aLeft, T aRight)
@@ -422,24 +546,14 @@ namespace CommonUtilities
 
 		return aLeft;
 	}
-
 	template<typename T>
-	constexpr Vector3<T>& operator*=(Vector3<T>& aLeft, const Vector3<T>& aRight)
+	constexpr Vector3<T>& operator%=(Vector3<T>& aLeft, T aRight)
 	{
-		aLeft.x *= aRight.x;
-		aLeft.y *= aRight.y;
-		aLeft.z *= aRight.z;
+		assert(aRight != 0 && "Cannot modulo by zero");
 
-		return aLeft;
-	}
-	template<typename T>
-	constexpr Vector3<T>& operator/=(Vector3<T>& aLeft, const Vector3<T>& aRight)
-	{
-		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot divide by zero");
-
-		aLeft.x /= aRight.x;
-		aLeft.y /= aRight.y;
-		aLeft.z /= aRight.z;
+		aLeft.x %= aRight;
+		aLeft.y %= aRight;
+		aLeft.z %= aRight;
 
 		return aLeft;
 	}
@@ -454,6 +568,23 @@ namespace CommonUtilities
 	{
 		return Vector3<T>(aLeft.x - aRight.x, aLeft.y - aRight.y, aLeft.z - aRight.z);
 	}
+	template<typename T>
+	NODISC constexpr Vector3<T> operator*(const Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		return Vector3<T>(aLeft.x * aRight.x, aLeft.y * aRight.y, aLeft.z * aRight.z);
+	}
+	template<typename T>
+	NODISC constexpr Vector3<T> operator/(const Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot divide by zero");
+		return Vector3<T>(aLeft.x / aRight.x, aLeft.y / aRight.y, aLeft.z / aRight.z);
+	}
+	template<typename T>
+	NODISC constexpr Vector3<T> operator%(const Vector3<T>& aLeft, const Vector3<T>& aRight)
+	{
+		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot modulo by zero");
+		return Vector3<T>(aLeft.x % aRight.x, aLeft.y % aRight.y, aLeft.z % aRight.z);
+	}
 
 	template<typename T>
 	NODISC constexpr Vector3<T> operator*(const Vector3<T>& aLeft, T aRight)
@@ -466,29 +597,29 @@ namespace CommonUtilities
 		assert(aRight != 0 && "Cannot divide by zero");
 		return Vector3<T>(aLeft.x / aRight, aLeft.y / aRight, aLeft.z / aRight);
 	}
-
 	template<typename T>
-	NODISC constexpr Vector3<T> operator*(const Vector3<T>& aLeft, const Vector3<T>& aRight)
+	NODISC constexpr Vector3<T> operator%(const Vector3<T>& aLeft, T aRight)
 	{
-		return Vector3<T>(aLeft.x * aRight.x, aLeft.y * aRight.y, aLeft.z * aRight.z);
+		assert(aRight != 0 && "Cannot modulo by zero");
+		return Vector3<T>(aLeft.x % aRight, aLeft.y % aRight, aLeft.z % aRight);
 	}
+
 	template<typename T>
 	NODISC constexpr Vector3<T> operator*(T aLeft, const Vector3<T>& aRight)
 	{
 		return aRight * aLeft;
-	}
-
-	template<typename T>
-	NODISC constexpr Vector3<T> operator/(const Vector3<T>& aLeft, const Vector3<T>& aRight)
-	{
-		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot divide by zero");
-		return Vector3<T>(aLeft.x / aRight.x, aLeft.y / aRight.y, aLeft.z / aRight.z);
 	}
 	template<typename T>
 	NODISC constexpr Vector3<T> operator/(T aLeft, const Vector3<T>& aRight)
 	{
 		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot divide by zero");
 		return Vector3<T>(aLeft / aRight.x, aLeft / aRight.y, aLeft / aRight.z);
+	}
+	template<typename T>
+	NODISC constexpr Vector3<T> operator%(T aLeft, const Vector3<T>& aRight)
+	{
+		assert(aRight.x != 0 && aRight.y != 0 && aRight.z != 0 && "Cannot modulo by zero");
+		return Vector3<T>(aLeft % aRight.x, aLeft % aRight.y, aLeft % aRight.z);
 	}
 
 	template<typename T>

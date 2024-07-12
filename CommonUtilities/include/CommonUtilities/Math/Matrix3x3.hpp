@@ -258,8 +258,24 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix3x3<T>::GetInverse() const -> Matrix3x3
 	{
-		throw std::runtime_error("Not yet implemented");
-		return Matrix3x3();
+		const T* m = myMatrix.data();
+
+		T det = m[0] * (m[4] * m[8] - m[5] * m[7]) - 
+				m[1] * (m[3] * m[8] - m[5] * m[6]) + 
+				m[2] * (m[3] * m[7] - m[4] * m[6]);
+
+		return (det != T(0)) ? Matrix3x3
+		{
+		    (m[4] * m[8] - m[5] * m[7]) / det,
+		   -(m[1] * m[8] - m[2] * m[7]) / det,
+		    (m[1] * m[5] - m[2] * m[4]) / det,
+		   -(m[3] * m[8] - m[5] * m[6]) / det,
+		    (m[0] * m[8] - m[2] * m[6]) / det,
+		   -(m[0] * m[5] - m[2] * m[3]) / det,
+		    (m[3] * m[7] - m[4] * m[6]) / det,
+		   -(m[0] * m[7] - m[1] * m[6]) / det,
+		    (m[0] * m[4] - m[1] * m[3]) / det,
+		} ? Matrix3x3{};
 	}
 	template<typename T>
 	constexpr auto Matrix3x3<T>::GetFastInverse() const -> Matrix3x3

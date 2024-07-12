@@ -28,6 +28,14 @@ namespace CommonUtilities
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
+		NODISC constexpr Sphere Union(const Sphere& aOther) const;
+
+		NODISC constexpr bool Overlaps(const Sphere& aOther) const;
+
+		NODISC constexpr bool Contains(T aX, T aY, T aZ) const;
+		NODISC constexpr bool Contains(const Vector3<T>& aPosition) const;
+		NODISC constexpr bool Contains(const Sphere& aOther) const;
+
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
@@ -80,7 +88,57 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Sphere<T>::IsInside(const Vector3<T>& aPosition) const
 	{
-		return Vector3<T>::DistanceSqr(myCenter, aPosition) <= myRadiusSqr;
+		return Vector3<T>::DistanceSqr(GetCenter(), aPosition) <= myRadiusSqr;
+	}
+
+	template<typename T>
+	constexpr Sphere<T> Sphere<T>::Union(const Sphere& aOther) const
+	{
+		if (Contains(aOther))
+			return *this;
+		else if (aOther.Contains(*this))
+			return aOther;
+
+		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
+
+		const T dist	= dir.Length();
+		const T radius  = (GetRadius() + aOther.GetRadius() + dist) / T(2);
+
+		const Vector3<T> center = GetCenter() + (dir * (radius - GetRadius())) / dist;
+
+		return Sphere(center, radius);
+	}
+
+	template<typename T>
+	constexpr bool Sphere<T>::Overlaps(const Sphere& aOther) const
+	{
+		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
+
+		const T distSqr = dir.LengthSqr();
+		const T radius	= GetRadius() + aOther.GetRadius();
+
+		return distSqr < radius * radius;
+	}
+
+	template<typename T>
+	constexpr bool Sphere<T>::Contains(T aX, T aY, T aZ) const
+	{
+		return Contains(cu::Vector3f(aX, aY, aZ));
+	}
+	template<typename T>
+	constexpr bool Sphere<T>::Contains(const Vector3<T>& aPosition) const
+	{
+		return Vector3<T>::DistanceSqr(GetCenter(), aPosition) < myRadiusSqr;
+	}
+	template<typename T>
+	constexpr bool Sphere<T>::Contains(const Sphere& aOther) const
+	{
+		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
+
+		const T distSqr = dir.LengthSqr();
+		const T radius  = GetRadius() - aOther.GetRadius();
+
+		return distSqr < radius * radius;
 	}
 
 	template<typename T>

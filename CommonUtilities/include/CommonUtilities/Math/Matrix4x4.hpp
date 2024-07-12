@@ -364,8 +364,51 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::GetInverse() const -> Matrix4x4
 	{
-		throw std::runtime_error("Not yet implemented");
-		return Matrix4x4();
+		const T* m = myMatrix.data();
+
+		const T A2323 = m[10] * m[15] - m[11] * m[14];
+		const T A1323 = m[9 ] * m[15] - m[11] * m[13];
+		const T A1223 = m[9 ] * m[14] - m[10] * m[13];
+		const T A0323 = m[8 ] * m[15] - m[11] * m[12];
+		const T A0223 = m[8 ] * m[14] - m[10] * m[12];
+		const T A0123 = m[8 ] * m[13] - m[9 ] * m[12];
+		const T A2313 = m[6 ] * m[15] - m[7 ] * m[14];
+		const T A1313 = m[5 ] * m[15] - m[7 ] * m[13];
+		const T A1213 = m[5 ] * m[14] - m[6 ] * m[13];
+		const T A2312 = m[6 ] * m[11] - m[7 ] * m[10];
+		const T A1312 = m[5 ] * m[11] - m[7 ] * m[9 ];
+		const T A1212 = m[5 ] * m[10] - m[6 ] * m[9 ];
+		const T A0313 = m[4 ] * m[15] - m[7 ] * m[12];
+		const T A0213 = m[4 ] * m[14] - m[6 ] * m[12];
+		const T A0312 = m[4 ] * m[11] - m[7 ] * m[8 ];
+		const T A0212 = m[4 ] * m[10] - m[6 ] * m[8 ];
+		const T A0113 = m[4 ] * m[13] - m[5 ] * m[12];
+		const T A0112 = m[4 ] * m[9 ] - m[5 ] * m[8 ];
+
+		const T det = m[0] * (m[5] * A2323 - m[6] * A1323 + m[7] * A1223) -
+					  m[1] * (m[4] * A2323 - m[6] * A0323 + m[7] * A0223) + 
+					  m[2] * (m[4] * A1323 - m[5] * A0323 + m[7] * A0123) - 
+					  m[3] * (m[4] * A1223 - m[5] * A0223 + m[6] * A0123);
+
+		return (det != T(0)) ? Matrix4x4
+		{
+			 (m[5] * A2323 - m[6] * A1323 + m[7] * A1223) / det,
+			-(m[1] * A2323 - m[2] * A1323 + m[3] * A1223) / det,
+			 (m[1] * A2313 - m[2] * A1313 + m[3] * A1213) / det,
+			-(m[1] * A2312 - m[2] * A1312 + m[3] * A1212) / det,
+			-(m[4] * A2323 - m[6] * A0323 + m[7] * A0223) / det,
+			 (m[0] * A2323 - m[2] * A0323 + m[3] * A0223) / det,
+			-(m[0] * A2313 - m[2] * A0313 + m[3] * A0213) / det,
+			 (m[0] * A2312 - m[2] * A0312 + m[3] * A0212) / det,
+			 (m[4] * A1323 - m[5] * A0323 + m[7] * A0123) / det,
+			-(m[0] * A1323 - m[1] * A0323 + m[3] * A0123) / det,
+			 (m[0] * A1313 - m[1] * A0313 + m[3] * A0113) / det,
+			-(m[0] * A1312 - m[1] * A0312 + m[3] * A0112) / det,
+			-(m[4] * A1223 - m[5] * A0223 + m[6] * A0123) / det,
+			 (m[0] * A1223 - m[1] * A0223 + m[2] * A0123) / det,
+			-(m[0] * A1213 - m[1] * A0213 + m[2] * A0113) / det,
+			 (m[0] * A1212 - m[1] * A0212 + m[2] * A0112) / det,
+		} : Matrix4x4{};
 	}
 	template<typename T>
 	constexpr auto Matrix4x4<T>::GetFastInverse() const -> Matrix4x4

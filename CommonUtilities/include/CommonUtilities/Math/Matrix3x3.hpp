@@ -274,8 +274,8 @@ namespace CommonUtilities
 		   -(m[0] * m[5] - m[2] * m[3]) / det,
 		    (m[3] * m[7] - m[4] * m[6]) / det,
 		   -(m[0] * m[7] - m[1] * m[6]) / det,
-		    (m[0] * m[4] - m[1] * m[3]) / det,
-		} ? Matrix3x3{};
+		    (m[0] * m[4] - m[1] * m[3]) / det
+		} : Matrix3x3{};
 	}
 	template<typename T>
 	constexpr auto Matrix3x3<T>::GetFastInverse() const -> Matrix3x3

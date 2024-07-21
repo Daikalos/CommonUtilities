@@ -495,6 +495,17 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC constexpr bool operator==(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return (aLeft.x == aRight.x && aLeft.y == aRight.y && aLeft.z == aRight.z && aLeft.w == aRight.w);
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
+	template<typename T>
 	inline const Quaternion<T> Quaternion<T>::IDENTITY;
 
 	using Quatf = Quaternion<float>;

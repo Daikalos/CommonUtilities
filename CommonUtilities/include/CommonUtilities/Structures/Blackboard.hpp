@@ -10,15 +10,19 @@
 #include <CommonUtilities/System/IDGenerator.h>
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Structures/FreeVector.hpp>
+#include <CommonUtilities/Utility/NonCopyable.h>
 
 namespace CommonUtilities
 {
 	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
-	class Blackboard
+	class Blackboard : private cu::NonCopyable
 	{
 	public:
 		Blackboard() = default;
 		~Blackboard() = default;
+
+		Blackboard(Blackboard&& aOther);
+		Blackboard& operator=(Blackboard&& aOther);
 
 		template<typename T>
 		NODISC const T& Get(const IDType& aID) const;
@@ -82,7 +86,7 @@ namespace CommonUtilities
 			ValueMap() = default;
 			~ValueMap() = default;
 
-			NODISC const T& Get(const IDType& aID) const 
+			NODISC const T& Get(const IDType& aID) const
 			{
 				return myValues.at(myIndices.at(Hash{}(aID)));
 			}
@@ -91,7 +95,7 @@ namespace CommonUtilities
 				return myValues.at(myIndices.at(Hash{}(aID)));
 			}
 
-			NODISC const T* TryGet(const IDType& aID) const 
+			NODISC const T* TryGet(const IDType& aID) const
 			{
 				if (auto it = myIndices.find(Hash{}(aID)); it != myIndices.end())
 				{
@@ -100,7 +104,7 @@ namespace CommonUtilities
 
 				return nullptr;
 			}
-			NODISC T* TryGet(const IDType& aID) 
+			NODISC T* TryGet(const IDType& aID)
 			{
 				return const_cast<T*>(std::as_const(*this).TryGet(aID));
 			}
@@ -122,7 +126,7 @@ namespace CommonUtilities
 				}
 			}
 
-			void Insert(const IDType& aID, const T& aValue) 
+			void Insert(const IDType& aID, const T& aValue)
 			{
 				Emplace(aID, aValue);
 			}
@@ -131,12 +135,12 @@ namespace CommonUtilities
 				Emplace(aID, std::move(aValue));
 			}
 
-			NODISC bool Has(const IDType& aID) override 
+			NODISC bool Has(const IDType& aID) override
 			{
 				return myIndices.find(Hash{}(aID)) != myIndices.end();
 			}
 
-			void Erase(const IDType& aID) override 
+			void Erase(const IDType& aID) override
 			{
 				if (const auto it = myIndices.find(Hash{}(aID)); it != myIndices.end())
 				{
@@ -144,7 +148,7 @@ namespace CommonUtilities
 					myIndices.erase(it);
 				}
 			}
-			void Clear() override 
+			void Clear() override
 			{
 				myValues.clear();
 				myIndices.clear();
@@ -169,6 +173,23 @@ namespace CommonUtilities
 		mutable std::shared_mutex myMutex;
 	};
 
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline Blackboard<IDType, Hash>::Blackboard(Blackboard&& aOther)
+	{
+		std::scoped_lock lock(aOther.myMutex);
+		myData = std::move(aOther.myData);
+	}
+
+	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	inline Blackboard<IDType, Hash>& Blackboard<IDType, Hash>::operator=(Blackboard&& aOther)
+	{
+		std::scoped_lock lock1(myMutex);
+		std::scoped_lock lock2(aOther.myMutex);
+
+		myData = std::move(aOther.myData);
+
+		return *this;
+	}
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>
@@ -268,7 +289,6 @@ namespace CommonUtilities
 			map.Clear();
 		}
 	}
-
 
 	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
 	template<typename T>

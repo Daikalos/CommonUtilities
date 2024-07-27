@@ -47,7 +47,7 @@ LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask)
 {
     std::lock_guard lock(myMutex);
 
-    if (myLoopTasks.size() >= myThreads.size())
+    if (myLoopTasks.count() >= myThreads.size())
     {
         throw std::runtime_error("More tasks than threads!");
     }

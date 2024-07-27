@@ -36,6 +36,6 @@ namespace CommonUtilities
         std::vector<bool>                   myDispatchedLoops;
         std::condition_variable             myCV;
         std::mutex                          myMutex; // sync access to task queue
-        bool                                myShutdown;
+        bool                                myShutdown {true};
 	};
 }

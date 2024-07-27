@@ -2,7 +2,10 @@
 
 using namespace CommonUtilities;
 
-ThreadLoops::ThreadLoops() = default;
+ThreadLoops::ThreadLoops() : myShutdown(true)
+{
+
+}
 
 ThreadLoops::~ThreadLoops()
 {

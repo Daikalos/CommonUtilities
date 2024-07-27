@@ -285,6 +285,9 @@
     <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\ThreadLoops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">
@@ -372,6 +375,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CommonUtilities.pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\System\ThreadLoops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

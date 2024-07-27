@@ -7,7 +7,6 @@
 #include <mutex>
 #include <type_traits>
 
-#include <CommonUtilities/Structures/StaticVector.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
 
 namespace CommonUtilities
@@ -15,8 +14,11 @@ namespace CommonUtilities
     class ThreadPool : private NonCopyable
     {
     public:
-        explicit ThreadPool(std::size_t aThreadCount);
+        ThreadPool();
         ~ThreadPool();
+
+        void Start(std::size_t aThreadCount);
+        void Shutdown();
 
         template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)
         auto Enqueue(F&& aFunc, Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>;

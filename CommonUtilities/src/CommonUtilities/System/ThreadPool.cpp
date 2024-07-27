@@ -2,14 +2,8 @@
 
 using namespace CommonUtilities;
 
-ThreadPool::ThreadPool(std::size_t aThreadCount) : myShutdown(false)
-{
-    myThreads.reserve(aThreadCount);
-    for (std::size_t i = 0; i < aThreadCount; ++i)
-    {
-        myThreads.emplace_back(&ThreadPool::ThreadLoop, this);
-    }
-}
+ThreadPool::ThreadPool() = default;
+
 ThreadPool::~ThreadPool()
 {
     {
@@ -17,6 +11,35 @@ ThreadPool::~ThreadPool()
         myShutdown = true;
     }
     myCV.notify_all();
+}
+
+void ThreadPool::Start(std::size_t aThreadCount)
+{
+    if (!myShutdown || !myThreads.empty())
+        return;
+
+    myShutdown = false;
+
+    myThreads.reserve(aThreadCount);
+    for (std::size_t i = 0; i < aThreadCount; ++i)
+    {
+        myThreads.emplace_back(&ThreadPool::ThreadLoop, this);
+    }
+}
+
+void ThreadPool::Shutdown()
+{
+    if (myShutdown || myThreads.empty())
+        return;
+
+    {
+        std::lock_guard<std::mutex> lock(myMutex);
+        myShutdown = true;
+    }
+
+    myCV.notify_all();
+    
+    myThreads.clear();
 }
 
 void ThreadPool::ThreadLoop()

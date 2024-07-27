@@ -6,10 +6,14 @@ ThreadPool::ThreadPool() = default;
 
 ThreadPool::~ThreadPool()
 {
+    if (myShutdown && myThreads.empty())
+        return;
+
     {
         std::lock_guard<std::mutex> lock(myMutex);
         myShutdown = true;
     }
+
     myCV.notify_all();
 }
 
@@ -29,7 +33,7 @@ void ThreadPool::Start(std::size_t aThreadCount)
 
 void ThreadPool::Shutdown()
 {
-    if (myShutdown || myThreads.empty())
+    if (myShutdown && myThreads.empty())
         return;
 
     {

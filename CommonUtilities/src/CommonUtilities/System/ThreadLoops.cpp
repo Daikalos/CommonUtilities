@@ -9,10 +9,14 @@ ThreadLoops::ThreadLoops() : myShutdown(true)
 
 ThreadLoops::~ThreadLoops()
 {
+    if (myShutdown && myThreads.empty())
+        return;
+
     {
         std::lock_guard<std::mutex> lock(myMutex);
         myShutdown = true;
     }
+
     myCV.notify_all();
 }
 
@@ -33,7 +37,7 @@ void ThreadLoops::Start(std::size_t aThreadCount)
 }
 void ThreadLoops::Shutdown()
 {
-    if (myShutdown || myThreads.empty())
+    if (myShutdown && myThreads.empty())
         return;
 
     {

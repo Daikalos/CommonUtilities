@@ -336,6 +336,7 @@ namespace CommonUtilities
 	template<typename T, std::size_t Capacity>
 	constexpr StaticVector<T, Capacity>::StaticVector(StaticVector&& aOther) noexcept(NoThrowMoveConstructor)
 		requires(!std::is_trivially_move_constructible_v<T> && (std::is_move_constructible_v<T> || std::is_copy_constructible_v<T>))
+		: mySize(aOther.size())
 	{
 		if constexpr ((std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) && std::is_move_constructible_v<T>)
 		{
@@ -352,6 +353,7 @@ namespace CommonUtilities
 	template<typename T, std::size_t Capacity>
 	template<std::size_t OtherCapacity> requires((std::is_move_constructible_v<T> || std::is_copy_constructible_v<T>) && (Capacity != OtherCapacity))
 	constexpr StaticVector<T, Capacity>::StaticVector(StaticVector<T, OtherCapacity>&& aOther) noexcept(NoThrowMoveConstructor && (Capacity > OtherCapacity))
+		: mySize(aOther.size())
 	{
 		if constexpr (OtherCapacity > Capacity)
 		{

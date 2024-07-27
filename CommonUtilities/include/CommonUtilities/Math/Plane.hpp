@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include "Vector3.hpp"
 #include "Shape.h"
 
@@ -29,6 +31,7 @@ namespace CommonUtilities
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, T aRadius) const;
+		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, const Vector3<T>& aExtends) const;
 
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
@@ -87,12 +90,22 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Plane<T>::IsInside(const Vector3<T>& aPosition) const
 	{
-		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= T{};
+		return Vector3<T>::Direction(GetOrigin(), aPosition).Dot(GetNormal()) <= T{};
 	}
 	template<typename T>
 	constexpr bool Plane<T>::IsInside(const Vector3<T>& aPosition, T aRadius) const
 	{
-		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= aRadius;
+		return Vector3<T>::Direction(GetOrigin(), aPosition).Dot(GetNormal()) <= aRadius;
+	}
+	template<typename T>
+	constexpr bool Plane<T>::IsInside(const Vector3<T>& aPosition, const Vector3<T>& aExtends) const
+	{
+		const T r = 
+			aExtends.x * std::abs(GetNormal().x) +
+			aExtends.y * std::abs(GetNormal().y) +
+			aExtends.z * std::abs(GetNormal().z);
+
+		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= -r;
 	}
 
 	template<typename T>

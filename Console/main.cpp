@@ -5,6 +5,7 @@
 #include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities/Utility/Benchmark.h>
 #include <CommonUtilities\Utility\Win32Utils.h>
+#include <CommonUtilities/System/BinarySerializer.h>
 
 #include <CommonUtilities/System/TimedEvent.h>
 
@@ -14,22 +15,16 @@
 
 int main()
 {
-	cu::bm::Begin();
+	std::vector<int> test { 4, 6, 8, 12, -3 };
 
-	for (int i = 0; i < 10000; ++i)
-	{
-		std::cout << i << '\n';
-	}
+	cu::BinaryWriteSerializer write;
 
-	cu::bm::End();
+	write.Serialize(test);
 
-	constexpr cu::AABBf aabb1(cu::Vector3f(0, 0, -1.0f), cu::Vector3f(10.0f, 10.0f, 10.0f));
-	constexpr cu::AABBf aabb2(cu::Vector3f(-1.0f, 0, -5.0f), cu::Vector3f(2.0f, 2.0f, 2.0f));
+	cu::BinaryReadSerializer read(write.GetBuffer());
 
-	constexpr cu::AABBf inter = aabb1.Union(aabb2);
-
-	cu::Vector2f vec(123.43423f, -3214.62345f);
-	cu::Vector2f test = vec.GetFrac();
+	std::vector<int> test2;
+	read.Serialize(test2);
 
 	return 0;
 }

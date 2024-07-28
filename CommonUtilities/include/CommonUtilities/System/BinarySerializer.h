@@ -35,18 +35,18 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	struct SerializeAsBinary<std::span<T>>
+	struct SerializeAsBinary<std::vector<T>>
 	{
-		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (std::is_trivially_copyable_v<T>);
 
-		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (std::is_trivially_copyable_v<T>);
 
-		NODISC std::size_t operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (!std::is_trivially_copyable_v<T>); // user must provide their own custom specialization for this type to work
 
-		NODISC std::size_t operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+		NODISC std::size_t operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 			requires (!std::is_trivially_copyable_v<T>);
 	};
 
@@ -133,34 +133,56 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (std::is_trivially_copyable_v<T>)
 	{
 		static constexpr std::size_t typeSize = sizeof(T);
 
-		const std::size_t numBytes = typeSize * aInOutData.size(); // user has to make sure that size matches the buffer correctly
+		std::size_t numBytes = 0;
 
 		if (aState == SerializerState::Read)
 		{
-			assert((aOffset + numBytes) <= aInOutBytes.size() && "Not enough memory to read from!");
+			std::size_t numElements = 0;
+			memcpy_s(&numElements, sizeof(std::size_t), aInOutBytes.data() + aOffset, sizeof(std::size_t));
+
+			numBytes = typeSize * numElements;
+
+			assert((aOffset + numBytes + sizeof(std::size_t)) <= aInOutBytes.size() && "Not enough memory to read from!");
+			
+			if (aInOutData.size() < numElements)
+			{
+				aInOutData.resize(numElements);
+			}
+
+			aOffset += sizeof(std::size_t);
+
 			memcpy_s(aInOutData.data(), numBytes, aInOutBytes.data() + aOffset, numBytes);
 		}
 		else
 		{
-			aInOutBytes.resize(aOffset + numBytes);
+			std::size_t numElements = aInOutData.size();
+
+			numBytes = typeSize * numElements;
+
+			aInOutBytes.resize(aOffset + numBytes + sizeof(std::size_t));
+
+			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
+
+			aOffset += sizeof(std::size_t);
+
 			memcpy_s(aInOutBytes.data() + aOffset, numBytes, aInOutData.data(), numBytes);
 		}
 
-		return numBytes;
+		return numBytes + sizeof(std::size_t);
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (std::is_trivially_copyable_v<T>)
 	{
 		static constexpr std::size_t typeSize = sizeof(T);
 
-		const std::size_t numBytes = typeSize * aInOutData.size();
+		std::size_t numBytes = 0;
 
 		if (aState == SerializerState::Read)
 		{
@@ -168,37 +190,85 @@ namespace CommonUtilities
 		}
 		else
 		{
-			aInOutBytes.resize(aOffset + numBytes);
+			std::size_t numElements = aInOutData.size();
+
+			numBytes = typeSize * numElements;
+
+			aInOutBytes.resize(aOffset + numBytes + sizeof(std::size_t));
+
+			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
+
+			aOffset += sizeof(std::size_t);
+
 			memcpy_s(aInOutBytes.data() + aOffset, numBytes, aInOutData.data(), numBytes);
 		}
 
-		return numBytes;
+		return numBytes + sizeof(std::size_t);
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (!std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;
-		for (T& item : aInOutData)
+
+		if (aState == SerializerState::Read)
 		{
-			numBytes += SerializeAsBinary<T>{}(aState, item, aInOutBytes, aOffset + numBytes);
+			std::size_t numElements = 0;
+			memcpy_s(&numElements, sizeof(std::size_t), aInOutBytes.data() + aOffset, sizeof(std::size_t));
+
+			if (aInOutData.size() < numElements)
+			{
+				aInOutData.resize(numElements);
+			}
+
+			aOffset += sizeof(std::size_t);
+
+			for (std::size_t i = 0; i < numElements; ++i)
+			{
+				numBytes += SerializeAsBinary<T>{}(aState, aInOutData[i], aInOutBytes, aOffset + numBytes);
+			}
+		}
+		else
+		{
+			std::size_t numElements = aInOutData.size();
+			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
+
+			aOffset += sizeof(std::size_t);
+
+			for (std::size_t i = 0; i < numElements; ++i)
+			{
+				numBytes += SerializeAsBinary<T>{}(aState, aInOutData[i], aInOutBytes, aOffset + numBytes);
+			}
 		}
 
-		return numBytes;
+		return numBytes + sizeof(std::size_t);
 	}
 
 	template<typename T>
-	inline std::size_t SerializeAsBinary<std::span<T>>::operator()(SerializerState aState, std::span<const T> aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	inline std::size_t SerializeAsBinary<std::vector<T>>::operator()(SerializerState aState, const std::vector<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 		requires (!std::is_trivially_copyable_v<T>)
 	{
 		std::size_t numBytes = 0;
-		for (const T& item : aInOutData)
+
+		if (aState == SerializerState::Read)
 		{
-			numBytes += SerializeAsBinary<T>{}(aState, item, aInOutBytes, aOffset + numBytes);
+			assert(false && "Cannot copy to const memory!");
+		}
+		else
+		{
+			std::size_t numElements = aInOutData.size();
+			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
+
+			aOffset += sizeof(std::size_t);
+
+			for (std::size_t i = 0; i < numElements; ++i)
+			{
+				numBytes += SerializeAsBinary<T>{}(aState, aInOutData[i], aInOutBytes, aOffset + numBytes);
+			}
 		}
 
-		return numBytes;
+		return numBytes + sizeof(std::size_t);
 	}
 
 	template<typename T>

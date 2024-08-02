@@ -25,6 +25,7 @@ namespace CommonUtilities
 
 		NODISC constexpr const Vector3<T>& GetOrigin() const noexcept;
 		NODISC constexpr const Vector3<T>& GetNormal() const noexcept;
+		NODISC constexpr T GetDistance() const noexcept;
 
 		constexpr void SetOrigin(const Vector3<T>& aOrigin);
 		constexpr void SetNormal(const Vector3<T>& aNormal);
@@ -36,14 +37,16 @@ namespace CommonUtilities
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
-		Vector3<T> myOrigin;
-		Vector3<T> myNormal;
+		Vector3<T>	myOrigin;
+		Vector3<T>	myNormal;
+		T			myDistance {0};
 	};
 
 	template<typename T>
 	constexpr Plane<T>::Plane(const Vector3<T>& aPoint, const Vector3<T>& aNormal)
 		: myOrigin(aPoint)
 		, myNormal(aNormal.GetNormalized()) // make sure is normalized
+		, myDistance(-Vector3<T>::Dot(myNormal, myOrigin))
 	{
 
 	}
@@ -75,16 +78,23 @@ namespace CommonUtilities
 	{
 		return myNormal;
 	}
+	template<typename T>
+	constexpr T Plane<T>::GetDistance() const noexcept
+	{
+		return myDistance;
+	}
 
 	template<typename T>
 	constexpr void Plane<T>::SetOrigin(const Vector3<T>& aOrigin)
 	{
-		myOrigin = aOrigin;
+		myOrigin	= aOrigin;
+		myDistance	= -Vector3<T>::Dot(myNormal, myOrigin);
 	}
 	template<typename T>
 	constexpr void Plane<T>::SetNormal(const Vector3<T>& aNormal)
 	{
-		myNormal = aNormal.GetNormalized();
+		myNormal	= aNormal.GetNormalized();
+		myDistance	= -Vector3<T>::Dot(myNormal, myOrigin);
 	}
 
 	template<typename T>
@@ -105,7 +115,7 @@ namespace CommonUtilities
 			aExtends.y * std::abs(GetNormal().y) +
 			aExtends.z * std::abs(GetNormal().z);
 
-		return Vector3<T>::Direction(myOrigin, aPosition).Dot(GetNormal()) <= -r;
+		return Vector3<T>::Direction(GetOrigin(), aPosition).Dot(GetNormal()) <= -r;
 	}
 
 	template<typename T>

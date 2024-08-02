@@ -143,6 +143,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr static T DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget);
 
+		/// \returns Dot product of the two vectors
+		/// 
+		NODISC constexpr static T Dot(const Vector4& aLeft, const Vector4& aRight);
+
 		/// \returns Lerped vector between current and target.
 		/// 
 		NODISC constexpr static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, T aPercentage);
@@ -304,6 +308,12 @@ namespace CommonUtilities
 	constexpr T Vector4<T>::DistanceSqr(const Vector4& aCurrent, const Vector4& aTarget)
 	{
 		return Direction(aCurrent, aTarget).LengthSqr();
+	}
+
+	template<typename T>
+	constexpr T Vector4<T>::Dot(const Vector4& aLeft, const Vector4& aRight)
+	{
+		return aLeft.Dot(aRight);
 	}
 
 	template<typename T>

@@ -19,7 +19,7 @@ namespace CommonUtilities
 	/// \param IDType: Type of the ID used to manage states
 	/// \param Hash: Function that generates the hash for IDType
 	/// 
-	template<typename IDType = std::uint32_t, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
+	template<typename IDType = std::uint32_t, typename Hash = std::hash<IDType>> requires IsHashableType<Hash, IDType>
 	class StateMachine
 	{
 	public:
@@ -123,37 +123,37 @@ namespace CommonUtilities
 		void DeepCopy(const StateMachine& aOther);
 	};
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline StateMachine<IDType, Hash>::State::State(const IDType& aID, StateMachine& aStateMachine)
 		: myID(aID), myStateMachine(&aStateMachine)
 	{
 
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline const IDType& StateMachine<IDType, Hash>::State::GetID() const noexcept
 	{
 		return myID;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::State::SetMachine(StateMachine& aStateMachine) noexcept
 	{
 		myStateMachine = &aStateMachine;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::State::GetMachine() const -> const StateMachine&
 	{
 		return *myStateMachine;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::State::GetMachine() -> StateMachine&
 	{
 		return *myStateMachine;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline StateMachine<IDType, Hash>::StateMachine(StateMachine&& aOther) noexcept
 		: myStates(std::move(aOther.myStates))
 		, myCurrentState(std::exchange(aOther.myCurrentState, nullptr))
@@ -167,7 +167,7 @@ namespace CommonUtilities
 			}
 		}
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline StateMachine<IDType, Hash>::StateMachine(const StateMachine& aOther)
 	{
 		if (this == &aOther)
@@ -176,7 +176,7 @@ namespace CommonUtilities
 		DeepCopy(aOther);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline StateMachine<IDType, Hash>& StateMachine<IDType, Hash>::operator=(StateMachine&& aOther) noexcept
 	{
 		if (this == &aOther)
@@ -196,7 +196,7 @@ namespace CommonUtilities
 
 		return *this;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline StateMachine<IDType, Hash>& StateMachine<IDType, Hash>::operator=(const StateMachine& aOther)
 	{
 		if (this == &aOther)
@@ -207,43 +207,43 @@ namespace CommonUtilities
 		return *this;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetCurrentState() const -> const State&
 	{
 		assert(myCurrentState != nullptr && "No state currently set");
 		return *myCurrentState;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetCurrentState() -> State&
 	{
 		assert(myCurrentState != nullptr && "No state currently set");
 		return *myCurrentState;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetPreviousState() const -> const State&
 	{
 		assert(myPreviousState != nullptr && "No state currently set");
 		return *myPreviousState;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetPreviousState() -> State&
 	{
 		assert(myPreviousState != nullptr && "No state currently set");
 		return *myPreviousState;
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetState(const IDType& aStateID) const -> const State&
 	{
 		const auto it = myStates.find(aStateID);
 		return *it->second.get();
 	}
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline auto StateMachine<IDType, Hash>::GetState(const IDType& aStateID) -> State&
 	{
 		return const_cast<State&>(std::as_const(*this).GetState(aStateID));
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline bool StateMachine<IDType, Hash>::TransitionTo(const IDType& aStateID)
 	{
 		const auto it = myStates.find(aStateID);
@@ -274,7 +274,7 @@ namespace CommonUtilities
 		return true;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::Stop()
 	{
 		if (myCurrentState != nullptr)
@@ -285,7 +285,7 @@ namespace CommonUtilities
 		myCurrentState = nullptr;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline bool StateMachine<IDType, Hash>::RemoveState(const IDType& aStateID)
 	{
 		const auto it = myStates.find(aStateID);
@@ -299,14 +299,14 @@ namespace CommonUtilities
 		return true;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::Clear()
 	{
 		myStates.clear();
 		myCurrentState = nullptr;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::Update(Timer& aTimer)
 	{
 		if (myCurrentState != nullptr)
@@ -315,7 +315,7 @@ namespace CommonUtilities
 		}
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void StateMachine<IDType, Hash>::DeepCopy(const StateMachine& aOther)
 	{
 		myStates.clear();

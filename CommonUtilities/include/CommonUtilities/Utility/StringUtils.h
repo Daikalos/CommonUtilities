@@ -6,13 +6,13 @@
 
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities::st
+namespace CommonUtilities
 {
 	template<typename T>
 	NODISC std::string ToString(const T& aValue);
 
 	template<typename T>
-	NODISC T ParseString(std::string_view aString);
+	NODISC T ParseString(const std::string& aString);
 
 	NODISC COMMON_UTILITIES_API void ToLower(std::string& aString);
 	NODISC COMMON_UTILITIES_API void ToUpper(std::string& aString);

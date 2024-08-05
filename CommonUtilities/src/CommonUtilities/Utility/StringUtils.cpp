@@ -1,6 +1,8 @@
 #include <CommonUtilities/Utility/StringUtils.h>
 
-namespace CommonUtilities::st
+#include <algorithm>
+
+namespace CommonUtilities
 { 
 	void ToLower(std::string& aString)
 	{

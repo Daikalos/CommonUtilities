@@ -28,10 +28,10 @@ namespace CommonUtilities::au
 	template<typename T = float>
 	constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	constexpr T MIN_V = (std::numeric_limits<T>::min)();
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	constexpr T MAX_V = (std::numeric_limits<T>::max)();
 
 	inline constexpr float			PI			= PI_V<float>;
@@ -70,7 +70,7 @@ namespace CommonUtilities::au
 		return aRadians * RAD2DEG_V<T>;
 	}
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	NODISC constexpr T Pow(T aBase, std::int32_t aExponent)
 	{
 		if (aExponent < 0)
@@ -85,7 +85,7 @@ namespace CommonUtilities::au
 		return aBase * Pow(aBase, (aExponent - 1) / 2) * Pow(aBase, (aExponent - 1) / 2);
 	}
 
-	template<IsIntegral T>
+	template<IsIntegralType T>
 	NODISC constexpr auto Wrap(T val, T max, T min = 0)
 	{
 		const auto range = max - min;
@@ -99,7 +99,7 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr auto Wrap(T val, T max, T min = 0)
 	{
 		const auto range = max - min;
@@ -113,7 +113,7 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsIntegral T>
+	template<IsIntegralType T>
 	NODISC constexpr auto WrapLower(T val, T max, T min = 0)
 	{
 		if (val < min)
@@ -122,7 +122,7 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsIntegral T>
+	template<IsIntegralType T>
 	NODISC constexpr auto WrapUpper(T val, T max, T min = 0)
 	{
 		if (val >= max)
@@ -131,7 +131,7 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr auto WrapLower(T val, T max, T min = 0)
 	{
 		if (val < min)
@@ -140,7 +140,7 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr auto WrapUpper(T val, T max, T min = 0)
 	{
 		if (val > max)
@@ -149,38 +149,38 @@ namespace CommonUtilities::au
 		return val;
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr auto Equal(T aFirst, T aSecond, T aTolerance = EPSILON_V<T>)
 	{
 		return std::abs(aFirst - aSecond) <= aTolerance;
 	}
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	NODISC constexpr T Sign(T aValue)
 	{
 		return static_cast<T>((aValue < T{}) ? -1 : 1);
 	}
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	NODISC constexpr T MapToRange(T aValue, T aMinIn, T aMaxIn, T aMinOut, T aMaxOut)
 	{
 		float x = (aValue - aMinIn) / static_cast<float>(aMaxIn - aMinIn);
 		return static_cast<T>(aMinOut + static_cast<float>(aMaxOut - aMinOut) * x);
 	}
 
-	template<IsArithmetic T>
+	template<IsArithmeticType T>
 	NODISC constexpr auto SetPrecision(T aValue, int aPlaces)
 	{
 		double n = Pow(10.0, aPlaces);
 		return std::round(aValue * n) / n;
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
 	{
 		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), PI_V<T> * 2) - PI_V<T>);
 	}
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC constexpr T ShortestAngleDegrees(T aFirstDegrees, T aSecondDegrees)
 	{
 		return T(180) - std::abs(std::fmodf(std::abs(aSecondDegrees - aFirstDegrees), T(360)) - T(180));

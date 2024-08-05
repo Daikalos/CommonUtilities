@@ -14,7 +14,7 @@
 
 namespace CommonUtilities
 {
-	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashable<Hash, IDType>
+	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashableType<Hash, IDType>
 	class Blackboard : private cu::NonCopyable
 	{
 	public:
@@ -173,14 +173,14 @@ namespace CommonUtilities
 		mutable std::shared_mutex myMutex;
 	};
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline Blackboard<IDType, Hash>::Blackboard(Blackboard&& aOther)
 	{
 		std::scoped_lock lock(aOther.myMutex);
 		myData = std::move(aOther.myData);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline Blackboard<IDType, Hash>& Blackboard<IDType, Hash>::operator=(Blackboard&& aOther)
 	{
 		std::scoped_lock lock1(myMutex);
@@ -191,7 +191,7 @@ namespace CommonUtilities
 		return *this;
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline const T& Blackboard<IDType, Hash>::Get(const IDType& aID) const
 	{
@@ -201,7 +201,7 @@ namespace CommonUtilities
 		return map.Get(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline T& Blackboard<IDType, Hash>::Get(const IDType& aID)
 	{
@@ -211,7 +211,7 @@ namespace CommonUtilities
 		return map.Get(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline const T* Blackboard<IDType, Hash>::TryGet(const IDType& aID) const
 	{
@@ -221,7 +221,7 @@ namespace CommonUtilities
 		return map.TryGet(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline T* Blackboard<IDType, Hash>::TryGet(const IDType& aID)
 	{
@@ -231,14 +231,14 @@ namespace CommonUtilities
 		return map.TryGet(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::Set(const IDType& aID, T&& aValue)
 	{
 		Emplace<T>(aID, std::forward<T>(aValue));
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline void Blackboard<IDType, Hash>::Erase(const IDType& aID)
 	{
@@ -248,7 +248,7 @@ namespace CommonUtilities
 		map.Erase(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::Has(const IDType& aID) const
 	{
@@ -258,7 +258,7 @@ namespace CommonUtilities
 		return map.Has(aID);
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::HasType() const
 	{
@@ -268,7 +268,7 @@ namespace CommonUtilities
 		return it != myData.end();
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void Blackboard<IDType, Hash>::EraseKey(const IDType& aID)
 	{
 		std::scoped_lock lock(myMutex);
@@ -279,7 +279,7 @@ namespace CommonUtilities
 		}
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline void Blackboard<IDType, Hash>::Clear()
 	{
 		std::scoped_lock lock(myMutex);
@@ -290,7 +290,7 @@ namespace CommonUtilities
 		}
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline auto Blackboard<IDType, Hash>::FindValueMap() const -> const ValueMap<T>&
 	{
@@ -307,7 +307,7 @@ namespace CommonUtilities
 		return *static_cast<ValueMap<T>*>(insert.first->second.get());
 	}
 
-	template<typename IDType, typename Hash> requires IsHashable<Hash, IDType>
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	template<typename T>
 	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
 	{

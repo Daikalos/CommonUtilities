@@ -5,7 +5,7 @@
 
 #include <CommonUtilities\Config.h>
 
-namespace CommonUtilities::hs
+namespace CommonUtilities
 {
 	namespace details
 	{

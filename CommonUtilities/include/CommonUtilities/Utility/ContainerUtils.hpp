@@ -14,7 +14,7 @@
 #error Container utilities use C++20 features; please change the language standard or don't include the header that caused this message.
 #endif
 
-namespace CommonUtilities::ctr
+namespace CommonUtilities
 {
 	template<typename It, typename Func>
 	inline auto ForEachUntil(It aBegin, It aEnd, Func&& aFunc)
@@ -116,7 +116,7 @@ namespace CommonUtilities::ctr
 	template<typename T>
 	inline auto InsertSorted(std::vector<T>& aVector, const T& aItem)
 	{
-		// insert at upper bound since that usually means that less items will have to be moved
+		// insert at upper bound since that means that less items will have to be moved
 		return aVector.insert(std::ranges::upper_bound(aVector, aItem), aItem);
 	}
 

@@ -11,7 +11,7 @@
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities::rn
+namespace CommonUtilities
 {
 	inline thread_local std::mt19937_64 dre(std::random_device{}());
 
@@ -21,13 +21,13 @@ namespace CommonUtilities::rn
 		return uid(dre);
 	}
 
-	template<IsFloatingPoint T>
+	template<IsFloatingPointType T>
 	NODISC inline T Random(T aMin, T aMax)
 	{
 		std::uniform_real_distribution<T> uid(aMin, aMax);
 		return uid(dre);
 	}
-	template<IsIntegral T>
+	template<IsIntegralType T>
 	NODISC inline T Random(T aMin, T aMax)
 	{
 		std::uniform_int_distribution<T> uid(aMin, aMax);

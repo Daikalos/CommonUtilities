@@ -147,7 +147,7 @@ namespace CommonUtilities
 		/// 
 		/// \param Func: Function to run
 		/// 
-		template<typename Func> requires HasParametersDecay<Func, C>
+		template<typename Func> requires HasTypeParametersDecay<Func, C>
 		constexpr void ForEachComponent(Func&& aFunc) const;
 
 		/// Retrieves a component from a static list of components.
@@ -431,7 +431,7 @@ namespace CommonUtilities
 	}
 
 	template<class C>
-	template<typename Func> requires HasParametersDecay<Func, C>
+	template<typename Func> requires HasTypeParametersDecay<Func, C>
 	constexpr void BaseEntity<C>::ForEachComponent(Func&& aFunc) const
 	{
 		for (std::size_t index = 0; index < myComponents.size(); ++index)

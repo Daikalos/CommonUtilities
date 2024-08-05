@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <string_view>
 
+#include <CommonUtilities/Utility/TypeUtils.hpp>
 #include <CommonUtilities/Utility/HashUtils.hpp>
 #include <CommonUtilities/Config.h>
 
@@ -49,7 +50,7 @@ namespace CommonUtilities::id
 #ifdef COMMON_UTILITIES_PRETTY_FUNCTION
 		static consteval std::size_t ID()
 		{
-			return hs::FNV1a(COMMON_UTILITIES_PRETTY_FUNCTION);
+			return FNV1a(WrappedTypeName<T>());
 		}
 #else
 		static constexpr std::size_t ID()

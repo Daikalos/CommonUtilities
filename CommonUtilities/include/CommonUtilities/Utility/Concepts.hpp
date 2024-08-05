@@ -13,52 +13,52 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	concept IsArithmetic = std::is_arithmetic_v<T>;
+	concept IsArithmeticType = std::is_arithmetic_v<T>;
 
 	template<typename T>
-	concept IsIntegral = std::is_integral_v<T>;
+	concept IsIntegralType = std::is_integral_v<T>;
 
 	template<typename T>
-	concept IsFloatingPoint = std::is_floating_point_v<T>;
+	concept IsFloatingPointType = std::is_floating_point_v<T>;
 
 	template<typename T>
-	concept IsEnum = std::is_enum_v<T>;
+	concept IsEnumType = std::is_enum_v<T>;
 
 	template<typename T>
-	concept IsArithEnum = IsArithmetic<T> || IsEnum<T>;
+	concept IsArithEnumType = IsArithmeticType<T> || IsEnumType<T>;
 
 	template<typename T>
-	concept IsIntEnum = IsIntegral<T> || IsEnum<T>;
+	concept IsIntEnumType = IsIntegralType<T> || IsEnumType<T>;
 
 	template<typename T, typename... Args>
 	concept IsSameType = std::conjunction_v<std::is_same<T, Args>...>;
 
 	template<typename... Args>
-	concept IsNonEmpty = sizeof...(Args) > 0;
+	concept IsNonEmptyArgs = sizeof...(Args) > 0;
 
 	template<std::size_t sz, typename... Args>
-	concept IsSameSize = requires 
+	concept IsSameSizeArgs = requires 
 	{
 		sz == (sizeof(Args) + ... + 0); 
 	};
 
 	template<typename T, typename... Args>
-	concept IsPresent = (std::same_as<T, Args> || ...);
+	concept IsPresentType = (std::same_as<T, Args> || ...);
 
 	template<typename... Ts>
-	concept HasNoDuplicates = requires
+	concept HasNoDuplicateTypes = requires
 	{
 		tr::NoDuplicates<Ts...>{};
 	};
 
 	template<typename F, typename T>
-	concept IsHashable = std::regular_invocable<F, T> && requires(F f, T t) 
+	concept IsHashableType = std::regular_invocable<F, T> && requires(F f, T t) 
 	{
 		{ std::invoke(f, t) } -> std::convertible_to<size_t>;
 	};
 
 	template<class T, class... Args>
-	concept Contains = std::disjunction_v<std::is_same<T, Args>...>;
+	concept ContainsType = std::disjunction_v<std::is_same<T, Args>...>;
 
 	template<class Lambda, typename T, std::size_t... Index>
 	concept SameTypeParamDecay = (std::same_as<T, std::decay_t<typename tr::FunctionTraits<Lambda>::template arg_type<Index>>> && ...);
@@ -67,8 +67,8 @@ namespace CommonUtilities
 	concept SameTypeParam = (std::same_as<T, typename tr::FunctionTraits<Lambda>::template arg_type<Index>> && ...);
 
 	template<class Lambda, typename... Ts>
-	concept HasParameters = (std::same_as<std::tuple<Ts...>, typename tr::FunctionTraits<Lambda>::arguments>);
+	concept HasTypeParameters = (std::same_as<std::tuple<Ts...>, typename tr::FunctionTraits<Lambda>::arguments>);
 
 	template<class Lambda, typename... Ts>
-	concept HasParametersDecay = (std::same_as<std::tuple<std::decay_t<Ts>...>, typename tr::FunctionTraits<Lambda>::arguments_decay>);
+	concept HasTypeParametersDecay = (std::same_as<std::tuple<std::decay_t<Ts>...>, typename tr::FunctionTraits<Lambda>::arguments_decay>);
 }

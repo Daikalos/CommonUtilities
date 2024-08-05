@@ -81,47 +81,47 @@ namespace CommonUtilities
 		/// 
 		/// \returns Vector with only the fractional values left
 		/// 
-		constexpr Vector4<T> GetFrac() const requires IsFloatingPoint<T>;
+		constexpr Vector4<T> GetFrac() const requires IsFloatingPointType<T>;
 
 		/// Computes the ceil of each member
 		/// 
 		/// \returns Vector whose values have been rounded up
 		/// 
-		constexpr Vector4<T> GetCeil() const requires IsFloatingPoint<T>;
+		constexpr Vector4<T> GetCeil() const requires IsFloatingPointType<T>;
 
 		/// Computes the floor of each member
 		/// 
 		/// \returns Vector whose values have been rounded down
 		/// 
-		constexpr Vector4<T> GetFloor() const requires IsFloatingPoint<T>;
+		constexpr Vector4<T> GetFloor() const requires IsFloatingPointType<T>;
 
 		/// Computes the trunc of each member
 		/// 
 		/// \returns Vector whose values have been truncated
 		/// 
-		constexpr Vector4<T> GetTrunc() const requires IsFloatingPoint<T>;
+		constexpr Vector4<T> GetTrunc() const requires IsFloatingPointType<T>;
 
 		/// Computes the round of each member
 		/// 
 		/// \returns Vector whose values have been rounded to nearest
 		/// 
-		constexpr Vector4<T> GetRound() const requires IsFloatingPoint<T>;
+		constexpr Vector4<T> GetRound() const requires IsFloatingPointType<T>;
 
 		/// Rounds the vector values up
 		/// 
-		constexpr void Ceil() requires IsFloatingPoint<T>;
+		constexpr void Ceil() requires IsFloatingPointType<T>;
 
 		/// Rounds the vector values down
 		/// 
-		constexpr void Floor() requires IsFloatingPoint<T>;
+		constexpr void Floor() requires IsFloatingPointType<T>;
 
 		/// Truncates the vector values
 		/// 
-		constexpr void Trunc() requires IsFloatingPoint<T>;
+		constexpr void Trunc() requires IsFloatingPointType<T>;
 
 		/// Rounds the vector values
 		/// 
-		constexpr void Round() requires IsFloatingPoint<T>;
+		constexpr void Round() requires IsFloatingPointType<T>;
 
 		/// \returns Converts this 4D vector to a 2D one.
 		/// 
@@ -161,7 +161,7 @@ namespace CommonUtilities
 
 		/// \returns Whether this equals another vector within a tolerance
 		/// 
-		NODISC constexpr static bool Equal(const Vector4<T>& aLeft, const Vector4<T>& aRight, T aTolerance = au::EPSILON_V<T>) requires IsFloatingPoint<T>;
+		NODISC constexpr static bool Equal(const Vector4<T>& aLeft, const Vector4<T>& aRight, T aTolerance = au::EPSILON_V<T>) requires IsFloatingPointType<T>;
 	};
 
 	template<typename T>
@@ -231,48 +231,48 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::GetFrac() const requires IsFloatingPoint<T>
+	constexpr Vector4<T> Vector4<T>::GetFrac() const requires IsFloatingPointType<T>
 	{
 		return (*this - GetFloor());
 	}
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::GetCeil() const requires IsFloatingPoint<T>
+	constexpr Vector4<T> Vector4<T>::GetCeil() const requires IsFloatingPointType<T>
 	{
 		return Vector4<T>(std::ceil(x), std::ceil(y), std::ceil(z), std::ceil(w));
 	}
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::GetFloor() const requires IsFloatingPoint<T>
+	constexpr Vector4<T> Vector4<T>::GetFloor() const requires IsFloatingPointType<T>
 	{
 		return Vector4<T>(std::floor(x), std::floor(y), std::floor(z), std::floor(w));
 	}
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::GetTrunc() const requires IsFloatingPoint<T>
+	constexpr Vector4<T> Vector4<T>::GetTrunc() const requires IsFloatingPointType<T>
 	{
 		return Vector4<T>(std::trunc(x), std::trunc(y), std::trunc(z), std::trunc(w));
 	}
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::GetRound() const requires IsFloatingPoint<T>
+	constexpr Vector4<T> Vector4<T>::GetRound() const requires IsFloatingPointType<T>
 	{
 		return Vector4<T>(std::round(x), std::round(y), std::round(z), std::round(w));
 	}
 
 	template<typename T>
-	constexpr void Vector4<T>::Ceil() requires IsFloatingPoint<T>
+	constexpr void Vector4<T>::Ceil() requires IsFloatingPointType<T>
 	{
 		*this = GetCeil();
 	}
 	template<typename T>
-	constexpr void Vector4<T>::Floor() requires IsFloatingPoint<T>
+	constexpr void Vector4<T>::Floor() requires IsFloatingPointType<T>
 	{
 		*this = GetFloor();
 	}
 	template<typename T>
-	constexpr void Vector4<T>::Trunc() requires IsFloatingPoint<T>
+	constexpr void Vector4<T>::Trunc() requires IsFloatingPointType<T>
 	{
 		*this = GetTrunc();
 	}
 	template<typename T>
-	constexpr void Vector4<T>::Round() requires IsFloatingPoint<T>
+	constexpr void Vector4<T>::Round() requires IsFloatingPointType<T>
 	{
 		*this = GetRound();
 	}
@@ -369,7 +369,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr bool Vector4<T>::Equal(const Vector4<T>& aLeft, const Vector4<T>& aRight, T aTolerance) requires IsFloatingPoint<T>
+	constexpr bool Vector4<T>::Equal(const Vector4<T>& aLeft, const Vector4<T>& aRight, T aTolerance) requires IsFloatingPointType<T>
 	{
 		return	au::Equal(aLeft.x, aRight.x, aTolerance) &&
 				au::Equal(aLeft.y, aRight.y, aTolerance) &&

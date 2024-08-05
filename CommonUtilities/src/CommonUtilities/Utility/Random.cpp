@@ -2,7 +2,7 @@
 
 using namespace CommonUtilities;
 
-void rn::Seed(std::uint64_t seed)
+void Seed(std::uint64_t seed)
 {
-	rn::dre.seed(seed);
+	dre.seed(seed);
 }

@@ -248,6 +248,7 @@
     <ClInclude Include="include\CommonUtilities\System\Timer.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Random.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\StackVector.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\TypeUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\Win32Utils.h" />
   </ItemGroup>
   <ItemGroup>

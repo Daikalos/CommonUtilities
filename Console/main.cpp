@@ -7,6 +7,7 @@
 #include <CommonUtilities\Utility\Win32Utils.h>
 #include <CommonUtilities/System/BinarySerializer.h>
 #include <CommonUtilities/Utility/TypeUtils.hpp>
+#include <CommonUtilities/Utility/Easings.hpp>
 
 #include <CommonUtilities/System/TimedEvent.h>
 
@@ -27,7 +28,7 @@ int main()
 	std::vector<int> test2;
 	read.Serialize(test2);
 
-	constexpr auto a = cu::TypeName<int>();
+	constexpr auto a = cu::EaseInBack(0.9f);
 
 	std::string_view huh = a;
 

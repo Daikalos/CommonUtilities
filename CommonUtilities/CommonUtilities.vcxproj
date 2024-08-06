@@ -186,6 +186,7 @@
     <ClInclude Include="include\CommonUtilities\System\ThreadLoops.h" />
     <ClInclude Include="include\CommonUtilities\System\TimedEvent.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\Easings.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />

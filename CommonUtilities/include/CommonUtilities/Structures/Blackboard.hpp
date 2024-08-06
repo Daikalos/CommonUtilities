@@ -169,7 +169,7 @@ namespace CommonUtilities
 
 		using TypeValueMap = std::unordered_map<std::size_t, std::unique_ptr<ValueMapBase>>;
 
-		mutable TypeValueMap myData;
+		TypeValueMap myData;
 		mutable std::shared_mutex myMutex;
 	};
 
@@ -295,6 +295,14 @@ namespace CommonUtilities
 	inline auto Blackboard<IDType, Hash>::FindValueMap() const -> const ValueMap<T>&
 	{
 		static constexpr std::size_t key = id::Type<T>::ID();
+		return *static_cast<ValueMap<T>*>(myData.at(key).get());
+	}
+
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
+	template<typename T>
+	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
+	{
+		static constexpr std::size_t key = id::Type<T>::ID();
 
 		if (const auto it = myData.find(key); it != myData.end())
 		{
@@ -305,12 +313,5 @@ namespace CommonUtilities
 		assert(insert.second);
 
 		return *static_cast<ValueMap<T>*>(insert.first->second.get());
-	}
-
-	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
-	template<typename T>
-	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
-	{
-		return const_cast<ValueMap<T>&>(std::as_const(*this).FindValueMap<T>());
 	}
 }

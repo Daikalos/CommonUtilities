@@ -222,7 +222,7 @@ namespace CommonUtilities
 				aInOutData.resize(numElements);
 			}
 
-			aOffset += sizeof(std::size_t);
+			numBytes += sizeof(std::size_t);
 
 			for (std::size_t i = 0; i < numElements; ++i)
 			{
@@ -231,10 +231,12 @@ namespace CommonUtilities
 		}
 		else
 		{
+			aInOutBytes.resize(aOffset + sizeof(std::size_t));
+
 			std::size_t numElements = aInOutData.size();
 			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
 
-			aOffset += sizeof(std::size_t);
+			numBytes += sizeof(std::size_t);
 
 			for (std::size_t i = 0; i < numElements; ++i)
 			{
@@ -242,7 +244,7 @@ namespace CommonUtilities
 			}
 		}
 
-		return numBytes + sizeof(std::size_t);
+		return numBytes;
 	}
 
 	template<typename T>
@@ -257,10 +259,12 @@ namespace CommonUtilities
 		}
 		else
 		{
+			aInOutBytes.resize(aOffset + sizeof(std::size_t));
+
 			std::size_t numElements = aInOutData.size();
 			memcpy_s(aInOutBytes.data() + aOffset, sizeof(std::size_t), &numElements, sizeof(std::size_t));
 
-			aOffset += sizeof(std::size_t);
+			numBytes += sizeof(std::size_t);
 
 			for (std::size_t i = 0; i < numElements; ++i)
 			{
@@ -268,7 +272,7 @@ namespace CommonUtilities
 			}
 		}
 
-		return numBytes + sizeof(std::size_t);
+		return numBytes;
 	}
 
 	template<typename T>

@@ -294,7 +294,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline constexpr Vector4<T> Quaternion<T>::ToVec() const
+	constexpr Vector4<T> Quaternion<T>::ToVec() const
 	{
 		return Vector4<T>(x, y, z, w);
 	}

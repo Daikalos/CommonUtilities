@@ -16,6 +16,7 @@
 #include "Ray.hpp"
 #include "Sphere.hpp"
 #include "AABB.hpp"
+#include "Capsule.hpp"
 #include "Vector3.hpp"
 
 namespace CommonUtilities
@@ -41,6 +42,9 @@ namespace CommonUtilities
 	inline CollisionResult<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
 
 	template<typename T>
+	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule);
+
+	template<typename T>
 	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
 
 	template<typename T>
@@ -50,7 +54,22 @@ namespace CommonUtilities
 	inline CollisionResult<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
 
 	template<typename T>
+	inline CollisionResult<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionAABBCapsule(const AABB<T>& aAABB, const Capsule<T>& aCapsule);
+
+	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane);
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule);
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
 
 	namespace details // hide this from client
 	{
@@ -78,6 +97,14 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
+		inline CollisionResult<T> CapsuleCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionCapsuleCapsule<T>(
+				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
+				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
+		}
+
+		template<typename T>
 		inline CollisionResult<T> PlaneRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionPlaneRay<T>(
@@ -101,7 +128,7 @@ namespace CommonUtilities
 		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
 		{
 			CollisionResult<T> result = SphereAABB<T>(aS2, aS1);
-			//result.normal = -result.normal; // flip normal ??
+			result.normal = -result.normal; // flip normal ??
 
 			return result;
 		}
@@ -120,6 +147,32 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
+		inline CollisionResult<T> AABBPlane(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionAABBPlane<T>(
+				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
+				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
+		}
+		template<typename T>
+		inline CollisionResult<T> PlaneAABB(const Shape& aS1, const Shape& aS2)
+		{
+			return AABBPlane<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline CollisionResult<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionAABBCapsule<T>(
+				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
+				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
+		}
+		template<typename T>
+		inline CollisionResult<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
+		{
+			return AABBCapsule<T>(aS2, aS1);
+		}
+
+		template<typename T>
 		inline CollisionResult<T> SphereRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereRay<T>(
@@ -132,27 +185,68 @@ namespace CommonUtilities
 			return SphereRay<T>(aS2, aS1);
 		}
 
-		///		ab	sp	li	lv	pl	pv	ry 
-		/// ab |-X-|-X-|---|---|---|---|-X-|
-		/// sp |-X-|-X-|---|---|---|---|-X-|
-		/// li |---|---|---|---|---|---|---|
-		/// lv |---|---|---|---|---|---|---|
-		/// pl |---|---|---|---|---|---|-X-|
-		/// pv |---|---|---|---|---|---|---|
-		/// ry |-X-|-X-|---|---|-X-|---|---|
+		template<typename T>
+		inline CollisionResult<T> SpherePlane(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSpherePlane<T>(
+				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
+		}
+		template<typename T>
+		inline CollisionResult<T> PlaneSphere(const Shape& aS1, const Shape& aS2)
+		{
+			return SpherePlane<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline CollisionResult<T> SphereCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSphereCapsule<T>(
+				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
+				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
+		}
+		template<typename T>
+		inline CollisionResult<T> CapsuleSphere(const Shape& aS1, const Shape& aS2)
+		{
+			return SphereCapsule<T>(aS2, aS1);
+		}
+
+		template<typename T>
+		inline CollisionResult<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionSphereCapsule<T>(
+				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
+				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
+		}
+		template<typename T>
+		inline CollisionResult<T> PlaneCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return CapsulePlane<T>(aS2, aS1);
+		}
+
+		///		ab	sp	li	lv	pl	pv	ry  cu
+		/// ab |-X-|-X-|---|---|---|---|-X-|-X-|
+		/// sp |-X-|-X-|---|---|---|---|-X-|-X-|
+		/// li |---|---|---|---|---|---|---|---|
+		/// lv |---|---|---|---|---|---|---|---|
+		/// pl |---|---|---|---|---|---|-X-|-X-|
+		/// pv |---|---|---|---|---|---|---|---|
+		/// ry |-X-|-X-|---|---|-X-|---|---|---|
+		/// cu |-X-|-X-|---|---|-X-|---|---|-X-|
 		/// 
 		template<typename T>
 		inline static std::array<CollisionResult<T>(*)(const Shape&, const Shape&),
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
 		{
-			// # aabb			# sphere			# line				# line volume		# plane				# plane volume		# ray
-			AABBAABB<T>,		AABBSphere<T>,		nullptr,			nullptr,			nullptr,			nullptr,			AABBRay<T>,
-			SphereAABB<T>,		SphereSphere<T>,	nullptr,			nullptr,			nullptr,			nullptr,			SphereRay<T>,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			PlaneRay<T>,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
-			RayAABB<T>,			RaySphere<T>,		nullptr,			nullptr,			RayPlane<T>,		nullptr,			nullptr
+			// # aabb			# sphere			# line				# line volume		# plane				# plane volume		# ray				#capsule
+			AABBAABB<T>,		AABBSphere<T>,		nullptr,			nullptr,			AABBPlane<T>,		nullptr,			AABBRay<T>,			AABBCapsule<T>,
+			SphereAABB<T>,		SphereSphere<T>,	nullptr,			nullptr,			SpherePlane<T>,		nullptr,			SphereRay<T>,		SphereCapsule<T>,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,		
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
+			PlaneAABB<T>,		PlaneSphere<T>,		nullptr,			nullptr,			nullptr,			nullptr,			PlaneRay<T>,		PlaneCapsule<T>,
+			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
+			RayAABB<T>,			RaySphere<T>,		nullptr,			nullptr,			RayPlane<T>,		nullptr,			nullptr,			nullptr,
+			CapsuleAABB<T>,		CapsuleSphere<T>,	nullptr,			nullptr,			CapsulePlane<T>,	nullptr,			nullptr,			CapsuleCapsule<T>
 		};
 	}
 
@@ -275,6 +369,12 @@ namespace CommonUtilities
 		}
 
 		return result;
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
+	{
+		return CollisionResult<T>();
 	}
 
 	template<typename T>
@@ -506,6 +606,18 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline CollisionResult<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
+	{
+		return CollisionResult<T>();
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionAABBCapsule(const AABB<T>& aAABB, const Capsule<T>& aCapsule)
+	{
+		return CollisionResult<T>();
+	}
+
+	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
 	{
 		CollisionResult<T> result{};
@@ -537,6 +649,24 @@ namespace CommonUtilities
 		result.collided		= true;
 
 		return result;
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
+	{
+		return CollisionResult<T>();
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
+	{
+		return CollisionResult<T>();
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
+	{
+		return CollisionResult<T>();
 	}
 
 	using CollResFloat	= CollisionResult<float>;

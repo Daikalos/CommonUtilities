@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CommonUtilities.pch.h" />
+    <ClInclude Include="include\CommonUtilities\Math\Capsule.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Dijkstra.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Sort.hpp" />

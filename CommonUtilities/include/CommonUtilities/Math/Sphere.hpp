@@ -147,7 +147,7 @@ namespace CommonUtilities
 		return Shape::Type::Sphere;
 	}
 
-	using SphereFloat	= Sphere<float>;
-	using SphereDouble	= Sphere<double>;
-	using SphereInt		= Sphere<int>;
+	using Spheref = Sphere<float>;
+	using Sphered = Sphere<double>;
+	using Spherei = Sphere<int>;
 }

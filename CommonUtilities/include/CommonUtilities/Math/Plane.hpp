@@ -126,7 +126,7 @@ namespace CommonUtilities
 
 	// using declarations
 
-	using PlaneFloat	= Plane<float>;
-	using PlaneDouble	= Plane<double>;
-	using PlaneInt		= Plane<int>;
+	using Planef = Plane<float>;
+	using Planed = Plane<double>;
+	using Planei = Plane<int>;
 }

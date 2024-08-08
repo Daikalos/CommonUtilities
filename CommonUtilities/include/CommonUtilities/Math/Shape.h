@@ -22,7 +22,8 @@ namespace CommonUtilities
 			Plane		= 4,
 			PlaneVolume	= 5,
 			Ray			= 6,
-			Count		= 7
+			Capsule		= 7,
+			Count		= 8
 		};
 
 		NODISC constexpr virtual Type GetType() const noexcept = 0;

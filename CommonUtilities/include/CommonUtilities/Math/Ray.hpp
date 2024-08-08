@@ -80,7 +80,7 @@ namespace CommonUtilities
 		return Shape::Type::Ray;
 	}
 
-	using RayFloat	= Ray<float>;
-	using RayDouble	= Ray<double>;
-	using RayInt	= Ray<int>;
+	using Rayf = Ray<float>;
+	using Rayd = Ray<double>;
+	using Rayi = Ray<int>;
 }

@@ -307,7 +307,7 @@ namespace CommonUtilities
 		return !(aLeft == aRight);
 	}
 
-	using Recti = Rect<int>;
 	using Rectf = Rect<float>;
 	using Rectd = Rect<double>;
+	using Recti = Rect<int>;
 }

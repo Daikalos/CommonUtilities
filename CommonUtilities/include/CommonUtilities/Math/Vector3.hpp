@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <xmmintrin.h>
 #include <bit>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
@@ -168,6 +169,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector4<T> XYZW(T aW = T{}) const;
 
+		/// \returns Converts this 3D vector to SIMD.
+		/// 
+		NODISC constexpr __m128 ToSIMD() const requires (std::is_same_v<T, float>);
+
 		/// \returns Directional vector pointing from current to target.
 		/// 
 		NODISC constexpr static Vector3 Direction(const Vector3& aCurrent, const Vector3& aTarget);
@@ -198,7 +203,7 @@ namespace CommonUtilities
 
 		/// \returns Whether this equals another vector within a tolerance
 		/// 
-		NODISC constexpr static bool Equal(const Vector3& aLeft, const Vector3& aRight, T aTolerance = au::EPSILON_V<T>) requires IsFloatingPointType<T>;
+		NODISC constexpr static bool Equal(const Vector3& aLeft, const Vector3& aRight, T aTolerance = EPSILON_V<T>) requires IsFloatingPointType<T>;
 
 		static const Vector3 Zero;
 		static const Vector3 One;
@@ -397,6 +402,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr __m128 Vector3<T>::ToSIMD() const requires (std::is_same_v<T, float>)
+	{
+		return __m128{ x, y, z, T(0) };
+	}
+
+	template<typename T>
 	constexpr Vector3<T> Vector3<T>::Direction(const Vector3& aCurrent, const Vector3& aTarget)
 	{
 		return Vector3<T>(aTarget.x - aCurrent.x, aTarget.y - aCurrent.y, aTarget.z - aCurrent.z);
@@ -473,9 +484,9 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Vector3<T>::Equal(const Vector3& aLeft, const Vector3& aRight, T aTolerance) requires IsFloatingPointType<T>
 	{
-		return	au::Equal(aLeft.x, aRight.x, aTolerance) &&
-				au::Equal(aLeft.y, aRight.y, aTolerance) &&
-				au::Equal(aLeft.z, aRight.z, aTolerance);
+		return	Equal(aLeft.x, aRight.x, aTolerance) &&
+				Equal(aLeft.y, aRight.y, aTolerance) &&
+				Equal(aLeft.z, aRight.z, aTolerance);
 	}
 
 	// GLOBAL OPERATORS

@@ -296,7 +296,7 @@ namespace CommonUtilities
 			return result;
 		}
 
-		if (!au::Equal<T>(distSqr, 0, au::EPSILON * au::EPSILON))
+		if (!Equal<T>(distSqr, 0, EPSILON * EPSILON))
 		{
 			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
 		}
@@ -385,9 +385,9 @@ namespace CommonUtilities
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
 		T denom = aPlane.GetNormal().Dot(aRay.GetDirection());
 
-		if (au::Equal<T>(denom, 0))
+		if (Equal<T>(denom, 0))
 		{
-			// if the numenator is zero then the origin of the ray lies on plane, which it must if parallel to the plane and allow intersection
+			// if the numenator is zero then the origin of the ray lies on plane, which it must if parallel to the plane and cause intersection
 			if (numen == 0)
 			{
 				result.intersection = aRay.GetOrigin();
@@ -407,7 +407,7 @@ namespace CommonUtilities
 		}
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
-		result.normal		= aPlane.GetNormal() * -au::Sign<T>(denom); // flip normal based on what side we are approaching from
+		result.normal		= aPlane.GetNormal() * -Sign<T>(denom); // flip normal based on what side we are approaching from
 		result.penetration	= 0; 
 		result.collided		= true;
 
@@ -463,7 +463,7 @@ namespace CommonUtilities
 		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
 
-		if (!au::Equal<T>(distance, 0, au::EPSILON * au::EPSILON))
+		if (!Equal<T>(distance, 0, EPSILON * EPSILON))
 		{ 
 			distance	= std::sqrt(distance);
 			normal		= normal.GetNormalized(distance, 1.0f);
@@ -490,15 +490,15 @@ namespace CommonUtilities
 
 			if (x > y && x > z)
 			{
-				result.normal = Vector3<T>(-au::Sign<T>(aRay.GetDirection().x), 0, 0);
+				result.normal = Vector3<T>(-Sign<T>(aRay.GetDirection().x), 0, 0);
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = Vector3<T>(0, -au::Sign<T>(aRay.GetDirection().y), 0);
+				result.normal = Vector3<T>(0, -Sign<T>(aRay.GetDirection().y), 0);
 			}
 			else
 			{
-				result.normal = Vector3<T>(0, 0, -au::Sign<T>(aRay.GetDirection().z));
+				result.normal = Vector3<T>(0, 0, -Sign<T>(aRay.GetDirection().z));
 			}
 
 
@@ -556,7 +556,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(au::Sign<T>(aRay.GetDirection().x), 0, 0);
+				result.normal = Vector3<T>(Sign<T>(aRay.GetDirection().x), 0, 0);
 
 				break;
 			}
@@ -574,7 +574,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, au::Sign<T>(aRay.GetDirection().y), 0);
+				result.normal = Vector3<T>(0, Sign<T>(aRay.GetDirection().y), 0);
 
 				break;
 			}
@@ -592,7 +592,7 @@ namespace CommonUtilities
 					return result;
 				}
 
-				result.normal = Vector3<T>(0, 0, au::Sign<T>(aRay.GetDirection().z));
+				result.normal = Vector3<T>(0, 0, Sign<T>(aRay.GetDirection().z));
 
 				break;
 			}

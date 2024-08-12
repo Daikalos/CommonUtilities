@@ -46,7 +46,7 @@ const std::vector<cu::Vector2f>& CommonUtilities::GetValidResolutions()
 
 			float ratio = resolution.x / resolution.y;
 
-			if (!cu::au::Equal(ratio, desktopRatio))
+			if (!cu::Equal(ratio, desktopRatio))
 				continue;
 
 			if (std::find(result.begin(), result.end(), resolution) == result.end())

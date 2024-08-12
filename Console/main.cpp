@@ -17,6 +17,12 @@
 
 int main()
 {
+	cu::Vector2f vec(5.0f, 3.0f);
+	auto l = vec.ToSIMD();
+
+	cu::Mat4f mat;
+	auto p = mat.ToSIMD();
+
 	std::vector<int> test { 4, 6, 8, 12, -3 };
 
 	cu::BinaryWriteSerializer write;
@@ -29,8 +35,6 @@ int main()
 	read.Serialize(test2);
 
 	constexpr auto a = cu::EaseInBack(0.9f);
-
-	std::string_view huh = a;
 
 	return 0;
 }

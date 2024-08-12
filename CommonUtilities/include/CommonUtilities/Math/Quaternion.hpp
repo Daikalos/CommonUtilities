@@ -231,7 +231,7 @@ namespace CommonUtilities
 		// yaw (y-axis rotation)
 		const T siny = T(2) * (w * y - z * x);
 
-		T yaw = (std::abs(siny) > T(0.99999) ? std::copysign(au::PI_2_V<T>, siny) : std::asin(siny));
+		T yaw = (std::abs(siny) > T(0.99999) ? std::copysign(PI_2_V<T>, siny) : std::asin(siny));
 
 		// roll (z-axis rotation)
 		const T sinr	= T(2) * (w * z + x * y);
@@ -250,7 +250,7 @@ namespace CommonUtilities
 		if (test > T(0.99999)) // singularity at north pole
 		{ 
 			const T pitch	= -T(2) * std::atan2(x, w);
-			const T yaw		= au::PI_2_V<T>;
+			const T yaw		= PI_2_V<T>;
 			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
@@ -259,7 +259,7 @@ namespace CommonUtilities
 		if (test < -T(0.99999)) // singularity at south pole
 		{ 
 			const T pitch	= T(2) * std::atan2(x, w);
-			const T yaw		= -au::PI_2_V<T>;;
+			const T yaw		= -PI_2_V<T>;;
 			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };

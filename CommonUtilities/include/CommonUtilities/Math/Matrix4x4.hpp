@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <cassert>
+#include <xmmintrin.h>
 #include <stdexcept>
 
 #include "Vector3.hpp"
@@ -63,6 +64,8 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetForward() const;
 		NODISC constexpr Vector3<T> GetUp() const;
 		NODISC constexpr Vector3<T> GetRight() const;
+
+		NODISC constexpr std::array<__m128, 4> ToSIMD() const requires (std::is_same_v<T, float>);
 
 		constexpr void DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale);
 		constexpr void DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale);
@@ -274,6 +277,18 @@ namespace CommonUtilities
 	constexpr Vector3<T> Matrix4x4<T>::GetRight() const 
 	{
 		return Vector3<T>{ myMatrix[0], myMatrix[1], myMatrix[2] };
+	}
+
+	template<typename T>
+	constexpr std::array<__m128, 4> Matrix4x4<T>::ToSIMD() const requires (std::is_same_v<T, float>)
+	{
+		return std::array<__m128, 4>
+		{
+			__m128 { myMatrix[0 ], myMatrix[1 ], myMatrix[2 ], myMatrix[3 ] },
+			__m128 { myMatrix[4 ], myMatrix[5 ], myMatrix[6 ], myMatrix[7 ] },
+			__m128 { myMatrix[8 ], myMatrix[9 ], myMatrix[10], myMatrix[11] },
+			__m128 { myMatrix[12], myMatrix[13], myMatrix[14], myMatrix[15] }
+		};
 	}
 
 	template<typename T>
@@ -589,7 +604,7 @@ namespace CommonUtilities
 		assert((float)aNearClip < (float)aFarClip);
 		assert((float)aNearClip >= 0.00000000000001f);
 
-		const float hFOVRad = (float)aHorizontalFOVDeg * au::DEG2RAD;
+		const float hFOVRad = (float)aHorizontalFOVDeg * DEG2RAD;
 		const float xScale = 1.0f / std::tan(hFOVRad / 2.0f);
 		const float yScale = (float)aAspectRatio * xScale;
 

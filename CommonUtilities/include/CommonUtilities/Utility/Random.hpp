@@ -88,7 +88,7 @@ namespace CommonUtilities
 	NODISC inline cu::Vector2<T> RandomPointInCircle(const cu::Vector2<T>& aCenter, T aRadius)
 	{
 		float r = aRadius * std::sqrt(Random());
-		float theta = Random() * 2.0f * au::PI;
+		float theta = Random() * 2.0f * PI;
 
 		return cu::Vector2<T>(
 			(T)(aCenter.x + r * std::cos(theta)),
@@ -121,7 +121,7 @@ namespace CommonUtilities
 	NODISC inline cu::Vector3<T> RandomPointInSphere(const cu::Vector3<T>& aCenter, T aRadius)
 	{
 		float r		= aRadius * std::sqrt(Random());
-		float phi	= Random() * 2.0f * au::PI;
+		float phi	= Random() * 2.0f * PI;
 		float theta = std::acos(Random(-1.0f, 1.0f));
 
 		const float s = std::sin(theta);

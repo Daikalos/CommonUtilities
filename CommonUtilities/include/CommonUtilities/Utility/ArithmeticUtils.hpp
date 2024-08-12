@@ -8,7 +8,7 @@
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities::au
+namespace CommonUtilities
 {
 	template<typename T = float>
 	constexpr T PI_V = std::numbers::pi_v<T>;

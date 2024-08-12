@@ -117,7 +117,7 @@ namespace CommonUtilities
 		const T distSqr = dir.LengthSqr();
 		const T radius	= GetRadius() + aOther.GetRadius();
 
-		return distSqr < radius * radius;
+		return distSqr <= radius * radius;
 	}
 
 	template<typename T>
@@ -138,7 +138,7 @@ namespace CommonUtilities
 		const T distSqr = dir.LengthSqr();
 		const T radius  = GetRadius() - aOther.GetRadius();
 
-		return distSqr < radius * radius;
+		return distSqr <= radius * radius;
 	}
 
 	template<typename T>

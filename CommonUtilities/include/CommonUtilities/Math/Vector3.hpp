@@ -210,7 +210,7 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr static Vector3 ClosestPointOnLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
 
-		/// \returns Closest points on line from point
+		/// \returns Closest points between two segments
 		/// 
 		NODISC constexpr static std::tuple<Vector3, Vector3> ClosestPointsSegmentSegment(const Vector3& aFirstStart, const Vector3& aFirstEnd, const Vector3& aSecondStart, const Vector3& aSecondEnd);
 

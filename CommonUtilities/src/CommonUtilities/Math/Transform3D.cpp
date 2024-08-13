@@ -12,19 +12,19 @@ Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, c
 }
 
 Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, AxisOrder aRotationOrder)
-	: Transform3D(aPosition, aRotation, cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
+	: Transform3D(aPosition, aRotation, Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
 {
 
 }
 
 Transform3D::Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder)
-	: Transform3D(aPosition, cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
+	: Transform3D(aPosition, Vector3f(), Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
 {
 
 }
 
 Transform3D::Transform3D(AxisOrder aRotationOrder)
-	: Transform3D(cu::Vector3f(), cu::Vector3f(), cu::Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
+	: Transform3D(Vector3f(), Vector3f(), Vector3f(1.0f, 1.0f, 1.0f), aRotationOrder)
 {
 
 }

@@ -15,16 +15,18 @@ namespace CommonUtilities
 		constexpr Capsule() = default;
 		constexpr ~Capsule() = default;
 
-		constexpr Capsule(const Vector3<T>& aCenter, T aRadius, T aHeight);
+		constexpr Capsule(const Vector3<T>& aTip, const Vector3<T>& aBase, T aRadius);
 
-		NODISC constexpr const Vector3<T>& GetCenter() const noexcept;
+		NODISC constexpr const Vector3<T>& GetTip() const noexcept;
+		NODISC constexpr const Vector3<T>& GetBase() const noexcept;
 		NODISC constexpr T GetRadius() const noexcept;
 		NODISC constexpr T GetRadiusSqr() const noexcept;
-		NODISC constexpr T GetHeight() const noexcept;
+		NODISC constexpr T GetBodyLength() const;
+		NODISC constexpr T GetBodyLengthSqr() const;
 
-		constexpr void SetCenter(const Vector3<T>& aCenter);
+		constexpr void SetTip(const Vector3<T>& aTip);
+		constexpr void SetBase(const Vector3<T>& aBase);
 		constexpr void SetRadius(T aRadius);
-		constexpr void SetHeight(T aHeight);
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
@@ -37,26 +39,31 @@ namespace CommonUtilities
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
-		Vector3<T>	myCenter;
+		Vector3<T>	myTip;
+		Vector3<T>	myBase;
 		T			myRadius{};
 		T			myRadiusSqr{};
-		T			myHeight{};
 	};
 
 	template<typename T>
-	constexpr Capsule<T>::Capsule(const Vector3<T>& aCenter, T aRadius, T aHeight)
-		: myCenter(aCenter)
+	constexpr Capsule<T>::Capsule(const Vector3<T>& aTip, const Vector3<T>& aBase, T aRadius)
+		: myTip(aTip)
+		, myBase(aBase)
 		, myRadius(aRadius)
 		, myRadiusSqr(aRadius* aRadius)
-		, myHeight(aHeight)
 	{
 
 	}
 
 	template<typename T>
-	constexpr const Vector3<T>& Capsule<T>::GetCenter() const noexcept
+	constexpr const Vector3<T>& Capsule<T>::GetTip() const noexcept
 	{
-		return myCenter;
+		return myTip;
+	}
+	template<typename T>
+	constexpr const Vector3<T>& Capsule<T>::GetBase() const noexcept
+	{
+		return myBase;
 	}
 	template<typename T>
 	constexpr T Capsule<T>::GetRadius() const noexcept
@@ -69,15 +76,25 @@ namespace CommonUtilities
 		return myRadiusSqr;
 	}
 	template<typename T>
-	constexpr T Capsule<T>::GetHeight() const noexcept
+	constexpr T Capsule<T>::GetBodyLength() const
 	{
-		return myHeight;
+		return Vector3<T>::Distance(myBase, myTip);
+	}
+	template<typename T>
+	constexpr T Capsule<T>::GetBodyLengthSqr() const
+	{
+		return Vector3<T>::DistanceSqr(myBase, myTip);
 	}
 
 	template<typename T>
-	constexpr void Capsule<T>::SetCenter(const Vector3<T>& aCenter)
+	constexpr void Capsule<T>::SetTip(const Vector3<T>& aTip)
 	{
-		myCenter = aCenter;
+		myTip = aTip;
+	}
+	template<typename T>
+	constexpr void Capsule<T>::SetBase(const Vector3<T>& aBase)
+	{
+		myBase = aBase;
 	}
 	template<typename T>
 	constexpr void Capsule<T>::SetRadius(T aRadius)
@@ -85,25 +102,20 @@ namespace CommonUtilities
 		myRadius = aRadius;
 		myRadiusSqr = aRadius * aRadius;
 	}
-	template<typename T>
-	constexpr void Capsule<T>::SetHeight(T aHeight)
-	{
-		myHeight = aHeight;
-	}
 
 	template<typename T>
 	constexpr bool Capsule<T>::IsInside(const Vector3<T>& aPosition) const
 	{
-		return Vector3<T>::DistanceSqr(GetCenter(), aPosition) <= myRadiusSqr;
+		return Vector3<T>::DistanceSqrToSegment(GetBase(), GetTip(), aPosition) <= myRadiusSqr;
 	}
 
 	template<typename T>
 	constexpr bool Capsule<T>::Overlaps(const Capsule& aOther) const
 	{
-		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
+		auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(GetTip(), GetBase(), aOther.GetTip(), aOther.GetBase());
 
-		const T distSqr = dir.LengthSqr();
-		const T radius = GetRadius() + aOther.GetRadius();
+		const T distSqr = Vector3<T>::DistanceSqr(p1, p2);
+		const T radius  = GetRadius() + aOther.GetRadius();
 
 		return distSqr < radius * radius;
 	}
@@ -111,20 +123,20 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Capsule<T>::Contains(T aX, T aY, T aZ) const
 	{
-		return Contains(cu::Vector3f(aX, aY, aZ));
+		return Contains(Vector3<T>(aX, aY, aZ));
 	}
 	template<typename T>
 	constexpr bool Capsule<T>::Contains(const Vector3<T>& aPosition) const
 	{
-		return Vector3<T>::DistanceSqr(GetCenter(), aPosition) < myRadiusSqr;
+		return Vector3<T>::DistanceSqrToSegment(GetBase(), GetTip(), aPosition) < myRadiusSqr;
 	}
 	template<typename T>
 	constexpr bool Capsule<T>::Contains(const Capsule& aOther) const
 	{
-		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
+		auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(GetTip(), GetBase(), aOther.GetTip(), aOther.GetBase());
 
-		const T distSqr = dir.LengthSqr();
-		const T radius = GetRadius() - aOther.GetRadius();
+		const T distSqr = Vector3<T>::DistanceSqr(p1, p2);
+		const T radius  = GetRadius() - aOther.GetRadius();
 
 		return distSqr < radius * radius;
 	}

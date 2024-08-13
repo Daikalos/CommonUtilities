@@ -96,7 +96,7 @@ namespace CommonUtilities
 	{
 		if (Contains(aOther))
 			return *this;
-		else if (aOther.Contains(*this))
+		if (aOther.Contains(*this))
 			return aOther;
 
 		Vector3<T> dir = Vector3<T>::Direction(GetCenter(), aOther.GetCenter());
@@ -123,7 +123,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Sphere<T>::Contains(T aX, T aY, T aZ) const
 	{
-		return Contains(cu::Vector3f(aX, aY, aZ));
+		return Contains(Vector3<T>(aX, aY, aZ));
 	}
 	template<typename T>
 	constexpr bool Sphere<T>::Contains(const Vector3<T>& aPosition) const

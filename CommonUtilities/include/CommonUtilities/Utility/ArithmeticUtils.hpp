@@ -211,6 +211,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC constexpr T Saturate(const T& aValue)
+	{
+		return Min(Max(aValue, T(0)), T(1));
+	}
+
+	template<typename T>
 	NODISC constexpr T Abs(const T& aValue)
 	{
 		// since the minus operator will possibly create a new object, we cannot return a reference

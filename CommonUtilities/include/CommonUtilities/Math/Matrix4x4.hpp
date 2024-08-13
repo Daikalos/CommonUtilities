@@ -243,9 +243,9 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Matrix4x4<T>::GetRotation() const
 	{
-		cu::Vector3<T> forward	= GetForward().GetNormalized();
-		cu::Vector3<T> right	= GetRight().GetNormalized();
-		cu::Vector3<T> up		= GetUp().GetNormalized();
+		Vector3<T> forward	= GetForward().GetNormalized();
+		Vector3<T> right	= GetRight().GetNormalized();
+		Vector3<T> up		= GetUp().GetNormalized();
 
 		return Vector3<T>
 		{
@@ -296,9 +296,9 @@ namespace CommonUtilities
 	{
 		outPosition = GetTranslation();
 
-		cu::Vector3<T> right	= GetRight();
-		cu::Vector3<T> up		= GetUp();
-		cu::Vector3<T> forward	= GetForward();
+		Vector3<T> right	= GetRight();
+		Vector3<T> up		= GetUp();
+		Vector3<T> forward	= GetForward();
 
 		outScale.x = right.Length();
 		outScale.y = up.Length();
@@ -317,15 +317,27 @@ namespace CommonUtilities
 	{
 		outPosition = GetTranslation();
 
-		outQuaternion = Quaternion<T>(*this);
-
-		cu::Vector3<T> right	= GetRight();
-		cu::Vector3<T> up		= GetUp();
-		cu::Vector3<T> forward	= GetForward();
+		Vector3<T> right	= GetRight();
+		Vector3<T> up		= GetUp();
+		Vector3<T> forward	= GetForward();
 
 		outScale.x = right.Length();
 		outScale.y = up.Length();
 		outScale.z = forward.Length();
+
+		right   = right.GetNormalized(outScale.x, T(1));
+		up	    = up.GetNormalized(outScale.y, T(1));
+		forward = forward.GetNormalized(outScale.z, T(1));
+
+		const Matrix4x4 rotationMatrix
+		{
+			right.x,	up.x,	forward.x,	0,
+			right.y,	up.y,	forward.y,	0,
+			right.z,	up.z,	forward.z, 	0,
+			0,			0,		0,			1
+		};
+
+		outQuaternion = Quaternion<T>(rotationMatrix);
 	}
 
 	template<typename T>
@@ -428,15 +440,18 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::GetFastInverse() const -> Matrix4x4
 	{
-		Matrix4x4 inverseMatrix = GetRotationMatrix().GetTranspose();
-
-		const Vector3<T> ip = -GetTranslation();
-		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(ip));
-
 		const Vector3<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");
 
-		const Matrix4x4 scalingInverse
+		Vector3<T> row0{ myMatrix[0], myMatrix[1], myMatrix[2 ] };
+		Vector3<T> row1{ myMatrix[4], myMatrix[5], myMatrix[6 ] };
+		Vector3<T> row2{ myMatrix[8], myMatrix[9], myMatrix[10] };
+
+		row0 = row0.GetNormalized(s.x, T(1));
+		row1 = row1.GetNormalized(s.y, T(1));
+		row2 = row2.GetNormalized(s.z, T(1));
+
+		const Matrix4x4 scalingMatrix
 		{
 			1.0f / s.x,	0,			0,			0,
 			0,			1.0f / s.y,	0,			0,
@@ -444,7 +459,20 @@ namespace CommonUtilities
 			0,			0,			0,			1
 		};
 
-		return inverseMatrix.Combine(scalingInverse);
+		const Matrix4x4 rotationMatrix
+		{
+			row0.x,		row1.x,		row2.x,		0,
+			row0.y,		row1.y,		row2.y,		0,
+			row0.z,		row1.z,		row2.z, 	0,
+			0,			0,			0,			1
+		};
+
+		Matrix4x4 inverseMatrix = rotationMatrix;
+
+		const Vector3<T> ip = -GetTranslation();
+		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(ip));
+
+		return inverseMatrix.Combine(scalingMatrix);
 	}
 
 	template<typename T>

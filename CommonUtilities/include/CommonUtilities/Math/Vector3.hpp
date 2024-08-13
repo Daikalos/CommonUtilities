@@ -4,6 +4,7 @@
 #include <cassert>
 #include <xmmintrin.h>
 #include <bit>
+#include <tuple>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -200,6 +201,34 @@ namespace CommonUtilities
 		/// \returns Moved vector going from current towards target.
 		/// 
 		NODISC constexpr static Vector3 MoveTowards(const Vector3& aCurrent, const Vector3& aTarget, T aDistance);
+
+		/// \returns Closest point between start and end segment to point
+		/// 
+		NODISC constexpr static Vector3 ClosestPointOnSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
+
+		/// \returns Closest point on line from point
+		/// 
+		NODISC constexpr static Vector3 ClosestPointOnLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
+
+		/// \returns Closest points on line from point
+		/// 
+		NODISC constexpr static std::tuple<Vector3, Vector3> ClosestPointsSegmentSegment(const Vector3& aFirstStart, const Vector3& aFirstEnd, const Vector3& aSecondStart, const Vector3& aSecondEnd);
+
+		/// \returns Distance to closest point on line
+		/// 
+		NODISC constexpr static T DistanceToLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
+
+		/// \returns Distance to closest point on segment
+		/// 
+		NODISC constexpr static T DistanceToSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
+
+		/// \returns Distance squared to closest point on line
+		/// 
+		NODISC constexpr static T DistanceSqrToLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
+
+		/// \returns Distance squared to closest point on segment
+		/// 
+		NODISC constexpr static T DistanceSqrToSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint);
 
 		/// \returns Whether this equals another vector within a tolerance
 		/// 
@@ -479,6 +508,120 @@ namespace CommonUtilities
 		}
 
 		return aCurrent;
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::ClosestPointOnSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		const Vector3<T> dir = Vector3<T>::Direction(aStart, aEnd);
+		const T dirLengthSqr = dir.LengthSqr();
+
+		if (dirLengthSqr <= EPSILON_V<T>)
+			return aStart;
+
+		const T t = Vector3<T>::Dot(aPoint - aStart, dir) / dirLengthSqr;
+
+		return aStart + Saturate(t) * dir;
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::ClosestPointOnLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		const Vector3<T> dir = Vector3<T>::Direction(aStart, aEnd);
+		const T dirLengthSqr = dir.LengthSqr();
+
+		if (dirLengthSqr <= EPSILON_V<T>)
+			return aStart;
+
+		const T t = Vector3<T>::Dot(aPoint - aStart, dir) / dirLengthSqr;
+
+		return aStart + t * dir;
+	}
+
+	template<typename T>
+	constexpr std::tuple<Vector3<T>, Vector3<T>> Vector3<T>::ClosestPointsSegmentSegment(const Vector3& aFirstStart, const Vector3& aFirstEnd, const Vector3& aSecondStart, const Vector3& aSecondEnd)
+	{
+		const Vector3<T> d1	= Vector3<T>::Direction(aFirstStart, aFirstEnd);
+		const Vector3<T> d2	= Vector3<T>::Direction(aSecondStart, aSecondEnd);
+		const Vector3<T> r	= Vector3<T>::Direction(aSecondStart, aFirstStart);
+
+		const T d1Sqr	= d1.LengthSqr();
+		const T d2Sqr	= d2.LengthSqr();
+		const T d2rSqr	= Vector3<T>::Dot(d2, r);
+
+		T s{};
+		T t{};
+
+		Vector3<T> p1;
+		Vector3<T> p2;
+
+		if (d1Sqr <= EPSILON_V<T> && d2Sqr <= EPSILON_V<T>)
+		{
+			s = t = T(0);
+		}
+		else if (d1Sqr <= EPSILON_V<T>)
+		{
+			s = T(0);
+			t = Saturate(d2rSqr / d2Sqr);
+		}
+		else 
+		{
+			const T d1rSqr = Vector3<T>::Dot(d1, r);
+			if (d2Sqr <= EPSILON_V<T>)
+			{
+				s = Saturate(-d1rSqr / d1Sqr);
+				t = T(0);
+			}
+			else
+			{
+				const T d1d2Sqr = Vector3<T>::Dot(d1, d2);
+				const T denom	= d1Sqr * d2Sqr - d1d2Sqr * d1d2Sqr;
+
+				s = (denom != T(0)) ? Saturate((d1d2Sqr * d2rSqr - d1rSqr * d2Sqr) / denom) : T(0);
+
+				t = (d1d2Sqr * s + d2rSqr) / d2Sqr;
+
+				if (t < T(0))
+				{
+					s = Saturate(-d1rSqr / d1Sqr);
+					t = T(0);
+				}
+				else if (t > T(1))
+				{
+					s = Saturate((d1d2Sqr - d1rSqr) / d1Sqr);
+					t = T(1);
+				}
+			}
+		}
+
+		p1 = aFirstStart + d1 * s;
+		p2 = aSecondStart + d2 * t;
+
+		return std::make_tuple(p1, p2);
+	}
+
+	template<typename T>
+	constexpr T Vector3<T>::DistanceToLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		return Vector3<T>::Distance(ClosestPointOnLine(aStart, aEnd, aPoint), aPoint);
+	}
+
+	template<typename T>
+	constexpr T Vector3<T>::DistanceToSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		return Vector3<T>::Distance(ClosestPointOnSegment(aStart, aEnd, aPoint), aPoint);
+	}
+
+	template<typename T>
+	constexpr T Vector3<T>::DistanceSqrToLine(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		return Vector3<T>::DistanceSqr(ClosestPointOnLine(aStart, aEnd, aPoint), aPoint);
+	}
+
+	template<typename T>
+	constexpr T Vector3<T>::DistanceSqrToSegment(const Vector3& aStart, const Vector3& aEnd, const Vector3& aPoint)
+	{
+		return Vector3<T>::DistanceSqr(ClosestPointOnSegment(aStart, aEnd, aPoint), aPoint);
 	}
 
 	template<typename T>

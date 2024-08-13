@@ -109,7 +109,7 @@ namespace CommonUtilities::bm
 
 			const auto print = [](auto aValue, int aPlaces)
 			{
-				return cu::RemoveTrailingZeroes(std::to_string(cu::SetPrecision(aValue, aPlaces)));
+				return RemoveTrailingZeroes(std::to_string(SetPrecision(aValue, aPlaces)));
 			};
 
 			{

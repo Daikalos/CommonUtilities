@@ -15,7 +15,7 @@
 namespace CommonUtilities
 {
 	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashableType<Hash, IDType>
-	class Blackboard : private cu::NonCopyable
+	class Blackboard : private NonCopyable
 	{
 	public:
 		Blackboard() = default;

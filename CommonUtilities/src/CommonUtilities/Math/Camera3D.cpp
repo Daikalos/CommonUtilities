@@ -32,12 +32,12 @@ Vector4f Camera3D::WorldToClip(const Vector3f& aWorldPosition) const
 Vector3f Camera3D::ClipToNDC(const Vector4f& aClipPosition) const
 {
 	assert(aClipPosition.w != 0 && "Clip depth is zero!");
-	return cu::Vector3f(aClipPosition.x, aClipPosition.y, aClipPosition.z) / aClipPosition.w;
+	return Vector3f(aClipPosition.x, aClipPosition.y, aClipPosition.z) / aClipPosition.w;
 }
 Vector2f Camera3D::NDCToScreen(const Vector3f& aNDCPosition) const
 {
-	assert(myScreenSize != cu::Vector2f() && "Screen size is invalid");
-	return myScreenSize * cu::Vector2f(aNDCPosition.x + 1.0f, aNDCPosition.y + 1.0f) / 2.0f;
+	assert(myScreenSize != Vector2f() && "Screen size is invalid");
+	return myScreenSize * Vector2f(aNDCPosition.x + 1.0f, aNDCPosition.y + 1.0f) / 2.0f;
 }
 Vector2f Camera3D::WorldToScreen(const Vector3f& aWorldPosition) const
 {

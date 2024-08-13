@@ -23,6 +23,8 @@ int main()
 	cu::Mat4f mat;
 	auto p = mat.ToSIMD();
 
+	auto [p1, p2] = cu::Vector3f::ClosestPointsSegmentSegment({}, {}, {}, {});
+
 	std::vector<int> test { 4, 6, 8, 12, -3 };
 
 	cu::BinaryWriteSerializer write;

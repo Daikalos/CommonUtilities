@@ -77,48 +77,48 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC inline cu::Vector2<T> RandomPointInRect(const cu::Vector2<T>& aCenter, const cu::Vector2<T>& aHalfSize)
+	NODISC inline Vector2<T> RandomPointInRect(const Vector2<T>& aCenter, const Vector2<T>& aHalfSize)
 	{
-		return cu::Vector2<T>(
+		return Vector2<T>(
 			RandomDev<T>(aCenter.x, aHalfSize.x), 
 			RandomDev<T>(aCenter.y, aHalfSize.y));
 	}
 
 	template<typename T>
-	NODISC inline cu::Vector2<T> RandomPointInCircle(const cu::Vector2<T>& aCenter, T aRadius)
+	NODISC inline Vector2<T> RandomPointInCircle(const Vector2<T>& aCenter, T aRadius)
 	{
 		float r = aRadius * std::sqrt(Random());
 		float theta = Random() * 2.0f * PI;
 
-		return cu::Vector2<T>(
+		return Vector2<T>(
 			(T)(aCenter.x + r * std::cos(theta)),
 			(T)(aCenter.y + r * std::sin(theta)));
 	}
 
 	template<typename T>
-	NODISC inline cu::Vector2<T> RandomDeflection(const cu::Vector2<T>& aDirection, T aMaxRotation)
+	NODISC inline Vector2<T> RandomDeflection(const Vector2<T>& aDirection, T aMaxRotation)
 	{
 		T angle = RandomDev<T>(0.0f, aMaxRotation);
 
 		T cos = std::cos(angle);
 		T sin = std::sin(angle);
 
-		return cu::Vector2<T>(
+		return Vector2<T>(
 			(T)(cos * aDirection.x - sin * aDirection.y),
 			(T)(sin * aDirection.x + cos * aDirection.y));
 	}
 
 	template<typename T>
-	NODISC inline cu::Vector3<T> RandomPointInRect(const cu::Vector3<T>& aCenter, const cu::Vector3<T>& aHalfSize)
+	NODISC inline Vector3<T> RandomPointInRect(const Vector3<T>& aCenter, const Vector3<T>& aHalfSize)
 	{
-		return cu::Vector3<T>(
+		return Vector3<T>(
 			RandomDev<T>(aCenter.x, aHalfSize.x),
 			RandomDev<T>(aCenter.y, aHalfSize.y),
 			RandomDev<T>(aCenter.z, aHalfSize.z));
 	}
 
 	template<typename T>
-	NODISC inline cu::Vector3<T> RandomPointInSphere(const cu::Vector3<T>& aCenter, T aRadius)
+	NODISC inline Vector3<T> RandomPointInSphere(const Vector3<T>& aCenter, T aRadius)
 	{
 		float r		= aRadius * std::sqrt(Random());
 		float phi	= Random() * 2.0f * PI;
@@ -127,7 +127,7 @@ namespace CommonUtilities
 		const float s = std::sin(theta);
 		const float c = std::cos(theta);
 
-		return cu::Vector3<T>(
+		return Vector3<T>(
 			(T)(aCenter.x + r * c * std::cos(phi)),
 			(T)(aCenter.y + r * s * std::sin(phi)),
 			(T)(aCenter.z + r * c));

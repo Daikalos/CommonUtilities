@@ -98,21 +98,21 @@ namespace CommonUtilities
 
 		static void RemoveAllExpiredImpl(Relation3D& aCurrentRelation);
 
-		Parent					myParent;
-		Children				myChildren;
+		Parent				myParent;
+		Children			myChildren;
 
-		mutable Mat4f			myGlobalMatrix;
-		mutable Mat4f			myInverseGlobalMatrix;
+		mutable Mat4f		myGlobalMatrix;
+		mutable Mat4f		myInverseGlobalMatrix;
 
-		mutable cu::Vector3f	myGlobalPosition;
-		mutable cu::Vector3f	myGlobalRotation;
-		mutable cu::Vector3f	myGlobalScale				{1.0f, 1.0f, 1.0f};
+		mutable Vector3f	myGlobalPosition;
+		mutable Vector3f	myGlobalRotation;
+		mutable Vector3f	myGlobalScale				{1.0f, 1.0f, 1.0f};
 
-		mutable bool			myUpdateGlobalMatrix		{true};
-		mutable bool			myUpdateGlobalInverseMatrix	{true};
-		mutable bool			myUpdateGlobalPosition		{true};
-		mutable bool			myUpdateGlobalRotation		{true};
-		mutable bool			myUpdateGlobalScale			{true};
+		mutable bool		myUpdateGlobalMatrix		{true};
+		mutable bool		myUpdateGlobalInverseMatrix	{true};
+		mutable bool		myUpdateGlobalPosition		{true};
+		mutable bool		myUpdateGlobalRotation		{true};
+		mutable bool		myUpdateGlobalScale			{true};
 	};
 
 	template<typename... Args>

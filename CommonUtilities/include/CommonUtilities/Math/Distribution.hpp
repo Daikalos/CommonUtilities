@@ -73,13 +73,13 @@ namespace CommonUtilities
 
 	COMMON_UTILITIES_API NODISC Distribution<float> CreateDistributionUniform(float aMin, float aMax);
 
-	COMMON_UTILITIES_API NODISC Distribution<cu::Vector2f> CreateDistributionRect(const cu::Vector2f& aCenter, const cu::Vector2f& aHalfSize);
+	COMMON_UTILITIES_API NODISC Distribution<Vector2f> CreateDistributionRect(const Vector2f& aCenter, const Vector2f& aHalfSize);
 
-	COMMON_UTILITIES_API NODISC Distribution<cu::Vector2f> CreateDistributionCircle(const cu::Vector2f& aCenter, float aRadius);
+	COMMON_UTILITIES_API NODISC Distribution<Vector2f> CreateDistributionCircle(const Vector2f& aCenter, float aRadius);
 
-	COMMON_UTILITIES_API NODISC Distribution<cu::Vector2f> CreateDistributionDeflect(const cu::Vector2f& aDirection, float aMaxRotation);
+	COMMON_UTILITIES_API NODISC Distribution<Vector2f> CreateDistributionDeflect(const Vector2f& aDirection, float aMaxRotation);
 
-	COMMON_UTILITIES_API NODISC Distribution<cu::Vector3f> CreateDistributionRect(const cu::Vector3f& aCenter, const cu::Vector3f& aHalfSize);
+	COMMON_UTILITIES_API NODISC Distribution<Vector3f> CreateDistributionRect(const Vector3f& aCenter, const Vector3f& aHalfSize);
 
-	COMMON_UTILITIES_API NODISC Distribution<cu::Vector3f> CreateDistributionSphere(const cu::Vector3f& aCenter, float aRadius);
+	COMMON_UTILITIES_API NODISC Distribution<Vector3f> CreateDistributionSphere(const Vector3f& aCenter, float aRadius);
 }

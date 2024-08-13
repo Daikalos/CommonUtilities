@@ -101,21 +101,21 @@ namespace CommonUtilities
 
 		static void RemoveAllExpiredImpl(Relation2D& aCurrentRelation);
 
-		Parent					myParent;
-		Children				myChildren;
+		Parent				myParent;
+		Children			myChildren;
 
-		mutable Mat3f			myGlobalMatrix;
-		mutable Mat3f			myInverseGlobalMatrix;
+		mutable Mat3f		myGlobalMatrix;
+		mutable Mat3f		myInverseGlobalMatrix;
 
-		mutable cu::Vector2f	myGlobalPosition;
-		mutable float			myGlobalRotation			{0.0f};
-		mutable cu::Vector2f	myGlobalScale				{1.0f, 1.0f};
+		mutable Vector2f	myGlobalPosition;
+		mutable float		myGlobalRotation			{0.0f};
+		mutable Vector2f	myGlobalScale				{1.0f, 1.0f};
 
-		mutable bool			myUpdateGlobalMatrix		{true};
-		mutable bool			myUpdateGlobalInverseMatrix	{true};
-		mutable bool			myUpdateGlobalPosition		{true};
-		mutable bool			myUpdateGlobalRotation		{true};
-		mutable bool			myUpdateGlobalScale			{true};
+		mutable bool		myUpdateGlobalMatrix		{true};
+		mutable bool		myUpdateGlobalInverseMatrix	{true};
+		mutable bool		myUpdateGlobalPosition		{true};
+		mutable bool		myUpdateGlobalRotation		{true};
+		mutable bool		myUpdateGlobalScale			{true};
 	};
 
 	template<typename... Args>

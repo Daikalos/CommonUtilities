@@ -374,7 +374,11 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
 	{
-		return CollisionResult<T>();
+		CollisionResult<T> result{};
+
+
+
+		return result;
 	}
 
 	template<typename T>

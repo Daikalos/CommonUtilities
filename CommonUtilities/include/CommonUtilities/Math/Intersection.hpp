@@ -661,7 +661,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
 	{
-		return CollisionResult<T>();
+		Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aSphere.GetCenter());
+		return IntersectionSphereSphere(aSphere, Sphere<T>(p, aCapsule.GetRadius()));
 	}
 
 	template<typename T>

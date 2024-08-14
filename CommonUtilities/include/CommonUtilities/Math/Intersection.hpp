@@ -17,6 +17,7 @@
 #include "Sphere.hpp"
 #include "AABB.hpp"
 #include "Capsule.hpp"
+#include "Triangle.hpp"
 #include "Vector3.hpp"
 
 namespace CommonUtilities
@@ -72,6 +73,9 @@ namespace CommonUtilities
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
 
 	namespace details // hide this from client
 	{
@@ -226,29 +230,41 @@ namespace CommonUtilities
 			return CapsulePlane<T>(aS2, aS1);
 		}
 
-		///		ab	sp	li	lv	pl	pv	ry  cu
-		/// ab |-X-|-X-|---|---|---|---|-X-|-X-|
-		/// sp |-X-|-X-|---|---|---|---|-X-|-X-|
-		/// li |---|---|---|---|---|---|---|---|
-		/// lv |---|---|---|---|---|---|---|---|
-		/// pl |---|---|---|---|---|---|-X-|-X-|
-		/// pv |---|---|---|---|---|---|---|---|
-		/// ry |-X-|-X-|---|---|-X-|---|---|---|
-		/// cu |-X-|-X-|---|---|-X-|---|---|-X-|
+		template<typename T>
+		inline CollisionResult<T> CapsuleRay(const Shape& aS1, const Shape& aS2)
+		{
+			return IntersectionCapsuleRay<T>(
+				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
+				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
+		}
+		template<typename T>
+		inline CollisionResult<T> RayCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return CapsuleRay<T>(aS2, aS1);
+		}
+
+		///		ab	sp	cu	ry	pl	tr
+		/// ab |-X-|-X-|-X-|-X-|-X-|---|
+		/// sp |-X-|-X-|-X-|-X-|-X-|---|
+		/// li |-X-|-X-|-X-|-X-|-X-|---|
+		/// lv |-X-|-X-|-X-|-X-|---|---|
+		/// pl |-X-|-X-|-X-|-X-|---|---|
+		///	tr |---|---|---|---|---|---|
 		/// 
 		template<typename T>
 		inline static std::array<CollisionResult<T>(*)(const Shape&, const Shape&),
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
 		{
-			// # aabb			# sphere			# line				# line volume		# plane				# plane volume		# ray				#capsule
-			AABBAABB<T>,		AABBSphere<T>,		nullptr,			nullptr,			AABBPlane<T>,		nullptr,			AABBRay<T>,			AABBCapsule<T>,
-			SphereAABB<T>,		SphereSphere<T>,	nullptr,			nullptr,			SpherePlane<T>,		nullptr,			SphereRay<T>,		SphereCapsule<T>,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,		
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
-			PlaneAABB<T>,		PlaneSphere<T>,		nullptr,			nullptr,			nullptr,			nullptr,			PlaneRay<T>,		PlaneCapsule<T>,
-			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,			nullptr,
-			RayAABB<T>,			RaySphere<T>,		nullptr,			nullptr,			RayPlane<T>,		nullptr,			nullptr,			nullptr,
-			CapsuleAABB<T>,		CapsuleSphere<T>,	nullptr,			nullptr,			CapsulePlane<T>,	nullptr,			nullptr,			CapsuleCapsule<T>
+			// # aabb			# sphere			# capsule				# ray				# plane				# triangle
+			AABBAABB<T>,		AABBSphere<T>,		AABBCapsule<T>,			AABBRay<T>,			AABBPlane<T>,		nullptr,		nullptr,		nullptr,	nullptr,
+			SphereAABB<T>,		SphereSphere<T>,	SphereCapsule<T>,		SphereRay<T>,		SpherePlane<T>,		nullptr,		nullptr,		nullptr,	nullptr,
+			CapsuleAABB<T>,		CapsuleSphere<T>,	CapsuleCapsule<T>,		CapsuleRay<T>,		CapsulePlane<T>,	nullptr,		nullptr,		nullptr,	nullptr,
+			RayAABB<T>,			RaySphere<T>,		RayCapsule<T>,			RayPlane<T>,		nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			PlaneAABB<T>,		PlaneSphere<T>,		PlaneCapsule<T>,		PlaneRay<T>,		nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr		nullptr,
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr		nullptr
 		};
 	}
 
@@ -600,7 +616,13 @@ namespace CommonUtilities
 		return CollisionResult<T>();
 	}
 
-	using CollResFloat	= CollisionResult<float>;
-	using CollResInt	= CollisionResult<int>;
-	using CollResDouble = CollisionResult<double>;
+	template<typename T>
+	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
+	{
+		return CollisionResult<T>();
+	}
+
+	using Collf	= CollisionResult<float>;
+	using Colli	= CollisionResult<int>;
+	using Colld = CollisionResult<double>;
 }

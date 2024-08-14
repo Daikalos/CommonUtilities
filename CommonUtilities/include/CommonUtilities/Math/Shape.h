@@ -17,13 +17,14 @@ namespace CommonUtilities
 			None		= -1,
 			AABB		= 0,
 			Sphere		= 1,
-			Line		= 2,
-			LineVolume	= 3,
+			Capsule		= 2,
+			Ray			= 3,
 			Plane		= 4,
-			PlaneVolume	= 5,
-			Ray			= 6,
-			Capsule		= 7,
-			Count		= 8
+			Triangle	= 5,
+			Line		= 6,
+			LineVolume	= 7,
+			PlaneVolume	= 8,
+			Count		= 9
 		};
 
 		NODISC constexpr virtual Type GetType() const noexcept = 0;

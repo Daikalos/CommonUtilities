@@ -27,6 +27,8 @@ namespace CommonUtilities
 		Vector3<T>	intersection;
 		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal points right
 		T			penetration		{0};
+		T			enter			{0}; // used only for ray
+		T			exit			{0};
 		bool		collided		{false};
 
 		operator bool() const noexcept // implicitly convertible to boolean
@@ -296,7 +298,7 @@ namespace CommonUtilities
 			return result;
 		}
 
-		if (!Equal<T>(distSqr, 0, EPSILON * EPSILON))
+		if (!Equal(distSqr, T(0), EPSILON_V<T> *EPSILON_V<T>))
 		{
 			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
 		}
@@ -393,7 +395,6 @@ namespace CommonUtilities
 			{
 				result.intersection = aRay.GetOrigin();
 				result.normal		= aPlane.GetNormal();
-				result.penetration	= 0;
 				result.collided		= true;
 			}
 
@@ -409,7 +410,8 @@ namespace CommonUtilities
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
 		result.normal		= aPlane.GetNormal() * -Sign<T>(denom); // flip normal based on what side we are approaching from
-		result.penetration	= 0; 
+		result.enter		= t;
+		result.exit			= t;
 		result.collided		= true;
 
 		return result;
@@ -464,7 +466,7 @@ namespace CommonUtilities
 		if (distance > aSphere.GetRadiusSqr() && !inside)
 			return result;
 
-		if (!Equal<T>(distance, 0, EPSILON * EPSILON))
+		if (!Equal(distance, T(0), EPSILON_V<T> * EPSILON_V<T>))
 		{ 
 			distance	= std::sqrt(distance);
 			normal		= normal.GetNormalized(distance, 1.0f);
@@ -483,125 +485,49 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
-		if (aAABB.IsInside(aRay.GetOrigin()))
-		{
-			const T x = static_cast<T>(std::abs(aRay.GetDirection().x));
-			const T y = static_cast<T>(std::abs(aRay.GetDirection().y));
-			const T z = static_cast<T>(std::abs(aRay.GetDirection().z));
+		const Vector3<T> t1 = (aAABB.GetMin() - aRay.GetOrigin()) / aRay.GetDirection();
+		const Vector3<T> t2 = (aAABB.GetMax() - aRay.GetOrigin()) / aRay.GetDirection();
 
-			if (x > y && x > z)
-			{
-				result.normal = Vector3<T>(-Sign<T>(aRay.GetDirection().x), 0, 0);
-			}
-			else if (y > x && y > z)
-			{
-				result.normal = Vector3<T>(0, -Sign<T>(aRay.GetDirection().y), 0);
-			}
-			else
-			{
-				result.normal = Vector3<T>(0, 0, -Sign<T>(aRay.GetDirection().z));
-			}
+		T minT = 0;
+		T maxT = MAX_V<T>;
 
+		minT = Min(Max(t1.x, minT), Max(t2.x, minT));
+		maxT = Max(Min(t1.x, maxT), Min(t2.x, maxT));
 
-			result.intersection = aRay.GetOrigin();
-			result.penetration	= 0;
-			result.collided		= true;
+		minT = Min(Max(t1.y, minT), Max(t2.y, minT));
+		maxT = Max(Min(t1.y, maxT), Min(t2.y, maxT));
 
+		minT = Min(Max(t1.z, minT), Max(t2.z, minT));
+		maxT = Max(Min(t1.z, maxT), Min(t2.z, maxT));
+
+		if (minT > maxT)
 			return result;
-		}
 
-		Vector3<T> t; // get vector from best corner to ray's origin
+		minT = Max(minT, T(0)); // clamp t to zero if inside aabb
 
-		t.x = ((aRay.GetDirection().x > 0 ? aAABB.GetMin().x : aAABB.GetMax().x) - aRay.GetOrigin().x);
-		t.y = ((aRay.GetDirection().y > 0 ? aAABB.GetMin().y : aAABB.GetMax().y) - aRay.GetOrigin().y);
-		t.z = ((aRay.GetDirection().z > 0 ? aAABB.GetMin().z : aAABB.GetMax().z) - aRay.GetOrigin().z);
-
-		if (aRay.GetDirection().x != 0) t.x /= aRay.GetDirection().x;
-		if (aRay.GetDirection().y != 0) t.y /= aRay.GetDirection().y;
-		if (aRay.GetDirection().z != 0) t.z /= aRay.GetDirection().z;
-
-		enum class Plane
-		{
-			YZ,
-			XZ,
-			XY
-		};
-
-		T maxT = t.x;
-		Plane whichPlane = Plane::YZ;
-
-		if (t.y > maxT)
-		{
-			whichPlane = Plane::XZ;
-			maxT = t.y;
-		}
-		if (t.z > maxT)
-		{
-			whichPlane = Plane::XY;
-			maxT = t.z;
-		}
-
-		switch (whichPlane)
-		{
-			case Plane::YZ:
-			{
-				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
-				if (y < aAABB.GetMin().y || y > aAABB.GetMax().y)
-				{
-					return result;
-				}
-
-				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
-				if (z < aAABB.GetMin().z || z > aAABB.GetMax().z)
-				{
-					return result;
-				}
-
-				result.normal = Vector3<T>(Sign<T>(aRay.GetDirection().x), 0, 0);
-
-				break;
-			}
-			case Plane::XZ:
-			{
-				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
-				if (x < aAABB.GetMin().x || x > aAABB.GetMax().x)
-				{
-					return result;
-				}
-
-				T z = aRay.GetOrigin().z + aRay.GetDirection().z * maxT;
-				if (z < aAABB.GetMin().z || z > aAABB.GetMax().z)
-				{
-					return result;
-				}
-
-				result.normal = Vector3<T>(0, Sign<T>(aRay.GetDirection().y), 0);
-
-				break;
-			}
-			case Plane::XY:
-			{
-				T x = aRay.GetOrigin().x + aRay.GetDirection().x * maxT;
-				if (x < aAABB.GetMin().x || x > aAABB.GetMax().x)
-				{
-					return result;
-				}
-
-				T y = aRay.GetOrigin().y + aRay.GetDirection().y * maxT;
-				if (y < aAABB.GetMin().y || y > aAABB.GetMax().y)
-				{
-					return result;
-				}
-
-				result.normal = Vector3<T>(0, 0, Sign<T>(aRay.GetDirection().z));
-
-				break;
-			}
-		}
-
-		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * maxT;
-		result.penetration	= 0;
+		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * minT;
+		result.enter		= minT;
+		result.exit			= maxT;
 		result.collided		= true;
+
+		const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+
+		const T x = T(std::abs(dir.x));
+		const T y = T(std::abs(dir.y));
+		const T z = T(std::abs(dir.z));
+
+		if (x > y && x > z)
+		{
+			result.normal = { Sign(dir.x), T(0), T(0) };
+		}
+		else if (y > x && y > z)
+		{
+			result.normal = { T(0), Sign(dir.y), T(0) };
+		}
+		else
+		{
+			result.normal = { T(0), T(0), Sign(dir.z) };
+		}
 
 		return result;
 	}
@@ -623,12 +549,12 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
-		Vector3<T> dir = Vector3<T>::Direction(aSphere.GetCenter(), aRay.GetOrigin());
+		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
 		T distSqr = dir.LengthSqr() - aSphere.GetRadiusSqr();
 		T projScalar = dir.Dot(aRay.GetDirection());
 
-		if (distSqr > 0 && projScalar > 0) // outside sphere and pointing away
+		if (distSqr > 0 && projScalar < 0) // outside sphere and pointing away
 		{
 			return result;
 		}
@@ -640,13 +566,15 @@ namespace CommonUtilities
 			return result;
 		}
 
-		T t = -projScalar - std::sqrt(discr);
+		discr = std::sqrt(discr);
 
-		if (t < 0) t = 0; // clamp t to zero if inside sphere
+		T t1 = Max(projScalar - discr, T(0)); // clamp t to zero if inside sphere
+		T t2 = projScalar + discr;
 
-		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t;
+		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t1;
 		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
-		result.penetration	= 0;
+		result.enter		= t1;
+		result.exit			= t2;
 		result.collided		= true;
 
 		return result;

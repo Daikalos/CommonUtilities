@@ -588,6 +588,8 @@ namespace CommonUtilities
 		T t1 = Max(projScalar - discr, T(0)); // clamp t to zero if inside sphere
 		T t2 = projScalar + discr;
 
+		if (t1 > t2) (std::swap)(t1, t2);
+
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t1;
 		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
 		result.enter		= t1;
@@ -619,7 +621,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
 	{
-		return CollisionResult<T>();
+		return CollisionResult<T>(); // TODO: implement
 	}
 
 	using Collf	= CollisionResult<float>;

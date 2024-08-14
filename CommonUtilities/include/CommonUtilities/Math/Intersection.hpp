@@ -247,7 +247,7 @@ namespace CommonUtilities
 		/// ab |-X-|-X-|-X-|-X-|-X-|---|
 		/// sp |-X-|-X-|-X-|-X-|-X-|---|
 		/// li |-X-|-X-|-X-|-X-|-X-|---|
-		/// lv |-X-|-X-|-X-|-X-|---|---|
+		/// lv |-X-|-X-|-X-|---|-X-|---|
 		/// pl |-X-|-X-|-X-|-X-|---|---|
 		///	tr |---|---|---|---|---|---|
 		/// 
@@ -259,7 +259,7 @@ namespace CommonUtilities
 			AABBAABB<T>,		AABBSphere<T>,		AABBCapsule<T>,			AABBRay<T>,			AABBPlane<T>,		nullptr,		nullptr,		nullptr,	nullptr,
 			SphereAABB<T>,		SphereSphere<T>,	SphereCapsule<T>,		SphereRay<T>,		SpherePlane<T>,		nullptr,		nullptr,		nullptr,	nullptr,
 			CapsuleAABB<T>,		CapsuleSphere<T>,	CapsuleCapsule<T>,		CapsuleRay<T>,		CapsulePlane<T>,	nullptr,		nullptr,		nullptr,	nullptr,
-			RayAABB<T>,			RaySphere<T>,		RayCapsule<T>,			RayPlane<T>,		nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			RayAABB<T>,			RaySphere<T>,		RayCapsule<T>,			nullptr,			RayPlane<T>,		nullptr,		nullptr,		nullptr,	nullptr,
 			PlaneAABB<T>,		PlaneSphere<T>,		PlaneCapsule<T>,		PlaneRay<T>,		nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
 			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
 			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,

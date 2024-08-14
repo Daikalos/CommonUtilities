@@ -59,7 +59,7 @@ namespace CommonUtilities
 	inline CollisionResult<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBCapsule(const AABB<T>& aAABB, const Capsule<T>& aCapsule);
+	inline CollisionResult<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB);
 
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
@@ -162,16 +162,16 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline CollisionResult<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
-		{
-			return IntersectionAABBCapsule<T>(
-				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
-				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
-		}
-		template<typename T>
 		inline CollisionResult<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
 		{
-			return AABBCapsule<T>(aS2, aS1);
+			return IntersectionCapsuleAABB<T>(
+				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
+				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
+		}
+		template<typename T>
+		inline CollisionResult<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
+		{
+			return CapsuleAABB<T>(aS2, aS1);
 		}
 
 		template<typename T>
@@ -376,7 +376,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
 	{
-		auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetTip(), aFirstCapsule.GetBase(), aSecondCapsule.GetTip(), aSecondCapsule.GetBase());
+		const auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetTip(), aFirstCapsule.GetBase(), aSecondCapsule.GetTip(), aSecondCapsule.GetBase());
 		return IntersectionSphereSphere(Sphere<T>(p1, aFirstCapsule.GetRadius()), Sphere<T>(p2, aSecondCapsule.GetRadius()));
 	}
 
@@ -424,8 +424,8 @@ namespace CommonUtilities
 
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
-		Vector3<T> aabbCenter = aAABB.GetCenter();
-		Vector3<T> dir = Vector3<T>::Direction(aabbCenter, aSphere.GetCenter());
+		const Vector3<T> aabbCenter = aAABB.GetCenter();
+		const Vector3<T> dir = Vector3<T>::Direction(aabbCenter, aSphere.GetCenter());
 
 		Vector3<T> pointOnEdge
 		{
@@ -539,9 +539,10 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBCapsule(const AABB<T>& aAABB, const Capsule<T>& aCapsule)
+	inline CollisionResult<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
-		return CollisionResult<T>();
+		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aAABB.GetCenter());
+		return IntersectionSphereAABB(Sphere<T>(p, aCapsule.GetRadius()), aAABB);
 	}
 
 	template<typename T>
@@ -549,10 +550,10 @@ namespace CommonUtilities
 	{
 		CollisionResult<T> result{};
 
-		Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
+		const Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
-		T distSqr = dir.LengthSqr() - aSphere.GetRadiusSqr();
-		T projScalar = dir.Dot(aRay.GetDirection());
+		const T distSqr = dir.LengthSqr() - aSphere.GetRadiusSqr();
+		const T projScalar = dir.Dot(aRay.GetDirection());
 
 		if (distSqr > 0 && projScalar < 0) // outside sphere and pointing away
 		{
@@ -589,7 +590,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
 	{
-		Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aSphere.GetCenter());
+		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aSphere.GetCenter());
 		return IntersectionSphereSphere(aSphere, Sphere<T>(p, aCapsule.GetRadius()));
 	}
 

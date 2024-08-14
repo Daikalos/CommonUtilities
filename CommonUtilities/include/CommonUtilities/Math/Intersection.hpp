@@ -27,8 +27,11 @@ namespace CommonUtilities
 	{
 		Vector3<T>	intersection;
 		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal points right
-		T			penetration		{0};
-		T			enter			{0}; // used only for ray
+		union
+		{
+			T		penetration		{0};
+			T		enter; // used only for ray
+		};
 		T			exit			{0};
 		bool		collided		{false};
 
@@ -263,8 +266,8 @@ namespace CommonUtilities
 			PlaneAABB<T>,		PlaneSphere<T>,		PlaneCapsule<T>,		PlaneRay<T>,		nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
 			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
 			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
-			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr		nullptr,
-			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr		nullptr
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr,
+			nullptr,			nullptr,			nullptr,				nullptr,			nullptr,			nullptr,		nullptr,		nullptr,	nullptr
 		};
 	}
 

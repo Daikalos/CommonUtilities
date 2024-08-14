@@ -2,6 +2,7 @@
 #include <string>
 #include <array>
 
+#include <CommonUtilities/Math/Intersection.hpp>
 #include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities/Utility/Benchmark.h>
 #include <CommonUtilities\Utility\Win32Utils.h>
@@ -22,6 +23,11 @@ int main()
 
 	cu::Mat4f mat;
 	auto p = mat.ToSIMD();
+
+	cu::AABBf aabb;
+	cu::Rayf ray;
+
+	cu::Collf coll = cu::IntersectionAABBRay(aabb, ray);
 
 	auto [p1, p2] = cu::Vector3f::ClosestPointsSegmentSegment({}, {}, {}, {});
 

@@ -80,6 +80,9 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
 
+	template<typename T>
+	inline CollisionResult<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+
 	namespace details // hide this from client
 	{
 		template<typename T>
@@ -395,7 +398,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
 	{
-		const auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetTip(), aFirstCapsule.GetBase(), aSecondCapsule.GetTip(), aSecondCapsule.GetBase());
+		const auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetBase(), aFirstCapsule.GetTip(), aSecondCapsule.GetBase(), aSecondCapsule.GetTip());
 		return IntersectionSphereSphere(Sphere<T>(p1, aFirstCapsule.GetRadius()), Sphere<T>(p2, aSecondCapsule.GetRadius()));
 	}
 
@@ -507,45 +510,45 @@ namespace CommonUtilities
 		const Vector3<T> t1 = (aAABB.GetMin() - aRay.GetOrigin()) / aRay.GetDirection();
 		const Vector3<T> t2 = (aAABB.GetMax() - aRay.GetOrigin()) / aRay.GetDirection();
 
-		T minT = 0;
-		T maxT = MAX_V<T>;
+		T tMin = 0;
+		T tMax = MAX_V<T>;
 
-		minT = Min(Max(t1.x, minT), Max(t2.x, minT));
-		maxT = Max(Min(t1.x, maxT), Min(t2.x, maxT));
+		tMin = Min(Max(t1.x, tMin), Max(t2.x, tMin));
+		tMax = Max(Min(t1.x, tMax), Min(t2.x, tMax));
 
-		minT = Min(Max(t1.y, minT), Max(t2.y, minT));
-		maxT = Max(Min(t1.y, maxT), Min(t2.y, maxT));
+		tMin = Min(Max(t1.y, tMin), Max(t2.y, tMin));
+		tMax = Max(Min(t1.y, tMax), Min(t2.y, tMax));
 
-		minT = Min(Max(t1.z, minT), Max(t2.z, minT));
-		maxT = Max(Min(t1.z, maxT), Min(t2.z, maxT));
+		tMin = Min(Max(t1.z, tMin), Max(t2.z, tMin));
+		tMax = Max(Min(t1.z, tMax), Min(t2.z, tMax));
 
-		if (minT > maxT)
-			return result;
+		if (tMin <= tMax)
+		{ 
+			tMin = Max(tMin, T(0)); // clamp t to zero if inside aabb
 
-		minT = Max(minT, T(0)); // clamp t to zero if inside aabb
+			result.intersection = aRay.GetOrigin() + aRay.GetDirection() * tMin;
+			result.enter		= tMin;
+			result.exit			= tMax;
+			result.collided		= true;
 
-		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * minT;
-		result.enter		= minT;
-		result.exit			= maxT;
-		result.collided		= true;
+			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
-		const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+			const T x = T(std::abs(dir.x));
+			const T y = T(std::abs(dir.y));
+			const T z = T(std::abs(dir.z));
 
-		const T x = T(std::abs(dir.x));
-		const T y = T(std::abs(dir.y));
-		const T z = T(std::abs(dir.z));
-
-		if (x > y && x > z)
-		{
-			result.normal = { Sign(dir.x), T(0), T(0) };
-		}
-		else if (y > x && y > z)
-		{
-			result.normal = { T(0), Sign(dir.y), T(0) };
-		}
-		else
-		{
-			result.normal = { T(0), T(0), Sign(dir.z) };
+			if (x > y && x > z)
+			{
+				result.normal = { Sign(dir.x), T(0), T(0) };
+			}
+			else if (y > x && y > z)
+			{
+				result.normal = { T(0), Sign(dir.y), T(0) };
+			}
+			else
+			{
+				result.normal = { T(0), T(0), Sign(dir.z) };
+			}
 		}
 
 		return result;
@@ -560,8 +563,8 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
-		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aAABB.GetCenter());
-		return IntersectionSphereAABB(Sphere<T>(p, aCapsule.GetRadius()), aAABB);
+
+		return CollisionResult<T>();
 	}
 
 	template<typename T>
@@ -611,7 +614,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
 	{
-		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetTip(), aCapsule.GetBase(), aSphere.GetCenter());
+		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetBase(), aCapsule.GetTip(), aSphere.GetCenter());
 		return IntersectionSphereSphere(aSphere, Sphere<T>(p, aCapsule.GetRadius()));
 	}
 
@@ -624,7 +627,82 @@ namespace CommonUtilities
 	template<typename T>
 	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
 	{
+		const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
+		const Vector3<T> AO = Vector3<T>::Direction(aCapsule.GetBase(), aRay.GetOrigin());
+
+		const T ABdotD	= Vector3<T>::Dot(AB, aRay.GetDirection());
+		const T ABdotAO = Vector3<T>::Dot(AB, AO);
+		const T ABdotAB = Vector3<T>::Dot(AB, AB);
+
+		const T m = ABdotD / ABdotAB;
+		const T n = ABdotAO / ABdotAB;
+
+		const Vector3<T> Q = aRay.GetDirection() - (AB * m);
+		const Vector3<T> R = AO - (AB * n);
+
+		// https://gist.github.com/jdryg/ecde24d34aa0ce2d4d87 ...
+
 		return CollisionResult<T>(); // TODO: implement
+	}
+
+	template<typename T>
+	inline CollisionResult<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	{
+		CollisionResult<T> result{};
+
+		const Vector3<T> dir = Vector3<T>::Direction(aStart, aEnd);
+
+		const Vector3<T> t1 = (aAABB.GetMin() - aStart) / dir;
+		const Vector3<T> t2 = (aAABB.GetMax() - aStart) / dir;
+
+		T tMin = 0;
+		T tMax = MAX_V<T>;
+
+		tMin = Min(Max(t1.x, tMin), Max(t2.x, tMin));
+		tMax = Max(Min(t1.x, tMax), Min(t2.x, tMax));
+
+		tMin = Min(Max(t1.y, tMin), Max(t2.y, tMin));
+		tMax = Max(Min(t1.y, tMax), Min(t2.y, tMax));
+
+		tMin = Min(Max(t1.z, tMin), Max(t2.z, tMin));
+		tMax = Max(Min(t1.z, tMax), Min(t2.z, tMax));
+
+		if (tMin <= tMax)
+		{
+			if (tMin >= T(0) && tMin <= T(1))
+			{
+				result.intersection = aStart + dir * tMin;
+				result.enter		= tMin;
+				result.collided		= true;
+
+				const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+
+				const T x = T(std::abs(dir.x));
+				const T y = T(std::abs(dir.y));
+				const T z = T(std::abs(dir.z));
+
+				if (x > y && x > z)
+				{
+					result.normal = { Sign(dir.x), T(0), T(0) };
+				}
+				else if (y > x && y > z)
+				{
+					result.normal = { T(0), Sign(dir.y), T(0) };
+				}
+				else
+				{
+					result.normal = { T(0), T(0), Sign(dir.z) };
+				}
+			}
+
+			if (tMax >= T(0) && tMax <= T(1))
+			{
+				result.exit			= tMax;
+				result.collided		= true;
+			}
+		}
+
+		return result;
 	}
 
 	using Collf	= CollisionResult<float>;

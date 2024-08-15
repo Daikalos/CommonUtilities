@@ -541,61 +541,58 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr std::tuple<Vector3<T>, Vector3<T>> Vector3<T>::ClosestPointsSegmentSegment(const Vector3& aFirstStart, const Vector3& aFirstEnd, const Vector3& aSecondStart, const Vector3& aSecondEnd)
 	{
-		const Vector3<T> d1	= Vector3<T>::Direction(aFirstStart, aFirstEnd);
-		const Vector3<T> d2	= Vector3<T>::Direction(aSecondStart, aSecondEnd);
-		const Vector3<T> r	= Vector3<T>::Direction(aSecondStart, aFirstStart);
+		const Vector3<T> AB	= Vector3<T>::Direction(aFirstStart, aFirstEnd);
+		const Vector3<T> CD	= Vector3<T>::Direction(aSecondStart, aSecondEnd);
+		const Vector3<T> CA	= Vector3<T>::Direction(aSecondStart, aFirstStart);
 
-		const T d1Sqr	= d1.LengthSqr();
-		const T d2Sqr	= d2.LengthSqr();
-		const T d2rSqr	= Vector3<T>::Dot(d2, r);
+		const T ABdotAB	= Vector3<T>::Dot(AB, AB);
+		const T CDdotCD	= Vector3<T>::Dot(CD, CD);
+		const T CDdotCA = Vector3<T>::Dot(CD, CA);
 
 		T s{};
 		T t{};
 
-		Vector3<T> p1;
-		Vector3<T> p2;
-
-		if (d1Sqr <= EPSILON_V<T> && d2Sqr <= EPSILON_V<T>)
+		if (ABdotAB <= EPSILON_V<T> && CDdotCD <= EPSILON_V<T>)
 		{
 			s = t = T(0);
 		}
-		else if (d1Sqr <= EPSILON_V<T>)
+		else if (ABdotAB <= EPSILON_V<T>)
 		{
 			s = T(0);
-			t = Saturate(d2rSqr / d2Sqr);
+			t = Saturate(CDdotCA / CDdotCD);
 		}
 		else 
 		{
-			const T d1rSqr = Vector3<T>::Dot(d1, r);
-			if (d2Sqr <= EPSILON_V<T>)
+			const T ABdotCA = Vector3<T>::Dot(AB, CA);
+			if (CDdotCD <= EPSILON_V<T>)
 			{
-				s = Saturate(-d1rSqr / d1Sqr);
+				s = Saturate(-ABdotCA / ABdotAB);
 				t = T(0);
 			}
 			else
 			{
-				const T d1d2Sqr = Vector3<T>::Dot(d1, d2);
-				const T denom	= d1Sqr * d2Sqr - d1d2Sqr * d1d2Sqr;
+				const T ABdotCD = Vector3<T>::Dot(AB, CD);
+				const T denom	= ABdotAB * CDdotCD - ABdotCD * ABdotCD;
 
-				s = (denom != T(0)) ? Saturate((d1d2Sqr * d2rSqr - d1rSqr * d2Sqr) / denom) : T(0);
+				s = (denom != T(0)) ? Saturate((ABdotCD * CDdotCA - ABdotCA * CDdotCD) / denom) : T(0);
 
-				t = (d1d2Sqr * s + d2rSqr) / d2Sqr;
+				t = (ABdotCD * s + CDdotCA) / CDdotCD;
 
 				if (t < T(0))
 				{
-					s = Saturate(-d1rSqr / d1Sqr);
+					s = Saturate(-ABdotCA / ABdotAB);
 					t = T(0);
 				}
 				else if (t > T(1))
 				{
-					s = Saturate((d1d2Sqr - d1rSqr) / d1Sqr);
+					s = Saturate((ABdotCD - ABdotCA) / ABdotAB);
 					t = T(1);
 				}
 			}
 		}
 
-		p1 = aFirstStart + d1 * s;
-		p2 = aSecondStart + d2 * t;
+		const Vector3<T> p1 = aFirstStart + AB * s;
+		const Vector3<T> p2 = aSecondStart + CD * t;
 
 		return std::make_tuple(p1, p2);
 	}

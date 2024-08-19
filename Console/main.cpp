@@ -33,7 +33,8 @@ int main()
 		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
 
-	cu::Mat4f mat2<0>(p[0]);
+	cu::Mat4f mat2;
+	mat2.SetRow<3>(p[3]);
 
 	return 0;
 }

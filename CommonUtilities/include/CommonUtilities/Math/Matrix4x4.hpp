@@ -80,6 +80,12 @@ namespace CommonUtilities
 		constexpr void SetRotation(const Quaternion<T>& aQuaternion);
 		constexpr void SetScale(const Vector3<T>& aScale);
 
+		template<std::size_t R> requires (R < 4)
+		constexpr void SetRow(const Vector4<T>& aRow);
+
+		template<std::size_t R> requires (R < 4)
+		constexpr void SetRow(const Vector3<T>& aRow);
+
 		NODISC constexpr auto GetInverse() const -> Matrix4x4;
 		NODISC constexpr auto GetFastInverse() const -> Matrix4x4;
 
@@ -101,6 +107,12 @@ namespace CommonUtilities
 		constexpr auto Add(const Matrix4x4& aRight) -> Matrix4x4&;
 		constexpr auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
 		constexpr auto Combine(const Matrix4x4& aRight) -> Matrix4x4&;
+
+		NODISC constexpr static auto CreateFromRows(
+			const Vector4<T>& aRow0 = { 1, 0, 0, 0 },
+			const Vector4<T>& aRow1 = { 0, 1, 0, 0 },
+			const Vector4<T>& aRow2 = { 0, 0, 1, 0 },
+			const Vector4<T>& aRow3 = { 0, 0, 0, 1 }) -> Matrix4x4;
 
 		NODISC constexpr static auto CreateOrthographic(T aWidth, T aHeight, T aDepth) -> Matrix4x4;
 		NODISC constexpr static auto CreateOrthographic(T aLeft, T aRight, T aTop, T aBottom, T aNear, T aFar) -> Matrix4x4;
@@ -186,6 +198,26 @@ namespace CommonUtilities
 	constexpr Matrix4x4<T>::operator OtherMatrix() const
 	{
 		return OtherMatrix{ GetData() };
+	}
+
+	template<typename T>
+	template<std::size_t R> requires (R < 4)
+	constexpr void Matrix4x4<T>::SetRow(const Vector4<T>& aRow)
+	{
+		if constexpr (R == 0)		myMatrix[0 ] = aRow.x, myMatrix[1 ] = aRow.y, myMatrix[2 ] = aRow.z, myMatrix[3 ] = aRow.w;
+		else if constexpr (R == 1)	myMatrix[4 ] = aRow.x, myMatrix[5 ] = aRow.y, myMatrix[6 ] = aRow.z, myMatrix[7 ] = aRow.w;
+		else if constexpr (R == 2)	myMatrix[8 ] = aRow.x, myMatrix[9 ] = aRow.y, myMatrix[10] = aRow.z, myMatrix[11] = aRow.w;
+		else if constexpr (R == 3)	myMatrix[12] = aRow.x, myMatrix[13] = aRow.y, myMatrix[14] = aRow.z, myMatrix[15] = aRow.w;
+	}
+
+	template<typename T>
+	template<std::size_t R> requires (R < 4)
+	constexpr void Matrix4x4<T>::SetRow(const Vector3<T>& aRow)
+	{
+		if constexpr (R == 0)		myMatrix[0 ] = aRow.x, myMatrix[1 ] = aRow.y, myMatrix[2 ] = aRow.z;
+		else if constexpr (R == 1)	myMatrix[4 ] = aRow.x, myMatrix[5 ] = aRow.y, myMatrix[6 ] = aRow.z;
+		else if constexpr (R == 2)	myMatrix[8 ] = aRow.x, myMatrix[9 ] = aRow.y, myMatrix[10] = aRow.z;
+		else if constexpr (R == 3)	myMatrix[12] = aRow.x, myMatrix[13] = aRow.y, myMatrix[14] = aRow.z;
 	}
 
 	template<typename T>
@@ -611,6 +643,22 @@ namespace CommonUtilities
 		};
 
 		return *this;
+	}
+
+	template<typename T>
+	constexpr auto Matrix4x4<T>::CreateFromRows(
+		const Vector4<T>& aRow0, 
+		const Vector4<T>& aRow1,
+		const Vector4<T>& aRow2, 
+		const Vector4<T>& aRow3) -> Matrix4x4
+	{
+		return Matrix4x4
+		{
+			aRow0.x, aRow0.y, aRow0.z, aRow0.w,
+			aRow1.x, aRow1.y, aRow1.z, aRow1.w,
+			aRow2.x, aRow2.y, aRow2.z, aRow2.w,
+			aRow3.x, aRow3.y, aRow3.z, aRow3.w
+		};
 	}
 
 	template<typename T>

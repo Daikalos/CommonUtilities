@@ -19,10 +19,6 @@ namespace CommonUtilities
 	class Matrix3x3
 	{
 	public:
-		static constexpr int ROWS		= 3;
-		static constexpr int COLUMNS	= 3;
-		static constexpr int COUNT		= ROWS * COLUMNS;
-
 		constexpr Matrix3x3() = default;
 		constexpr ~Matrix3x3() = default;
 
@@ -31,9 +27,9 @@ namespace CommonUtilities
 			T a01, T a11, T a21,
 			T a02, T a12, T a22);
 
-		constexpr Matrix3x3(const std::array<T, COUNT>& aArray);
+		constexpr Matrix3x3(const std::array<T, 9>& aArray);
 
-		constexpr Matrix3x3(const T(&aArray)[COUNT]);
+		constexpr Matrix3x3(const T(&aArray)[9]);
 
 		constexpr Matrix3x3(const Matrix4x4<T>& aMatrix);
 
@@ -88,7 +84,7 @@ namespace CommonUtilities
 		static const Matrix3x3 IDENTITY;
 
 	private:
-		std::array<T, COUNT> myMatrix
+		std::array<T, 9> myMatrix
 		{ 
 			1, 0, 0,
 			0, 1, 0,
@@ -109,14 +105,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Matrix3x3<T>::Matrix3x3(const std::array<T, COUNT>& aArray)
+	constexpr Matrix3x3<T>::Matrix3x3(const std::array<T, 9>& aArray)
 		: myMatrix{ aArray }
 	{
 
 	}
 
 	template<typename T>
-	constexpr Matrix3x3<T>::Matrix3x3(const T(&aArray)[COUNT])
+	constexpr Matrix3x3<T>::Matrix3x3(const T(&aArray)[9])
 		: myMatrix{ std::to_array(aArray) }
 	{
 
@@ -146,12 +142,12 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr T& Matrix3x3<T>::operator()(int aRow, int aColumn)
 	{
-		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
+		return myMatrix[(aColumn - 1) + (aRow - 1) * 3];
 	}
 	template<typename T>
 	constexpr const T& Matrix3x3<T>::operator()(int aRow, int aColumn) const
 	{
-		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
+		return myMatrix[(aColumn - 1) + (aRow - 1) * 3];
 	}
 
 	template<typename T>
@@ -283,26 +279,32 @@ namespace CommonUtilities
 		const Vector2<T> s = GetScale();
 		assert(s.x != 0 && s.y != 0 && "Cannot divide by zero");
 
-		const Vector2<T> is = static_cast<T>(1) / s;
-		const Vector2<T> ip	= -GetTranslation();
+		Vector2<T> row0{ myMatrix[0], myMatrix[1] };
+		Vector2<T> row1{ myMatrix[3], myMatrix[4] };
 
-		Matrix3x3 inverseMatrix
+		row0 = row0.GetNormalized(s.x, T(1));
+		row1 = row1.GetNormalized(s.y, T(1));
+
+		const Matrix3x3 scalingMatrix
 		{
-			myMatrix[0],	myMatrix[3],	0,
-			myMatrix[1],	myMatrix[4],	0,
-			0,				0,				1
+			T(1) / s.x,	0,			0,
+			0,			T(1) / s.y,	0,
+			0,			0,			1
 		};
 
+		const Matrix3x3 rotationMatrix
+		{
+			row0.x,		row1.x,		0,
+			row0.y,		row1.y,		0,
+			0,			0,			1
+		};
+
+		Matrix3x3 inverseMatrix = rotationMatrix;
+
+		const Vector2<T> ip = -GetTranslation();
 		inverseMatrix.SetTranslation(inverseMatrix.TransformPoint(ip));
 
-		const Matrix3x3 scalingInverse =
-		{
-			is.x * is.x,	0,				0,
-			0,				is.y * is.y,	0,
-			0,				0,				1
-		};
-
-		return inverseMatrix.Combine(scalingInverse);
+		return inverseMatrix.Combine(scalingMatrix);
 	}
 
 	template<typename T>
@@ -354,7 +356,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix3x3<T>::Add(const Matrix3x3& aRight) -> Matrix3x3&
 	{
-		for (int i = 0; i < COUNT; ++i)
+		for (int i = 0; i < 9; ++i)
 		{
 			myMatrix[i] += aRight[i];
 		}
@@ -365,7 +367,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix3x3<T>::Subtract(const Matrix3x3& aRight) -> Matrix3x3&
 	{
-		for (int i = 0; i < COUNT; ++i)
+		for (int i = 0; i < 9; ++i)
 		{
 			myMatrix[i] -= aRight[i];
 		}
@@ -513,7 +515,7 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC constexpr bool operator==(const Matrix3x3<T>& aLeft, const Matrix3x3<T>& aRight)
 	{
-		for (int i = 0; i < Matrix3x3<T>::COUNT; ++i)
+		for (int i = 0; i < Matrix3x3<T>::9; ++i)
 		{
 			if (aLeft[i] != aRight[i])
 			{

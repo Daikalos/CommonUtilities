@@ -23,10 +23,6 @@ namespace CommonUtilities
 	class Matrix4x4
 	{
 	public:
-		static constexpr int ROWS		= 4;
-		static constexpr int COLUMNS	= 4;
-		static constexpr int COUNT		= ROWS * COLUMNS;
-
 		constexpr Matrix4x4() = default;
 		constexpr ~Matrix4x4() = default;
 
@@ -36,13 +32,13 @@ namespace CommonUtilities
 			T a02, T a12, T a22, T a32,
 			T a03, T a13, T a23, T a33);
 
-		constexpr Matrix4x4(const std::array<T, COUNT>& aArray);
+		constexpr Matrix4x4(const std::array<T, 16>& aArray);
 
-		constexpr Matrix4x4(const T(&aArray)[COUNT]);
+		constexpr Matrix4x4(const T(&aArray)[16]);
 
 		constexpr Matrix4x4(const Matrix3x3<T>& aMatrix);
 
-		constexpr Matrix4x4(const std::array<__m128, ROWS>& aRegisters) requires (std::is_same_v<T, float>);
+		constexpr Matrix4x4(const std::array<__m128, 4>& aRegisters) requires (std::is_same_v<T, float>);
 
 		template<class OtherMatrix>
 		NODISC constexpr explicit operator OtherMatrix() const;
@@ -134,7 +130,7 @@ namespace CommonUtilities
 		static const Matrix4x4 IDENTITY;
 
 	private:
-		std::array<T, COUNT> myMatrix
+		std::array<T, 16> myMatrix
 		{
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -158,14 +154,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4(const std::array<T, COUNT>& aArray)
+	constexpr Matrix4x4<T>::Matrix4x4(const std::array<T, 16>& aArray)
 		: myMatrix{ aArray }
 	{
 
 	}
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4(const T(&aArray)[COUNT])
+	constexpr Matrix4x4<T>::Matrix4x4(const T(&aArray)[16])
 		: myMatrix{ std::to_array(aArray) }
 	{
 
@@ -183,13 +179,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4(const std::array<__m128, ROWS>& aRegisters) requires (std::is_same_v<T, float>)
+	constexpr Matrix4x4<T>::Matrix4x4(const std::array<__m128, 4>& aRegisters) requires (std::is_same_v<T, float>)
 	{
-		alignas(16) std::array<T, COUNT> values{};
-		_mm_store_ps(values.data() + COLUMNS * 0, aRegisters[0]);
-		_mm_store_ps(values.data() + COLUMNS * 1, aRegisters[1]);
-		_mm_store_ps(values.data() + COLUMNS * 2, aRegisters[2]);
-		_mm_store_ps(values.data() + COLUMNS * 3, aRegisters[3]);
+		alignas(16) std::array<T, 16> values{};
+		_mm_store_ps(values.data() + 4 * 0, aRegisters[0]);
+		_mm_store_ps(values.data() + 4 * 1, aRegisters[1]);
+		_mm_store_ps(values.data() + 4 * 2, aRegisters[2]);
+		_mm_store_ps(values.data() + 4 * 3, aRegisters[3]);
 		myMatrix = values;
 	}
 
@@ -234,12 +230,12 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr T& Matrix4x4<T>::operator()(int aRow, int aColumn)
 	{
-		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
+		return myMatrix[(aColumn - 1) + (aRow - 1) * 4];
 	}
 	template<typename T>
 	constexpr const T& Matrix4x4<T>::operator()(int aRow, int aColumn) const
 	{
-		return myMatrix[(aColumn - 1) + (aRow - 1) * COLUMNS];
+		return myMatrix[(aColumn - 1) + (aRow - 1) * 4];
 	}
 
 	template<typename T>
@@ -498,9 +494,9 @@ namespace CommonUtilities
 
 		const Matrix4x4 scalingMatrix
 		{
-			1.0f / s.x,	0,			0,			0,
-			0,			1.0f / s.y,	0,			0,
-			0,			0,			1.0f / s.z,	0,
+			T(1) / s.x,	0,			0,			0,
+			0,			T(1) / s.y,	0,			0,
+			0,			0,			T(1) / s.z,	0,
 			0,			0,			0,			1
 		};
 
@@ -609,7 +605,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::Add(const Matrix4x4& aRight) -> Matrix4x4&
 	{
-		for (int i = 0; i < COUNT; ++i)
+		for (int i = 0; i < 16; ++i)
 		{
 			myMatrix[i] += aRight[i];
 		}
@@ -620,7 +616,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr auto Matrix4x4<T>::Subtract(const Matrix4x4& aRight) -> Matrix4x4&
 	{
-		for (int i = 0; i < COUNT; ++i)
+		for (int i = 0; i < 16; ++i)
 		{
 			myMatrix[i] -= aRight[i];
 		}
@@ -893,7 +889,7 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC constexpr bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
-		for (int i = 0; i < Matrix4x4<T>::COUNT; ++i)
+		for (int i = 0; i < 16; ++i)
 		{
 			if (aLeft[i] != aRight[i])
 			{

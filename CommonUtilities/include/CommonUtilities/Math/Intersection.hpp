@@ -750,14 +750,14 @@ namespace CommonUtilities
 		const Vector3<T> D = aEnd;
 
 		const auto CheckSpheres = 
-			[&]() -> ISect<T>
+			[&aCapsule, &A, &B, &C, &D]() -> ISect<T>
 			{
-				ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd);
+				ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), C, D);
 
 				if (isectSphereBaseSeg.inside)
 					return isectSphereBaseSeg;
 
-				ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(B, aCapsule.GetRadius()), aStart, aEnd);
+				ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(B, aCapsule.GetRadius()), C, D);
 
 				if (isectSphereTipSeg.inside)
 					return isectSphereTipSeg;
@@ -903,12 +903,11 @@ namespace CommonUtilities
 		}
 
 		t1 = Max(t1, T(0));
-		t2 = Min(t2, T(1));
 
 		result.intersection = C + CD * t1;
 		result.normal		= Vector3<T>::Direction(Vector3<T>::ClosestPointOnLine(A, B, result.intersection), result.intersection).GetNormalized();
 		result.enter		= t1;
-		result.exit			= exitOutside ? outsideISect.exit : t2;
+		result.exit			= exitOutside ? outsideISect.exit : Min(t2, T(1));
 		result.intersects	= true;
 
 		return result;

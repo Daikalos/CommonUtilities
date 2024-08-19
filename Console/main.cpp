@@ -27,7 +27,10 @@ int main()
 	cu::AABBf aabb;
 	cu::Rayf ray;
 
-	cu::Collf coll = cu::IntersectionAABBRay(aabb, ray);
+	cu::ISectf intersection = cu::IntersectionCapsuleSegment(
+		cu::Capsulef(cu::Vector3f(0.0f, 0.0f, 0.0f), cu::Vector3f(0.0f, 10.0f, 0.0f), 16.0f),
+		cu::Vector3f(-32.0f, 1.0f, 2.0f), 
+		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
 	auto [p1, p2] = cu::Vector3f::ClosestPointsSegmentSegment({}, {}, {}, {});
 

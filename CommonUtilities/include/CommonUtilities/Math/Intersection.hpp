@@ -23,65 +23,72 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	struct CollisionResult 
+	struct ISect 
 	{
-		Vector3<T>	intersection;
+		Vector3<T>	intersection;						// intersection point of entry time
 		Vector3<T>	normal			{1.0f, 0.0f, 0.0f};	// default normal points right
 		union
 		{
-			T		penetration		{0};
-			T		enter; // used only for ray
+			T		penetration		{0};				// depth intersecting the other shape
+			T		enter;								// used only for ray/segment
 		};
-		T			exit			{0};
-		bool		collided		{false};
+		T			exit			{0};				// exit time of ray/segment
+		bool		intersects		{false};
+		bool		inside			{false};			// not always used
 
 		operator bool() const noexcept // implicitly convertible to boolean
 		{
-			return collided;
+			return intersects;
 		}
 	};
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
+	inline ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
+	inline ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule);
+	inline ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
+	inline ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB);
+	inline ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
+	inline ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
+	inline ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB);
+	inline ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+	inline ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane);
+	inline ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule);
+	inline ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
+	inline ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
+	inline ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+	inline ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+
+	template<typename T>
+	inline ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+
+	template<typename T>
+	inline ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd);
 
 	namespace details // hide this from client
 	{
@@ -93,7 +100,7 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline CollisionResult<T> AABBAABB(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> AABBAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBAABB<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB), 
@@ -101,7 +108,7 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline CollisionResult<T> SphereSphere(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> SphereSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereSphere<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere), 
@@ -109,7 +116,7 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline CollisionResult<T> CapsuleCapsule(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> CapsuleCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleCapsule<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
@@ -117,134 +124,134 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline CollisionResult<T> PlaneRay(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> PlaneRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionPlaneRay<T>(
 				DownCastTo<Plane<T>>(aS1, Shape::Type::Plane),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline CollisionResult<T> RayPlane(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> RayPlane(const Shape& aS1, const Shape& aS2)
 		{
 			return PlaneRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> SphereAABB(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> SphereAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereAABB<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 		template<typename T>
-		inline CollisionResult<T> AABBSphere(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> AABBSphere(const Shape& aS1, const Shape& aS2)
 		{
-			CollisionResult<T> result = SphereAABB<T>(aS2, aS1);
+			ISect<T> result = SphereAABB<T>(aS2, aS1);
 			result.normal = -result.normal; // flip normal ??
 
 			return result;
 		}
 
 		template<typename T>
-		inline CollisionResult<T> AABBRay(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> AABBRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBRay<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline CollisionResult<T> RayAABB(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> RayAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return AABBRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> AABBPlane(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> AABBPlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBPlane<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline CollisionResult<T> PlaneAABB(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> PlaneAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return AABBPlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleAABB<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 		template<typename T>
-		inline CollisionResult<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsuleAABB<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> SphereRay(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> SphereRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereRay<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline CollisionResult<T> RaySphere(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> RaySphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SphereRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> SpherePlane(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> SpherePlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSpherePlane<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline CollisionResult<T> PlaneSphere(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> PlaneSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SpherePlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> SphereCapsule(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> SphereCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereCapsule<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
 		}
 		template<typename T>
-		inline CollisionResult<T> CapsuleSphere(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> CapsuleSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SphereCapsule<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereCapsule<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline CollisionResult<T> PlaneCapsule(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> PlaneCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsulePlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline CollisionResult<T> CapsuleRay(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> CapsuleRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleRay<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline CollisionResult<T> RayCapsule(const Shape& aS1, const Shape& aS2)
+		inline ISect<T> RayCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsuleRay<T>(aS2, aS1);
 		}
@@ -258,7 +265,7 @@ namespace CommonUtilities
 		///	tr |---|---|---|---|---|---|
 		/// 
 		template<typename T>
-		inline static std::array<CollisionResult<T>(*)(const Shape&, const Shape&),
+		inline static std::array<ISect<T>(*)(const Shape&, const Shape&),
 			static_cast<int>(Shape::Type::Count) * static_cast<int>(Shape::Type::Count)> globalCollisionMatrix
 		{
 			// # aabb			# sphere			# capsule				# ray				# plane				# triangle
@@ -285,7 +292,7 @@ namespace CommonUtilities
 	/// \return Result from collision
 	/// 
 	template<typename T>
-	inline CollisionResult<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
+	inline ISect<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
 	{
 		const int collisionIndex = static_cast<int>(aSecondShape.GetType()) +
 			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count);
@@ -306,9 +313,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
+	inline ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		Vector3<T> normal = Vector3<T>::Direction(aFirstSphere.GetCenter(), aSecondSphere.GetCenter());
 
@@ -331,15 +338,15 @@ namespace CommonUtilities
 		result.intersection = 0.5f * (firstContact + secondContact);
 		result.normal		= (normal == Vector3<T>()) ? Vector3<T>(1, 0, 0) : normal;
 		result.penetration	= -Vector3<T>::Direction(firstContact, secondContact).Dot(normal);
-		result.collided		= true;
+		result.intersects		= true;
 
 		return result;
 	}
 
 	template<typename T>
-	CollisionResult<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB)
+	ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		Vector3<T> dir = Vector3<T>::Direction(aFirstAABB.GetCenter(), aSecondAABB.GetCenter());
 
@@ -359,19 +366,19 @@ namespace CommonUtilities
 					{
 						result.normal		= (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
 						result.penetration	= xOverlap;
-						result.collided		= true;
+						result.intersects		= true;
 					}
 					else if (yOverlap < xOverlap && yOverlap < zOverlap) // y-axis
 					{
 						result.normal		= (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
 						result.penetration	= yOverlap;
-						result.collided		= true;
+						result.intersects		= true;
 					}
 					else // z-axis
 					{
 						result.normal		= (dir.z < 0) ? Vector3<T>(0, 0, 1) : Vector3<T>(0, 0, -1);
 						result.penetration	= zOverlap;
-						result.collided		= true;
+						result.intersects		= true;
 					}
 				}
 				//else // 2D collision
@@ -380,13 +387,13 @@ namespace CommonUtilities
 				//	{
 				//		result.normal = (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
 				//		result.penetration = xOverlap;
-				//		result.collided = true;
+				//		result.intersects = true;
 				//	}
 				//	else  // y-axis
 				//	{
 				//		result.normal = (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
 				//		result.penetration = yOverlap;
-				//		result.collided = true;
+				//		result.intersects = true;
 				//	}
 				//}
 			}
@@ -396,16 +403,16 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
+	inline ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
 	{
 		const auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetBase(), aFirstCapsule.GetTip(), aSecondCapsule.GetBase(), aSecondCapsule.GetTip());
 		return IntersectionSphereSphere(Sphere<T>(p1, aFirstCapsule.GetRadius()), Sphere<T>(p2, aSecondCapsule.GetRadius()));
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
+	inline ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		T numen = Vector3<T>::Direction(aRay.GetOrigin(), aPlane.GetOrigin()).Dot(aPlane.GetNormal());
 		T denom = aPlane.GetNormal().Dot(aRay.GetDirection());
@@ -417,7 +424,7 @@ namespace CommonUtilities
 			{
 				result.intersection = aRay.GetOrigin();
 				result.normal		= aPlane.GetNormal();
-				result.collided		= true;
+				result.intersects	= true;
 			}
 
 			return result;
@@ -434,15 +441,15 @@ namespace CommonUtilities
 		result.normal		= aPlane.GetNormal() * -Sign<T>(denom); // flip normal based on what side we are approaching from
 		result.enter		= t;
 		result.exit			= t;
-		result.collided		= true;
+		result.intersects	= true;
 
 		return result;
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB)
+	inline ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
@@ -497,15 +504,15 @@ namespace CommonUtilities
 		result.intersection = pointOnEdge;
 		result.normal		= (inside ? -normal : normal);
 		result.penetration	= aSphere.GetRadius() - distance;
-		result.collided		= true;
+		result.intersects	= true;
 
 		return result;
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay)
+	inline ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		const Vector3<T> t1 = (aAABB.GetMin() - aRay.GetOrigin()) / aRay.GetDirection();
 		const Vector3<T> t2 = (aAABB.GetMax() - aRay.GetOrigin()) / aRay.GetDirection();
@@ -529,7 +536,7 @@ namespace CommonUtilities
 			result.intersection = aRay.GetOrigin() + aRay.GetDirection() * tMin;
 			result.enter		= tMin;
 			result.exit			= tMax;
-			result.collided		= true;
+			result.intersects		= true;
 
 			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
@@ -555,22 +562,48 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
+	inline ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
 	{
-		return CollisionResult<T>();
+		return ISect<T>();
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
+	inline ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
+		ISect<T> result{};
 
-		return CollisionResult<T>();
+		cu::AABB<T> expandedAABB
+		{
+			aAABB.GetMin() - Vector3<T>(aCapsule.GetRadius()),
+			aAABB.GetMin() + Vector3<T>(aCapsule.GetRadius())
+		};
+
+		const ISect<T> collSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
+		
+		if (!collSegAABB)
+			return result;
+
+		if (collSegAABB.enter >= T(0) && collSegAABB.exit <= T(1))
+		{
+			const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
+
+			const Vector3<T> p1 = collSegAABB.intersection;
+			const Vector3<T> p2 = aCapsule.GetBase() + AB * collSegAABB.exit;
+
+
+		}
+		else
+		{
+
+		}
+
+		return result;
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
+	inline ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		const Vector3<T> dir = Vector3<T>::Direction(aRay.GetOrigin(), aSphere.GetCenter());
 
@@ -578,54 +611,55 @@ namespace CommonUtilities
 		const T projScalar = dir.Dot(aRay.GetDirection());
 
 		if (distSqr > 0 && projScalar < 0) // outside sphere and pointing away
-		{
 			return result;
-		}
 
 		T discr = projScalar * projScalar - distSqr;
 
 		if (discr < 0) // closest point is outside
-		{
 			return result;
-		}
 
 		discr = std::sqrt(discr);
 
-		T t1 = Max(projScalar - discr, T(0)); // clamp t to zero if inside sphere
+		T t1 = projScalar - discr;
 		T t2 = projScalar + discr;
 
 		if (t1 > t2) (std::swap)(t1, t2);
+
+		bool inside = (t1 < T(0));
+
+		t1 = Max(t1, T(0)); // clamp t to zero if inside sphere
 
 		result.intersection = aRay.GetOrigin() + aRay.GetDirection() * t1;
 		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
 		result.enter		= t1;
 		result.exit			= t2;
-		result.collided		= true;
+		result.intersects	= true;
+		result.inside		= inside;
 
 		return result;
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
+	inline ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
 	{
-		return CollisionResult<T>();
+		return ISect<T>();
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
+	inline ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
 	{
 		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetBase(), aCapsule.GetTip(), aSphere.GetCenter());
 		return IntersectionSphereSphere(aSphere, Sphere<T>(p, aCapsule.GetRadius()));
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
+	inline ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
 	{
-		return CollisionResult<T>();
+		return ISect<T>();
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
+	inline ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
 	{
 		const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
 		const Vector3<T> AO = Vector3<T>::Direction(aCapsule.GetBase(), aRay.GetOrigin());
@@ -642,13 +676,13 @@ namespace CommonUtilities
 
 		// https://gist.github.com/jdryg/ecde24d34aa0ce2d4d87 ...
 
-		return CollisionResult<T>(); // TODO: implement
+		return ISect<T>(); // TODO: implement
 	}
 
 	template<typename T>
-	inline CollisionResult<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	inline ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd)
 	{
-		CollisionResult<T> result{};
+		ISect<T> result{};
 
 		const Vector3<T> dir = Vector3<T>::Direction(aStart, aEnd);
 
@@ -673,7 +707,7 @@ namespace CommonUtilities
 			{
 				result.intersection = aStart + dir * tMin;
 				result.enter		= tMin;
-				result.collided		= true;
+				result.intersects	= true;
 
 				const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
@@ -698,14 +732,236 @@ namespace CommonUtilities
 			if (tMax >= T(0) && tMax <= T(1))
 			{
 				result.exit			= tMax;
-				result.collided		= true;
+				result.intersects	= true;
 			}
 		}
 
 		return result;
 	}
 
-	using Collf	= CollisionResult<float>;
-	using Colli	= CollisionResult<int>;
-	using Colld = CollisionResult<double>;
+	template<typename T>
+	inline ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	{
+		ISect<T> result{};
+
+		const Vector3<T> A = aCapsule.GetBase();
+		const Vector3<T> B = aCapsule.GetTip();
+		const Vector3<T> C = aStart;
+		const Vector3<T> D = aEnd;
+
+		const auto CheckSpheres = 
+			[&]() -> ISect<T>
+			{
+				ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd);
+
+				if (isectSphereBaseSeg.inside)
+					return isectSphereBaseSeg;
+
+				ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd);
+
+				if (isectSphereTipSeg.inside)
+					return isectSphereTipSeg;
+
+				if (isectSphereBaseSeg)
+				{
+					if (isectSphereTipSeg)
+					{
+						if (isectSphereBaseSeg.enter < isectSphereTipSeg.enter)
+						{
+							isectSphereBaseSeg.exit = Max(isectSphereBaseSeg.exit, isectSphereTipSeg.exit);
+							return isectSphereBaseSeg;
+						}
+						else
+						{
+							isectSphereTipSeg.exit = Max(isectSphereBaseSeg.exit, isectSphereTipSeg.exit);
+							return isectSphereTipSeg;
+						}
+					}
+					else
+						return isectSphereBaseSeg;
+				}
+
+				if (isectSphereTipSeg)
+					return isectSphereTipSeg;
+
+				return ISect<T>{};
+			};
+
+		const Vector3<T> AB = Vector3<T>::Direction(A, B);
+		const Vector3<T> AC = Vector3<T>::Direction(A, C);
+		const Vector3<T> CD = Vector3<T>::Direction(C, D);
+
+		const T ACdotAB = Vector3<T>::Dot(AC, AB);
+		const T CDdotAB = Vector3<T>::Dot(CD, AB);
+		const T ABdotAB = Vector3<T>::Dot(AB, AB);
+
+		if (ABdotAB <= EPSILON_V<T>)
+			return IntersectionSphereSegment(Sphere<T>((B + A) / T(2), aCapsule.GetRadius()), aStart, aEnd);
+
+		if (ACdotAB < T(0) && ACdotAB + CDdotAB < T(0)) // outside on base side
+			return IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd);
+
+		if (ACdotAB > T(0) && ACdotAB + CDdotAB < T(0)) // outside on tip side
+			return IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd);
+
+		const T CDdotCD = Vector3<T>::Dot(CD, CD);
+		const T ACdotCD = Vector3<T>::Dot(AC, CD);
+
+		const T a = ABdotAB * CDdotCD - CDdotAB * CDdotAB;
+		const T k = Vector3<T>::Dot(AC, AC) - aCapsule.GetRadiusSqr();
+		const T c = ABdotAB * k - ACdotAB * ACdotAB;
+
+		if (T((std::abs)(a)) < EPSILON_V<T>)
+		{
+			if (c > T(0)) // outside cylinder
+			{
+				if (ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd))
+					return isectSphereBaseSeg;
+
+				if (ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd))
+					return isectSphereTipSeg;
+
+				return result;
+			}
+
+			if (ACdotAB < T(0) || ACdotAB > ABdotAB) // intersects either base or tip from outside
+			{
+				return CheckSpheres();
+			}
+			else // completely inside
+			{
+				result.intersection = aStart;
+				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, aStart).GetNormalized();
+				result.enter		= T(0);
+				result.exit			= T(1);
+				result.intersects	= true;
+				result.inside		= true;
+			}
+
+			return result;
+		}
+
+		const T b = ABdotAB * ACdotCD - CDdotAB * ACdotAB;
+		T discr = b * b - a * c;
+
+		if (discr < T(0))
+			return result;
+
+		discr = std::sqrt(discr);
+
+		T t1 = (-b - discr) / a;
+		T t2 = (-b + discr) / a;
+
+		if (t1 > t2) (std::swap)(t1, t2);
+
+		ISect<T> outsideISect;
+
+		const bool entryOutside = ACdotAB + t1 * CDdotAB < T(0) || ACdotAB + t1 * CDdotAB > ABdotAB;
+		const bool exitOutside  = ACdotAB + t2 * CDdotAB < T(0) || ACdotAB + t2 * CDdotAB > ABdotAB;
+
+		if (entryOutside || exitOutside)
+		{
+			ISect<T> spheresISect = CheckSpheres();
+
+			if (entryOutside)
+			{
+				outsideISect.intersection	= spheresISect.intersection;
+				outsideISect.normal			= spheresISect.normal;
+				outsideISect.enter			= spheresISect.enter;
+				outsideISect.exit			= Min(t2, T(1));
+				outsideISect.intersects		= spheresISect.intersects;
+				outsideISect.inside			= spheresISect.inside;
+			}
+
+			if (exitOutside)
+			{
+				outsideISect.exit = spheresISect.exit;
+			}
+
+			if (outsideISect)
+				return outsideISect;
+		}
+
+		if (t1 > T(1))
+		{
+			return CheckSpheres();
+		}
+		else if (t1 < T(0))
+		{
+			if (c <= T(0))
+			{
+				result.intersection = aStart;
+				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, aStart).GetNormalized();
+				result.enter		= T(0);
+				result.exit			= exitOutside ? outsideISect.exit : Min(t2, T(1));
+				result.intersects	= true;
+				result.inside		= true;
+
+				return result;
+			}
+
+			return CheckSpheres();
+		}
+
+		t1 = Max(t1, T(0));
+		t2 = Min(t2, T(1));
+
+		result.intersection = C + CD * t1;
+		result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, result.intersection).GetNormalized();
+		result.enter		= t1;
+		result.exit			= t2;
+		result.intersects	= true;
+
+		return result;
+	}
+
+	template<typename T>
+	inline ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	{
+		ISect<T> result{};
+
+		const Vector3<T> origin = Vector3<T>::Direction(aStart, aSphere.GetCenter());
+		const Vector3<T> dir	= Vector3<T>::Direction(aStart, aEnd);
+
+		const T a = Vector3<T>::Dot(dir, dir);
+
+		if (a == T(0))
+			return result;
+
+		const T b = Vector3<T>::Dot(origin, dir);
+		const T c = Vector3<T>::Dot(origin, origin) - aSphere.GetRadiusSqr();
+
+		T discr = b * b - a * c;
+
+		if (discr < 0)
+			return result;
+
+		discr = std::sqrt(discr);
+
+		T t1 = (b - discr) / a;
+		T t2 = (b + discr) / a;
+
+		if (t1 > t2) (std::swap)(t1, t2);
+
+		bool inside = (t1 <= T(0) && t2 >= T(1));
+
+		t1 = Max(t1, T(0));
+		t2 = Min(t2, T(1));
+
+		if (t2 < t1)
+			return result;
+
+		result.intersection = aStart + dir * t1;
+		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
+		result.enter		= t1;
+		result.exit			= t2;
+		result.intersects	= true;
+		result.inside		= inside;
+
+		return result;
+	}
+
+	using ISectf = ISect<float>;
+	using ISecti = ISect<int>;
+	using ISectd = ISect<double>;
 }

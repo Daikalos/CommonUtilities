@@ -66,6 +66,14 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector2<T> GetNormalized(T aLength, T aRadius) const;
 
+		/// Computes a normalized vector.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector and current length
+		/// 
+		NODISC constexpr std::pair<Vector2<T>, T> GetNormalizedWithLength(T aRadius = T(1)) const;
+
 		/// Normalizes this vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
@@ -268,6 +276,12 @@ namespace CommonUtilities
 	{
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
+	}
+	template<typename T>
+	constexpr std::pair<Vector2<T>, T> Vector2<T>::GetNormalizedWithLength(T aRadius) const
+	{
+		const T length = Length();
+		return std::make_pair(GetNormalized(length, aRadius), length);
 	}
 
 	template<typename T>

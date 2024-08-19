@@ -19,6 +19,9 @@ namespace CommonUtilities
 	template<typename t> 
 	class AABB;
 
+	template<typename t>
+	class Sphere;
+
 	template<typename T>
 	class Matrix3x3;
 
@@ -61,6 +64,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetTranslation() const;
 		NODISC constexpr Vector3<T> GetRotation() const;
 		NODISC constexpr Vector3<T> GetScale() const;
+		NODISC constexpr Vector3<T> GetScaleSqr() const;
 
 		NODISC constexpr Vector3<T> GetForward() const;
 		NODISC constexpr Vector3<T> GetUp() const;
@@ -103,6 +107,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> TransformPoint(const Vector3<T>& aPoint) const;
 		NODISC constexpr Vector4<T> TransformPoint(const Vector4<T>& aPoint) const;
 		NODISC constexpr AABB<T> TransformAABB(const AABB<T>& aAABB) const;
+		NODISC constexpr Sphere<T> TransformSphere(const Sphere<T>& aSphere) const;
 
 		constexpr auto Add(const Matrix4x4& aRight) -> Matrix4x4&;
 		constexpr auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
@@ -305,6 +310,14 @@ namespace CommonUtilities
 		return Vector3<T>
 		{
 			GetRight().Length(), GetUp().Length(), GetForward().Length()
+		};
+	}
+	template<typename T>
+	constexpr Vector3<T> Matrix4x4<T>::GetScaleSqr() const
+	{
+		return Vector3<T>
+		{
+			GetRight().LengthSqr(), GetUp().LengthSqr(), GetForward().LengthSqr()
 		};
 	}
 
@@ -608,23 +621,23 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr AABB<T> Matrix4x4<T>::TransformAABB(const AABB<T>& aAABB) const
 	{
-		cu::Vector3f center		= aAABB.GetCenter();
-		cu::Vector3f extends	= aAABB.GetExtends();
+		const Vector3<T> center		= aAABB.GetCenter();
+		const Vector3<T> extends	= aAABB.GetExtends();
 
-		const std::array<cu::Vector3f, 8> points 
+		const std::array<Vector3<T>, 8> points 
 		{
-			TransformPoint(center + cu::Vector3f(-extends.x,  extends.y, -extends.z)),
-			TransformPoint(center + cu::Vector3f(-extends.x,  extends.y,  extends.z)),
-			TransformPoint(center + cu::Vector3f( extends.x,  extends.y,  extends.z)), 
-			TransformPoint(center + cu::Vector3f( extends.x,  extends.y, -extends.z)), 
-			TransformPoint(center + cu::Vector3f(-extends.x, -extends.y, -extends.z)),
-			TransformPoint(center + cu::Vector3f(-extends.x, -extends.y,  extends.z)),
-			TransformPoint(center + cu::Vector3f( extends.x, -extends.y,  extends.z)),
-			TransformPoint(center + cu::Vector3f( extends.x, -extends.y, -extends.z))
+			TransformPoint(center + Vector3<T>(-extends.x,  extends.y, -extends.z)),
+			TransformPoint(center + Vector3<T>(-extends.x,  extends.y,  extends.z)),
+			TransformPoint(center + Vector3<T>( extends.x,  extends.y,  extends.z)), 
+			TransformPoint(center + Vector3<T>( extends.x,  extends.y, -extends.z)), 
+			TransformPoint(center + Vector3<T>(-extends.x, -extends.y, -extends.z)),
+			TransformPoint(center + Vector3<T>(-extends.x, -extends.y,  extends.z)),
+			TransformPoint(center + Vector3<T>( extends.x, -extends.y,  extends.z)),
+			TransformPoint(center + Vector3<T>( extends.x, -extends.y, -extends.z))
 		};
 
-		cu::Vector3f min = points[0];
-		cu::Vector3f max = points[0];
+		Vector3<T> min = points[0];
+		Vector3<T> max = points[0];
 
 		for (std::size_t i = 1; i < points.size(); ++i)
 		{
@@ -639,6 +652,17 @@ namespace CommonUtilities
 		}
 
 		return AABB<T>(min, max);
+	}
+
+	template<typename T>
+	constexpr Sphere<T> Matrix4x4<T>::TransformSphere(const Sphere<T>& aSphere) const
+	{
+		const Vector3<T> center		= TransformPoint(aSphere.GetCenter());
+
+		const Vector3<T> scaleSqr	= GetScaleSqr();
+		const T radius				= T(std::sqrt(Max(scaleSqr.x, scaleSqr.y, scaleSqr.z))) * aSphere.GetRadius();
+
+		return Sphere<T>(center, radius);
 	}
 
 	template<typename T>

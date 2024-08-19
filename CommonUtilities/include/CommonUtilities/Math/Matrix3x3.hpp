@@ -13,6 +13,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class Rect;
+
+	template<typename T>
 	class Matrix4x4;
 
 	template<typename T>
@@ -48,6 +51,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector2<T> GetTranslation() const;
 		NODISC constexpr T GetRotation() const;
 		NODISC constexpr Vector2<T> GetScale() const;
+		NODISC constexpr Vector2<T> GetScaleSqr() const;
 
 		NODISC constexpr Vector2<T> GetUp() const;
 		NODISC constexpr Vector2<T> GetRight() const;
@@ -65,6 +69,7 @@ namespace CommonUtilities
 
 		NODISC constexpr Vector2<T> TransformPoint(const Vector2<T>& aPoint) const;
 		NODISC constexpr Vector3<T> TransformPoint(const Vector3<T>& aPoint) const;
+		NODISC constexpr Rect<T> TransformRect(const Rect<T>& aRect) const;
 
 		constexpr auto Add(const Matrix3x3& aRight) -> Matrix3x3&;
 		constexpr auto Subtract(const Matrix3x3& aRight) -> Matrix3x3&;
@@ -201,8 +206,15 @@ namespace CommonUtilities
 	{
 		return Vector2<T>
 		{
-			Vector2<T>{ myMatrix[0], myMatrix[1] }.Length(),
-			Vector2<T>{ myMatrix[3], myMatrix[4] }.Length()
+			GetRight().Length(), GetUp().Length()
+		};
+	}
+	template<typename T>
+	inline constexpr Vector2<T> Matrix3x3<T>::GetScaleSqr() const
+	{
+		return Vector2<T>
+		{
+			GetRight().LengthSqr(), GetUp().LengthSqr()
 		};
 	}
 
@@ -351,6 +363,31 @@ namespace CommonUtilities
 			aPoint.x * myMatrix[1] + aPoint.y * myMatrix[4] + aPoint.z * myMatrix[7],
 			aPoint.x * myMatrix[2] + aPoint.y * myMatrix[5] + aPoint.z * myMatrix[8] 
 		};
+	}
+	template<typename T>
+	constexpr Rect<T> Matrix3x3<T>::TransformRect(const Rect<T>& aRect) const
+	{
+		const std::array<Vector2<T>, 4> points
+		{
+			TransformPoint(Vector2<T>(aRect.left,  aRect.top)),
+			TransformPoint(Vector2<T>(aRect.right, aRect.top)),
+			TransformPoint(Vector2<T>(aRect.left,  aRect.bottom)),
+			TransformPoint(Vector2<T>(aRect.right, aRect.bottom)),
+		};
+
+		Vector2<T> min = points[0];
+		Vector2<T> max = points[0];
+
+		for (std::size_t i = 1; i < points.size(); ++i)
+		{
+			if		(points[i].x < min.x) min.x = points[i].x;
+			else if (points[i].x > max.x) max.x = points[i].x;
+
+			if		(points[i].y < min.y) min.y = points[i].y;
+			else if (points[i].y > max.y) max.y = points[i].y;
+		}
+
+		return Rect<T>(min, max);
 	}
 
 	template<typename T>
@@ -515,7 +552,7 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC constexpr bool operator==(const Matrix3x3<T>& aLeft, const Matrix3x3<T>& aRight)
 	{
-		for (int i = 0; i < Matrix3x3<T>::9; ++i)
+		for (int i = 0; i < 9; ++i)
 		{
 			if (aLeft[i] != aRight[i])
 			{

@@ -2,8 +2,9 @@
 
 #include <cmath>
 #include <cassert>
-#include <xmmintrin.h>
-#include <bit>
+#include <immintrin.h>
+#include <array>
+#include <tuple>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -30,6 +31,8 @@ namespace CommonUtilities
 
 		constexpr Vector4(T aValue);
 		constexpr Vector4(T aX, T aY, T aZ, T aW);
+		constexpr Vector4(const std::array<T, 4>& aArray);
+		constexpr Vector4(__m128 aRegister) requires (std::is_same_v<T, float>);
 
 		template <typename U>
 		constexpr explicit Vector4(const Vector2<U>& aVector);
@@ -186,6 +189,18 @@ namespace CommonUtilities
 		: x(aX), y(aY), z(aZ), w(aW) {}
 
 	template<typename T>
+	constexpr Vector4<T>::Vector4(const std::array<T, 4>& aArray)
+		: Vector4(aArray[0], aArray[1], aArray[2], aArray[4]) {}
+
+	template<typename T>
+	constexpr Vector4<T>::Vector4(__m128 aRegister) requires (std::is_same_v<T, float>)
+	{
+		alignas(16) std::array<float, 4> values{};
+		_mm_store_ps(values.data(), aRegister);
+		x = values[0], y = values[1], z = values[2], w = values[3];
+	}
+
+	template<typename T>
 	template<typename U>
 	constexpr Vector4<T>::Vector4(const Vector2<U>& aVector)
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(T(0)), w(T(0)) {}
@@ -310,7 +325,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr __m128 Vector4<T>::ToSIMD() const requires (std::is_same_v<T, float>)
 	{
-		return __m128{ x, y, z, w };
+		alignas(16) const std::array<float, 4> values{ x, y, z, w };
+		return _mm_load_ps(values.data());
 	}
 
 	template<typename T>

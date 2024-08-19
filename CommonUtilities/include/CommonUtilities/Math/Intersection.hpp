@@ -578,17 +578,19 @@ namespace CommonUtilities
 			aAABB.GetMin() + Vector3<T>(aCapsule.GetRadius())
 		};
 
-		const ISect<T> collSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
+		const ISect<T> isectSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
 		
-		if (!collSegAABB)
+		if (!isectSegAABB)
 			return result;
 
-		if (collSegAABB.enter >= T(0) && collSegAABB.exit <= T(1))
+		if (isectSegAABB.enter >= T(0) && isectSegAABB.exit <= T(1))
 		{
 			const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
 
-			const Vector3<T> p1 = collSegAABB.intersection;
-			const Vector3<T> p2 = aCapsule.GetBase() + AB * collSegAABB.exit;
+			const Vector3<T> p1 = isectSegAABB.intersection;
+			const Vector3<T> p2 = aCapsule.GetBase() + AB * isectSegAABB.exit;
+
+			int u = 0, v = 0;
 
 
 		}

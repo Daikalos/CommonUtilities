@@ -2,8 +2,9 @@
 
 #include <cmath>
 #include <cassert>
-#include <xmmintrin.h>
-#include <bit>
+#include <immintrin.h>
+#include <array>
+#include <tuple>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -28,6 +29,8 @@ namespace CommonUtilities
 
 		constexpr Vector2(T aValue);
 		constexpr Vector2(T aX, T aY);
+		constexpr Vector2(const std::array<T, 2>& aArray);
+		constexpr Vector2(__m128 aRegister) requires (std::is_same_v<T, float>);
 
 		template <typename U>
 		constexpr explicit Vector2(const Vector3<U>& aVector);
@@ -233,6 +236,18 @@ namespace CommonUtilities
 		: x(aX), y(aY) {}
 
 	template<typename T>
+	constexpr Vector2<T>::Vector2(const std::array<T, 2>& aArray)
+		: Vector2(aArray[0], aArray[1]) {}
+
+	template<typename T>
+	constexpr Vector2<T>::Vector2(__m128 aRegister)  requires (std::is_same_v<T, float>)
+	{
+		alignas(16) std::array<float, 4> values{};
+		_mm_store_ps(values.data(), aRegister);
+		x = values[0], y = values[1];
+	}
+
+	template<typename T>
 	template<typename U>
 	constexpr Vector2<T>::Vector2(const Vector3<U>& aVector)
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)) {}
@@ -380,7 +395,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr __m128 Vector2<T>::ToSIMD() const requires (std::is_same_v<T, float>)
 	{
-		return __m128{ x, y, T(0), T(0) };
+		alignas(16) const std::array<float, 4> values{ x, y, T(0), T(0) };
+		return _mm_load_ps(values.data());
 	}
 
 	template<typename T>

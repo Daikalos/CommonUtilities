@@ -3,7 +3,7 @@
 #include <array>
 #include <cmath>
 #include <cassert>
-#include <xmmintrin.h>
+#include <immintrin.h>
 #include <stdexcept>
 
 #include "Vector3.hpp"
@@ -41,6 +41,11 @@ namespace CommonUtilities
 		constexpr Matrix4x4(const T(&aArray)[COUNT]);
 
 		constexpr Matrix4x4(const Matrix3x3<T>& aMatrix);
+
+		constexpr Matrix4x4(const std::array<__m128, ROWS>& aRegisters) requires (std::is_same_v<T, float>);
+
+		template<std::size_t R> requires (R < 4)
+		constexpr Matrix4x4(__m128 aRegister) requires (std::is_same_v<T, float>);
 
 		template<class OtherMatrix>
 		NODISC constexpr explicit operator OtherMatrix() const;
@@ -144,21 +149,21 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline constexpr Matrix4x4<T>::Matrix4x4(const std::array<T, COUNT>& aArray)
+	constexpr Matrix4x4<T>::Matrix4x4(const std::array<T, COUNT>& aArray)
 		: myMatrix{ aArray }
 	{
 
 	}
 
 	template<typename T>
-	inline constexpr Matrix4x4<T>::Matrix4x4(const T(&aArray)[COUNT])
+	constexpr Matrix4x4<T>::Matrix4x4(const T(&aArray)[COUNT])
 		: myMatrix{ std::to_array(aArray) }
 	{
 
 	}
 
 	template<typename T>
-	inline constexpr Matrix4x4<T>::Matrix4x4(const Matrix3x3<T>& aMatrix)
+	constexpr Matrix4x4<T>::Matrix4x4(const Matrix3x3<T>& aMatrix)
 		: myMatrix{
 			aMatrix[0],		aMatrix[1],		0,		aMatrix[2],
 			aMatrix[3],		aMatrix[4],		0,		aMatrix[5],
@@ -166,6 +171,29 @@ namespace CommonUtilities
 			aMatrix[6],		aMatrix[7],		0,		aMatrix[8]}
 	{
 
+	}
+
+	template<typename T>
+	constexpr Matrix4x4<T>::Matrix4x4(const std::array<__m128, ROWS>& aRegisters) requires (std::is_same_v<T, float>)
+	{
+		alignas(16) std::array<T, COUNT> values{};
+		_mm_store_ps(values.data() + COLUMNS * 0, aRegisters[0]);
+		_mm_store_ps(values.data() + COLUMNS * 1, aRegisters[1]);
+		_mm_store_ps(values.data() + COLUMNS * 2, aRegisters[2]);
+		_mm_store_ps(values.data() + COLUMNS * 3, aRegisters[3]);
+		myMatrix = values;
+	}
+
+	template<typename T>
+	template<std::size_t R> requires (R < 4)
+	constexpr Matrix4x4<T>::Matrix4x4(__m128 aRegister) requires (std::is_same_v<T, float>)
+	{
+		const Vector4<T> row{ aRegister };
+
+		if constexpr (R == 0)		myMatrix[0 ] = row.x, myMatrix[1 ] = row.y, myMatrix[2 ] = row.z, myMatrix[3 ] = row.w;
+		else if constexpr (R == 1)	myMatrix[4 ] = row.x, myMatrix[5 ] = row.y, myMatrix[6 ] = row.z, myMatrix[7 ] = row.w;
+		else if constexpr (R == 2)	myMatrix[8 ] = row.x, myMatrix[9 ] = row.y, myMatrix[10] = row.z, myMatrix[11] = row.w;
+		else if constexpr (R == 3)	myMatrix[12] = row.x, myMatrix[13] = row.y, myMatrix[14] = row.z, myMatrix[15] = row.w;
 	}
 
 	template<typename T>
@@ -284,10 +312,10 @@ namespace CommonUtilities
 	{
 		return std::array<__m128, 4>
 		{
-			__m128 { myMatrix[0 ], myMatrix[1 ], myMatrix[2 ], myMatrix[3 ] },
-			__m128 { myMatrix[4 ], myMatrix[5 ], myMatrix[6 ], myMatrix[7 ] },
-			__m128 { myMatrix[8 ], myMatrix[9 ], myMatrix[10], myMatrix[11] },
-			__m128 { myMatrix[12], myMatrix[13], myMatrix[14], myMatrix[15] }
+			Vector4<T>{ myMatrix[0 ], myMatrix[1 ], myMatrix[2 ], myMatrix[3 ] }.ToSIMD(),
+			Vector4<T>{ myMatrix[4 ], myMatrix[5 ], myMatrix[6 ], myMatrix[7 ] }.ToSIMD(),
+			Vector4<T>{ myMatrix[8 ], myMatrix[9 ], myMatrix[10], myMatrix[11] }.ToSIMD(),
+			Vector4<T>{ myMatrix[12], myMatrix[13], myMatrix[14], myMatrix[15] }.ToSIMD()
 		};
 	}
 

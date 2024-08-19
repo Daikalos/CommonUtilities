@@ -21,7 +21,7 @@ int main()
 	cu::Vector2f vec(5.0f, 3.0f);
 	auto l = vec.ToSIMD();
 
-	cu::Mat4f mat;
+	cu::Mat4f mat = cu::Mat4f::CreateTRS(cu::Vector3f(0.0f, 5.0f, 0.0f), cu::Quatf::IDENTITY, cu::Vector3f::One);
 	auto p = mat.ToSIMD();
 
 	cu::AABBf aabb;
@@ -32,20 +32,7 @@ int main()
 		cu::Vector3f(-32.0f, 1.0f, 2.0f), 
 		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
-	auto [p1, p2] = cu::Vector3f::ClosestPointsSegmentSegment({}, {}, {}, {});
-
-	std::vector<int> test { 4, 6, 8, 12, -3 };
-
-	cu::BinaryWriteSerializer write;
-
-	write.Serialize(test);
-
-	cu::BinaryReadSerializer read(write.GetBuffer());
-
-	std::vector<int> test2;
-	read.Serialize(test2);
-
-	constexpr auto a = cu::EaseInBack(0.9f);
+	cu::Mat4f mat2 = p;
 
 	return 0;
 }

@@ -16,6 +16,9 @@
 
 namespace CommonUtilities
 {
+	template<typename t> 
+	class AABB;
+
 	template<typename T>
 	class Matrix3x3;
 
@@ -99,6 +102,7 @@ namespace CommonUtilities
 
 		NODISC constexpr Vector3<T> TransformPoint(const Vector3<T>& aPoint) const;
 		NODISC constexpr Vector4<T> TransformPoint(const Vector4<T>& aPoint) const;
+		NODISC constexpr AABB<T> TransformAABB(const AABB<T>& aAABB) const;
 
 		constexpr auto Add(const Matrix4x4& aRight) -> Matrix4x4&;
 		constexpr auto Subtract(const Matrix4x4& aRight) -> Matrix4x4&;
@@ -600,6 +604,41 @@ namespace CommonUtilities
 			aPoint.x * myMatrix[2] + aPoint.y * myMatrix[6] + aPoint.z * myMatrix[10] + aPoint.w * myMatrix[14],
 			aPoint.x * myMatrix[3] + aPoint.y * myMatrix[7] + aPoint.z * myMatrix[11] + aPoint.w * myMatrix[15] 
 		};
+	}
+	template<typename T>
+	constexpr AABB<T> Matrix4x4<T>::TransformAABB(const AABB<T>& aAABB) const
+	{
+		cu::Vector3f center		= aAABB.GetCenter();
+		cu::Vector3f extends	= aAABB.GetExtends();
+
+		const std::array<cu::Vector3f, 8> points 
+		{
+			TransformPoint(center + cu::Vector3f(-extends.x,  extends.y, -extends.z)),
+			TransformPoint(center + cu::Vector3f(-extends.x,  extends.y,  extends.z)),
+			TransformPoint(center + cu::Vector3f( extends.x,  extends.y,  extends.z)), 
+			TransformPoint(center + cu::Vector3f( extends.x,  extends.y, -extends.z)), 
+			TransformPoint(center + cu::Vector3f(-extends.x, -extends.y, -extends.z)),
+			TransformPoint(center + cu::Vector3f(-extends.x, -extends.y,  extends.z)),
+			TransformPoint(center + cu::Vector3f( extends.x, -extends.y,  extends.z)),
+			TransformPoint(center + cu::Vector3f( extends.x, -extends.y, -extends.z))
+		};
+
+		cu::Vector3f min = points[0];
+		cu::Vector3f max = points[0];
+
+		for (std::size_t i = 1; i < points.size(); ++i)
+		{
+			if      (points[i].x < min.x) min.x = points[i].x;
+			else if (points[i].x > max.x) max.x = points[i].x;
+
+			if      (points[i].y < min.y) min.y = points[i].y;
+			else if (points[i].y > max.y) max.y = points[i].y;
+
+			if      (points[i].z < min.z) min.z = points[i].z;
+			else if (points[i].z > max.z) max.z = points[i].z;
+		}
+
+		return AABB<T>(min, max);
 	}
 
 	template<typename T>

@@ -9,6 +9,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class AABB;
+
+	template<typename T>
 	class Sphere final : public Clonable<Shape, Sphere<T>>
 	{
 	public:
@@ -25,6 +28,8 @@ namespace CommonUtilities
 
 		constexpr void SetCenter(const Vector3<T>& aCenter);
 		constexpr void SetRadius(T aRadius);
+
+		NODISC constexpr AABB<T> GetAABB() const;
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
@@ -83,6 +88,12 @@ namespace CommonUtilities
 	{
 		myRadius = aRadius;
 		myRadiusSqr = aRadius * aRadius;
+	}
+
+	template<typename T>
+	constexpr AABB<T> Sphere<T>::GetAABB() const
+	{
+		return AABB<T>(myCenter - Vector3<T>(myRadius), myCenter + Vector3<T>(myRadius));
 	}
 
 	template<typename T>

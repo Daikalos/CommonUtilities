@@ -908,7 +908,7 @@ namespace CommonUtilities
 		result.intersection = C + CD * t1;
 		result.normal		= Vector3<T>::Direction(Vector3<T>::ClosestPointOnLine(A, B, result.intersection), result.intersection).GetNormalized();
 		result.enter		= t1;
-		result.exit			= t2;
+		result.exit			= exitOutside ? outsideISect.exit : t2;
 		result.intersects	= true;
 
 		return result;

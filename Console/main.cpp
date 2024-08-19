@@ -27,14 +27,14 @@ int main()
 	cu::AABBf aabb;
 	cu::Rayf ray;
 
+	constexpr cu::Capsulef caps = cu::Capsulef(cu::Vector3f(0.0f, 0.0f, 0.0f), cu::Vector3f(0.0f, 10.0f, 0.0f), 16.0f);
+
 	cu::ISectf intersection = cu::IntersectionCapsuleSegment(
-		cu::Capsulef(cu::Vector3f(0.0f, 0.0f, 0.0f), cu::Vector3f(0.0f, 10.0f, 0.0f), 16.0f),
+		caps,
 		cu::Vector3f(-32.0f, 1.0f, 2.0f), 
 		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
-
-	cu::Mat4f mat2;
-	mat2.SetRow<3>(p[3]);
+	constexpr cu::AABBf test = caps.GetAABB();
 
 	return 0;
 }

@@ -9,24 +9,29 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class AABB;
+
+	template<typename T>
 	class Capsule final : public Clonable<Shape, Capsule<T>>
 	{
 	public:
 		constexpr Capsule() = default;
 		constexpr ~Capsule() = default;
 
-		constexpr Capsule(const Vector3<T>& aTip, const Vector3<T>& aBase, T aRadius);
+		constexpr Capsule(const Vector3<T>& aBase, const Vector3<T>& aTip, T aRadius);
 
-		NODISC constexpr const Vector3<T>& GetTip() const noexcept;
 		NODISC constexpr const Vector3<T>& GetBase() const noexcept;
+		NODISC constexpr const Vector3<T>& GetTip() const noexcept;
 		NODISC constexpr T GetRadius() const noexcept;
 		NODISC constexpr T GetRadiusSqr() const noexcept;
 		NODISC constexpr T GetBodyLength() const;
 		NODISC constexpr T GetBodyLengthSqr() const;
 
-		constexpr void SetTip(const Vector3<T>& aTip);
 		constexpr void SetBase(const Vector3<T>& aBase);
+		constexpr void SetTip(const Vector3<T>& aTip);
 		constexpr void SetRadius(T aRadius);
+
+		NODISC constexpr AABB<T> GetAABB() const;
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
@@ -39,16 +44,16 @@ namespace CommonUtilities
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
-		Vector3<T>	myTip;
 		Vector3<T>	myBase;
+		Vector3<T>	myTip;
 		T			myRadius{};
 		T			myRadiusSqr{};
 	};
 
 	template<typename T>
-	constexpr Capsule<T>::Capsule(const Vector3<T>& aTip, const Vector3<T>& aBase, T aRadius)
-		: myTip(aTip)
-		, myBase(aBase)
+	constexpr Capsule<T>::Capsule(const Vector3<T>& aBase, const Vector3<T>& aTip, T aRadius)
+		: myBase(aBase)
+		, myTip(aTip)
 		, myRadius(aRadius)
 		, myRadiusSqr(aRadius* aRadius)
 	{
@@ -56,14 +61,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr const Vector3<T>& Capsule<T>::GetTip() const noexcept
-	{
-		return myTip;
-	}
-	template<typename T>
 	constexpr const Vector3<T>& Capsule<T>::GetBase() const noexcept
 	{
 		return myBase;
+	}
+	template<typename T>
+	constexpr const Vector3<T>& Capsule<T>::GetTip() const noexcept
+	{
+		return myTip;
 	}
 	template<typename T>
 	constexpr T Capsule<T>::GetRadius() const noexcept
@@ -87,20 +92,35 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Capsule<T>::SetTip(const Vector3<T>& aTip)
-	{
-		myTip = aTip;
-	}
-	template<typename T>
 	constexpr void Capsule<T>::SetBase(const Vector3<T>& aBase)
 	{
 		myBase = aBase;
+	}
+	template<typename T>
+	constexpr void Capsule<T>::SetTip(const Vector3<T>& aTip)
+	{
+		myTip = aTip;
 	}
 	template<typename T>
 	constexpr void Capsule<T>::SetRadius(T aRadius)
 	{
 		myRadius = aRadius;
 		myRadiusSqr = aRadius * aRadius;
+	}
+
+	template<typename T>
+	constexpr AABB<T> Capsule<T>::GetAABB() const
+	{
+		Vector3<T> bCorner = GetBase() - Vector3<T>(GetRadius());
+		Vector3<T> tCorner = GetTip() + Vector3<T>(GetRadius());
+
+		Vector3<T> min;
+		Vector3<T> max;
+
+		min.x = Min(bCorner.x, tCorner.x), min.y = Min(bCorner.y, tCorner.y), min.z = Min(bCorner.z, tCorner.z);
+		max.x = Max(bCorner.x, tCorner.x), max.y = Max(bCorner.y, tCorner.y), max.z = Max(bCorner.z, tCorner.z);
+
+		return AABB<T>(min, max);
 	}
 
 	template<typename T>

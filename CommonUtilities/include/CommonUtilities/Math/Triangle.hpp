@@ -9,6 +9,9 @@
 namespace CommonUtilities
 {
 	template<typename T>
+	class AABB;
+
+	template<typename T>
 	class Triangle final : public Clonable<Shape, Triangle<T>>
 	{
 	public:
@@ -22,7 +25,8 @@ namespace CommonUtilities
 		NODISC constexpr const Vector3<T>& GetPoint2() const noexcept;
 		NODISC constexpr const Vector3<T>& GetNormal() const noexcept;
 
-		NODISC constexpr Vector3<T> GetCenter() const noexcept;
+		NODISC constexpr Vector3<T> GetCenter() const;
+		NODISC constexpr AABB<T> GetAABB() const;
 
 		constexpr void SetPoint0(const Vector3<T>& aPoint);
 		constexpr void SetPoint1(const Vector3<T>& aPoint);
@@ -69,9 +73,20 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Triangle<T>::GetCenter() const noexcept
+	constexpr Vector3<T> Triangle<T>::GetCenter() const
 	{
 		return (myPoint0 + myPoint1 + myPoint2) / T(3);
+	}
+	template<typename T>
+	constexpr AABB<T> Triangle<T>::GetAABB() const
+	{
+		Vector3<T> min;
+		Vector3<T> max;
+
+		min.x = Min(myPoint0.x, myPoint1.x, myPoint2.x), min.y = Min(myPoint0.y, myPoint1.y, myPoint2.y), min.z = Min(myPoint0.z, myPoint1.z, myPoint2.z);
+		max.x = Max(myPoint0.x, myPoint1.x, myPoint2.x), max.y = Max(myPoint0.y, myPoint1.y, myPoint2.y), max.z = Max(myPoint0.z, myPoint1.z, myPoint2.z);
+
+		return AABB<T>(min, max);
 	}
 
 	template<typename T>

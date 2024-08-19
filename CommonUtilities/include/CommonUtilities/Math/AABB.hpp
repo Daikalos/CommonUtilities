@@ -108,13 +108,13 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr void AABB<T>::SetMin(const Vector3<T>& aMin)
 	{
-		assert(myMax.x >= aMin.x && myMax.y >= aMin.y && "Maximum cannot be smaller than minimum");
+		assert(myMax.x >= aMin.x && myMax.y >= aMin.y && myMax.z >= aMin.z && "Maximum cannot be smaller than minimum");
 		myMin = aMin;
 	}
 	template<typename T>
 	constexpr void AABB<T>::SetMax(const Vector3<T>& aMax)
 	{
-		assert(aMax.x >= myMin.x && aMax.y >= myMin.y && "Maximum cannot be smaller than minimum");
+		assert(aMax.x >= myMin.x && aMax.y >= myMin.y && aMax.z >= myMin.z && "Maximum cannot be smaller than minimum");
 		myMax = aMax;
 	}
 	template<typename T>

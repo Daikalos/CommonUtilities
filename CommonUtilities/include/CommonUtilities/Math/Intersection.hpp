@@ -43,64 +43,64 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
+	constexpr ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere);
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
+	constexpr ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB);
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule);
+	constexpr ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule);
 
 	template<typename T>
-	inline ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
+	constexpr ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay);
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB);
+	constexpr ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB);
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
+	constexpr ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay);
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
+	constexpr ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB);
+	constexpr ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB);
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
+	constexpr ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay);
 
 	template<typename T>
-	inline ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane);
+	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule);
+	constexpr ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule);
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
+	constexpr ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane);
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
+	constexpr ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay);
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+	constexpr ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd);
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+	constexpr ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd);
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd);
+	constexpr ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd);
 
 	namespace details // hide this from client
 	{
 		template<typename T>
-		inline const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
+		constexpr const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
 		{
 			assert(aShape.GetType() == aExpectedType && "This shape's type is incorrectly set");
 			return reinterpret_cast<const T&>(aShape); // should only "crash" if shape has incorrectly set its enum type
 		}
 
 		template<typename T>
-		inline ISect<T> AABBAABB(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> AABBAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBAABB<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB), 
@@ -108,7 +108,7 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline ISect<T> SphereSphere(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> SphereSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereSphere<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere), 
@@ -116,7 +116,7 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline ISect<T> CapsuleCapsule(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> CapsuleCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleCapsule<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
@@ -124,27 +124,27 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline ISect<T> PlaneRay(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> PlaneRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionPlaneRay<T>(
 				DownCastTo<Plane<T>>(aS1, Shape::Type::Plane),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline ISect<T> RayPlane(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> RayPlane(const Shape& aS1, const Shape& aS2)
 		{
 			return PlaneRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> SphereAABB(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> SphereAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereAABB<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 		template<typename T>
-		inline ISect<T> AABBSphere(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> AABBSphere(const Shape& aS1, const Shape& aS2)
 		{
 			ISect<T> result = SphereAABB<T>(aS2, aS1);
 			result.normal = -result.normal; // flip normal ??
@@ -153,105 +153,105 @@ namespace CommonUtilities
 		}
 
 		template<typename T>
-		inline ISect<T> AABBRay(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> AABBRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBRay<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline ISect<T> RayAABB(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> RayAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return AABBRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> AABBPlane(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> AABBPlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionAABBPlane<T>(
 				DownCastTo<AABB<T>>(aS1, Shape::Type::AABB),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline ISect<T> PlaneAABB(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> PlaneAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return AABBPlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> CapsuleAABB(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleAABB<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<AABB<T>>(aS2, Shape::Type::AABB));
 		}
 		template<typename T>
-		inline ISect<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> AABBCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsuleAABB<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> SphereRay(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> SphereRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereRay<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline ISect<T> RaySphere(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> RaySphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SphereRay<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> SpherePlane(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> SpherePlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSpherePlane<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline ISect<T> PlaneSphere(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> PlaneSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SpherePlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> SphereCapsule(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> SphereCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereCapsule<T>(
 				DownCastTo<Sphere<T>>(aS1, Shape::Type::Sphere),
 				DownCastTo<Capsule<T>>(aS2, Shape::Type::Capsule));
 		}
 		template<typename T>
-		inline ISect<T> CapsuleSphere(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> CapsuleSphere(const Shape& aS1, const Shape& aS2)
 		{
 			return SphereCapsule<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionSphereCapsule<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
 		template<typename T>
-		inline ISect<T> PlaneCapsule(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> PlaneCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsulePlane<T>(aS2, aS1);
 		}
 
 		template<typename T>
-		inline ISect<T> CapsuleRay(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> CapsuleRay(const Shape& aS1, const Shape& aS2)
 		{
 			return IntersectionCapsuleRay<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<Ray<T>>(aS2, Shape::Type::Ray));
 		}
 		template<typename T>
-		inline ISect<T> RayCapsule(const Shape& aS1, const Shape& aS2)
+		constexpr ISect<T> RayCapsule(const Shape& aS1, const Shape& aS2)
 		{
 			return CapsuleRay<T>(aS2, aS1);
 		}
@@ -292,7 +292,7 @@ namespace CommonUtilities
 	/// \return Result from collision
 	/// 
 	template<typename T>
-	inline ISect<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
+	constexpr ISect<T> Collide(const Shape& aFirstShape, const Shape& aSecondShape)
 	{
 		const int collisionIndex = static_cast<int>(aSecondShape.GetType()) +
 			static_cast<int>(aFirstShape.GetType()) * static_cast<int>(Shape::Type::Count);
@@ -313,7 +313,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
+	constexpr ISect<T> IntersectionSphereSphere(const Sphere<T>& aFirstSphere, const Sphere<T>& aSecondSphere)
 	{
 		ISect<T> result{};
 
@@ -344,7 +344,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB)
+	constexpr ISect<T> IntersectionAABBAABB(const AABB<T>& aFirstAABB, const AABB<T>& aSecondAABB)
 	{
 		ISect<T> result{};
 
@@ -403,14 +403,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
+	constexpr ISect<T> IntersectionCapsuleCapsule(const Capsule<T>& aFirstCapsule, const Capsule<T>& aSecondCapsule)
 	{
 		const auto [p1, p2] = Vector3<T>::ClosestPointsSegmentSegment(aFirstCapsule.GetBase(), aFirstCapsule.GetTip(), aSecondCapsule.GetBase(), aSecondCapsule.GetTip());
 		return IntersectionSphereSphere(Sphere<T>(p1, aFirstCapsule.GetRadius()), Sphere<T>(p2, aSecondCapsule.GetRadius()));
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
+	constexpr ISect<T> IntersectionPlaneRay(const Plane<T>& aPlane, const Ray<T>& aRay)
 	{
 		ISect<T> result{};
 
@@ -447,7 +447,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB)
+	constexpr ISect<T> IntersectionSphereAABB(const Sphere<T>& aSphere, const AABB<T>& aAABB)
 	{
 		ISect<T> result{};
 
@@ -510,7 +510,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay)
+	constexpr ISect<T> IntersectionAABBRay(const AABB<T>& aAABB, const Ray<T>& aRay)
 	{
 		ISect<T> result{};
 
@@ -562,13 +562,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
 	{
 		return ISect<T>();
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
+	constexpr ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
 		ISect<T> result{};
 
@@ -601,7 +601,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
+	constexpr ISect<T> IntersectionSphereRay(const Sphere<T>& aSphere, const Ray<T>& aRay)
 	{
 		ISect<T> result{};
 
@@ -640,26 +640,26 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
 	{
 		return ISect<T>();
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
+	constexpr ISect<T> IntersectionSphereCapsule(const Sphere<T>& aSphere, const Capsule<T>& aCapsule)
 	{
 		const Vector3<T> p = Vector3<T>::ClosestPointOnSegment(aCapsule.GetBase(), aCapsule.GetTip(), aSphere.GetCenter());
 		return IntersectionSphereSphere(aSphere, Sphere<T>(p, aCapsule.GetRadius()));
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
 	{
 		return ISect<T>();
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
+	constexpr ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
 	{
 		const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
 		const Vector3<T> AO = Vector3<T>::Direction(aCapsule.GetBase(), aRay.GetOrigin());
@@ -680,7 +680,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	constexpr ISect<T> IntersectionAABBSegment(const AABB<T>& aAABB, const Vector3<T>& aStart, const Vector3<T>& aEnd)
 	{
 		ISect<T> result{};
 
@@ -740,7 +740,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	constexpr ISect<T> IntersectionCapsuleSegment(const Capsule<T>& aCapsule, const Vector3<T>& aStart, const Vector3<T>& aEnd)
 	{
 		ISect<T> result{};
 
@@ -915,7 +915,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	constexpr ISect<T> IntersectionSphereSegment(const Sphere<T>& aSphere, const Vector3<T>& aStart, const Vector3<T>& aEnd)
 	{
 		ISect<T> result{};
 

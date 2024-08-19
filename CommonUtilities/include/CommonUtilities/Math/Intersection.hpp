@@ -757,7 +757,7 @@ namespace CommonUtilities
 				if (isectSphereBaseSeg.inside)
 					return isectSphereBaseSeg;
 
-				ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd);
+				ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(B, aCapsule.GetRadius()), aStart, aEnd);
 
 				if (isectSphereTipSeg.inside)
 					return isectSphereTipSeg;
@@ -801,8 +801,8 @@ namespace CommonUtilities
 		if (ACdotAB < T(0) && ACdotAB + CDdotAB < T(0)) // outside on base side
 			return IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd);
 
-		if (ACdotAB > T(0) && ACdotAB + CDdotAB < T(0)) // outside on tip side
-			return IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd);
+		if (ACdotAB > ABdotAB && ACdotAB + CDdotAB > ABdotAB) // outside on tip side
+			return IntersectionSphereSegment(Sphere<T>(B, aCapsule.GetRadius()), aStart, aEnd);
 
 		const T CDdotCD = Vector3<T>::Dot(CD, CD);
 		const T ACdotCD = Vector3<T>::Dot(AC, CD);
@@ -818,7 +818,7 @@ namespace CommonUtilities
 				if (ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), aStart, aEnd))
 					return isectSphereBaseSeg;
 
-				if (ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(C, aCapsule.GetRadius()), aStart, aEnd))
+				if (ISect<T> isectSphereTipSeg = IntersectionSphereSegment(Sphere<T>(B, aCapsule.GetRadius()), aStart, aEnd))
 					return isectSphereTipSeg;
 
 				return result;
@@ -831,7 +831,7 @@ namespace CommonUtilities
 			else // completely inside
 			{
 				result.intersection = aStart;
-				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, aStart).GetNormalized();
+				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, result.intersection).GetNormalized();
 				result.enter		= T(0);
 				result.exit			= T(1);
 				result.intersects	= true;
@@ -871,15 +871,14 @@ namespace CommonUtilities
 				outsideISect.exit			= Min(t2, T(1));
 				outsideISect.intersects		= spheresISect.intersects;
 				outsideISect.inside			= spheresISect.inside;
+
+				return outsideISect;
 			}
 
 			if (exitOutside)
 			{
 				outsideISect.exit = spheresISect.exit;
 			}
-
-			if (outsideISect)
-				return outsideISect;
 		}
 
 		if (t1 > T(1))
@@ -891,7 +890,7 @@ namespace CommonUtilities
 			if (c <= T(0))
 			{
 				result.intersection = aStart;
-				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, aStart).GetNormalized();
+				result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, result.intersection).GetNormalized();
 				result.enter		= T(0);
 				result.exit			= exitOutside ? outsideISect.exit : Min(t2, T(1));
 				result.intersects	= true;
@@ -907,7 +906,7 @@ namespace CommonUtilities
 		t2 = Min(t2, T(1));
 
 		result.intersection = C + CD * t1;
-		result.normal		= Vector3<T>::Direction(A + AB * ACdotAB / ABdotAB, result.intersection).GetNormalized();
+		result.normal		= Vector3<T>::Direction(Vector3<T>::ClosestPointOnLine(A, B, result.intersection), result.intersection).GetNormalized();
 		result.enter		= t1;
 		result.exit			= t2;
 		result.intersects	= true;
@@ -933,7 +932,7 @@ namespace CommonUtilities
 
 		T discr = b * b - a * c;
 
-		if (discr < 0)
+		if (discr < T(0))
 			return result;
 
 		discr = std::sqrt(discr);
@@ -952,7 +951,7 @@ namespace CommonUtilities
 			return result;
 
 		result.intersection = aStart + dir * t1;
-		result.normal		= Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized();
+		result.normal		= (aSphere.GetCenter() != result.intersection) ? Vector3<T>::Direction(aSphere.GetCenter(), result.intersection).GetNormalized() : Vector3<T>::Right;
 		result.enter		= t1;
 		result.exit			= t2;
 		result.intersects	= true;

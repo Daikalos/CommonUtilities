@@ -32,7 +32,8 @@ int main()
 		cu::Vector3f(-32.0f, 1.0f, 2.0f), 
 		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
-	cu::Mat4f mat2 = p;
+
+	cu::Mat4f mat2<0>(p[0]);
 
 	return 0;
 }

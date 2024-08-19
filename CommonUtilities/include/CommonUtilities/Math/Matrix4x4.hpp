@@ -44,9 +44,6 @@ namespace CommonUtilities
 
 		constexpr Matrix4x4(const std::array<__m128, ROWS>& aRegisters) requires (std::is_same_v<T, float>);
 
-		template<std::size_t R> requires (R < 4)
-		constexpr Matrix4x4(__m128 aRegister) requires (std::is_same_v<T, float>);
-
 		template<class OtherMatrix>
 		NODISC constexpr explicit operator OtherMatrix() const;
 
@@ -182,18 +179,6 @@ namespace CommonUtilities
 		_mm_store_ps(values.data() + COLUMNS * 2, aRegisters[2]);
 		_mm_store_ps(values.data() + COLUMNS * 3, aRegisters[3]);
 		myMatrix = values;
-	}
-
-	template<typename T>
-	template<std::size_t R> requires (R < 4)
-	constexpr Matrix4x4<T>::Matrix4x4(__m128 aRegister) requires (std::is_same_v<T, float>)
-	{
-		const Vector4<T> row{ aRegister };
-
-		if constexpr (R == 0)		myMatrix[0 ] = row.x, myMatrix[1 ] = row.y, myMatrix[2 ] = row.z, myMatrix[3 ] = row.w;
-		else if constexpr (R == 1)	myMatrix[4 ] = row.x, myMatrix[5 ] = row.y, myMatrix[6 ] = row.z, myMatrix[7 ] = row.w;
-		else if constexpr (R == 2)	myMatrix[8 ] = row.x, myMatrix[9 ] = row.y, myMatrix[10] = row.z, myMatrix[11] = row.w;
-		else if constexpr (R == 3)	myMatrix[12] = row.x, myMatrix[13] = row.y, myMatrix[14] = row.z, myMatrix[15] = row.w;
 	}
 
 	template<typename T>

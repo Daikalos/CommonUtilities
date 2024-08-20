@@ -573,6 +573,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
+		// don't know if this even works, use with causion
+
 		ISect<T> result{};
 
 		const ISect<T> isectSegAABB = IntersectionAABBSegment(aAABB, aCapsule.GetBase(), aCapsule.GetTip());
@@ -581,10 +583,10 @@ namespace CommonUtilities
 		
 		if (isectSegAABB) // capsule is deep
 		{
-			const Vector3<T> dir = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
+			const Vector3<T> BtT = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
 
-			const Vector3<T> innerStart = dir + aCapsule.GetBase() * isectSegAABB.enter;
-			const Vector3<T> innerEnd	= dir + aCapsule.GetBase() * isectSegAABB.exit;
+			const Vector3<T> innerStart = aCapsule.GetBase() + BtT * isectSegAABB.enter;
+			const Vector3<T> innerEnd	= aCapsule.GetBase() + BtT * isectSegAABB.exit;
 
 			Vector3<T> farthestPointOnSegment;
 			T largestDistance = MIN_V<T>;
@@ -757,10 +759,10 @@ namespace CommonUtilities
 	{
 		ISect<T> result{};
 
-		const Vector3<T> dir = Vector3<T>::Direction(aStart, aEnd);
+		const Vector3<T> StoE = Vector3<T>::Direction(aStart, aEnd);
 
-		const Vector3<T> t1 = (aAABB.GetMin() - aStart) / dir;
-		const Vector3<T> t2 = (aAABB.GetMax() - aStart) / dir;
+		const Vector3<T> t1 = (aAABB.GetMin() - aStart) / StoE;
+		const Vector3<T> t2 = (aAABB.GetMax() - aStart) / StoE;
 
 		T tMin = 0;
 		T tMax = MAX_V<T>;
@@ -774,14 +776,14 @@ namespace CommonUtilities
 		tMin = Min(Max(t1.z, tMin), Max(t2.z, tMin));
 		tMax = Max(Min(t1.z, tMax), Min(t2.z, tMax));
 
-		if (tMin <= tMax)
+		if (tMin <= tMax && tMin <= T(1) && tMax >= T(0))
 		{
-			bool inside = (t1 <= T(0) && t2 >= T(1));
+			bool inside = (tMin <= T(0) && tMax >= T(1));
 
 			tMin = Max(tMin, T(0)); // clamp tMin to zero if inside aabb
 			tMax = Min(tMax, T(1)); // clamp tMax to one if inside aabb
 
-			result.intersection = aStart + dir * tMin;
+			result.intersection = aStart + StoE * tMin;
 			result.enter		= tMin;
 			result.exit			= tMax;
 			result.inside		= inside;

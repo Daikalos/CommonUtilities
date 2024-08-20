@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <optional>
+#include <array>
 
 #include "Vector3.hpp"
 #include "Shape.h"
@@ -29,6 +30,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetExtends() const;
 		NODISC constexpr Vector3<T> GetSize() const;
 		NODISC constexpr Vector3<T> GetCenter() const;
+		NODISC constexpr std::array<Vector3<T>, 8> GetPoints() const;
 
 		constexpr void SetMin(const Vector3<T>& aMin);
 		constexpr void SetMax(const Vector3<T>& aMax);
@@ -103,6 +105,21 @@ namespace CommonUtilities
 	constexpr Vector3<T> AABB<T>::GetCenter() const
 	{
 		return (myMin + myMax) / 2.0f;
+	}
+	template<typename T>
+	constexpr std::array<Vector3<T>, 8> AABB<T>::GetPoints() const
+	{
+		return std::array<Vector3<T>, 8>
+		{
+			Vector3<T>(GetMin().x, GetMax().y, GetMin().z),
+			Vector3<T>(GetMin().x, GetMax().y, GetMax().z),
+			Vector3<T>(GetMax().x, GetMax().y, GetMax().z),
+			Vector3<T>(GetMax().x, GetMax().y, GetMin().z),
+			Vector3<T>(GetMin().x, GetMin().y, GetMin().z),
+			Vector3<T>(GetMin().x, GetMin().y, GetMax().z),
+			Vector3<T>(GetMax().x, GetMin().y, GetMax().z),
+			Vector3<T>(GetMax().x, GetMin().y, GetMin().z)
+		};
 	}
 
 	template<typename T>

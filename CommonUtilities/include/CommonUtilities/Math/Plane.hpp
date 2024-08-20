@@ -30,6 +30,8 @@ namespace CommonUtilities
 		constexpr void SetOrigin(const Vector3<T>& aOrigin);
 		constexpr void SetNormal(const Vector3<T>& aNormal);
 
+		NODISC constexpr Vector3<T> ClosestPoint(const Vector3<T>& aPoint);
+
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, T aRadius) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition, const Vector3<T>& aExtends) const;
@@ -95,6 +97,13 @@ namespace CommonUtilities
 	{
 		myNormal	= aNormal.GetNormalized();
 		myDistance	= -Vector3<T>::Dot(myNormal, myOrigin);
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Plane<T>::ClosestPoint(const Vector3<T>& aPoint)
+	{
+		const T distance = Vector3<T>::Dot(GetNormal(), aPoint) - myDistance;
+		return aPoint - distance * GetNormal();
 	}
 
 	template<typename T>

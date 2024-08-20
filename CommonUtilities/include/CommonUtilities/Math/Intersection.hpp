@@ -366,19 +366,19 @@ namespace CommonUtilities
 					{
 						result.normal		= (dir.x < 0) ? Vector3<T>(1, 0, 0) : Vector3<T>(-1, 0, 0);
 						result.penetration	= xOverlap;
-						result.intersects		= true;
+						result.intersects	= true;
 					}
 					else if (yOverlap < xOverlap && yOverlap < zOverlap) // y-axis
 					{
 						result.normal		= (dir.y < 0) ? Vector3<T>(0, 1, 0) : Vector3<T>(0, -1, 0);
 						result.penetration	= yOverlap;
-						result.intersects		= true;
+						result.intersects	= true;
 					}
 					else // z-axis
 					{
 						result.normal		= (dir.z < 0) ? Vector3<T>(0, 0, 1) : Vector3<T>(0, 0, -1);
 						result.penetration	= zOverlap;
-						result.intersects		= true;
+						result.intersects	= true;
 					}
 				}
 				//else // 2D collision
@@ -531,12 +531,15 @@ namespace CommonUtilities
 
 		if (tMin <= tMax)
 		{ 
-			tMin = Max(tMin, T(0)); // clamp t to zero if inside aabb
+			bool inside = (tMin <= T(0));
+
+			tMin = Max(tMin, T(0)); // clamp tMin to zero if inside aabb
 
 			result.intersection = aRay.GetOrigin() + aRay.GetDirection() * tMin;
 			result.enter		= tMin;
 			result.exit			= tMax;
-			result.intersects		= true;
+			result.inside		= inside;
+			result.intersects	= true;
 
 			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
@@ -572,34 +575,102 @@ namespace CommonUtilities
 	{
 		ISect<T> result{};
 
-		cu::AABB<T> expandedAABB
-		{
-			aAABB.GetMin() - Vector3<T>(aCapsule.GetRadius()),
-			aAABB.GetMin() + Vector3<T>(aCapsule.GetRadius())
-		};
+		const ISect<T> isectSegAABB = IntersectionAABBSegment(aAABB, aCapsule.GetBase(), aCapsule.GetTip());
 
-		const ISect<T> isectSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
+		const std::array<Vector3<T>, 8> points = aAABB.GetPoints();
 		
-		if (!isectSegAABB)
-			return result;
-
-		if (isectSegAABB.enter >= T(0) && isectSegAABB.exit <= T(1))
+		if (isectSegAABB) // capsule is deep
 		{
-			const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
+			const Vector3<T> dir = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
 
-			const Vector3<T> p1 = isectSegAABB.intersection;
-			const Vector3<T> p2 = aCapsule.GetBase() + AB * isectSegAABB.exit;
+			const Vector3<T> innerStart = dir + aCapsule.GetBase() * isectSegAABB.enter;
+			const Vector3<T> innerEnd	= dir + aCapsule.GetBase() * isectSegAABB.exit;
 
-			int u = 0, v = 0;
+			Vector3<T> farthestPointOnSegment;
+			T largestDistance = MIN_V<T>;
 
+			for (std::size_t i = 0; i < points.size(); ++i)
+			{
+				const Vector3<T> pointOnSegment = Vector3<T>::ClosestPointOnSegment(innerStart, innerEnd, points[i]);
+				const Vector3<T> dir = Vector3<T>::Direction(pointOnSegment, points[i]);
 
+				if (const T lengthSqr = dir.LengthSqr(); lengthSqr > largestDistance)
+				{
+					farthestPointOnSegment = pointOnSegment;
+					largestDistance = lengthSqr;
+				}
+			}
+
+			return IntersectionSphereAABB(Sphere<T>(farthestPointOnSegment, aCapsule.GetRadius()), aAABB);
 		}
-		else
+
+		// capsule is shallow
+
+		Vector3<T> closestPointOnSegment;
+		T smallestDistance = MAX_V<T>;
+
+		for (std::size_t i = 0; i < points.size(); ++i)
 		{
+			const Vector3<T> pointOnSegment = Vector3<T>::ClosestPointOnSegment(aCapsule.GetBase(), aCapsule.GetTip(), points[i]);
+			const Vector3<T> dir			= Vector3<T>::Direction(pointOnSegment, points[i]);
 
+			if (const T lengthSqr = dir.LengthSqr(); lengthSqr < smallestDistance)
+			{
+				closestPointOnSegment = pointOnSegment;
+				smallestDistance = lengthSqr;
+			}
 		}
 
-		return result;
+		return IntersectionSphereAABB(Sphere<T>(closestPointOnSegment, aCapsule.GetRadius()), aAABB);
+
+		//cu::AABB<T> expandedAABB
+		//{
+		//	aAABB.GetMin() - Vector3<T>(aCapsule.GetRadius()),
+		//	aAABB.GetMin() + Vector3<T>(aCapsule.GetRadius())
+		//};
+
+		//const ISect<T> isectSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
+		//
+		//if (!isectSegAABB)
+		//	return result;
+
+		//const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
+
+		//const Vector3<T> p1 = isectSegAABB.intersection;
+		//const Vector3<T> p2 = aCapsule.GetBase() + AB * isectSegAABB.exit;
+
+		//int u = 0, v = 0;
+		//if (p1.x < aAABB.min.x) u |= 1;
+		//if (p1.x > aAABB.max.x) v |= 1;
+		//if (p1.y < aAABB.min.y) u |= 2;
+		//if (p1.y > aAABB.max.y) v |= 2;
+		//if (p1.z < aAABB.min.z) u |= 4;
+		//if (p1.z > aAABB.max.z) v |= 4;
+
+		//const auto GetCorner =
+		//	[&aAABB](int aIndex) -> Vector3<T>
+		//	{
+		//		Vector3<T> p;
+		//		p.x = ((aIndex & 1) ? aAABB.GetMax().x, aAABB.GetMin().x);
+		//		p.y = ((aIndex & 2) ? aAABB.GetMax().y, aAABB.GetMin().y);
+		//		p.z = ((aIndex & 4) ? aAABB.GetMax().z, aAABB.GetMin().z);
+		//		return p;
+		//	};
+
+		//int m = u | v;
+
+		//if (m == 7)
+		//{
+
+		//}
+
+		//if ((m & (m - 1)) == 0) // in face region
+		//{
+		//	result.intersection = isectSegAABB.intersection;
+		//	result.normal		= isectSegAABB.normal;
+		//	result.intersects	= isectSegAABB.intersects;
+		//	result.inside		= isectSegAABB.inside;
+		//}
 	}
 
 	template<typename T>
@@ -705,36 +776,34 @@ namespace CommonUtilities
 
 		if (tMin <= tMax)
 		{
-			if (tMin >= T(0) && tMin <= T(1))
+			bool inside = (t1 <= T(0) && t2 >= T(1));
+
+			tMin = Max(tMin, T(0)); // clamp tMin to zero if inside aabb
+			tMax = Min(tMax, T(1)); // clamp tMax to one if inside aabb
+
+			result.intersection = aStart + dir * tMin;
+			result.enter		= tMin;
+			result.exit			= tMax;
+			result.inside		= inside;
+			result.intersects	= true;
+
+			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+
+			const T x = T(std::abs(dir.x));
+			const T y = T(std::abs(dir.y));
+			const T z = T(std::abs(dir.z));
+
+			if (x > y && x > z)
 			{
-				result.intersection = aStart + dir * tMin;
-				result.enter		= tMin;
-				result.intersects	= true;
-
-				const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
-
-				const T x = T(std::abs(dir.x));
-				const T y = T(std::abs(dir.y));
-				const T z = T(std::abs(dir.z));
-
-				if (x > y && x > z)
-				{
-					result.normal = { Sign(dir.x), T(0), T(0) };
-				}
-				else if (y > x && y > z)
-				{
-					result.normal = { T(0), Sign(dir.y), T(0) };
-				}
-				else
-				{
-					result.normal = { T(0), T(0), Sign(dir.z) };
-				}
+				result.normal = { Sign(dir.x), T(0), T(0) };
 			}
-
-			if (tMax >= T(0) && tMax <= T(1))
+			else if (y > x && y > z)
 			{
-				result.exit			= tMax;
-				result.intersects	= true;
+				result.normal = { T(0), Sign(dir.y), T(0) };
+			}
+			else
+			{
+				result.normal = { T(0), T(0), Sign(dir.z) };
 			}
 		}
 

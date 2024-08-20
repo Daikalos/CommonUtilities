@@ -588,22 +588,13 @@ namespace CommonUtilities
 			const Vector3<T> innerStart = aCapsule.GetBase() + BtT * isectSegAABB.enter;
 			const Vector3<T> innerEnd	= aCapsule.GetBase() + BtT * isectSegAABB.exit;
 
-			Vector3<T> farthestPointOnSegment;
-			T largestDistance = MIN_V<T>;
-
+			Vector3<T> pointsOnSegmentSum;
 			for (std::size_t i = 0; i < points.size(); ++i)
 			{
-				const Vector3<T> pointOnSegment = Vector3<T>::ClosestPointOnSegment(innerStart, innerEnd, points[i]);
-				const Vector3<T> dir = Vector3<T>::Direction(pointOnSegment, points[i]);
-
-				if (const T lengthSqr = dir.LengthSqr(); lengthSqr > largestDistance)
-				{
-					farthestPointOnSegment = pointOnSegment;
-					largestDistance = lengthSqr;
-				}
+				pointsOnSegmentSum += Vector3<T>::ClosestPointOnSegment(innerStart, innerEnd, points[i]);
 			}
 
-			return IntersectionSphereAABB(Sphere<T>(farthestPointOnSegment, aCapsule.GetRadius()), aAABB);
+			return IntersectionSphereAABB(Sphere<T>(pointsOnSegmentSum / (T)points.size(), aCapsule.GetRadius()), aAABB);
 		}
 
 		// capsule is shallow

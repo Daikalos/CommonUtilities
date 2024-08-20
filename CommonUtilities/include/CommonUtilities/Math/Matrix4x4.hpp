@@ -621,34 +621,23 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr AABB<T> Matrix4x4<T>::TransformAABB(const AABB<T>& aAABB) const
 	{
-		const Vector3<T> center		= aAABB.GetCenter();
-		const Vector3<T> extends	= aAABB.GetExtends();
+		const std::array<Vector3<T>, 8> points = aAABB.GetPoints();
 
-		const std::array<Vector3<T>, 8> points 
-		{
-			TransformPoint(center + Vector3<T>(-extends.x,  extends.y, -extends.z)),
-			TransformPoint(center + Vector3<T>(-extends.x,  extends.y,  extends.z)),
-			TransformPoint(center + Vector3<T>( extends.x,  extends.y,  extends.z)), 
-			TransformPoint(center + Vector3<T>( extends.x,  extends.y, -extends.z)), 
-			TransformPoint(center + Vector3<T>(-extends.x, -extends.y, -extends.z)),
-			TransformPoint(center + Vector3<T>(-extends.x, -extends.y,  extends.z)),
-			TransformPoint(center + Vector3<T>( extends.x, -extends.y,  extends.z)),
-			TransformPoint(center + Vector3<T>( extends.x, -extends.y, -extends.z))
-		};
-
-		Vector3<T> min = points[0];
-		Vector3<T> max = points[0];
+		Vector3<T> min = TransformPoint(points[0]);
+		Vector3<T> max = TransformPoint(points[0]);
 
 		for (std::size_t i = 1; i < points.size(); ++i)
 		{
-			if      (points[i].x < min.x) min.x = points[i].x;
-			else if (points[i].x > max.x) max.x = points[i].x;
+			const Vector3<T> point = TransformPoint(points[i]);
 
-			if      (points[i].y < min.y) min.y = points[i].y;
-			else if (points[i].y > max.y) max.y = points[i].y;
-
-			if      (points[i].z < min.z) min.z = points[i].z;
-			else if (points[i].z > max.z) max.z = points[i].z;
+			if      (point.x < min.x) min.x = point.x;
+			else if (point.x > max.x) max.x = point.x;
+					 						  
+			if      (point.y < min.y) min.y = point.y;
+			else if (point.y > max.y) max.y = point.y;
+					 						  
+			if      (point.z < min.z) min.z = point.z;
+			else if (point.z > max.z) max.z = point.z;
 		}
 
 		return AABB<T>(min, max);

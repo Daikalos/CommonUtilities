@@ -92,6 +92,8 @@ namespace CommonUtilities
 
 		void SetIsLooping(bool aFlag);
 
+		void SetRepeat(bool aFlag);
+
 		void Start();
 
 		void Stop();
@@ -101,9 +103,12 @@ namespace CommonUtilities
 		void Update(const Timer& aTimer);
 
 	private:
+		void Execute();
+
 		Event<>		myEvent;
 		float		myCallTime	{1.0f};
 		StopWatch	myStopWatch;
 		bool		myIsLooping	{false};
+		bool		myRepeat	{false};
 	};
 }

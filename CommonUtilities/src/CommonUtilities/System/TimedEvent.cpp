@@ -106,6 +106,11 @@ void TimedEvent::SetIsLooping(bool aFlag)
 	myIsLooping = aFlag;
 }
 
+void TimedEvent::SetRepeat(bool aFlag)
+{
+	myRepeat = aFlag;
+}
+
 void TimedEvent::Start()
 {
 	myStopWatch.Start();
@@ -126,19 +131,34 @@ void TimedEvent::Update(const Timer& aTimer)
 	if (IsRunning())
 	{ 
 		myStopWatch.Update(aTimer);
-		if (GetElapsed() >= GetCallTime())
+		if (myRepeat)
 		{
-			myEvent();
-
-			if (IsLooping())
+			while (GetElapsed() >= GetCallTime())
 			{
-				myStopWatch.Reset(std::fmod(GetElapsed(), GetCallTime()));
-				myStopWatch.Start();
-			}
-			else
-			{
-				myStopWatch.Reset();
+				Execute();
 			}
 		}
+		else
+		{
+			if (GetElapsed() >= GetCallTime())
+			{
+				Execute();
+			}
+		}
+	}
+}
+
+void TimedEvent::Execute()
+{
+	myEvent();
+
+	if (IsLooping())
+	{
+		myStopWatch.Reset(std::fmod(GetElapsed(), GetCallTime()));
+		myStopWatch.Start();
+	}
+	else
+	{
+		myStopWatch.Reset();
 	}
 }

@@ -453,9 +453,6 @@ namespace CommonUtilities
 
 		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
 
-		const Vector3<T> aabbCenter = aAABB.GetCenter();
-		const Vector3<T> dir = Vector3<T>::Direction(aabbCenter, aSphere.GetCenter());
-
 		Vector3<T> pointOnEdge
 		{
 			Clamp(aSphere.GetCenter().x, aAABB.GetMin().x, aAABB.GetMax().x),
@@ -471,21 +468,23 @@ namespace CommonUtilities
 
 			inside = true;
 
-			const T x = T(std::abs(dir.x));
-			const T y = T(std::abs(dir.y));
-			const T z = T(std::abs(dir.z));
+			const Vector3<T> sDir = Vector3<T>::Direction(aAABB.GetCenter(), aSphere.GetCenter());
+
+			const T x = T(std::abs(sDir.x));
+			const T y = T(std::abs(sDir.y));
+			const T z = T(std::abs(sDir.z));
 
 			if (x > y && x > z)
 			{
-				pointOnEdge.x = (pointOnEdge.x > 0) ? aAABB.GetMax().x : aAABB.GetMin().x;
+				pointOnEdge.x = (sDir.x > 0) ? aAABB.GetMax().x : aAABB.GetMin().x;
 			}
 			else if (y > x && y > z)
 			{
-				pointOnEdge.y = (pointOnEdge.y > 0) ? aAABB.GetMax().y : aAABB.GetMin().y;
+				pointOnEdge.y = (sDir.y > 0) ? aAABB.GetMax().y : aAABB.GetMin().y;
 			}
 			else
 			{
-				pointOnEdge.z = (pointOnEdge.z > 0) ? aAABB.GetMax().z : aAABB.GetMin().z;
+				pointOnEdge.z = (sDir.z > 0) ? aAABB.GetMax().z : aAABB.GetMin().z;
 			}
 		}
 
@@ -514,8 +513,13 @@ namespace CommonUtilities
 	{
 		ISect<T> result{};
 
-		const Vector3<T> t1 = (aAABB.GetMin() - aRay.GetOrigin()) / aRay.GetDirection();
-		const Vector3<T> t2 = (aAABB.GetMax() - aRay.GetOrigin()) / aRay.GetDirection();
+		const Vector3<T> rDir = aRay.GetDirection();
+
+		const Vector3<T> originToMin = (aAABB.GetMin() - aRay.GetOrigin());
+		const Vector3<T> originToMax = (aAABB.GetMax() - aRay.GetOrigin());
+
+		const Vector3<T> t1 { originToMin.x / rDir.x, originToMin.y / rDir.y, originToMin.z / rDir.z };
+		const Vector3<T> t2 { originToMax.x / rDir.x, originToMax.y / rDir.y, originToMax.z / rDir.z };
 
 		T tMin = 0;
 		T tMax = MAX_V<T>;
@@ -541,23 +545,23 @@ namespace CommonUtilities
 			result.inside		= inside;
 			result.intersects	= true;
 
-			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+			const Vector3<T> iDir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
-			const T x = T(std::abs(dir.x));
-			const T y = T(std::abs(dir.y));
-			const T z = T(std::abs(dir.z));
+			const T x = T(std::abs(iDir.x));
+			const T y = T(std::abs(iDir.y));
+			const T z = T(std::abs(iDir.z));
 
 			if (x > y && x > z)
 			{
-				result.normal = { Sign(dir.x), T(0), T(0) };
+				result.normal = { Sign(iDir.x), T(0), T(0) };
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = { T(0), Sign(dir.y), T(0) };
+				result.normal = { T(0), Sign(iDir.y), T(0) };
 			}
 			else
 			{
-				result.normal = { T(0), T(0), Sign(dir.z) };
+				result.normal = { T(0), T(0), Sign(iDir.z) };
 			}
 		}
 
@@ -752,8 +756,11 @@ namespace CommonUtilities
 
 		const Vector3<T> StoE = Vector3<T>::Direction(aStart, aEnd);
 
-		const Vector3<T> t1 = (aAABB.GetMin() - aStart) / StoE;
-		const Vector3<T> t2 = (aAABB.GetMax() - aStart) / StoE;
+		const Vector3<T> startToMin = (aAABB.GetMin() - aStart);
+		const Vector3<T> startToMax = (aAABB.GetMax() - aStart);
+
+		const Vector3<T> t1 { startToMin.x / StoE.x, startToMin.y / StoE.y, startToMin.z / StoE.z };
+		const Vector3<T> t2 { startToMax.x / StoE.x, startToMax.y / StoE.y, startToMax.z / StoE.z };
 
 		T tMin = 0;
 		T tMax = MAX_V<T>;
@@ -780,23 +787,23 @@ namespace CommonUtilities
 			result.inside		= inside;
 			result.intersects	= true;
 
-			const Vector3<T> dir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
+			const Vector3<T> iDir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
-			const T x = T(std::abs(dir.x));
-			const T y = T(std::abs(dir.y));
-			const T z = T(std::abs(dir.z));
+			const T x = T(std::abs(iDir.x));
+			const T y = T(std::abs(iDir.y));
+			const T z = T(std::abs(iDir.z));
 
 			if (x > y && x > z)
 			{
-				result.normal = { Sign(dir.x), T(0), T(0) };
+				result.normal = { Sign(iDir.x), T(0), T(0) };
 			}
 			else if (y > x && y > z)
 			{
-				result.normal = { T(0), Sign(dir.y), T(0) };
+				result.normal = { T(0), Sign(iDir.y), T(0) };
 			}
 			else
 			{
-				result.normal = { T(0), T(0), Sign(dir.z) };
+				result.normal = { T(0), T(0), Sign(iDir.z) };
 			}
 		}
 

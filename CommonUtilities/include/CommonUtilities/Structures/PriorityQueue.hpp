@@ -12,14 +12,11 @@ namespace CommonUtilities
 	{
 		enum class HeapType : bool
 		{
-			Min = false,
-			Max = true
+			Min,
+			Max
 		};
 	}
 
-	/// Custom priority queue to allow modifying the elements while still maintaining order due to separating the priority from 
-	/// the item itself.
-	/// 
 	template<typename T, pq::HeapType C = pq::HeapType::Min>
 	class PriorityQueue
 	{
@@ -191,7 +188,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T, pq::HeapType C>
-	template<typename ...Args> requires std::constructible_from<T, Args...>
+	template<typename... Args> requires std::constructible_from<T, Args...>
 	constexpr void PriorityQueue<T, C>::Emplace(Args&&... someArgs)
 	{
 		myNodes.emplace_back(std::forward<Args>(someArgs)...);

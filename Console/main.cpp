@@ -21,8 +21,11 @@ int main()
 	cu::Vector2f vec(5.0f, 3.0f);
 	auto l = vec.ToSIMD();
 
-	cu::Mat4f mat = cu::Mat4f::CreateTRS(cu::Vector3f(0.0f, 5.0f, 0.0f), cu::Quatf::IDENTITY, cu::Vector3f::One);
-	auto p = mat.ToSIMD();
+	cu::Mat4f mat1 = cu::Mat4f::CreateTRS(cu::Vector3f(0.0f, 5.0f, 0.0f), cu::Vector3f(0.5f, 0.2f, -2.5f), cu::Vector3f::One);
+	cu::Mat4f mat2 = cu::Mat4f::CreateTRS(cu::Vector3f(0.0f, 5.0f, 0.0f), cu::Vector3f(0.2f, 0.9f, -0.5f), cu::Vector3f::One);
+
+	cu::Mat4f r1 = mat1 * mat2;
+	cu::Mat4f r2 = cu::Mat4f::Multiply(mat1, mat2);
 
 	cu::AABBf aabb;
 	cu::Rayf ray;

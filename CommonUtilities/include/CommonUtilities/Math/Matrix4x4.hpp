@@ -44,7 +44,7 @@ namespace CommonUtilities
 
 		constexpr Matrix4x4(const Matrix3x3<T>& aMatrix);
 
-		constexpr Matrix4x4(const std::array<__m128, 4>& aRegisters) requires (std::is_same_v<T, float>);
+		constexpr Matrix4x4(std::array<__m128, 4> aRegisters) requires (std::is_same_v<T, float>);
 
 		template<class OtherMatrix>
 		NODISC constexpr explicit operator OtherMatrix() const;
@@ -136,6 +136,8 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateRotationMatrixFromQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 		NODISC constexpr static auto CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 
+		NODISC constexpr static auto Multiply(const Matrix4x4& aLeft, const Matrix4x4& aRight) -> Matrix4x4;
+
 		static const Matrix4x4 IDENTITY;
 
 	private:
@@ -188,7 +190,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Matrix4x4<T>::Matrix4x4(const std::array<__m128, 4>& aRegisters) requires (std::is_same_v<T, float>)
+	constexpr Matrix4x4<T>::Matrix4x4(std::array<__m128, 4> aRegisters) requires (std::is_same_v<T, float>)
 	{
 		alignas(16) std::array<T, 16> values{};
 		_mm_store_ps(values.data() + 4 * 0, aRegisters[0]);
@@ -342,7 +344,7 @@ namespace CommonUtilities
 	{
 		return std::array<__m128, 4>
 		{
-			Vector4<T>{ myMatrix[0 ], myMatrix[1 ], myMatrix[2 ], myMatrix[3 ] }.ToSIMD(),
+			Vector4<T>{ myMatrix[0 ], myMatrix[1 ], myMatrix[2 ], myMatrix[3 ] }.ToSIMD(), // would like to use __m512 but is not supported by many CPUs
 			Vector4<T>{ myMatrix[4 ], myMatrix[5 ], myMatrix[6 ], myMatrix[7 ] }.ToSIMD(),
 			Vector4<T>{ myMatrix[8 ], myMatrix[9 ], myMatrix[10], myMatrix[11] }.ToSIMD(),
 			Vector4<T>{ myMatrix[12], myMatrix[13], myMatrix[14], myMatrix[15] }.ToSIMD()
@@ -880,6 +882,43 @@ namespace CommonUtilities
 			a20,	a21,	a22,	0,
 			0,		0,		0,		1
 		};
+	}
+
+	template<typename T>
+	constexpr auto Matrix4x4<T>::Multiply(const Matrix4x4& aLeft, const Matrix4x4& aRight) -> Matrix4x4
+	{
+		// https://stackoverflow.com/a/18508113
+
+		Matrix4x4 result;
+
+		const T* a	= aLeft.GetData();
+		const T* b	= aRight.GetData();
+		T* c		= result.GetData();
+
+		__m128 row1 = _mm_load_ps(&b[0]);
+		__m128 row2 = _mm_load_ps(&b[4]);
+		__m128 row3 = _mm_load_ps(&b[8]);
+		__m128 row4 = _mm_load_ps(&b[12]);
+
+		for (int i = 0; i < 4; i++)
+		{
+			__m128 brod1 = _mm_set_ps1(a[4 * i + 0]);
+			__m128 brod2 = _mm_set_ps1(a[4 * i + 1]);
+			__m128 brod3 = _mm_set_ps1(a[4 * i + 2]);
+			__m128 brod4 = _mm_set_ps1(a[4 * i + 3]);
+
+			__m128 row = _mm_add_ps(
+				_mm_add_ps(
+					_mm_mul_ps(brod1, row1),
+					_mm_mul_ps(brod2, row2)),
+				_mm_add_ps(
+					_mm_mul_ps(brod3, row3),
+					_mm_mul_ps(brod4, row4)));
+
+			_mm_store_ps(&c[4 * i], row);
+		}
+
+		return result;
 	}
 
 	// GLOBAL OPERATORS

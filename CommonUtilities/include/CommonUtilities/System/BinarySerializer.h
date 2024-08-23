@@ -50,6 +50,24 @@ namespace CommonUtilities
 			requires (!std::is_trivially_copyable_v<T>);
 	};
 
+	template<typename T, typename U> requires (!std::is_trivially_copyable_v<T> || !std::is_trivially_copyable_v<U>)
+	struct SerializeAsBinary<std::pair<T, U>>
+	{
+		NODISC std::size_t operator()(SerializerState aState, std::pair<T, U>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+		NODISC std::size_t operator()(SerializerState aState, const std::pair<T, U>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+	};
+
+	template<typename... Ts> requires (!std::is_trivially_copyable_v<Ts> || ...)
+	struct SerializeAsBinary<std::tuple<Ts...>>
+	{
+		NODISC std::size_t operator()(SerializerState aState, std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+		NODISC std::size_t operator()(SerializerState aState, const std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+
+	private:
+		template<std::size_t I = 0>
+		std::size_t SerializeTuple(SerializerState aState, std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+	};
+
 	class BinarySerializer
 	{
 	public:
@@ -273,6 +291,69 @@ namespace CommonUtilities
 		}
 
 		return numBytes;
+	}
+
+	template<typename T, typename U> requires (!std::is_trivially_copyable_v<T> || !std::is_trivially_copyable_v<U>)
+	inline std::size_t SerializeAsBinary<std::pair<T, U>>::operator()(SerializerState aState, std::pair<T, U>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		aOffset += cu::SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
+		aOffset += cu::SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+
+	template<typename T, typename U> requires (!std::is_trivially_copyable_v<T> || !std::is_trivially_copyable_v<U>)
+	inline std::size_t SerializeAsBinary<std::pair<T, U>>::operator()(SerializerState aState, const std::pair<T, U>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		aOffset += cu::SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
+		aOffset += cu::SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+
+	template<typename... Ts> requires (!std::is_trivially_copyable_v<Ts> || ...)
+	inline std::size_t SerializeAsBinary<std::tuple<Ts...>>::operator()(SerializerState aState, std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		aOffset = SerializeTuple<>(aState, aInOutData, aInOutBytes, aOffset);
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+
+	template<typename... Ts> requires (!std::is_trivially_copyable_v<Ts> || ...)
+	inline std::size_t SerializeAsBinary<std::tuple<Ts...>>::operator()(SerializerState aState, const std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		aOffset = SerializeTuple<>(aState, aInOutData, aInOutBytes, aOffset);
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+
+	template<typename... Ts> requires (!std::is_trivially_copyable_v<Ts> || ...)
+	template<std::size_t I>
+	inline std::size_t SerializeAsBinary<std::tuple<Ts...>>::SerializeTuple(SerializerState aState, std::tuple<Ts...>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		if constexpr (I != sizeof...(Ts))
+		{
+			aOffset += cu::SerializeAsBinary<std::tuple_element_t<I, std::tuple<Ts...>>>{}(aState, std::get<I>(aInOutData), aInOutBytes, aOffset);
+			return SerializeTuple<I + 1>(aState, aInOutData, aInOutBytes, aOffset);
+		}
+
+		return aOffset;
 	}
 
 	template<typename T>

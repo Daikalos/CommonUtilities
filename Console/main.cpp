@@ -39,5 +39,9 @@ int main()
 
 	constexpr cu::AABBf test = caps.GetAABB();
 
+	cu::BinaryWriteSerializer write;
+	std::tuple<std::string, int, float> abc("hello", 5, 9.0f);
+	write.Serialize(abc);
+
 	return 0;
 }

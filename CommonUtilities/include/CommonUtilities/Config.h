@@ -1,20 +1,18 @@
 #pragma once
 
-#ifndef COMMON_UTILITIES_STATIC
-
 #ifdef _WIN32
 #	define COMMON_UTILITIES_SYSTEM_WIN
-
-#	define COMMON_UTILITIES_API_EXPORT __declspec(dllexport)
-#	define COMMON_UTILITIES_API_IMPORT __declspec(dllimport)
-
-#	ifndef NOMINMAX
-#		define NOMINMAX
-#	endif
+#	define NOMINMAX
 #endif
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4251) // disable 4251 warning
+#ifndef COMMON_UTILITIES_STATIC
+
+#ifdef COMMON_UTILITIES_SYSTEM_WIN
+#	define COMMON_UTILITIES_API_EXPORT __declspec(dllexport)
+#	define COMMON_UTILITIES_API_IMPORT __declspec(dllimport)
+#	ifdef _MSC_VER
+#		pragma warning(disable : 4251) // disable 4251 warning
+#	endif
 #endif
 
 #else
@@ -100,4 +98,5 @@
 #ifndef FULL_NAMESPACE
 	namespace CommonUtilities{}
 	namespace cu = CommonUtilities;
+	namespace CU = CommonUtilities;
 #endif 

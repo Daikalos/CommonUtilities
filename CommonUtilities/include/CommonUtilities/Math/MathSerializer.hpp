@@ -65,7 +65,7 @@ namespace CommonUtilities
 			aOffset += cu::SerializeAsBinary<Vector3<T>>{}(aState, min, aInOutBytes, aOffset);
 			aOffset += cu::SerializeAsBinary<Vector3<T>>{}(aState, max, aInOutBytes, aOffset);
 
-			aInOutData = AABB<T>(aabbMin, aabbMax);
+			aInOutData = AABB<T>(min, max);
 		}
 		else
 		{

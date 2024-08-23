@@ -353,8 +353,10 @@ namespace CommonUtilities
 			aOffset += cu::SerializeAsBinary<std::tuple_element_t<I, std::tuple<Ts...>>>{}(aState, std::get<I>(aInOutData), aInOutBytes, aOffset);
 			return SerializeTuple<I + 1>(aState, aInOutData, aInOutBytes, aOffset);
 		}
-
-		return aOffset;
+		else
+		{
+			return aOffset;
+		}
 	}
 
 	template<typename T>

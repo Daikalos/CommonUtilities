@@ -74,6 +74,7 @@ namespace CommonUtilities
 		BinarySerializer() = delete;
 		virtual ~BinarySerializer() = default;
 
+		NODISC SerializerState GetState() const noexcept { return myState; }
 		NODISC std::size_t GetOffset() const noexcept { return myOffset; }
 
 		template<typename... Ts>

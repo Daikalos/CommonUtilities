@@ -116,23 +116,23 @@ namespace CommonUtilities
 	{
 		const cu::Mat4f invMat = aViewProjection.GetInverse();
 
-		cu::Vector4f p0	= invMat * cu::Vector4f(-1.0f,  1.0f, 0.0f, 1.0f);
-		cu::Vector4f p1 = invMat * cu::Vector4f( 1.0f,  1.0f, 0.0f, 1.0f);
-		cu::Vector4f p2 = invMat * cu::Vector4f(-1.0f, -1.0f, 0.0f, 1.0f);
-		cu::Vector4f p3 = invMat * cu::Vector4f( 1.0f, -1.0f, 0.0f, 1.0f);
-		cu::Vector4f p4 = invMat * cu::Vector4f(-1.0f,  1.0f, 1.0f, 1.0f);
-		cu::Vector4f p5 = invMat * cu::Vector4f( 1.0f,  1.0f, 1.0f, 1.0f);
-		cu::Vector4f p6 = invMat * cu::Vector4f(-1.0f, -1.0f, 1.0f, 1.0f);
-		cu::Vector4f p7 = invMat * cu::Vector4f( 1.0f, -1.0f, 1.0f, 1.0f);
-
-		cu::Vector3f nearTopLeft	= p0.XYZ() / p0.w;
-		cu::Vector3f nearTopRight	= p1.XYZ() / p1.w;
-		cu::Vector3f nearBotLeft	= p2.XYZ() / p2.w;
-		cu::Vector3f nearBotRight	= p3.XYZ() / p3.w;
-		cu::Vector3f farTopLeft		= p4.XYZ() / p4.w;
-		cu::Vector3f farTopRight	= p5.XYZ() / p5.w;
-		cu::Vector3f farBotLeft		= p6.XYZ() / p6.w;
-		cu::Vector3f farBotRight	= p7.XYZ() / p7.w;
+		const Vector4<T> p0 = invMat * Vector4<T>(-1.0f,  1.0f, 0.0f, 1.0f);
+		const Vector4<T> p1 = invMat * Vector4<T>( 1.0f,  1.0f, 0.0f, 1.0f);
+		const Vector4<T> p2 = invMat * Vector4<T>(-1.0f, -1.0f, 0.0f, 1.0f);
+		const Vector4<T> p3 = invMat * Vector4<T>( 1.0f, -1.0f, 0.0f, 1.0f);
+		const Vector4<T> p4 = invMat * Vector4<T>(-1.0f,  1.0f, 1.0f, 1.0f);
+		const Vector4<T> p5 = invMat * Vector4<T>( 1.0f,  1.0f, 1.0f, 1.0f);
+		const Vector4<T> p6 = invMat * Vector4<T>(-1.0f, -1.0f, 1.0f, 1.0f);
+		const Vector4<T> p7 = invMat * Vector4<T>( 1.0f, -1.0f, 1.0f, 1.0f);
+			   
+		const Vector3<T> nearTopLeft	= p0.XYZ() / p0.w;
+		const Vector3<T> nearTopRight	= p1.XYZ() / p1.w;
+		const Vector3<T> nearBotLeft	= p2.XYZ() / p2.w;
+		const Vector3<T> nearBotRight	= p3.XYZ() / p3.w;
+		const Vector3<T> farTopLeft		= p4.XYZ() / p4.w;
+		const Vector3<T> farTopRight	= p5.XYZ() / p5.w;
+		const Vector3<T> farBotLeft		= p6.XYZ() / p6.w;
+		const Vector3<T> farBotRight	= p7.XYZ() / p7.w;
 
 		myPoints[0] = nearTopLeft;
 		myPoints[1] = nearTopRight;
@@ -170,15 +170,15 @@ namespace CommonUtilities
 	{
 		Frustum result;
 
-		cu::Vector3f nearTopLeft	= Vector3<T>::CLerp(myPoints[0], myPoints[4], (T)aStartPercentage);
-		cu::Vector3f nearTopRight	= Vector3<T>::CLerp(myPoints[1], myPoints[5], (T)aStartPercentage);
-		cu::Vector3f nearBotLeft	= Vector3<T>::CLerp(myPoints[2], myPoints[6], (T)aStartPercentage);
-		cu::Vector3f nearBotRight	= Vector3<T>::CLerp(myPoints[3], myPoints[7], (T)aStartPercentage);
-													 
-		cu::Vector3f farTopLeft		= Vector3<T>::CLerp(myPoints[0], myPoints[4], (T)aEndPercentage);
-		cu::Vector3f farTopRight	= Vector3<T>::CLerp(myPoints[1], myPoints[5], (T)aEndPercentage);
-		cu::Vector3f farBotLeft		= Vector3<T>::CLerp(myPoints[2], myPoints[6], (T)aEndPercentage);
-		cu::Vector3f farBotRight	= Vector3<T>::CLerp(myPoints[3], myPoints[7], (T)aEndPercentage);
+		const Vector3<T> nearTopLeft	= Vector3<T>::CLerp(myPoints[0], myPoints[4], (T)aStartPercentage);
+		const Vector3<T> nearTopRight	= Vector3<T>::CLerp(myPoints[1], myPoints[5], (T)aStartPercentage);
+		const Vector3<T> nearBotLeft	= Vector3<T>::CLerp(myPoints[2], myPoints[6], (T)aStartPercentage);
+		const Vector3<T> nearBotRight	= Vector3<T>::CLerp(myPoints[3], myPoints[7], (T)aStartPercentage);
+		 										 
+		const Vector3<T> farTopLeft		= Vector3<T>::CLerp(myPoints[0], myPoints[4], (T)aEndPercentage);
+		const Vector3<T> farTopRight	= Vector3<T>::CLerp(myPoints[1], myPoints[5], (T)aEndPercentage);
+		const Vector3<T> farBotLeft		= Vector3<T>::CLerp(myPoints[2], myPoints[6], (T)aEndPercentage);
+		const Vector3<T> farBotRight	= Vector3<T>::CLerp(myPoints[3], myPoints[7], (T)aEndPercentage);
 
 		result.myPoints[0] = nearTopLeft;
 		result.myPoints[1] = nearTopRight;
@@ -216,7 +216,7 @@ namespace CommonUtilities
 		{
 			Face f = static_cast<Face>(i);
 
-			float d = myPlanes[f].GetDistance();
+			const float d = myPlanes[f].GetDistance();
 
 			int out = 0;
 			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));
@@ -256,7 +256,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Frustum<T>::IsInsideNoDepth(const Sphere<T>& aSphere) const
 	{
-		float radius = -aSphere.GetRadius();
+		const float radius = -aSphere.GetRadius();
 
 		return 
 			!(myPlanes[Face::Right].IsInside(aSphere.GetCenter(), radius) ||
@@ -271,7 +271,7 @@ namespace CommonUtilities
 		{
 			Face f = static_cast<Face>(i);
 
-			float d = myPlanes[f].GetDistance(); // plane distance
+			const float d = myPlanes[f].GetDistance(); // plane distance
 
 			int out = 0;
 			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));

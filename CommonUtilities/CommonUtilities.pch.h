@@ -24,5 +24,4 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#define NOMINMAX
-#include <Windows.h>
+#include <CommonUtilities/System/WindowsHeader.h>

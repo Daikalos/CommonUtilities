@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Windows.h>
+#include <CommonUtilities/System/WindowsHeader.h>
+
 #include <Xinput.h>
 #include <optional>
 

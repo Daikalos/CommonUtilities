@@ -1,9 +1,7 @@
 #pragma once
 
-#include <Windows.h>
-
-#include <CommonUtilities\Math\Vector2.hpp>
-#include <CommonUtilities\Config.h>
+#include <CommonUtilities/Math/Vector2.hpp>
+#include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {

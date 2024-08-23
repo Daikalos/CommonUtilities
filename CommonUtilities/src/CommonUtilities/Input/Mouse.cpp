@@ -1,7 +1,7 @@
 #include <CommonUtilities/Input/Mouse.h>
 
 #include <cassert>
-#include <Windows.h>
+#include <CommonUtilities/System/WindowsHeader.h>
 
 using namespace CommonUtilities;
 

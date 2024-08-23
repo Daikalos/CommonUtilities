@@ -306,6 +306,9 @@
     <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\WindowsHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp">
@@ -380,7 +383,7 @@
     <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\Utility\WinUtils.cpp">
+    <ClCompile Include="src\CommonUtilities\Utility\Win32Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Utility\FileUtils.cpp">

@@ -1,8 +1,7 @@
 #pragma once
 
+#include <CommonUtilities/System/WindowsHeader.h>
 #include <CommonUtilities/Config.h>
-
-#include <Windows.h>
 
 namespace CommonUtilities::Keyboard
 {

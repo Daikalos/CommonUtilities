@@ -1,8 +1,9 @@
 #pragma once
 
-#include <array>
-#include <Windows.h>
+#include <CommonUtilities/System/WindowsHeader.h>
+
 #include <Xinput.h>
+#include <array>
 
 #include <CommonUtilities/Input/InputHandler.h>
 #include <CommonUtilities/Input/Gamepad.h>

@@ -6,8 +6,8 @@
 #include <span>
 #include <cassert>
 
-#include <CommonUtilities\Utility\Traits.h>
-#include <CommonUtilities\Config.h>
+#include <CommonUtilities/Utility/Traits.h>
+#include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 { 

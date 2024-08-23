@@ -1,9 +1,8 @@
 #pragma once
 
+#include <CommonUtilities/System/WindowsHeader.h>
 #include <CommonUtilities/Math/Vector2.hpp>
 #include <CommonUtilities/Config.h>
-
-#include <Windows.h>
 
 namespace CommonUtilities::Mouse
 {

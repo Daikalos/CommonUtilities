@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Windows.h>
 #include <array>
 
+#include <CommonUtilities/System/WindowsHeader.h>
 #include <CommonUtilities/Utility/NonCopyable.h>
 #include <CommonUtilities/Config.h>
 

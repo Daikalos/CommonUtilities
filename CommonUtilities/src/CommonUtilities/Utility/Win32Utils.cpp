@@ -1,5 +1,6 @@
-#include <CommonUtilities\Utility\Win32Utils.h>
+#include <CommonUtilities/Utility/Win32Utils.h>
 
+#include <CommonUtilities/System/WindowsHeader.h>
 #include <algorithm>
 #include <Psapi.h>
 #include <Pdh.h>

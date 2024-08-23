@@ -3,7 +3,7 @@
 #include <span>
 #include <string>
 
-#include <CommonUtilities\Config.h>
+#include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {

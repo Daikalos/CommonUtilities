@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="CommonUtilities.pch.h" />
     <ClInclude Include="include\CommonUtilities\Math\Capsule.hpp" />
+    <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\MathSerializer.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Triangle.hpp" />

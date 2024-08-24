@@ -14,6 +14,7 @@
 
 #include <CommonUtilities/Structures/Blackboard.hpp>
 
+#include <CommonUtilities/Utility/BitUtils.hpp>
 #include <CommonUtilities/Math/AABB.hpp>
 
 int main()
@@ -42,6 +43,6 @@ int main()
 	cu::BinaryWriteSerializer write;
 	std::tuple<std::string, int, float> abc("hello", 5, 9.0f);
 	write.Serialize(abc);
-
+	
 	return 0;
 }

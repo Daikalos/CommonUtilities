@@ -26,14 +26,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	std::string ToBinary(const T& aVariable)
+	inline std::string ToBinary(const T& aVariable)
 	{
 		const std::byte* bytes = reinterpret_cast<const std::byte*>(&aVariable);
 
 		std::string result;
-		result.reserve(sizeof(aVariable) * CHAR_BIT);
+		result.reserve(sizeof(T) * CHAR_BIT);
 
-		for (int i = sizeof(aVariable) - 1; i >= 0; --i)
+		for (int i = sizeof(T) - 1; i >= 0; --i)
 		{
 			for (int j = CHAR_BIT - 1; j >= 0; --j)
 				result += std::to_integer<int>(bytes[i] & std::byte(1 << j)) ? '1' : '0';

@@ -44,8 +44,10 @@ int main()
 	std::tuple<std::string, int, float> abc("hello", 5, 9.0f);
 	write.Serialize(abc);
 	
-	constexpr std::uint64_t packed = cu::PackValues64<8, 4, 9, 43>({ 3, 3, 1, 3 });
+	constexpr std::uint64_t packed = cu::PackValues64<8, 4, 9, 43>({ 3, 5, 1, 3 });
+	constexpr std::uint64_t extracted = cu::ExtractValue64<43, 21>(packed);
 	std::string bits = cu::ToBinary(packed);
+	std::string bits2 = cu::ToBinary(extracted);
 
 	return 0;
 }

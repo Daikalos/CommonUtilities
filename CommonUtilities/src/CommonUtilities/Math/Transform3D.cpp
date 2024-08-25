@@ -4,7 +4,7 @@ using namespace CommonUtilities;
 
 Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder)
 	: myPosition(aPosition)
-	, myRotation(aRotation)
+	, myRotation(aRotation, aRotationOrder)
 	, myScale(aScale)
 	, myRotationOrder(aRotationOrder)
 {
@@ -33,7 +33,7 @@ const Mat4f& Transform3D::GetMatrix() const
 {
 	if (myUpdateMatrix)
 	{
-		myMatrix = Mat4f::CreateTRS(myPosition, myRotation, myScale, myRotationOrder);
+		myMatrix = Mat4f::CreateTRS(myPosition, myRotation, myScale);
 		myUpdateMatrix = false;
 	}
 	return myMatrix;
@@ -52,7 +52,7 @@ const Vector3f& Transform3D::GetPosition() const noexcept
 {
 	return myPosition;
 }
-const Vector3f& Transform3D::GetRotation() const noexcept
+const Quatf& Transform3D::GetRotation() const noexcept
 {
 	return myRotation;
 }
@@ -63,11 +63,6 @@ const Vector3f& Transform3D::GetScale() const noexcept
 AxisOrder Transform3D::GetRotationOrder() const noexcept
 {
 	return myRotationOrder;
-}
-
-Quatf Transform3D::GetQuaternion() const
-{
-	return Quatf(GetMatrix());
 }
 
 Vector3f Transform3D::ModelToWorld(const Vector3f& aModelPosition) const
@@ -88,7 +83,7 @@ void Transform3D::SetPosition(const Vector3f& aPosition)
 		myUpdateInverseMatrix	= true;
 	}
 }
-void Transform3D::SetRotation(const Vector3f& aRotation)
+void Transform3D::SetRotation(const Quatf& aRotation)
 {
 	if (myRotation != aRotation)
 	{
@@ -117,7 +112,7 @@ void Transform3D::Move(const Vector3f& aPosition)
 }
 void Transform3D::Rotate(const Vector3f& aRotation)
 {
-	SetRotation(GetRotation() + aRotation);
+	SetRotation(GetRotation() * cu::Quatf(aRotation, myRotationOrder));
 }
 void Transform3D::Scale(const Vector3f& aScale)
 {

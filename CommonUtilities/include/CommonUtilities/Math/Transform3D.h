@@ -23,17 +23,15 @@ namespace CommonUtilities
 		NODISC const Mat4f& GetInverseMatrix() const;
 
 		NODISC const Vector3f& GetPosition() const noexcept;
-		NODISC const Vector3f& GetRotation() const noexcept;
+		NODISC const Quatf& GetRotation() const noexcept;
 		NODISC const Vector3f& GetScale() const noexcept;
 		NODISC AxisOrder GetRotationOrder() const noexcept;
-
-		NODISC Quatf GetQuaternion() const;
 
 		NODISC Vector3f ModelToWorld(const Vector3f& aModelPosition) const;
 		NODISC Vector3f WorldToModel(const Vector3f& aWorldPosition) const;
 
 		virtual void SetPosition(const Vector3f& aPosition);
-		virtual void SetRotation(const Vector3f& aRotation);
+		virtual void SetRotation(const Quatf& aRotation);
 		virtual void SetScale(const Vector3f& aScale);
 		void SetRotationOrder(AxisOrder aRotationOrder);
 
@@ -43,7 +41,7 @@ namespace CommonUtilities
 
 	protected:
 		Vector3f		myPosition;
-		Vector3f		myRotation; // TODO: switch to quaternion in the future
+		Quatf			myRotation; 
 		Vector3f		myScale					{1.0f, 1.0f, 1.0f};
 		AxisOrder		myRotationOrder			{RotationOrder};
 		mutable Mat4f	myMatrix;

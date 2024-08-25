@@ -35,6 +35,15 @@ namespace CommonUtilities
 		return result;
 	}
 
+	/// Extracts N bits from a number with the offset starting from left most bit
+	/// 
+	template<std::size_t BitSize, std::size_t BitOffset>
+	constexpr std::uint64_t ExtractValue64(std::uint64_t aPackedValues)
+	{
+		constexpr std::uint64_t bitPos = sizeof(std::uint64_t) * CHAR_BIT - (BitOffset + BitSize);
+		return (aPackedValues >> bitPos) & ((1ULL << BitSize) - 1);
+	}
+
 	template<typename T>
 	inline std::string ToBinary(const T& aVariable)
 	{

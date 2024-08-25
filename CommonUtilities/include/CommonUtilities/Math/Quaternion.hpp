@@ -76,6 +76,9 @@ namespace CommonUtilities
 		NODISC constexpr static Quaternion Lerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 		NODISC constexpr static Quaternion Slerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 
+		NODISC constexpr static Quaternion AxisAngle(const Vector3<T>& aVector, T aAngle);
+		NODISC constexpr static Quaternion LookRotation(const Vector3<T>& aForward, const Vector3<T>& aUp = Vector3<T>::Up);
+		NODISC constexpr static Quaternion RotateTowards(Quaternion aQuatA, Quaternion aQuatB, T aMaxRadiansDelta);
 		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate);
 		NODISC constexpr static Quaternion RotationFromTo(Vector3<T> aFrom, Vector3<T> aTo);
 
@@ -379,10 +382,59 @@ namespace CommonUtilities
 
 		// Essential Mathematics, page 467
 
-		T angle = std::acos(cosTheta);
+		const T angle = std::acos(cosTheta);
 		return (std::sin((T(1) - aDelta) * angle) * aQuatA + std::sin(aDelta * angle) * qz) / std::sin(angle);
 	}
 
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::AxisAngle(const Vector3<T>& aVector, T aAngle)
+	{
+		return Quaternion(aVector, aAngle);
+	}
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::LookRotation(const Vector3<T>& aForward, const Vector3<T>& aUp)
+	{
+		if (aForward.LengthSqr() < T(0.0001))
+			return Quaternion<T>();
+
+		const Vector3<T> xAxis = aUp.Cross(aForward).GetNormalized();
+		const Vector3<T> yAxis = aForward.Cross(xAxis);
+
+		const Quaternion<T> rot1 = Quaternion<T>::RotationFromTo(Vector3<T>(0, 0, 1), aForward);
+
+		const Vector3<T> newUp = rot1 * Vector3<T>(0, 1, 0);
+		const Quaternion<T> rot2 = Quaternion<T>::RotationFromTo(newUp, yAxis);
+
+		return rot2 * rot1;
+	}
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::RotateTowards(Quaternion aQuatA, Quaternion aQuatB, T aMaxRadiansDelta)
+	{
+		if (aMaxRadiansDelta <= EPSILON_V<T>)
+			return aQuatA;
+
+		const T cosTheta = aQuatA.Dot(aQuatB);
+
+		if (cosTheta >= T(0.99999)) // already equal
+			return aQuatB;
+
+		if (cosTheta < T(0))
+		{
+			aQuatA = -aQuatA;
+			cosTheta = -cosTheta;
+		}
+
+		const T angle = std::acos(cosTheta);
+
+		if (angle < aMaxRadiansDelta) // arrived
+			return aQuatB;
+
+		const T fT = aMaxRadiansDelta / angle;
+		angle = aMaxRadiansDelta;
+
+		Quaternion<T> result = (std::sin((T(1) - fT) * angle) * aQuatA + std::sin(fT * angle) * aQuatB) / std::sin(angle);
+		return result.GetNormalized();
+	}
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate)
 	{
@@ -401,11 +453,11 @@ namespace CommonUtilities
 		aTo.Normalize();
 
 		const float d = aFrom.Dot(aTo);
-		if (d >= T(1)) // same direction
+		if (d >= T(0.99999)) // same direction
 		{
 			return IDENTITY; 
 		}
-		else if (d >= -T(1)) // opposites
+		else if (d >= T(-0.99999)) // opposites
 		{
 			Vector3<T> axis(1, 0, 0);
 			axis = axis.Cross(aFrom);

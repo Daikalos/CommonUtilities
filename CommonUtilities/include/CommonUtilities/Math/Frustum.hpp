@@ -152,7 +152,22 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Frustum<T>& Frustum<T>::SetPoints(const AABB<T>& aBox)
 	{
-		return SetPoints(aBox.GetPoints());
+		const std::array<Vector3<T>, 8> boxPoints = aBox.GetPoints();
+
+		myPoints[0] = boxPoints[0];
+		myPoints[1] = boxPoints[3];
+		myPoints[2] = boxPoints[4];
+		myPoints[3] = boxPoints[7];
+
+		myPoints[4] = boxPoints[1];
+		myPoints[5] = boxPoints[2];
+		myPoints[6] = boxPoints[5];
+		myPoints[7] = boxPoints[6];
+
+		ComputeCenters();
+		ComputePlanes();
+
+		return *this;
 	}
 	template<typename T>
 	constexpr Frustum<T>& Frustum<T>::SetPoints(const FrustumPoints& aPoints)

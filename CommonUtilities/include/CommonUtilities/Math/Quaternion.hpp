@@ -333,10 +333,10 @@ namespace CommonUtilities
 	{
 		*this = Quaternion<T>
 		(
-			(aRight.w * w) - (aRight.x * x) - (aRight.y * y) - (aRight.z *z),
-			(aRight.w * x) + (aRight.x * w) + (aRight.y * z) - (aRight.z *y),
-			(aRight.w * y) + (aRight.y * w) + (aRight.z * x) - (aRight.x *z),
-			(aRight.w * z) + (aRight.z * w) + (aRight.x * y) - (aRight.y *x)
+			(aRight.w * w) - (aRight.x * x) - (aRight.y * y) - (aRight.z * z),
+			(aRight.w * x) + (aRight.x * w) + (aRight.y * z) - (aRight.z * y),
+			(aRight.w * y) + (aRight.y * w) + (aRight.z * x) - (aRight.x * z),
+			(aRight.w * z) + (aRight.z * w) + (aRight.x * y) - (aRight.y * x)
 		);
 
 		return *this;
@@ -397,15 +397,19 @@ namespace CommonUtilities
 		if (aForward.LengthSqr() < T(0.0001))
 			return Quaternion<T>();
 
-		const Vector3<T> xAxis = aUp.Cross(aForward).GetNormalized();
-		const Vector3<T> yAxis = aForward.Cross(xAxis);
+		const Vector3<T> f = aForward.GetNormalized();
+		const Vector3<T> u = aUp.GetNormalized();
 
-		const Quaternion<T> rot1 = Quaternion<T>::RotationFromTo(Vector3<T>::Forward, aForward);
+		const Quaternion<T> rot1 = Quaternion<T>::RotationFromTo(Vector3<T>::Forward, f);
 
 		const Vector3<T> newUp = rot1 * Vector3<T>::Up;
+
+		const Vector3<T> xAxis = u.Cross(f);
+		const Vector3<T> yAxis = f.Cross(xAxis);
+
 		const Quaternion<T> rot2 = Quaternion<T>::RotationFromTo(newUp, yAxis);
 
-		return rot2 * rot1;
+		return rot1 * rot2;
 	}
 	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::RotateTowards(Quaternion aQuatA, Quaternion aQuatB, T aMaxRadiansDelta)
@@ -438,12 +442,10 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate)
 	{
-		const Vector3<T> v(aQuaternion.x, aQuaternion.y, aQuaternion.z);
-		const T s = aQuaternion.w;
+		const Vector3<T> qv = { aQuaternion.x, aQuaternion.y, aQuaternion.z };
+		const Vector3<T> t = T(2) * qv.Cross(aVectorToRotate);
 
-		return 2.0f * v.Dot(aVectorToRotate) * v
-			+ (s * s - v.Dot(v)) * aVectorToRotate
-			+ 2.0f * s * v.Cross(aVectorToRotate);
+		return aVectorToRotate + aQuaternion.w * t + qv.Cross(t);
 	}
 
 	template<typename T>
@@ -452,22 +454,23 @@ namespace CommonUtilities
 		aFrom.Normalize();
 		aTo.Normalize();
 
-		const float d = aFrom.Dot(aTo);
+		const T d = aFrom.Dot(aTo);
+
 		if (d >= T(0.99999)) // same direction
 		{
 			return IDENTITY; 
 		}
-		else if (d >= T(-0.99999)) // opposites
+		else if (d <= T(-0.99999)) // opposites
 		{
-			Vector3<T> axis(1, 0, 0);
+			Vector3<T> axis = Vector3<T>::Right;
 			axis = axis.Cross(aFrom);
 			if (axis == Vector3<T>::Zero)
 			{
-				axis = Vector3<T>(0, 1, 0);
+				axis = Vector3<T>::Up;
 				axis = axis.Cross(aFrom);
 			}
 
-			return Quaternion(T(0), axis.x, axis.y, axis.z).GetNormalized();
+			return Quaternion(PI_V<T>, axis.x, axis.y, axis.z).GetNormalized();
 		}
 
 		const T s			= std::sqrt((T(1) + d) * T(2));

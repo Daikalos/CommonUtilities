@@ -400,9 +400,9 @@ namespace CommonUtilities
 		const Vector3<T> xAxis = aUp.Cross(aForward).GetNormalized();
 		const Vector3<T> yAxis = aForward.Cross(xAxis);
 
-		const Quaternion<T> rot1 = Quaternion<T>::RotationFromTo(Vector3<T>(0, 0, 1), aForward);
+		const Quaternion<T> rot1 = Quaternion<T>::RotationFromTo(Vector3<T>::Forward, aForward);
 
-		const Vector3<T> newUp = rot1 * Vector3<T>(0, 1, 0);
+		const Vector3<T> newUp = rot1 * Vector3<T>::Up;
 		const Quaternion<T> rot2 = Quaternion<T>::RotationFromTo(newUp, yAxis);
 
 		return rot2 * rot1;
@@ -510,6 +510,12 @@ namespace CommonUtilities
 	NODISC constexpr Quaternion<T> operator*(T aLeft, const Quaternion<T>& aRight)
 	{
 		return aRight * aLeft;
+	}
+
+	template<typename T>
+	NODISC constexpr Vector3<T> operator*(const Quaternion<T>& aLeft, const Vector3<T>& aRight)
+	{
+		return Quaternion<T>::RotateVectorByQuaternion(aLeft, aRight);
 	}
 
 	template <typename T>

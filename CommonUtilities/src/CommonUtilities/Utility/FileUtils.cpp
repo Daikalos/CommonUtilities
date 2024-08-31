@@ -14,8 +14,6 @@ std::size_t CommonUtilities::FileSize(const std::filesystem::path& aPath)
 
 std::vector<std::byte> CommonUtilities::ReadFileBytes(const std::filesystem::path& aPath)
 {
-	std::vector<std::byte> data;
-
 	std::ifstream fs;
 	fs.open(aPath, std::ifstream::in | std::ifstream::binary);
 
@@ -23,12 +21,17 @@ std::vector<std::byte> CommonUtilities::ReadFileBytes(const std::filesystem::pat
 	{
 		if (auto size = FileSize(aPath); size != 0)
 		{
+			std::vector<std::byte> data;
 			data.resize(size);
+
 			fs.seekg(0, std::ios::beg);
 			fs.read(reinterpret_cast<char*>(data.data()), size);
-			fs.close();
+
+			return data;
 		}
+
+		fs.close();
 	}
 
-	return data;
+	return {};
 }

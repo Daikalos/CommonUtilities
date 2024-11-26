@@ -58,13 +58,13 @@ namespace CommonUtilities
 	inline constexpr double			EPSILON_D	= EPSILON_V<double>;
 	inline constexpr long double	EPSILON_LD	= EPSILON_V<long double>;
 
-	template<typename T>
+	template<IsArithmeticType T>
 	NODISC constexpr T ToRadians(T aDegrees)
 	{
 		return aDegrees * DEG2RAD_V<T>;
 	}
 
-	template<typename T>
+	template<IsArithmeticType T>
 	NODISC constexpr T ToDegrees(T aRadians)
 	{
 		return aRadians * RAD2DEG_V<T>;
@@ -149,7 +149,7 @@ namespace CommonUtilities
 		return val;
 	}
 
-	template<IsFloatingPointType T>
+	template<IsArithmeticType T>
 	NODISC constexpr auto Equal(T aFirst, T aSecond, T aTolerance = EPSILON_V<T>)
 	{
 		return std::abs(aFirst - aSecond) <= aTolerance;
@@ -186,70 +186,60 @@ namespace CommonUtilities
 		return T(180) - std::abs(std::fmodf(std::abs(aSecondDegrees - aFirstDegrees), T(360)) - T(180));
 	}
 
-	template<typename T>
-	NODISC constexpr const T& Max(const T& aFirst, const T& aSecond)
+	template<IsArithmeticType T>
+	NODISC constexpr T Max(T aFirst, T aSecond)
 	{
 		return (aFirst < aSecond) ? aSecond : aFirst;
 	}
 
-	template<typename T>
-	NODISC constexpr const T& Min(const T& aFirst, const T& aSecond)
+	template<IsArithmeticType T>
+	NODISC constexpr T Min(T aFirst, T aSecond)
 	{
 		return (aSecond < aFirst) ? aSecond : aFirst;
 	}
 
-	template<typename T, typename... Args>
-	NODISC constexpr const T& Max(const T& aFirst, const T& aSecond, const Args&... someArgs)
+	template<IsArithmeticType T, IsArithmeticType... Args>
+	NODISC constexpr T Max(T aFirst, T aSecond, Args... someArgs)
 	{
 		return Max(Max(aFirst, aSecond), someArgs...);
 	}
 
-	template<typename T, typename... Args>
-	NODISC constexpr const T& Min(const T& aFirst, const T& aSecond, const Args&... someArgs)
+	template<IsArithmeticType T, IsArithmeticType... Args>
+	NODISC constexpr T Min(T aFirst, T aSecond, Args... someArgs)
 	{
 		return Min(Min(aFirst, aSecond), someArgs...);
 	}
 
-	template<typename T>
-	NODISC constexpr T Saturate(const T& aValue)
+	template<IsArithmeticType T>
+	NODISC constexpr T Saturate(T aValue)
 	{
 		return Min(Max(aValue, T(0)), T(1));
 	}
 
-	template<typename T>
-	NODISC constexpr T Abs(const T& aValue)
+	template<IsArithmeticType T>
+	NODISC constexpr T Abs(T aValue)
 	{
 		// since the minus operator will possibly create a new object, we cannot return a reference
 		return (aValue >= T{}) ? aValue : -aValue;
 	}
 
-	template<typename T>
-	NODISC constexpr const T& Clamp(const T& aValue, const T& aMin, const T& aMax)
+	template<IsArithmeticType T>
+	NODISC constexpr T Clamp(T aValue, T aMin, T aMax)
 	{
 		assert(!(aMin > aMax) && "Min must be smaller than max!");
-		if (aValue < aMin)
-		{
-			return aMin;
-		}
-		if (aValue > aMax)
-		{
-			return aMax;
-		}
-		return aValue;
+		return (aValue < aMin ? aMin : (aValue > aMax ? aMax : aValue));
 	}
 
-	template<typename T>
-	NODISC constexpr T Lerp(const T& aStart, const T& aEnd, float aPercentage)
+	template<IsArithmeticType T>
+	NODISC constexpr T Lerp(T aStart, T aEnd, float aPercentage)
 	{
 		return static_cast<T>(aStart + aPercentage * (aEnd - aStart));
 	}
 
-	template<typename T>
-	NODISC constexpr void Swap(T& aFirst, T& aSecond)
+	template<IsArithmeticType T>
+	NODISC constexpr T CLerp(T aStart, T aEnd, float aPercentage)
 	{
-		T temp	= std::move(aFirst);
-		aFirst	= std::move(aSecond);
-		aSecond = std::move(temp);
+		return Clamp(Lerp(aStart, aEnd, aPercentage), aStart, aEnd);
 	}
 
 	NODISC __forceinline float AtanApproximation(float aX)

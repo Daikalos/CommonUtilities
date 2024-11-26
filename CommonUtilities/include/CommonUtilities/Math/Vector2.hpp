@@ -27,7 +27,7 @@ namespace CommonUtilities
 		constexpr Vector2() = default;
 		constexpr ~Vector2() = default;
 
-		constexpr Vector2(T aValue);
+		constexpr explicit Vector2(T aValue);
 		constexpr Vector2(T aX, T aY);
 		constexpr Vector2(const std::array<T, 2>& aArray);
 		constexpr Vector2(__m128 aRegister) requires (std::is_same_v<T, float>);
@@ -44,6 +44,10 @@ namespace CommonUtilities
 		template<class OtherVector>
 		NODISC constexpr explicit operator OtherVector() const;
 
+		///	Rotation of vector in radians.
+		/// 
+		NODISC constexpr T Angle() const;
+
 		///	Length of the vector.
 		/// 
 		NODISC constexpr T Length() const;
@@ -51,6 +55,22 @@ namespace CommonUtilities
 		/// Square length of the vector, useful for comparisons
 		/// 
 		NODISC constexpr T LengthSqr() const;
+
+		/// Computes closest angle to other vector.
+		/// 
+		/// \param Vector: Vector to compare with
+		/// 
+		/// \returns Closest angle in radians
+		/// 
+		NODISC constexpr T AngleTo(const Vector2& aVector) const;
+
+		/// Rotates this vector by rotation.
+		/// 
+		/// \param Rotation: rotation in radians to rotate vector
+		/// 
+		/// \returns Rotated vector
+		/// 
+		NODISC constexpr Vector2<T> GetRotatedBy(T aRotation) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -69,6 +89,22 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector2<T> GetNormalized(T aLength, T aRadius) const;
 
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector2<T> GetNormalizedSafe(T aRadius = T(1)) const;
+
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector2<T> GetNormalizedSafe(T aLength, T aRadius = T(1)) const;
+
 		/// Computes a normalized vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
@@ -83,9 +119,21 @@ namespace CommonUtilities
 		/// 
 		constexpr void Normalize(T aRadius = T(1)) &;
 
+		/// Normalizes this vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		constexpr void NormalizeSafe(T aRadius = T(1)) &;
+
 		/// Dot product of two vectors.
 		/// 
 		NODISC constexpr T Dot(const Vector2& aVector) const;
+
+		/// Cross product of two vectors.
+		/// 
+		/// \returns The Z component of the cross product of the 2D vectors
+		/// 
+		NODISC constexpr T Cross(const Vector2& aVector) const;
 
 		/// Projects this vector onto another.
 		/// 
@@ -102,6 +150,12 @@ namespace CommonUtilities
 		/// \returns Reflected vector
 		/// 
 		NODISC constexpr Vector2 Reflect(const Vector2& aVector) const;
+
+		/// Computes the abs of each member
+		/// 
+		/// \returns Vector whose values have been made absolute
+		/// 
+		constexpr Vector2<T> GetAbs() const;
 
 		/// Computes the fractional part of each member
 		/// 
@@ -187,11 +241,11 @@ namespace CommonUtilities
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage);
+		NODISC constexpr static Vector2 Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
 
 		/// \returns Clamped lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector2 CLerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage);
+		NODISC constexpr static Vector2 CLerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage);
 
 		/// \returns Moved vector going from current towards target.
 		/// 
@@ -270,6 +324,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr T Vector2<T>::Angle() const
+	{
+		return (T)std::atan2(y, x);
+	}
+
+	template<typename T>
 	constexpr T Vector2<T>::Length() const
 	{
 		return static_cast<T>(std::sqrt(LengthSqr()));
@@ -279,6 +339,21 @@ namespace CommonUtilities
 	constexpr T Vector2<T>::LengthSqr() const
 	{
 		return Dot(*this);
+	}
+
+	template<typename T>
+	constexpr T Vector2<T>::AngleTo(const Vector2& aVector) const
+	{
+		return (T)std::atan2(Cross(aVector), Dot(aVector));
+	}
+
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::GetRotatedBy(T aRotation) const
+	{
+		const T cos = std::cos(aRotation);
+		const T sin = std::sin(aRotation);
+
+		return Vector2<T>(cos * x - sin * y, sin * x + cos * y);
 	}
 
 	template<typename T>
@@ -293,6 +368,26 @@ namespace CommonUtilities
 		return (*this) * (aRadius / aLength);
 	}
 	template<typename T>
+	constexpr Vector2<T> Vector2<T>::GetNormalizedSafe(T aRadius) const
+	{
+		using CommonUtilities::Equal;
+
+		if (const T lenSqr = LengthSqr(); lenSqr >= EPSILON_V<T> * EPSILON_V<T>)
+			return GetNormalized((T)std::sqrt(lenSqr), aRadius);
+
+		return *this;
+	}
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::GetNormalizedSafe(T aLength, T aRadius) const
+	{
+		using CommonUtilities::Equal;
+
+		if (aLength >= EPSILON_V<T>)
+			return GetNormalized(aLength, aRadius);
+
+		return *this;
+	}
+	template<typename T>
 	constexpr std::pair<Vector2<T>, T> Vector2<T>::GetNormalizedWithLength(T aRadius) const
 	{
 		const T length = Length();
@@ -304,11 +399,21 @@ namespace CommonUtilities
 	{
 		*this = GetNormalized(aRadius);
 	}
+	template<typename T>
+	constexpr void Vector2<T>::NormalizeSafe(T aRadius) &
+	{
+		*this = GetNormalizedSafe(aRadius);
+	}
 
 	template<typename T>
 	constexpr T Vector2<T>::Dot(const Vector2& aVector) const
 	{
 		return x * aVector.x + y * aVector.y;
+	}
+	template<typename T>
+	constexpr T Vector2<T>::Cross(const Vector2& aVector) const
+	{
+		return x * aVector.y - y * aVector.x;
 	}
 
 	template<typename T>
@@ -324,6 +429,11 @@ namespace CommonUtilities
 		return aVector - T{2} * ProjectOnto(aVector);
 	}
 
+	template<typename T>
+	constexpr Vector2<T> Vector2<T>::GetAbs() const
+	{
+		return Vector2<T>(std::abs(x), std::abs(y));
+	}
 	template<typename T>
 	constexpr Vector2<T> Vector2<T>::GetFrac() const requires IsFloatingPointType<T>
 	{
@@ -424,9 +534,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage)
+	constexpr Vector2<T> Vector2<T>::Lerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
-		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Lerp;
 
 		return Vector2<T>
 		{
@@ -436,10 +546,10 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector2<T> Vector2<T>::CLerp(const Vector2& aCurrent, const Vector2& aTarget, T aPercentage)
+	constexpr Vector2<T> Vector2<T>::CLerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
-		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
-		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Clamp;
+		using CommonUtilities::Lerp;
 
 		return Vector2<T>
 		{
@@ -474,6 +584,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Vector2<T>::Equal(const Vector2& aLeft, const Vector2& aRight, T aTolerance) requires IsFloatingPointType<T>
 	{
+		using CommonUtilities::Equal; // koenig lookup if you wanna know
+
 		return	Equal(aLeft.x, aRight.x, aTolerance) &&
 				Equal(aLeft.y, aRight.y, aTolerance);
 	}
@@ -633,6 +745,12 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return !(aLeft == aRight);
+	}
+
+	template<typename T>
+	NODISC constexpr Vector2<T> Lerp(const Vector2<T>& aStart, const Vector2<T>& aEnd, float aPercentage)
+	{
+		return Vector2<T>::Lerp(aStart, aEnd, aPercentage);
 	}
 
 	// using declarations

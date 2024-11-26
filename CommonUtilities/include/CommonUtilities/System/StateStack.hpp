@@ -428,7 +428,7 @@ namespace CommonUtilities
 						(*it)->OnActivate();
 					}
 
-					ctr::MoveTo(myStack, currentIndex, change.index);
+					MoveTo(myStack, currentIndex, change.index);
 
 					break;
 				}
@@ -476,7 +476,7 @@ namespace CommonUtilities
 		const auto it = myFactory.find(aStateID);
 		if (it == myFactory.end())
 		{
-			throw std::runtime_error("State could not be found");
+			throw std::invalid_argument("State could not be found");
 		}
 
 		auto statePtr = it->second();

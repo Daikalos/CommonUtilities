@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "EventIdentifiers.h"
 
 namespace CommonUtilities
@@ -17,5 +19,10 @@ namespace CommonUtilities
 
 		virtual void Reserve(std::size_t aSize) = 0;
 		virtual void Clear() = 0;
+
+	private:
+		std::shared_ptr<void*> myLifetime;
+		
+		friend class EventID;
 	};
 }

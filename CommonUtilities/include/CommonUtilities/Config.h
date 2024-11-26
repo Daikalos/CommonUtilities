@@ -95,6 +95,8 @@
 #	define UNSD
 #endif
 
+#define DEPREC [[deprecated]] // C14 support is assumed
+
 #ifndef FULL_NAMESPACE
 	namespace CommonUtilities{}
 	namespace cu = CommonUtilities;

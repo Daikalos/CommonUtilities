@@ -48,6 +48,10 @@ float TimedEvent::GetElapsed() const noexcept
 {
 	return myStopWatch.GetElapsed();
 }
+float TimedEvent::GetRemaining() const
+{
+	return GetCallTime() - GetElapsed();
+}
 bool TimedEvent::IsRunning() const noexcept
 {
 	return myStopWatch.IsRunning();
@@ -98,7 +102,7 @@ bool TimedEvent::RemoveID(evnt::IDType aHandlerID)
 
 void TimedEvent::SetCallTime(float aCallTime)
 {
-	myCallTime = aCallTime;
+	myCallTime = (std::max)(aCallTime, 0.0f);
 }
 
 void TimedEvent::SetIsLooping(bool aFlag)
@@ -133,7 +137,7 @@ void TimedEvent::Update(const Timer& aTimer)
 		myStopWatch.Update(aTimer);
 		if (myRepeat)
 		{
-			while (GetElapsed() >= GetCallTime())
+			while (GetElapsed() >= GetCallTime() && IsRunning())
 			{
 				Execute();
 			}
@@ -150,15 +154,16 @@ void TimedEvent::Update(const Timer& aTimer)
 
 void TimedEvent::Execute()
 {
+	if (!IsLooping())
+	{
+		myStopWatch.Reset();
+	}
+
 	myEvent();
 
-	if (IsLooping())
+	if (IsLooping() && IsRunning())
 	{
 		myStopWatch.Reset(std::fmod(GetElapsed(), GetCallTime()));
 		myStopWatch.Start();
-	}
-	else
-	{
-		myStopWatch.Reset();
 	}
 }

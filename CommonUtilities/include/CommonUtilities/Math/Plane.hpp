@@ -102,7 +102,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Plane<T>::ClosestPoint(const Vector3<T>& aPoint)
 	{
-		const T distance = Vector3<T>::Dot(GetNormal(), aPoint) - myDistance;
+		const T distance = Vector3<T>::Dot(GetNormal(), aPoint) + myDistance;
 		return aPoint - distance * GetNormal();
 	}
 
@@ -131,6 +131,20 @@ namespace CommonUtilities
 	constexpr Shape::Type Plane<T>::GetType() const noexcept
 	{
 		return Shape::Type::Plane;
+	}
+
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Plane<T>& aLeft, const Plane<T>& aRight)
+	{
+		return  aLeft.GetOrigin() == aRight.GetOrigin() &&
+				aLeft.GetNormal() == aRight.GetNormal();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Plane<T>& aLeft, const Plane<T>& aRight)
+	{
+		return !(aLeft == aRight);
 	}
 
 	// using declarations

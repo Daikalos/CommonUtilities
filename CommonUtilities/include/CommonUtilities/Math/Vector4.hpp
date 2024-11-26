@@ -29,10 +29,13 @@ namespace CommonUtilities
 		constexpr Vector4() = default;
 		constexpr ~Vector4() = default;
 
-		constexpr Vector4(T aValue);
+		constexpr explicit Vector4(T aValue);
 		constexpr Vector4(T aX, T aY, T aZ, T aW);
 		constexpr Vector4(const std::array<T, 4>& aArray);
 		constexpr Vector4(__m128 aRegister) requires (std::is_same_v<T, float>);
+
+		constexpr explicit Vector4(const Vector3<T>& aVector, T aW);
+		constexpr explicit Vector4(T aX, const Vector3<T>& aVector);
 
 		template <typename U>
 		constexpr explicit Vector4(const Vector2<U>& aVector);
@@ -71,6 +74,23 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector4<T> GetNormalized(T aLength, T aRadius) const;
 
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector4<T> GetNormalizedSafe(T aRadius = T(1)) const;
+
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Length: Optimization param for when length may already have been calculated
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector4<T> GetNormalizedSafe(T aLength, T aRadius) const;
+
 		/// Computes a normalized vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
@@ -85,9 +105,21 @@ namespace CommonUtilities
 		/// 
 		constexpr void Normalize(T aRadius = T(1)) &;
 
+		/// Normalizes this vector
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		constexpr void NormalizeSafe(T aRadius = T(1)) &;
+
 		/// Dot product of two vectors.
 		/// 
 		NODISC constexpr T Dot(const Vector4& aVector) const;
+
+		/// Computes the abs of each member
+		/// 
+		/// \returns Vector whose values have been made absolute
+		/// 
+		constexpr Vector4<T> GetAbs() const;
 
 		/// Computes the fractional part of each member
 		/// 
@@ -165,11 +197,11 @@ namespace CommonUtilities
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, T aPercentage);
+		NODISC constexpr static Vector4 Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector4 CLerp(const Vector4& aCurrent, const Vector4& aTarget, T aPercentage);
+		NODISC constexpr static Vector4 CLerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage);
 
 		/// \returns Moved vector going from current towards target.
 		/// 
@@ -199,6 +231,14 @@ namespace CommonUtilities
 		_mm_store_ps(values.data(), aRegister);
 		x = values[0], y = values[1], z = values[2], w = values[3];
 	}
+
+	template<typename T>
+	constexpr Vector4<T>::Vector4(const Vector3<T>& aVector, T aW)
+		: Vector4(aVector.x, aVector.y, aVector.z, aW) {}
+
+	template<typename T>
+	constexpr Vector4<T>::Vector4(T aX, const Vector3<T>& aVector)
+		: Vector4(aX, aVector.x, aVector.y, aVector.z) {}
 
 	template<typename T>
 	template<typename U>
@@ -246,6 +286,22 @@ namespace CommonUtilities
 		return (*this) * (aRadius / aLength);
 	}
 	template<typename T>
+	constexpr Vector4<T> Vector4<T>::GetNormalizedSafe(T aRadius) const
+	{
+		if (const T lenSqr = LengthSqr(); lenSqr >= EPSILON_V<T> *EPSILON_V<T>)
+			return GetNormalized((T)std::sqrt(lenSqr), aRadius);
+
+		return *this;
+	}
+	template<typename T>
+	constexpr Vector4<T> Vector4<T>::GetNormalizedSafe(T aLength, T aRadius) const
+	{
+		if (aLength >= EPSILON_V<T>)
+			return GetNormalized(aLength, aRadius);
+
+		return *this;
+	}
+	template<typename T>
 	constexpr std::pair<Vector4<T>, T> Vector4<T>::GetNormalizedWithLength(T aRadius) const
 	{
 		const T length = Length();
@@ -259,11 +315,22 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr void Vector4<T>::NormalizeSafe(T aRadius) &
+	{
+		*this = GetNormalizedSafe(aRadius);
+	}
+
+	template<typename T>
 	constexpr T Vector4<T>::Dot(const Vector4& aVector) const
 	{
 		return x * aVector.x + y * aVector.y + z * aVector.z + w * aVector.w;
 	}
 
+	template<typename T>
+	constexpr Vector4<T> Vector4<T>::GetAbs() const
+	{
+		return Vector4<T>(std::abs(x), std::abs(y), std::abs(z), std::abs(w));
+	}
 	template<typename T>
 	constexpr Vector4<T> Vector4<T>::GetFrac() const requires IsFloatingPointType<T>
 	{
@@ -358,9 +425,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, T aPercentage)
+	constexpr Vector4<T> Vector4<T>::Lerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
-		static const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Lerp;
 
 		return Vector4<T>
 		{
@@ -372,10 +439,10 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector4<T> Vector4<T>::CLerp(const Vector4& aCurrent, const Vector4& aTarget, T aPercentage)
+	constexpr Vector4<T> Vector4<T>::CLerp(const Vector4& aCurrent, const Vector4& aTarget, float aPercentage)
 	{
-		static const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
-		static const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Clamp;
+		using CommonUtilities::Lerp;
 
 		return Vector4<T>
 		{
@@ -412,6 +479,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Vector4<T>::Equal(const Vector4<T>& aLeft, const Vector4<T>& aRight, T aTolerance) requires IsFloatingPointType<T>
 	{
+		using CommonUtilities::Equal; // koenig lookup if you wanna know
+
 		return	Equal(aLeft.x, aRight.x, aTolerance) &&
 				Equal(aLeft.y, aRight.y, aTolerance) &&
 				Equal(aLeft.z, aRight.z, aTolerance) &&
@@ -589,6 +658,12 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Vector4<T>& aLeft, const Vector4<T>& aRight)
 	{
 		return !(aLeft == aRight);
+	}
+
+	template<typename T>
+	NODISC constexpr Vector4<T> Lerp(const Vector4<T>& aStart, const Vector4<T>& aEnd, float aPercentage)
+	{
+		return Vector4<T>::Lerp(aStart, aEnd, aPercentage);
 	}
 
 	// using declarations

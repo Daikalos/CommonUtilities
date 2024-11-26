@@ -10,19 +10,22 @@
 #include <CommonUtilities/System/IDGenerator.h>
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Structures/FreeVector.hpp>
-#include <CommonUtilities/Utility/NonCopyable.h>
+#include <CommonUtilities/Utility/Clonable.hpp>
 
 namespace CommonUtilities
 {
 	template<typename IDType = std::string_view, typename Hash = std::hash<IDType>> requires IsHashableType<Hash, IDType>
-	class Blackboard : private NonCopyable
+	class Blackboard
 	{
 	public:
 		Blackboard() = default;
 		~Blackboard() = default;
 
 		Blackboard(Blackboard&& aOther);
+		Blackboard(const Blackboard& aOther);
+
 		Blackboard& operator=(Blackboard&& aOther);
+		Blackboard& operator=(const Blackboard& aOther);
 
 		template<typename T>
 		NODISC const T& Get(const IDType& aID) const;
@@ -75,12 +78,11 @@ namespace CommonUtilities
 			virtual void Erase(const IDType& aID) = 0;
 			virtual void Clear() = 0;
 
-		private:
-
+			NODISC virtual std::unique_ptr<ValueMapBase> Clone() const = 0;
 		};
 
 		template<typename T>
-		class ValueMap : public ValueMapBase
+		class ValueMap final : public Clonable<ValueMapBase, ValueMap<T>>
 		{
 		public:
 			ValueMap() = default;
@@ -99,7 +101,7 @@ namespace CommonUtilities
 			{
 				if (auto it = myIndices.find(Hash{}(aID)); it != myIndices.end())
 				{
-					return &myValues.at(it->second);
+					return std::addressof(myValues.at(it->second));
 				}
 
 				return nullptr;
@@ -179,14 +181,43 @@ namespace CommonUtilities
 		std::scoped_lock lock(aOther.myMutex);
 		myData = std::move(aOther.myData);
 	}
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
+	inline Blackboard<IDType, Hash>::Blackboard(const Blackboard& aOther)
+	{
+		std::shared_lock lock(aOther.myMutex);
+
+		for (const auto& [id, map] : aOther.myData)
+		{
+			myData[id] = map->Clone();
+		}
+	}
 
 	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
 	inline Blackboard<IDType, Hash>& Blackboard<IDType, Hash>::operator=(Blackboard&& aOther)
 	{
+		if (this == &aOther)
+			return *this;
+
 		std::scoped_lock lock1(myMutex);
 		std::scoped_lock lock2(aOther.myMutex);
 
 		myData = std::move(aOther.myData);
+
+		return *this;
+	}
+	template<typename IDType, typename Hash> requires IsHashableType<Hash, IDType>
+	inline Blackboard<IDType, Hash>& Blackboard<IDType, Hash>::operator=(const Blackboard& aOther)
+	{
+		if (this == &aOther)
+			return *this;
+
+		std::scoped_lock lock1(myMutex);
+		std::shared_lock lock2(aOther.myMutex);
+
+		for (const auto& [id, map] : aOther.myData)
+		{
+			myData[id] = map->Clone();
+		}
 
 		return *this;
 	}
@@ -262,7 +293,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline bool Blackboard<IDType, Hash>::HasType() const
 	{
-		static constexpr std::size_t key = id::Type<T>::ID();
+		static constexpr std::size_t key = Type<T>::ID();
 
 		const auto it = myData.find(key);
 		return it != myData.end();
@@ -294,7 +325,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline auto Blackboard<IDType, Hash>::FindValueMap() const -> const ValueMap<T>&
 	{
-		static constexpr std::size_t key = id::Type<T>::ID();
+		static constexpr std::size_t key = Type<T>::ID();
 		return *static_cast<ValueMap<T>*>(myData.at(key).get());
 	}
 
@@ -302,7 +333,7 @@ namespace CommonUtilities
 	template<typename T>
 	inline auto Blackboard<IDType, Hash>::FindValueMap() -> ValueMap<T>&
 	{
-		static constexpr std::size_t key = id::Type<T>::ID();
+		static constexpr std::size_t key = Type<T>::ID();
 
 		if (const auto it = myData.find(key); it != myData.end())
 		{

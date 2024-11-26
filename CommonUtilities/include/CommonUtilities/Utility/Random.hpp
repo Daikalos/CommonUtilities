@@ -109,7 +109,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC inline Vector3<T> RandomPointInRect(const Vector3<T>& aCenter, const Vector3<T>& aHalfSize)
+	NODISC inline Vector3<T> RandomPointInBox(const Vector3<T>& aCenter, const Vector3<T>& aHalfSize)
 	{
 		return Vector3<T>(
 			RandomDev<T>(aCenter.x, aHalfSize.x),
@@ -118,19 +118,23 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC inline Vector3<T> RandomPointInSphere(const Vector3<T>& aCenter, T aRadius)
+	NODISC inline Vector3<T> RandomPointInSphere(const Vector3<T>& aCenter, T aRadius, T aInnerRadius = T())
 	{
-		float r		= aRadius * std::sqrt(Random());
-		float phi	= Random() * 2.0f * PI;
-		float theta = std::acos(Random(-1.0f, 1.0f));
+		const float p		= cu::Random(aInnerRadius, aRadius);
+		const float r		= p * std::cbrt(p / aRadius);
+		const float theta	= Random() * 2.0f * PI;
+		const float phi		= std::acos(Random(-1.0f, 1.0f));
 
-		const float s = std::sin(theta);
-		const float c = std::cos(theta);
+		const float sinTheta = std::sin(theta);
+		const float cosTheta = std::cos(theta);
+
+		const float sinPhi = std::sin(phi);
+		const float cosPhi = std::cos(phi);
 
 		return Vector3<T>(
-			(T)(aCenter.x + r * c * std::cos(phi)),
-			(T)(aCenter.y + r * s * std::sin(phi)),
-			(T)(aCenter.z + r * c));
+			(T)(aCenter.x + r * sinPhi * cosTheta),
+			(T)(aCenter.y + r * sinPhi * sinTheta),
+			(T)(aCenter.z + r * cosPhi));
 	}
 
 	COMMON_UTILITIES_API void Seed(std::uint64_t seed = std::mt19937_64::default_seed);

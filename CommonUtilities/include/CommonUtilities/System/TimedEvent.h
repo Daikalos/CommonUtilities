@@ -5,7 +5,7 @@
 
 namespace CommonUtilities
 {
-	class TimedEvent final
+	class TimedEvent final : public IEvent
 	{
 	public:
 		using HandlerType = typename Event<>::HandlerType;
@@ -22,11 +22,13 @@ namespace CommonUtilities
 		evnt::IDType operator+=(typename HandlerType::FunctionType&& aHandler);
 
 		evnt::IDType operator-=(const HandlerType& aHandler);
-		evnt::IDType operator-=(evnt::IDType aHandlerID);
+		evnt::IDType operator-=(evnt::IDType aHandlerID) override;
 
 		NODISC float GetCallTime() const noexcept;
 
 		NODISC float GetElapsed() const noexcept;
+
+		NODISC float GetRemaining() const;
 
 		NODISC bool IsRunning() const noexcept;
 		
@@ -34,19 +36,19 @@ namespace CommonUtilities
 
 		/// \return Number registered callbacks in the event 
 		///
-		NODISC std::size_t Count() const;
+		NODISC std::size_t Count() const override;
 
 		/// \return If the event is empty of callbacks
 		///
-		NODISC bool IsEmpty() const;
+		NODISC bool IsEmpty() const override;
 
 		/// Preallocate memory for the functions to reduce number of reallocations.
 		///
-		void Reserve(std::size_t aSize);
+		void Reserve(std::size_t aSize) override;
 
 		/// Removes all registered callbacks.
 		/// 
-		void Clear();
+		void Clear() override;
 
 		/// Adds the handler to the list of callbacks.
 		/// 
@@ -86,7 +88,7 @@ namespace CommonUtilities
 		/// 
 		/// \return If removal was successful
 		/// 
-		bool RemoveID(evnt::IDType aHandlerID);
+		bool RemoveID(evnt::IDType aHandlerID) override;
 
 		void SetCallTime(float aCallTime);
 

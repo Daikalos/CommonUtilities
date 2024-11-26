@@ -21,20 +21,21 @@ namespace CommonUtilities
         void Shutdown();
 
         template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)
-        auto Enqueue(F&& aFunc, Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>;
+        auto Enqueue(F&& aFunc, std::string&& aThreadName = "CU THREAD", Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>;
 
     private:
         void ThreadLoop();
 
         std::vector<std::jthread>           myThreads;
         std::queue<std::function<void()>>   myTasks;
+        std::queue<std::string>             myQueuedNames;
         std::condition_variable             myCV;
         std::mutex                          myMutex; // sync access to task queue
-        bool                                myShutdown;
+        bool                                myShutdown = true;
     };
 
     template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)
-    inline auto ThreadPool::Enqueue(F&& aFunc, Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>
+    inline auto ThreadPool::Enqueue(F&& aFunc, std::string&& aThreadName, Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>
     {
         using ReturnType = std::invoke_result_t<F, Args...>;
 
@@ -54,6 +55,7 @@ namespace CommonUtilities
 
             // place task in queue, copying the shared pointer keeps it alive
             myTasks.emplace([task] { (*task)(); });
+            myQueuedNames.emplace(std::move(aThreadName));
         }
 
         myCV.notify_one(); // notify a thread that a task is available

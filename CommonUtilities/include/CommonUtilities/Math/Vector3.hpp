@@ -28,10 +28,13 @@ namespace CommonUtilities
 		constexpr Vector3() = default;
 		constexpr ~Vector3() = default;
 
-		constexpr Vector3(T aValue);
+		constexpr explicit Vector3(T aValue);
 		constexpr Vector3(T aX, T aY, T aZ);
 		constexpr Vector3(const std::array<T, 3>& aArray);
 		constexpr Vector3(__m128 aRegister) requires (std::is_same_v<T, float>);
+
+		constexpr explicit Vector3(const Vector2<T>& aVector, T aZ);
+		constexpr explicit Vector3(T aX, const Vector2<T>& aVector);
 
 		template <typename U>
 		constexpr explicit Vector3(const Vector2<U>& aVector);
@@ -70,6 +73,23 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr Vector3<T> GetNormalized(T aLength, T aRadius) const;
 
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector3<T> GetNormalizedSafe(T aRadius = T(1)) const;
+
+		/// Computes a normalized vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Length: Optimization param for when length may already have been calculated
+		/// \param Radius: Length of the normalized vector
+		/// 
+		/// \returns Normalized vector
+		/// 
+		NODISC constexpr Vector3<T> GetNormalizedSafe(T aLength, T aRadius) const;
+
 		/// Computes a normalized vector.
 		/// 
 		/// \param Radius: Length of the normalized vector
@@ -83,6 +103,12 @@ namespace CommonUtilities
 		/// \param Radius: Length of the normalized vector
 		/// 
 		constexpr void Normalize(T aRadius = T(1)) &;
+
+		/// Normalizes this vector if length of vector is a non-negative number above 0.
+		/// 
+		/// \param Radius: Length of the normalized vector
+		/// 
+		constexpr void SafeNormalize(T aRadius = T(1)) &;
 
 		/// Dot product of two vectors.
 		/// 
@@ -117,6 +143,12 @@ namespace CommonUtilities
 		/// \returns Angle in the range [-PI, PI) radians
 		/// 
 		NODISC constexpr T AngleTo(const Vector3& aVector) const;
+
+		/// Computes the abs of each member
+		/// 
+		/// \returns Vector whose values have been made absolute
+		/// 
+		constexpr Vector3<T> GetAbs() const;
 
 		/// Computes the fractional part of each member
 		/// 
@@ -202,11 +234,11 @@ namespace CommonUtilities
 
 		/// \returns Lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector3 Lerp(const Vector3& aCurrent, const Vector3& aTarget, T aPercentage);
+		NODISC constexpr static Vector3 Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
 
 		/// \returns Clamped lerped vector between current and target.
 		/// 
-		NODISC constexpr static Vector3 CLerp(const Vector3& aCurrent, const Vector3& aTarget, T aPercentage);
+		NODISC constexpr static Vector3 CLerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
 
 		/// \returns Moved vector going from current towards target.
 		/// 
@@ -299,6 +331,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr Vector3<T>::Vector3(const Vector2<T>& aVector, T aZ)
+		: Vector3(aVector.x, aVector.y, aZ) {}
+
+	template<typename T>
+	constexpr Vector3<T>::Vector3(T aX, const Vector2<T>& aVector)
+		: Vector3(aX, aVector.x, aVector.y) {}
+
+	template<typename T>
 	template<typename U>
 	constexpr Vector3<T>::Vector3(const Vector2<U>& aVector)
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(T(0)) {}
@@ -343,6 +383,24 @@ namespace CommonUtilities
 		assert(aLength > T{} && "Negative or zero length is an error");
 		return (*this) * (aRadius / aLength);
 	}
+
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetNormalizedSafe(T aRadius) const
+	{
+		if (const T lenSqr = LengthSqr(); lenSqr >= EPSILON_V<T> * EPSILON_V<T>)
+			return GetNormalized((T)std::sqrt(lenSqr), aRadius);
+
+		return *this;
+	}
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetNormalizedSafe(T aLength, T aRadius) const
+	{
+		if (aLength >= EPSILON_V<T>)
+			return GetNormalized(aLength, aRadius);
+
+		return *this;
+	}
+
 	template<typename T>
 	constexpr std::pair<Vector3<T>, T> Vector3<T>::GetNormalizedWithLength(T aRadius) const
 	{
@@ -355,13 +413,17 @@ namespace CommonUtilities
 	{
 		*this = GetNormalized(aRadius);
 	}
+	template<typename T>
+	constexpr void Vector3<T>::SafeNormalize(T aRadius) &
+	{
+		*this = GetNormalizedSafe(aRadius);
+	}
 
 	template<typename T>
 	constexpr T Vector3<T>::Dot(const Vector3& aVector) const
 	{
 		return x * aVector.x + y * aVector.y + z * aVector.z;
 	}
-
 	template<typename T>
 	constexpr Vector3<T> Vector3<T>::Cross(const Vector3& aVector) const
 	{
@@ -388,6 +450,12 @@ namespace CommonUtilities
 	constexpr T Vector3<T>::AngleTo(const Vector3& aVector) const
 	{
 		return std::acos(Dot(aVector) / (Length() * aVector.Length()));
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Vector3<T>::GetAbs() const
+	{
+		return Vector3<T>(std::abs(x), std::abs(y), std::abs(z));
 	}
 
 	template<typename T>
@@ -490,9 +558,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Vector3<T>::Lerp(const Vector3& aCurrent, const Vector3& aTarget, T aPercentage)
+	constexpr Vector3<T> Vector3<T>::Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
 	{
-		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Lerp;
 
 		return Vector3<T>
 		{
@@ -503,10 +571,10 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Vector3<T>::CLerp(const Vector3& aCurrent, const Vector3& aTarget, T aPercentage)
+	constexpr Vector3<T> Vector3<T>::CLerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
 	{
-		const auto Clamp = [](T aValue, T aMin, T aMax) { return (aValue < aMin) ? aMin : ((aValue > aMax) ? aMax : aValue); };
-		const auto Lerp = [](T aStart, T aEnd, T aPerc) { return aStart + aPerc * (aEnd - aStart); };
+		using CommonUtilities::Clamp;
+		using CommonUtilities::Lerp;
 
 		return Vector3<T>
 		{
@@ -519,7 +587,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Vector3<T>::MoveTowards(const Vector3& aCurrent, const Vector3& aTarget, T aDistance)
 	{
-		if (Vector3<T> dir = Vector2<T>::Direction(aCurrent, aTarget); dir != Vector3<T>::Zero)
+		if (Vector3<T> dir = Vector3<T>::Direction(aCurrent, aTarget); dir != Vector3<T>::Zero)
 		{
 			const T lenSqr	= dir.LengthSqr();
 			const T distSqr = aDistance * aDistance;
@@ -653,6 +721,8 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Vector3<T>::Equal(const Vector3& aLeft, const Vector3& aRight, T aTolerance) requires IsFloatingPointType<T>
 	{
+		using CommonUtilities::Equal; // koenig lookup if you wanna know
+
 		return	Equal(aLeft.x, aRight.x, aTolerance) &&
 				Equal(aLeft.y, aRight.y, aTolerance) &&
 				Equal(aLeft.z, aRight.z, aTolerance);
@@ -821,6 +891,12 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Vector3<T>& aLeft, const Vector3<T>& aRight)
 	{
 		return !(aLeft == aRight);
+	}
+
+	template<typename T>
+	NODISC constexpr Vector3<T> Lerp(const Vector3<T>& aStart, const Vector3<T>& aEnd, float aPercentage)
+	{
+		return Vector3<T>::Lerp(aStart, aEnd, aPercentage);
 	}
 
 	// using declarations

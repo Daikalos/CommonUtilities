@@ -156,8 +156,8 @@ namespace CommonUtilities
 		constexpr auto insert(const_iterator aIterator, const T& aElement) -> iterator;
 		constexpr auto insert(const_iterator aIterator, T&& aElement) -> iterator;
 
-		constexpr void fill(const T& aElement);
-		constexpr void resize(size_type aSize, const T& aElement = T());
+		constexpr void fill(const_reference aElement);
+		constexpr void resize(size_type aSize, const_reference aValue = T());
 
 		constexpr void shrink_to_fit();
 
@@ -186,6 +186,9 @@ namespace CommonUtilities
 	private:
 		using signed_type = std::make_signed_t<size_type>;
 
+		NODISC constexpr __forceinline bool IsStack() const noexcept;
+		NODISC constexpr __forceinline bool IsHeap() const noexcept;
+
 		std::array<T, N>		myStack	{};
 		std::vector<T, Alloc>	myHeap	{};
 		size_type				mySize	{0};
@@ -202,7 +205,7 @@ namespace CommonUtilities
 	constexpr SmallVector<T, N, Alloc>::SmallVector(size_type aSize, const allocator_type& aAlloc)
 		: myStack(), myHeap(aAlloc), mySize(aSize)
 	{
-		if (mySize > N)
+		if (IsHeap())
 		{
 			myHeap = std::vector<T>(mySize, aAlloc);
 		}
@@ -212,7 +215,7 @@ namespace CommonUtilities
 	constexpr SmallVector<T, N, Alloc>::SmallVector(size_type aSize, const_reference aValue, const allocator_type& aAlloc)
 		: myStack(), myHeap(aAlloc), mySize(aSize)
 	{
-		if (mySize <= N)
+		if (IsStack())
 		{
 			std::fill(myStack.begin(), myStack.begin() + mySize, aValue);
 		}
@@ -227,7 +230,7 @@ namespace CommonUtilities
 	constexpr SmallVector<T, N, Alloc>::SmallVector(Iter aFirst, Iter aLast, const allocator_type& aAlloc)
 		: myStack(), myHeap(), mySize(std::distance(aFirst, aLast))
 	{
-		if (mySize <= N)
+		if (IsStack())
 		{
 			std::copy(aFirst, aLast, myStack.begin());
 		}
@@ -255,7 +258,7 @@ namespace CommonUtilities
 	constexpr SmallVector<T, N, Alloc>::SmallVector(SmallVector&& aOther, const allocator_type& aAlloc) noexcept
 		: myStack(), myHeap(aAlloc), mySize(aOther.mySize) 
 	{
-		if (mySize <= N)
+		if (IsStack())
 		{
 			std::move(aOther.myStack.begin(), aOther.myStack.begin() + mySize, myStack.begin());
 		}
@@ -321,7 +324,7 @@ namespace CommonUtilities
 		if (mySize != aRhs.mySize)
 			return false;
 
-		if (mySize <= N)
+		if (IsStack())
 		{
 			for (size_type index = 0; index < mySize; ++index)
 			{
@@ -338,61 +341,61 @@ namespace CommonUtilities
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::operator[](size_type aIndex) -> reference
 	{
-		return (mySize <= N) ? myStack[aIndex] : myHeap[aIndex];
+		return (IsStack()) ? myStack[aIndex] : myHeap[aIndex];
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::operator[](size_type aIndex) const -> const_reference
 	{
-		return (mySize <= N) ? myStack[aIndex] : myHeap[aIndex];
+		return (IsStack()) ? myStack[aIndex] : myHeap[aIndex];
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::at(size_type aIndex) -> reference
 	{
-		return (mySize <= N) ? myStack.at(aIndex) : myHeap.at(aIndex);
+		return (IsStack()) ? myStack.at(aIndex) : myHeap.at(aIndex);
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::at(size_type aIndex) const -> const_reference
 	{
-		return (mySize <= N) ? myStack.at(aIndex) : myHeap.at(aIndex);
+		return (IsStack()) ? myStack.at(aIndex) : myHeap.at(aIndex);
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::front() -> reference
 	{
-		return (mySize <= N) ? myStack.front() : myHeap.front();
+		return (IsStack()) ? myStack.front() : myHeap.front();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::front() const -> const_reference
 	{
-		return (mySize <= N) ? myStack.front() : myHeap.front();
+		return (IsStack()) ? myStack.front() : myHeap.front();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::back() -> reference
 	{
-		return (mySize <= N) ? myStack[mySize - 1] : myHeap.back();
+		return (IsStack()) ? myStack[mySize - 1] : myHeap.back();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::back() const -> const_reference
 	{
-		return (mySize <= N) ? myStack[mySize - 1] : myHeap.back();
+		return (IsStack()) ? myStack[mySize - 1] : myHeap.back();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::data() noexcept -> pointer
 	{
-		return (mySize <= N) ? myStack.data() : myHeap.data();
+		return (IsStack()) ? myStack.data() : myHeap.data();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::data() const noexcept -> const_pointer
 	{
-		return (mySize <= N) ? myStack.data() : myHeap.data();
+		return (IsStack()) ? myStack.data() : myHeap.data();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
@@ -410,7 +413,7 @@ namespace CommonUtilities
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::max_size() const noexcept -> size_type
 	{
-		return (mySize <= N) ? myStack.max_size() : myHeap.max_size();
+		return (IsStack()) ? myStack.max_size() : myHeap.max_size();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
@@ -458,7 +461,7 @@ namespace CommonUtilities
 		if (empty())
 			return;
 
-		if (mySize <= N)
+		if (IsStack())
 		{
 			--mySize;
 		}
@@ -483,7 +486,7 @@ namespace CommonUtilities
 
 		const auto posIndex = std::distance(cbegin(), aPosition);
 
-		if (mySize <= N)
+		if (IsStack())
 		{
 			for (auto index = static_cast<size_type>(posIndex); index < mySize - 1; ++index)
 				myStack[index] = std::move(myStack[index + 1]);
@@ -517,7 +520,7 @@ namespace CommonUtilities
 		const auto lastPos	= std::distance(cbegin(), aLast);
 		const auto count	= lastPos - firstPos;
 
-		if (mySize <= N)
+		if (IsStack())
 		{
 			for (auto index = static_cast<size_type>(firstPos); index < mySize - count; ++index)
 				myStack[index] = std::move(myStack[index + count]);
@@ -529,7 +532,7 @@ namespace CommonUtilities
 			myHeap.erase(myHeap.begin() + firstPos, myHeap.begin() + lastPos);
 			mySize -= count;
 
-			if (mySize <= N)
+			if (IsStack())
 			{
 				std::move(myHeap.begin(), myHeap.end(), myStack.begin());
 				myHeap.clear();
@@ -588,7 +591,7 @@ namespace CommonUtilities
 	{
 		if (aSize <= N)
 		{
-			if (mySize > N)
+			if (IsHeap())
 			{
 				std::move(myHeap.begin(), myHeap.begin() + aSize, myStack.begin());
 				myHeap.clear();
@@ -599,7 +602,7 @@ namespace CommonUtilities
 		}
 		else
 		{
-			if (mySize <= N)
+			if (IsStack())
 				std::move(myStack.begin(), myStack.end(), std::back_inserter(myHeap));
 
 			myHeap.resize(aSize, aValue);
@@ -611,14 +614,14 @@ namespace CommonUtilities
 	template<typename T, std::size_t N, class Alloc>
 	constexpr void SmallVector<T, N, Alloc>::shrink_to_fit()
 	{
-		if (mySize > N)
+		if (IsHeap())
 			myHeap.shrink_to_fit();
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr void SmallVector<T, N, Alloc>::clear()
 	{
-		if (mySize > N)
+		if (IsHeap())
 			myHeap.clear();
 
 		mySize = 0;
@@ -633,23 +636,23 @@ namespace CommonUtilities
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::begin() noexcept -> iterator
 	{
-		return iterator(mySize <= N ? myStack.data() : myHeap.data());
+		return iterator(IsStack() ? myStack.data() : myHeap.data());
 	}
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::end() noexcept -> iterator
 	{
-		return iterator(mySize <= N ? (myStack.data() + mySize) : (myHeap.data() + mySize));
+		return iterator(IsStack() ? (myStack.data() + mySize) : (myHeap.data() + mySize));
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::begin() const noexcept -> const_iterator
 	{
-		return const_iterator(mySize <= N ? myStack.data() : myHeap.data());
+		return const_iterator(IsStack() ? myStack.data() : myHeap.data());
 	}
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::end() const noexcept -> const_iterator
 	{
-		return const_iterator(mySize <= N ? (myStack.data() + mySize) : (myHeap.data() + mySize));
+		return const_iterator(IsStack() ? (myStack.data() + mySize) : (myHeap.data() + mySize));
 	}
 
 	template<typename T, std::size_t N, class Alloc>
@@ -666,23 +669,23 @@ namespace CommonUtilities
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::rbegin() noexcept -> reverse_iterator
 	{
-		return reverse_iterator(mySize <= N ? (myStack.data() + mySize - 1) : (myHeap.data() + mySize - 1));
+		return reverse_iterator(IsStack() ? (myStack.data() + mySize - 1) : (myHeap.data() + mySize - 1));
 	}
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::rend() noexcept -> reverse_iterator
 	{
-		return reverse_iterator(mySize <= N ? (myStack.data() - 1) : (myHeap.data() - 1));
+		return reverse_iterator(IsStack() ? (myStack.data() - 1) : (myHeap.data() - 1));
 	}
 
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::rbegin() const noexcept -> const_reverse_iterator
 	{
-		return const_reverse_iterator(mySize <= N ? (myStack.data() + mySize - 1) : (myHeap.data() + mySize - 1));
+		return const_reverse_iterator(IsStack() ? (myStack.data() + mySize - 1) : (myHeap.data() + mySize - 1));
 	}
 	template<typename T, std::size_t N, class Alloc>
 	constexpr auto SmallVector<T, N, Alloc>::rend() const noexcept -> const_reverse_iterator
 	{
-		return const_reverse_iterator(mySize <= N ? (myStack.data() - 1) : (myHeap.data() - 1));
+		return const_reverse_iterator(IsStack() ? (myStack.data() - 1) : (myHeap.data() - 1));
 	}
 
 	template<typename T, std::size_t N, class Alloc>
@@ -694,5 +697,16 @@ namespace CommonUtilities
 	constexpr auto SmallVector<T, N, Alloc>::crend() const noexcept -> const_reverse_iterator
 	{
 		return rend();
+	}
+
+	template<typename T, std::size_t N, class Alloc>
+	constexpr bool SmallVector<T, N, Alloc>::IsStack() const noexcept
+	{
+		return mySize <= N;
+	}
+	template<typename T, std::size_t N, class Alloc>
+	constexpr bool SmallVector<T, N, Alloc>::IsHeap() const noexcept
+	{
+		return mySize > N;
 	}
 }

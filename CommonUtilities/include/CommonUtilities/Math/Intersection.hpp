@@ -233,7 +233,7 @@ namespace CommonUtilities
 		template<typename T>
 		constexpr ISect<T> CapsulePlane(const Shape& aS1, const Shape& aS2)
 		{
-			return IntersectionSphereCapsule<T>(
+			return IntersectionCapsulePlane<T>(
 				DownCastTo<Capsule<T>>(aS1, Shape::Type::Capsule),
 				DownCastTo<Plane<T>>(aS2, Shape::Type::Plane));
 		}
@@ -569,7 +569,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr ISect<T> IntersectionAABBPlane(const AABB<T>& aAABB, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionAABBPlane(const AABB<T>& /*aAABB*/, const Plane<T>& /*aPlane*/)
 	{
 		return ISect<T>();
 	}
@@ -710,7 +710,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& /*aSphere*/, const Plane<T>& /*aPlane*/)
 	{
 		return ISect<T>();
 	}
@@ -723,7 +723,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr ISect<T> IntersectionCapsulePlane(const Capsule<T>& aCapsule, const Plane<T>& aPlane)
+	constexpr ISect<T> IntersectionCapsulePlane(const Capsule<T>& /*aCapsule*/, const Plane<T>& /*aPlane*/)
 	{
 		return ISect<T>();
 	}

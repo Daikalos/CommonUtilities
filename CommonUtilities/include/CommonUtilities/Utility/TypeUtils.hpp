@@ -60,4 +60,13 @@ namespace CommonUtilities
 
 		return wrappedName.substr(prefixLength, typeNameLength);
 	}
+
+	template <typename T>
+	constexpr std::string_view TypeNameClean()
+	{
+		constexpr auto typeName = cu::TypeName<T>();
+		constexpr auto index	= typeName.find_last_of(' ') + 1;
+
+		return typeName.substr(index);
+	}
 }

@@ -114,6 +114,21 @@ namespace CommonUtilities
 		return Shape::Type::Triangle;
 	}
 
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Triangle<T>& aLeft, const Triangle<T>& aRight)
+	{
+		return  aLeft.GetPoint0() == aRight.GetPoint0() &&
+				aLeft.GetPoint1() == aRight.GetPoint1() &&
+				aLeft.GetPoint2() == aRight.GetPoint2();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Triangle<T>& aLeft, const Triangle<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
 	using Trif = Triangle<float>;
 	using Trid = Triangle<double>;
 	using Trii = Triangle<int>;

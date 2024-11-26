@@ -5,6 +5,7 @@
 #include <mutex>
 #include <type_traits>
 #include <array>
+#include <queue>
 
 #include <CommonUtilities/Structures/FreeVector.hpp>
 #include <CommonUtilities/Utility/NonCopyable.h>
@@ -16,26 +17,40 @@ namespace CommonUtilities
 	class ThreadLoops
 	{
     public:
+        struct ThreadException
+        {
+            void*               thread;
+            std::exception_ptr  exceptionPtr;
+        };
+
         ThreadLoops();
         ~ThreadLoops();
 
         void Start(std::size_t aThreadCount);
         void Shutdown();
 
-        LoopID SetLoopTask(const std::function<void()>& aTask);
+        ThreadException GetLastException();
 
+        LoopID SetLoopTask(const std::function<void()>& aTask, const std::function<void()>& aOnException = {});
         void RemoveLoopTask(LoopID aLoopID);
-
         void DispatchLoop(LoopID aLoopID);
 
     private:
+        struct LoopTask
+        {
+            std::function<void()> callback;
+            std::function<void()> exceptionCallback;
+        };
+
         void ThreadLoop(LoopID aLoopID);
 
-        std::vector<std::jthread>           myThreads;
-        FreeVector<std::function<void()>>   myLoopTasks;
-        std::vector<bool>                   myDispatchedLoops;
-        std::condition_variable             myCV;
-        std::mutex                          myMutex; // sync access to task queue
-        bool                                myShutdown {true};
+        std::vector<std::jthread>       myThreads;
+        FreeVector<LoopTask>            myLoopTasks;
+        std::vector<bool>               myDispatchedLoops;
+        std::queue<ThreadException>     myExceptions;
+        std::condition_variable         myCV;
+        std::mutex                      myMutex; // sync access to task queue
+        std::mutex                      myExceptionMutex;
+        bool                            myShutdown {true};
 	};
 }

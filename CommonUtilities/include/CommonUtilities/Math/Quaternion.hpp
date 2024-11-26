@@ -404,7 +404,7 @@ namespace CommonUtilities
 
 		const Vector3<T> newUp = rot1 * Vector3<T>::Up;
 
-		const Vector3<T> xAxis = u.Cross(f);
+		const Vector3<T> xAxis = (u.GetAbs() != f.GetAbs()) ? u.Cross(f) : Vector3<T>::Right;
 		const Vector3<T> yAxis = f.Cross(xAxis);
 
 		const Quaternion<T> rot2 = Quaternion<T>::RotationFromTo(newUp, yAxis);
@@ -417,7 +417,7 @@ namespace CommonUtilities
 		if (aMaxRadiansDelta <= EPSILON_V<T>)
 			return aQuatA;
 
-		const T cosTheta = aQuatA.Dot(aQuatB);
+		T cosTheta = aQuatA.Dot(aQuatB);
 
 		if (cosTheta >= T(0.99999)) // already equal
 			return aQuatB;
@@ -428,7 +428,7 @@ namespace CommonUtilities
 			cosTheta = -cosTheta;
 		}
 
-		const T angle = std::acos(cosTheta);
+		T angle = std::acos(cosTheta);
 
 		if (angle < aMaxRadiansDelta) // arrived
 			return aQuatB;

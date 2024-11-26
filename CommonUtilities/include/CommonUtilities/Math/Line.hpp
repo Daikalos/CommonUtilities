@@ -94,6 +94,20 @@ namespace CommonUtilities
 		return Shape::Type::Line;
 	}
 
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Line<T>& aLeft, const Line<T>& aRight)
+	{
+		return  aLeft.GetOrigin() == aRight.GetOrigin() &&
+				aLeft.GetDirection() == aRight.GetDirection();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Line<T>& aLeft, const Line<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
 	// using declarations
 
 	using LineFloat		= Line<float>;

@@ -59,7 +59,10 @@ namespace CommonUtilities
 		NODISC constexpr T* GetData() noexcept;
 
 		NODISC constexpr auto GetTranspose() const -> Matrix4x4;
+		NODISC constexpr auto GetTranslationMatrix() const -> Matrix4x4;
 		NODISC constexpr auto GetRotationMatrix() const -> Matrix4x4;
+		NODISC constexpr auto GetRotationScaleMatrix() const -> Matrix4x4;
+		NODISC constexpr auto GetScaleMatrix() const -> Matrix4x4;
 
 		NODISC constexpr Vector3<T> GetTranslation() const;
 		NODISC constexpr Vector3<T> GetRotation() const;
@@ -272,6 +275,19 @@ namespace CommonUtilities
 		};
 	}
 	template<typename T>
+	constexpr auto Matrix4x4<T>::GetTranslationMatrix() const -> Matrix4x4
+	{
+		Matrix4x4<T> translationMatrix
+		{
+			1,				0,				0,				0,
+			0,				1,				0,				0,
+			0,				0,				1,				0,
+			myMatrix[12],	myMatrix[13],	myMatrix[14],	1
+		};
+
+		return translationMatrix;
+	}
+	template<typename T>
 	constexpr auto Matrix4x4<T>::GetRotationMatrix() const -> Matrix4x4
 	{
 		Matrix4x4<T> rotationMatrix
@@ -285,6 +301,34 @@ namespace CommonUtilities
 		rotationMatrix.SetScale(Vector3f(1.0f, 1.0f, 1.0f)); // remove scaling
 
 		return rotationMatrix;
+	}
+	template<typename T>
+	constexpr auto Matrix4x4<T>::GetRotationScaleMatrix() const -> Matrix4x4
+	{
+		Matrix4x4<T> rotationScaleMatrix
+		{
+			myMatrix[0],	myMatrix[1],	myMatrix[2],	0,
+			myMatrix[4],	myMatrix[5],	myMatrix[6],	0,
+			myMatrix[8],	myMatrix[9],	myMatrix[10],	0,
+			0,				0,				0,				1
+		};
+
+		return rotationScaleMatrix;
+	}
+	template<typename T>
+	constexpr auto Matrix4x4<T>::GetScaleMatrix() const -> Matrix4x4
+	{
+		const Vector3<T> s = GetScale();
+
+		Matrix4x4<T> scaleMatrix
+		{
+			s.x,	0,		0,		0,
+			0,		s.y,	0,		0,
+			0,		0,		s.z,	0,
+			0,		0,		0,		1
+		};
+
+		return scaleMatrix;
 	}
 
 	template<typename T>
@@ -439,9 +483,9 @@ namespace CommonUtilities
 		Vector3<T> scaleY{ myMatrix[4], myMatrix[5], myMatrix[6 ] };
 		Vector3<T> scaleZ{ myMatrix[8], myMatrix[9], myMatrix[10] };
 
-		scaleX.Normalize(aScale.x);
-		scaleY.Normalize(aScale.y);
-		scaleZ.Normalize(aScale.z);
+		if (scaleX != Vector3<T>::Zero) scaleX.Normalize(aScale.x);
+		if (scaleY != Vector3<T>::Zero) scaleY.Normalize(aScale.y);
+		if (scaleZ != Vector3<T>::Zero) scaleZ.Normalize(aScale.z);
 
 		myMatrix[0] = scaleX.x; myMatrix[1] = scaleX.y; myMatrix[2 ] = scaleX.z;
 		myMatrix[4] = scaleY.x; myMatrix[5] = scaleY.y; myMatrix[6 ] = scaleY.z;
@@ -501,22 +545,28 @@ namespace CommonUtilities
 	constexpr auto Matrix4x4<T>::GetFastInverse() const -> Matrix4x4
 	{
 		const Vector3<T> s = GetScale();
-		assert(s.x != 0 && s.y != 0 && s.z != 0 && "Cannot divide by zero");
 
 		Vector3<T> row0{ myMatrix[0], myMatrix[1], myMatrix[2 ] };
 		Vector3<T> row1{ myMatrix[4], myMatrix[5], myMatrix[6 ] };
 		Vector3<T> row2{ myMatrix[8], myMatrix[9], myMatrix[10] };
 
-		row0 = row0.GetNormalized(s.x, T(1));
-		row1 = row1.GetNormalized(s.y, T(1));
-		row2 = row2.GetNormalized(s.z, T(1));
+		row0 = (s.x != T(0)) ? row0.GetNormalized(s.x, T(1)) : row0;
+		row1 = (s.y != T(0)) ? row1.GetNormalized(s.y, T(1)) : row1;
+		row2 = (s.z != T(0)) ? row2.GetNormalized(s.z, T(1)) : row2;
+
+		const Vector3<T> is
+		{
+			(s.x != T(0)) ? T(1) / s.x : T(0),
+			(s.y != T(0)) ? T(1) / s.y : T(0),
+			(s.z != T(0)) ? T(1) / s.z : T(0)
+		};
 
 		const Matrix4x4 scalingMatrix
 		{
-			T(1) / s.x,	0,			0,			0,
-			0,			T(1) / s.y,	0,			0,
-			0,			0,			T(1) / s.z,	0,
-			0,			0,			0,			1
+			is.x,	0,		0,		0,
+			0,		is.y,	0,		0,
+			0,		0,		is.z,	0,
+			0,		0,		0,		1
 		};
 
 		const Matrix4x4 rotationMatrix
@@ -827,9 +877,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	inline constexpr auto Matrix4x4<T>::CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp)
+	constexpr auto Matrix4x4<T>::CreateLookAt(const Vector3<T>& aEyePosition, const Vector3<T>& aDirection, const Vector3<T>& aUp)
 	{
-		const Vector3<T> xAxis = aUp.Cross(aDirection).GetNormalized();
+		const Vector3<T> xAxis = (aUp.GetAbs() != aDirection.GetAbs()) ? aUp.Cross(aDirection).GetNormalized() : Vector3<T>::Right;
 		const Vector3<T> yAxis = aDirection.Cross(xAxis);
 
 		return Matrix4x4<T>

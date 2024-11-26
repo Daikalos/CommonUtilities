@@ -104,6 +104,8 @@ namespace CommonUtilities
 
 		COMMON_UTILITIES_API void ReserveBytesToFit(std::size_t aNumBytesToFit);
 		COMMON_UTILITIES_API void FitBufferToOffset();
+
+		COMMON_UTILITIES_API void Clear();
 	};
 
 	template<typename... Ts>

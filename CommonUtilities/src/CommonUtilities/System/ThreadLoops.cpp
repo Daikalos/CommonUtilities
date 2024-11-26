@@ -1,5 +1,7 @@
 #include <CommonUtilities/System/ThreadLoops.h>
 
+#include <CommonUtilities/System/WindowsHeader.h>
+
 using namespace CommonUtilities;
 
 ThreadLoops::ThreadLoops() : myShutdown(true)
@@ -9,15 +11,7 @@ ThreadLoops::ThreadLoops() : myShutdown(true)
 
 ThreadLoops::~ThreadLoops()
 {
-    if (myShutdown && myThreads.empty())
-        return;
-
-    {
-        std::lock_guard<std::mutex> lock(myMutex);
-        myShutdown = true;
-    }
-
-    myCV.notify_all();
+    Shutdown();
 }
 
 void ThreadLoops::Start(std::size_t aThreadCount)
@@ -50,7 +44,21 @@ void ThreadLoops::Shutdown()
     myThreads.clear();
 }
 
-LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask)
+ThreadLoops::ThreadException ThreadLoops::GetLastException()
+{
+    std::scoped_lock lock(myExceptionMutex);
+
+    ThreadException e;
+    if (!myExceptions.empty())
+    {
+        e = myExceptions.front();
+        myExceptions.pop();
+    }
+
+    return e;
+}
+
+LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask, const std::function<void()>& aOnException)
 {
     std::lock_guard lock(myMutex);
 
@@ -59,7 +67,7 @@ LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask)
         throw std::runtime_error("More tasks than threads!");
     }
 
-	return myLoopTasks.emplace(aTask);
+	return myLoopTasks.emplace(aTask, aOnException);
 }
 
 void ThreadLoops::RemoveLoopTask(LoopID aLoopID)
@@ -81,7 +89,7 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
 {
     while (true)
     {
-        std::function<void()> task;
+        LoopTask task;
         {
             std::unique_lock<std::mutex> lock(myMutex);
 
@@ -98,6 +106,17 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
             myDispatchedLoops[aLoopID] = false;
         }
 
-        task();
+        try
+        {
+            task.callback();
+        }
+        catch (std::exception&)
+        {
+            {
+                std::scoped_lock lock(myExceptionMutex);
+                myExceptions.emplace(GetCurrentThread(), std::current_exception());
+            }
+            task.exceptionCallback();
+        }
     }
 }

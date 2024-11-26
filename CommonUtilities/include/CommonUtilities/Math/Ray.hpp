@@ -80,6 +80,20 @@ namespace CommonUtilities
 		return Shape::Type::Ray;
 	}
 
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Ray<T>& aLeft, const Ray<T>& aRight)
+	{
+		return  aLeft.GetOrigin() == aRight.GetOrigin() &&
+				aLeft.GetDirection() == aRight.GetDirection();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Ray<T>& aLeft, const Ray<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
 	using Rayf = Ray<float>;
 	using Rayd = Ray<double>;
 	using Rayi = Ray<int>;

@@ -17,14 +17,14 @@ namespace CommonUtilities
 		Timer(Timer&&) = default;
 		Timer& operator=(Timer&&) = default;
 
-		NODISC float GetDT() const noexcept;
-		NODISC float GetRealDT() const noexcept;
-		NODISC float GetFixedDT() const noexcept;
-		NODISC float GetRealFixedDT() const noexcept;
-		NODISC float GetScaledTime() const noexcept;
-		NODISC float GetAlpha() const noexcept;
-		NODISC long double GetTotalTime() const noexcept;
-		NODISC long double GetTotalRunTime() const noexcept;
+		NODISC float GetDT() const noexcept					{ return myDeltaTime; }
+		NODISC float GetRealDT() const noexcept				{ return myRealDeltaTime; }
+		NODISC float GetFixedDT() const noexcept			{ return myFixedDeltaTime; }
+		NODISC float GetRealFixedDT() const noexcept		{ return myRealFixedDeltaTime; }
+		NODISC float GetScaledTime() const noexcept			{ return myScaledTime; }
+		NODISC float GetAlpha() const noexcept				{ return myAlpha; }
+		NODISC long double GetTotalTime() const noexcept	{ return myTotalTime; }
+		NODISC long double GetTotalRunTime() const noexcept { return myTotalRunTime; }
 
 		NODISC int GetFPS() const;
 		NODISC int GetFixedFPS() const noexcept;

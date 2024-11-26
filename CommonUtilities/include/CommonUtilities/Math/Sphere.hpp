@@ -158,6 +158,20 @@ namespace CommonUtilities
 		return Shape::Type::Sphere;
 	}
 
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Sphere<T>& aLeft, const Sphere<T>& aRight)
+	{
+		return  aLeft.GetCenter() == aRight.GetCenter() &&
+				aLeft.GetRadius() == aRight.GetRadius();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Sphere<T>& aLeft, const Sphere<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
 	using Spheref = Sphere<float>;
 	using Sphered = Sphere<double>;
 	using Spherei = Sphere<int>;

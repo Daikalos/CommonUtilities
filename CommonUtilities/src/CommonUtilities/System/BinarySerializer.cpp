@@ -33,6 +33,12 @@ void BinaryWriteSerializer::FitBufferToOffset()
 	myBuffer.shrink_to_fit();
 }
 
+void BinaryWriteSerializer::Clear()
+{
+	myBuffer.clear();
+	myOffset = 0;
+}
+
 std::size_t SerializeAsBinary<std::string>::operator()(SerializerState aState, std::string& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 {
 	if (aState == SerializerState::Read)

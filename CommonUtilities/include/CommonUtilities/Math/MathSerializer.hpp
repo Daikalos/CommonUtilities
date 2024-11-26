@@ -6,6 +6,7 @@
 #include "Triangle.hpp"
 #include "Plane.hpp"
 #include "Ray.hpp"
+#include "Transform3D.h"
 
 #include <CommonUtilities/System/BinarySerializer.h>
 
@@ -51,6 +52,13 @@ namespace CommonUtilities
 	{
 		NODISC std::size_t operator()(SerializerState aState, Ray<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 		NODISC std::size_t operator()(SerializerState aState, const Ray<T>& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+	};
+
+	template<>
+	struct SerializeAsBinary<Transform3D>
+	{
+		NODISC std::size_t operator()(SerializerState aState, Transform3D& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+		NODISC std::size_t operator()(SerializerState aState, const Transform3D& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 	};
 
 	template<typename T>
@@ -320,6 +328,53 @@ namespace CommonUtilities
 		{
 			aOffset += cu::SerializeAsBinary<Vector3<T>>{}(aState, aInOutData.GetOrigin(), aInOutBytes, aOffset);
 			aOffset += cu::SerializeAsBinary<Vector3<T>>{}(aState, aInOutData.GetDirection(), aInOutBytes, aOffset);
+		}
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+
+	inline std::size_t SerializeAsBinary<Transform3D>::operator()(SerializerState aState, Transform3D& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		if (aState == SerializerState::Read)
+		{
+			Vector3f position;
+			Quatf rotation;
+			Vector3f scale;
+
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, position, aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Quatf>{}(aState, rotation, aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, scale, aInOutBytes, aOffset);
+
+			aInOutData = Transform3D(position, rotation, scale);
+		}
+		else
+		{
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, aInOutData.GetPosition(), aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Quatf>{}(aState, aInOutData.GetRotation(), aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, aInOutData.GetScale(), aInOutBytes, aOffset);
+		}
+
+		const std::size_t numBytes = aOffset - prevOffset;
+
+		return numBytes;
+	}
+	inline std::size_t SerializeAsBinary<Transform3D>::operator()(SerializerState aState, const Transform3D& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
+	{
+		const std::size_t prevOffset = aOffset;
+
+		if (aState == SerializerState::Read)
+		{
+			assert(false && "Cannot copy to const memory!");
+		}
+		else
+		{
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, aInOutData.GetPosition(), aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Quatf>{}(aState, aInOutData.GetRotation(), aInOutBytes, aOffset);
+			aOffset += cu::SerializeAsBinary<Vector3f>{}(aState, aInOutData.GetScale(), aInOutBytes, aOffset);
 		}
 
 		const std::size_t numBytes = aOffset - prevOffset;

@@ -5,11 +5,14 @@
 #include <numeric>
 
 #include <CommonUtilities/Structures/EnumArray.hpp>
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
 #include "Matrix4x4.hpp"
 #include "Plane.hpp"
 #include "Sphere.hpp"
+#include "Capsule.hpp"
 #include "AABB.hpp"
+#include "GraphicsEngine/Objects/Line.h"
 
 namespace CommonUtilities
 {
@@ -39,6 +42,7 @@ namespace CommonUtilities
 
 		NODISC constexpr const FrustumPlanes& GetPlanes() const noexcept;
 		NODISC constexpr const FrustumPoints& GetPoints() const noexcept;
+		NODISC constexpr const AABB<T>& GetBox() const noexcept;
 		NODISC constexpr const Vector3<T>& GetCenter() const noexcept;
 		NODISC constexpr const Vector3<T>& GetNearCenter() const noexcept;
 		NODISC constexpr const Vector3<T>& GetFarCenter() const noexcept;
@@ -47,23 +51,33 @@ namespace CommonUtilities
 		constexpr Frustum& SetPoints(const AABB<T>& aBox);
 		constexpr Frustum& SetPoints(const FrustumPoints& aPoints);
 
+		NODISC constexpr T GetRadius() const;
+
 		template<std::size_t N>
 		NODISC constexpr std::array<Frustum, N> Subdivide(std::span<const float, N> aSubdivisions) const;
 
 		NODISC constexpr Frustum GetSubFrustum(float aStartPercentage, float aEndPercentage) const;
 
+		NODISC constexpr bool Contains(const AABB<T>& aBox) const;
+		NODISC constexpr bool ContainsNoDepth(const AABB<T>& aBox) const;
+
 		NODISC constexpr bool IsInside(const Sphere<T>& aSphere) const;
 		NODISC constexpr bool IsInside(const AABB<T>& aBox) const;
+		NODISC constexpr bool IsInside(const Vector3<T>& aPoint) const;
+		NODISC constexpr bool IsInside(const Capsule<T>& aCapsule) const;
+		NODISC constexpr bool IsInside(const Line& aLine) const;
 
 		NODISC constexpr bool IsInsideNoDepth(const Sphere<T>& aSphere) const;
 		NODISC constexpr bool IsInsideNoDepth(const AABB<T>& aBox) const;
 
 	private:
+		constexpr void ComputeBox();
 		constexpr void ComputeCenters();
 		constexpr void ComputePlanes();
 
 		FrustumPlanes	myPlanes;
 		FrustumPoints	myPoints;
+		AABB<T>			myBox;
 		Vector3<T>		myCenter;
 		Vector3<T>		myNearCenter;
 		Vector3<T>		myFarCenter;
@@ -94,6 +108,11 @@ namespace CommonUtilities
 	constexpr const Frustum<T>::FrustumPoints& Frustum<T>::GetPoints() const noexcept
 	{
 		return myPoints;
+	}
+	template<typename T>
+	constexpr const AABB<T>& Frustum<T>::GetBox() const noexcept
+	{
+		return myBox;
 	}
 	template<typename T>
 	constexpr const Vector3<T>& Frustum<T>::GetCenter() const noexcept
@@ -144,6 +163,7 @@ namespace CommonUtilities
 		myPoints[6] = farBotLeft;
 		myPoints[7] = farBotRight;
 
+		ComputeBox();
 		ComputeCenters();
  		ComputePlanes();
 
@@ -164,6 +184,7 @@ namespace CommonUtilities
 		myPoints[6] = boxPoints[5];
 		myPoints[7] = boxPoints[6];
 
+		ComputeBox();
 		ComputeCenters();
 		ComputePlanes();
 
@@ -174,10 +195,24 @@ namespace CommonUtilities
 	{
 		myPoints = aPoints;
 
+		ComputeBox();
 		ComputeCenters();
  		ComputePlanes();
 
 		return *this;
+	}
+
+	template<typename T>
+	constexpr T Frustum<T>::GetRadius() const
+	{
+		T radius = MIN_V<T>;
+		for (const auto& point : myPoints)
+		{
+			T distance = Vector3<T>::DistanceSqr(point, myCenter);
+			radius = (std::max)(radius, distance);
+		}
+
+		return (T)std::sqrt(radius);
 	}
 
 	template<typename T>
@@ -205,6 +240,7 @@ namespace CommonUtilities
 		result.myPoints[6] = farBotLeft;
 		result.myPoints[7] = farBotRight;
 
+		result.ComputeBox();
 		result.ComputeCenters();
 		result.ComputePlanes();
 
@@ -212,9 +248,43 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr bool Frustum<T>::Contains(const AABB<T>& aBox) const
+	{
+		if (!myBox.Contains(aBox))
+			return false;
+
+		for (int i = 0; i < 6; i++)
+		{
+			Face f = static_cast<Face>(i);
+
+			const T d = myPlanes[f].GetDistance();
+
+			if ((myPlanes[f].GetNormal().Dot(aBox.GetPointN(myPlanes[f].GetNormal())) + d) < T(0))
+				return false;
+		}
+
+		return true;
+	}
+	template<typename T>
+	constexpr bool Frustum<T>::ContainsNoDepth(const AABB<T>& aBox) const
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			Face f = static_cast<Face>(i);
+
+			const T d = myPlanes[f].GetDistance();
+
+			if ((myPlanes[f].GetNormal().Dot(aBox.GetPointN(myPlanes[f].GetNormal())) + d) < T(0))
+				return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
 	constexpr bool Frustum<T>::IsInside(const Sphere<T>& aSphere) const
 	{
-		float radius = -aSphere.GetRadius();
+		T radius = -aSphere.GetRadius();
 
 		return 
 			!(myPlanes[Face::Right].IsInside(aSphere.GetCenter(), radius) ||
@@ -227,23 +297,17 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr bool Frustum<T>::IsInside(const AABB<T>& aBox) const
 	{
+		if (!myBox.Overlaps(aBox))
+			return false;
+
 		for (int i = 0; i < 6; i++)
 		{
 			Face f = static_cast<Face>(i);
 
-			const float d = myPlanes[f].GetDistance();
+			const T d = myPlanes[f].GetDistance();
 
-			int out = 0;
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMax().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMax().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMin().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMax().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMax().y, aBox.GetMax().z)) + d) < T(0));
-
-			if (out == 8) return false;
+			if ((myPlanes[f].GetNormal().Dot(aBox.GetPointP(myPlanes[f].GetNormal())) + d) < T(0))
+				return false;
 		}
 
 		int out = 0;
@@ -255,23 +319,72 @@ namespace CommonUtilities
 		out = 0; for (int i = 0; i < 8; i++) out += (int)(myPoints[i].z < aBox.GetMin().z); if (out == 8) return false;
 
 		return true;
+	}
 
-		//cu::Vector3f center = aBox.GetCenter();
-		//cu::Vector3f extends = aBox.GetExtends();
+	template<typename T>
+	constexpr NODISC bool Frustum<T>::IsInside(const Vector3<T>& aPoint) const
+	{
+		for (size_t i = 0; i < 6; i++)
+		{
+			Face face = static_cast<Face>(i);
 
-		//return
-		//	!(myPlanes[Face::Right].IsInside(center, extends) ||
-		//	  myPlanes[Face::Left].IsInside(center, extends) ||
-		//	  myPlanes[Face::Top].IsInside(center, extends) ||
-		//	  myPlanes[Face::Bottom].IsInside(center, extends) ||
-		//	  myPlanes[Face::Far].IsInside(center, extends) ||
-		//	  myPlanes[Face::Near].IsInside(center, extends));
+			const T dist = myPlanes[face].GetDistance();
+
+			if ((myPlanes[face].GetNormal().Dot(aPoint) + dist) < T(0))
+				return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	constexpr NODISC bool Frustum<T>::IsInside(const Capsule<T>& aCapsule) const
+	{
+		const Vector3<T> base = aCapsule.GetBase();
+		const Vector3<T> tip = aCapsule.GetTip();
+		const T radius = aCapsule.GetRadius();
+
+		if (IsInside(base) || IsInside(tip))
+			return true;
+
+		for (size_t i = 0; i < 6; i++)
+		{
+			Face face = static_cast<Face>(i);
+
+			const T dist = myPlanes[face].GetDistance();
+
+			if ((myPlanes[face].GetNormal().Dot(base) + dist) < -radius &&
+				(myPlanes[face].GetNormal().Dot(tip) + dist) < -radius)
+				return false;
+		}
+		
+		return true;
+	}
+
+	template<typename T>
+	constexpr NODISC bool Frustum<T>::IsInside(const Line& aLine) const
+	{
+		if (IsInside(aLine.fromPos) || IsInside(aLine.toPos))
+			return true;
+
+		for (size_t i = 0; i < 6; i++)
+		{
+			Face face = static_cast<Face>(i);
+
+			const T dist = myPlanes[face].GetDistance();
+
+			if ((myPlanes[face].GetNormal().Dot(aLine.fromPos) + dist) < T(0) &&
+				(myPlanes[face].GetNormal().Dot(aLine.toPos) + dist) < T(0))
+				return false;
+		}
+
+		return true;
 	}
 
 	template<typename T>
 	constexpr bool Frustum<T>::IsInsideNoDepth(const Sphere<T>& aSphere) const
 	{
-		const float radius = -aSphere.GetRadius();
+		const T radius = -aSphere.GetRadius();
 
 		return 
 			!(myPlanes[Face::Right].IsInside(aSphere.GetCenter(), radius) ||
@@ -286,24 +399,37 @@ namespace CommonUtilities
 		{
 			Face f = static_cast<Face>(i);
 
-			const float d = myPlanes[f].GetDistance(); // plane distance
+			const T d = myPlanes[f].GetDistance(); // plane distance
 
-			int out = 0;
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMin().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMax().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMax().y, aBox.GetMin().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMin().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMin().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMin().x, aBox.GetMax().y, aBox.GetMax().z)) + d) < T(0));
-			out += (int)((myPlanes[f].GetNormal().Dot(Vector3<T>(aBox.GetMax().x, aBox.GetMax().y, aBox.GetMax().z)) + d) < T(0));
-
-			if (out == 8) return false;
+			if ((myPlanes[f].GetNormal().Dot(aBox.GetPointP(myPlanes[f].GetNormal())) + d) < T(0))
+				return false;
 		}
 
 		return true;
 	}
 
+	template<typename T>
+	constexpr void Frustum<T>::ComputeBox()
+	{
+		Vector3<T> min = myPoints[0];
+		Vector3<T> max = myPoints[0];
+
+		for (std::size_t i = 1; i < myPoints.size(); ++i)
+		{
+			const Vector3<T> point = myPoints[i];
+
+			if      (point.x < min.x) min.x = point.x;
+			else if (point.x > max.x) max.x = point.x;
+					 						  
+			if      (point.y < min.y) min.y = point.y;
+			else if (point.y > max.y) max.y = point.y;
+					 						  
+			if      (point.z < min.z) min.z = point.z;
+			else if (point.z > max.z) max.z = point.z;
+		}
+
+		myBox = AABB<T>(min, max);
+	}
 	template<typename T>
 	constexpr void Frustum<T>::ComputeCenters()
 	{

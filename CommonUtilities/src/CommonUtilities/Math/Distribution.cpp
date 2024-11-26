@@ -34,9 +34,9 @@ Distribution<Vector2f> CommonUtilities::CreateDistributionDeflect(const Vector2f
 	return [=] { return RandomDeflection(aDirection, aMaxRotation); };
 }
 
-Distribution<Vector3f> CommonUtilities::CreateDistributionRect(const Vector3f& aCenter, const Vector3f& aHalfSize)
+Distribution<Vector3f> CommonUtilities::CreateDistributionBox(const Vector3f& aCenter, const Vector3f& aHalfSize)
 {
-	return [=] { return RandomPointInRect(aCenter, aHalfSize); };
+	return [=] { return RandomPointInBox(aCenter, aHalfSize); };
 }
 
 Distribution<Vector3f> CommonUtilities::CreateDistributionSphere(const Vector3f& aCenter, float aRadius)

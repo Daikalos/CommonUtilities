@@ -167,6 +167,20 @@ namespace CommonUtilities
 		return Shape::Type::Capsule;
 	}
 
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const Capsule<T>& aLeft, const Capsule<T>& aRight)
+	{
+		return  aLeft.GetBase() == aRight.GetBase() &&
+				aLeft.GetTip() == aRight.GetTip();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const Capsule<T>& aLeft, const Capsule<T>& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
 	using Capsulef = Capsule<float>;
 	using Capsuled = Capsule<double>;
 	using Capsulei = Capsule<int>;

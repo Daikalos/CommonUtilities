@@ -14,6 +14,7 @@ namespace CommonUtilities
 		Transform3D() = default;
 		virtual ~Transform3D() = default;
 
+		Transform3D(const Vector3f& aPosition, const Quatf& aRotation, const Vector3f& aScale);
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder = RotationOrder);
 		Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, AxisOrder aRotationOrder = RotationOrder);
 		Transform3D(const Vector3f& aPosition, AxisOrder aRotationOrder = RotationOrder);

@@ -1,20 +1,14 @@
 #include <CommonUtilities/System/ThreadPool.h>
 
+#include <CommonUtilities/System/WindowsHeader.h>
+
 using namespace CommonUtilities;
 
 ThreadPool::ThreadPool() = default;
 
 ThreadPool::~ThreadPool()
 {
-    if (myShutdown && myThreads.empty())
-        return;
-
-    {
-        std::lock_guard<std::mutex> lock(myMutex);
-        myShutdown = true;
-    }
-
-    myCV.notify_all();
+    Shutdown();
 }
 
 void ThreadPool::Start(std::size_t aThreadCount)
@@ -61,6 +55,11 @@ void ThreadPool::ThreadLoop()
 
             if (myTasks.empty() && myShutdown)
                 break;
+
+            std::wstring wName = std::wstring(myQueuedNames.front().begin(), myQueuedNames.front().end());
+            myQueuedNames.pop();
+
+            SetThreadDescription(GetCurrentThread(), PCWSTR(wName.c_str()));
 
             task = std::move(myTasks.front());
             myTasks.pop();

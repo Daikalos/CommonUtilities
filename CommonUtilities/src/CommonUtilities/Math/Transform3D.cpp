@@ -2,6 +2,14 @@
 
 using namespace CommonUtilities;
 
+Transform3D::Transform3D(const Vector3f& aPosition, const Quatf& aRotation, const Vector3f& aScale)
+	: myPosition(aPosition)
+	, myRotation(aRotation)
+	, myScale(aScale)
+{
+
+}
+
 Transform3D::Transform3D(const Vector3f& aPosition, const Vector3f& aRotation, const Vector3f& aScale, AxisOrder aRotationOrder)
 	: myPosition(aPosition)
 	, myRotation(aRotation, aRotationOrder)

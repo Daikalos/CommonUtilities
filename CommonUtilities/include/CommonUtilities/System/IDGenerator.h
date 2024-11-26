@@ -7,7 +7,7 @@
 #include <CommonUtilities/Utility/HashUtils.hpp>
 #include <CommonUtilities/Config.h>
 
-namespace CommonUtilities::id
+namespace CommonUtilities
 {
 	/// Typical implementation of generating unique ids, does not work however across boundaries 
 	/// (counter will reset to zero in different boundaries, and can therefore collide), read more
@@ -51,6 +51,11 @@ namespace CommonUtilities::id
 		static consteval std::size_t ID()
 		{
 			return FNV1a(WrappedTypeName<T>());
+		}
+
+		static consteval std::size_t NameID()
+		{
+			return FNV1a(TypeNameClean<T>());
 		}
 #else
 		static constexpr std::size_t ID()

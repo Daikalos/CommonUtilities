@@ -87,7 +87,7 @@ namespace CommonUtilities
 		aContainer.pop_back();
 	}
 
-	template<typename T, typename Iter>
+	template<typename T, typename Iter> requires (std::convertible_to<Iter, typename T::const_iterator>)
 	inline void EraseCyclicAt(T& aContainer, Iter aIterator)
 	{
 		assert(aIterator != aContainer.end());

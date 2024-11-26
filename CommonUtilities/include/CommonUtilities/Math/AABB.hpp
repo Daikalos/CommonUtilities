@@ -24,6 +24,7 @@ namespace CommonUtilities
 
 		NODISC constexpr static AABB InitWithMinAndMax(const Vector3<T>& aMin, const Vector3<T>& aMax);
 		NODISC constexpr static AABB InitWithCenterAndSize(const Vector3<T>& aCenter, const Vector3<T>& aSize);
+		NODISC constexpr static AABB InitWithCenterAndExtents(const Vector3<T>& aCenter, const Vector3<T>& aExtents);
 
 		NODISC constexpr const Vector3<T>& GetMin() const noexcept;
 		NODISC constexpr const Vector3<T>& GetMax() const noexcept;
@@ -31,6 +32,10 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetSize() const;
 		NODISC constexpr Vector3<T> GetCenter() const;
 		NODISC constexpr std::array<Vector3<T>, 8> GetPoints() const;
+		NODISC constexpr T GetVolume() const;
+
+		NODISC constexpr Vector3<T> GetPointP(const Vector3<T>& aNormal) const;
+		NODISC constexpr Vector3<T> GetPointN(const Vector3<T>& aNormal) const;
 
 		constexpr void SetMin(const Vector3<T>& aMin);
 		constexpr void SetMax(const Vector3<T>& aMax);
@@ -38,6 +43,8 @@ namespace CommonUtilities
 		constexpr void SetCenter(const Vector3<T>& aCenter);
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
+
+		constexpr AABB Inflate(float aInflation) const;
 
 		NODISC constexpr AABB Union(const AABB& aOther) const;
 		NODISC constexpr std::optional<AABB> Intersection(const AABB& aOther) const;
@@ -80,6 +87,11 @@ namespace CommonUtilities
 		const Vector3<T> extends = aSize / 2.0f;
 		return AABB<T>(aCenter - extends, aCenter + extends);
 	}
+	template<typename T>
+	constexpr AABB<T> AABB<T>::InitWithCenterAndExtents(const Vector3<T>& aCenter, const Vector3<T>& aExtents)
+	{
+		return AABB<T>(aCenter - aExtents, aCenter + aExtents);
+	}
 
 	template<typename T>
 	constexpr const Vector3<T>& AABB<T>::GetMin() const noexcept
@@ -121,6 +133,29 @@ namespace CommonUtilities
 			Vector3<T>(GetMax().x, GetMin().y, GetMin().z)
 		};
 	}
+	template<typename T>
+	constexpr T AABB<T>::GetVolume() const
+	{
+		Vector3<T> size = GetSize();
+		return size.x * size.y * size.z;
+	}
+
+	template<typename T>
+	constexpr Vector3<T> AABB<T>::GetPointP(const Vector3<T>& aNormal) const
+	{
+		return Vector3<T>(
+			(aNormal.x > 0) ? GetMax().x : GetMin().x,
+			(aNormal.y > 0) ? GetMax().y : GetMin().y,
+			(aNormal.z > 0) ? GetMax().z : GetMin().z);
+	}
+	template<typename T>
+	constexpr Vector3<T> AABB<T>::GetPointN(const Vector3<T>& aNormal) const
+	{
+		return Vector3<T>(
+			(aNormal.x < 0) ? GetMax().x : GetMin().x,
+			(aNormal.y < 0) ? GetMax().y : GetMin().y,
+			(aNormal.z < 0) ? GetMax().z : GetMin().z);
+	}
 
 	template<typename T>
 	constexpr void AABB<T>::SetMin(const Vector3<T>& aMin)
@@ -159,6 +194,12 @@ namespace CommonUtilities
 			(aPosition.x >= myMin.x) && (aPosition.x <= myMax.x) && 
 			(aPosition.y >= myMin.y) && (aPosition.y <= myMax.y) && 
 			(aPosition.z >= myMin.z) && (aPosition.z <= myMax.z);
+	}
+
+	template<typename T>
+	constexpr AABB<T> AABB<T>::Inflate(float aInflation) const
+	{
+		return InitWithCenterAndSize(GetCenter(), GetSize() * aInflation);
 	}
 
 	template<typename T>
@@ -229,6 +270,20 @@ namespace CommonUtilities
 	constexpr Shape::Type AABB<T>::GetType() const noexcept
 	{
 		return Shape::Type::AABB;
+	}
+
+	// GLOBAL OPERATORS
+
+	template<typename T>
+	NODISC constexpr bool operator==(const AABB<T>& aLeft, const AABB<T>& aRight)
+	{
+		return  aLeft.GetMin() == aRight.GetMin() &&
+				aLeft.GetMax() == aRight.GetMax();
+	}
+	template<typename T>
+	NODISC constexpr bool operator!=(const AABB<T>& aLeft, const AABB<T>& aRight)
+	{
+		return !(aLeft == aRight);
 	}
 
 	using AABBf	= AABB<float>;

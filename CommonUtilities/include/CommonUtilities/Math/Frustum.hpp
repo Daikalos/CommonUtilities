@@ -12,7 +12,6 @@
 #include "Sphere.hpp"
 #include "Capsule.hpp"
 #include "AABB.hpp"
-#include "GraphicsEngine/Objects/Line.h"
 
 namespace CommonUtilities
 {
@@ -65,7 +64,7 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const AABB<T>& aBox) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPoint) const;
 		NODISC constexpr bool IsInside(const Capsule<T>& aCapsule) const;
-		NODISC constexpr bool IsInside(const Line& aLine) const;
+		NODISC constexpr bool IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const;
 
 		NODISC constexpr bool IsInsideNoDepth(const Sphere<T>& aSphere) const;
 		NODISC constexpr bool IsInsideNoDepth(const AABB<T>& aBox) const;
@@ -362,9 +361,9 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr NODISC bool Frustum<T>::IsInside(const Line& aLine) const
+	constexpr NODISC bool Frustum<T>::IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const
 	{
-		if (IsInside(aLine.fromPos) || IsInside(aLine.toPos))
+		if (IsInside(aStart) || IsInside(aEnd))
 			return true;
 
 		for (size_t i = 0; i < 6; i++)
@@ -373,8 +372,8 @@ namespace CommonUtilities
 
 			const T dist = myPlanes[face].GetDistance();
 
-			if ((myPlanes[face].GetNormal().Dot(aLine.fromPos) + dist) < T(0) &&
-				(myPlanes[face].GetNormal().Dot(aLine.toPos) + dist) < T(0))
+			if ((myPlanes[face].GetNormal().Dot(aStart) + dist) < T(0) &&
+				(myPlanes[face].GetNormal().Dot(aEnd) + dist) < T(0))
 				return false;
 		}
 

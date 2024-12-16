@@ -321,7 +321,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr NODISC bool Frustum<T>::IsInside(const Vector3<T>& aPoint) const
+	constexpr bool Frustum<T>::IsInside(const Vector3<T>& aPoint) const
 	{
 		for (size_t i = 0; i < 6; i++)
 		{
@@ -337,7 +337,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr NODISC bool Frustum<T>::IsInside(const Capsule<T>& aCapsule) const
+	constexpr bool Frustum<T>::IsInside(const Capsule<T>& aCapsule) const
 	{
 		const Vector3<T> base = aCapsule.GetBase();
 		const Vector3<T> tip = aCapsule.GetTip();
@@ -361,7 +361,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr NODISC bool Frustum<T>::IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const
+	constexpr bool Frustum<T>::IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const
 	{
 		if (IsInside(aStart) || IsInside(aEnd))
 			return true;

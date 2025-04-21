@@ -60,6 +60,9 @@ namespace CommonUtilities
 		template<typename Func>
 		constexpr void for_each(const Func& func) const;
 
+		template<typename Func>
+		constexpr void for_each(const Func& func);
+
 	private:
 		using container_type = std::vector<std::variant<T, std::int64_t>>;
 
@@ -192,6 +195,17 @@ namespace CommonUtilities
 	constexpr void FreeVector<T>::for_each(const Func& func) const
 	{
 		for (const auto& elt : myData)
+		{
+			if (elt.index() == 0)
+				func(std::get<T>(elt));
+		}
+	}
+
+	template<class T>
+	template<typename Func>
+	constexpr void FreeVector<T>::for_each(const Func& func)
+	{
+		for (auto& elt : myData)
 		{
 			if (elt.index() == 0)
 				func(std::get<T>(elt));

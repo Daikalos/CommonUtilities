@@ -17,6 +17,8 @@ namespace CommonUtilities
 	class ThreadLoops
 	{
     public:
+        using ExceptionCallback = std::function<void(std::exception&)>;
+
         struct ThreadException
         {
             void*               thread;
@@ -31,15 +33,15 @@ namespace CommonUtilities
 
         ThreadException GetLastException();
 
-        LoopID SetLoopTask(const std::function<void()>& aTask, const std::function<void()>& aOnException = {});
+        LoopID SetLoopTask(const std::function<void()>& aTask, const ExceptionCallback& aOnException = {});
         void RemoveLoopTask(LoopID aLoopID);
         void DispatchLoop(LoopID aLoopID);
 
     private:
         struct LoopTask
         {
-            std::function<void()> callback;
-            std::function<void()> exceptionCallback;
+            std::function<void()>   callback;
+            ExceptionCallback       exceptionCallback;
         };
 
         void ThreadLoop(LoopID aLoopID);

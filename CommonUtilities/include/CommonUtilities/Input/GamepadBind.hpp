@@ -26,6 +26,8 @@ namespace CommonUtilities
 		NODISC bool IsPressed(const ButtonType& aBind) const;
 		NODISC bool IsReleased(const ButtonType& aBind) const;
 
+		NODISC bool IsAnyPressed() const;
+
 	private:
 		GamepadInput* myGamepad {nullptr};
 	};
@@ -120,5 +122,14 @@ namespace CommonUtilities
 		}
 
 		return false;
+	}
+
+	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
+	inline bool GamepadBind<Bind>::IsAnyPressed() const
+	{
+		if (!this->GetEnabled() || !IsConnected())
+			return false;
+
+		return myGamepad->IsAnyPressed();
 	}
 }

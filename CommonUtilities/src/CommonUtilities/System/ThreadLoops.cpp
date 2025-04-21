@@ -58,7 +58,7 @@ ThreadLoops::ThreadException ThreadLoops::GetLastException()
     return e;
 }
 
-LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask, const std::function<void()>& aOnException)
+LoopID ThreadLoops::SetLoopTask(const std::function<void()>& aTask, const ExceptionCallback& aOnException)
 {
     std::lock_guard lock(myMutex);
 
@@ -106,17 +106,24 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
             myDispatchedLoops[aLoopID] = false;
         }
 
+        if (!task.callback)
+            continue;
+
         try
         {
             task.callback();
         }
-        catch (std::exception&)
+        catch (std::exception& e)
         {
             {
                 std::scoped_lock lock(myExceptionMutex);
                 myExceptions.emplace(GetCurrentThread(), std::current_exception());
             }
-            task.exceptionCallback();
+
+            if (task.exceptionCallback)
+            {
+                task.exceptionCallback(e);
+            }
         }
     }
 }

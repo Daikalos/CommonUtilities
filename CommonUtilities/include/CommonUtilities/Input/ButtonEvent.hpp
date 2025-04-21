@@ -40,7 +40,6 @@ namespace CommonUtilities
 	public:
 		using ButtonType = typename T::ButtonType; // relies on there being a ButtonType defined in input to access its type of button
 
-		ButtonEvent() = default;
 		~ButtonEvent() = default;
 
 		ButtonEvent(const T* input = nullptr);
@@ -149,7 +148,7 @@ namespace CommonUtilities
 		Execute(someArgs...);
 	}
 
-	template<class T, typename ...Args>
+	template<class T, typename ...Args> requires HasButtonInput<T>
 	inline bool ButtonEvent<T, Args...>::IsConnected() const noexcept
 	{
 		return myInput != nullptr;
@@ -180,12 +179,12 @@ namespace CommonUtilities
 		}
 	}
 
-	template<class T, typename ...Args>
+	template<class T, typename ...Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Connect(const T& aInput)
 	{
 		myInput = &aInput;
 	}
-	template<class T, typename ...Args>
+	template<class T, typename ...Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Disconnect()
 	{
 		myInput = nullptr;

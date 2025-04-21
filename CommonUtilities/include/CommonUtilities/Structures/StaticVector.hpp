@@ -232,7 +232,16 @@ namespace CommonUtilities
 		NODISC constexpr T* ptr_at(size_type aIndex);
 		NODISC constexpr const T* ptr_at(size_type aIndex) const;
 
-		alignas(T) std::byte myData[sizeof(T) * Capacity]{};
+#ifdef _DEBUG
+		union
+		{
+			T myDebugData[Capacity];
+#endif
+			alignas(T) std::byte myData[sizeof(T) * Capacity]{};
+#ifdef _DEBUG
+		};
+#endif
+
 		size_type mySize {0};
 	};
 
@@ -623,11 +632,13 @@ namespace CommonUtilities
 	template<typename T, std::size_t Capacity>
 	constexpr auto StaticVector<T, Capacity>::operator[](size_type aIndex) -> reference
 	{
+		assert(aIndex < mySize && "Index is out of bounds!");
 		return *ptr_at(aIndex);
 	}
 	template<typename T, std::size_t Capacity>
 	constexpr auto StaticVector<T, Capacity>::operator[](size_type aIndex) const -> const_reference
 	{
+		assert(aIndex < mySize && "Index is out of bounds!");
 		return *ptr_at(aIndex);
 	}
 

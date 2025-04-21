@@ -15,6 +15,23 @@ bool KeyboardInput::IsReleased(ButtonType aKey) const
 	return GetEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
 }
 
+bool KeyboardInput::IsAnyPressed() const
+{
+	if (!GetEnabled())
+		return false;
+
+	for (std::size_t i = 0; i < Keyboard::KeyCount; ++i)
+	{
+		ButtonType key = (ButtonType)i;
+		if (myCurrentState[key] && !myPreviousState[key])
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void KeyboardInput::Update()
 {	 
 	myPreviousState = myCurrentState;

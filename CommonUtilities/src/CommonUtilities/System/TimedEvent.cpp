@@ -52,6 +52,14 @@ float TimedEvent::GetRemaining() const
 {
 	return GetCallTime() - GetElapsed();
 }
+float TimedEvent::GetElapsedRatio() const
+{
+	return myCallTime ? GetElapsed() / GetCallTime() : 0.0f;
+}
+float TimedEvent::GetRemainingRatio() const
+{
+	return myCallTime ? GetRemaining() / GetCallTime() : 0.0f;
+}
 bool TimedEvent::IsRunning() const noexcept
 {
 	return myStopWatch.IsRunning();
@@ -115,6 +123,11 @@ void TimedEvent::SetRepeat(bool aFlag)
 	myRepeat = aFlag;
 }
 
+void TimedEvent::StartNew()
+{
+	myStopWatch.StartNew();
+}
+
 void TimedEvent::Start()
 {
 	myStopWatch.Start();
@@ -130,11 +143,29 @@ void TimedEvent::Reset(float aHeadStart)
 	myStopWatch.Reset(aHeadStart);
 }
 
+void TimedEvent::Finish()
+{
+	if (IsRunning())
+	{
+		if (!IsLooping())
+		{
+			myStopWatch.Reset(myCallTime);
+		}
+		else
+		{
+			myStopWatch.StartNew();
+		}
+
+		Execute();
+	}
+}
+
 void TimedEvent::Update(const Timer& aTimer)
 {
 	if (IsRunning())
 	{ 
 		myStopWatch.Update(aTimer);
+
 		if (myRepeat)
 		{
 			while (GetElapsed() >= GetCallTime() && IsRunning())
@@ -156,7 +187,7 @@ void TimedEvent::Execute()
 {
 	if (!IsLooping())
 	{
-		myStopWatch.Reset();
+		myStopWatch.Reset(myCallTime);
 	}
 
 	myEvent();

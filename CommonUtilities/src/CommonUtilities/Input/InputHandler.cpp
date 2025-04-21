@@ -14,14 +14,80 @@ bool InputHandler::GetInFocus() const noexcept
 {
 	return (myInFocus || !myFocusInput);
 }
+bool InputHandler::GetHasExternalFocus() const noexcept
+{
+	return myHasExternalFocus;
+}
 
 void InputHandler::SetEnabled(bool aFlag) noexcept
 {
+	if (myEnabled == aFlag)
+		return;
+
 	myEnabled = aFlag;
+
+	if (myEnabled)
+	{
+		OnEnable();
+	}
+	else
+	{
+		OnDisable();
+	}
 }
 void InputHandler::SetFocusAffectInput(bool aFlag) noexcept
 {
 	myFocusInput = aFlag;
+}
+
+void InputHandler::SetInFocus(bool aFlag)
+{
+	if (myInFocus == aFlag)
+		return;
+
+	myInFocus = aFlag;
+
+	if (!myHasExternalFocus)
+	{ 
+		if (myInFocus)
+		{
+			OnFocusGained();
+		}
+		else
+		{
+			if (myFocusInput)
+			{
+				ResetTentativeState();
+			}
+
+			OnFocusLost();
+		}
+	}
+}
+
+void InputHandler::SetHasExternalFocus(bool aFlag)
+{
+	if (myHasExternalFocus == aFlag)
+		return;
+
+	myHasExternalFocus = aFlag;
+
+	if (myInFocus)
+	{ 
+		if (!myHasExternalFocus)
+		{
+			OnFocusGained();
+		}
+		else
+		{
+			if (myFocusInput)
+			{
+				ResetTentativeState();
+			}
+
+			OnFocusLost();
+		}
+	}
 }
 
 bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
@@ -30,24 +96,35 @@ bool InputHandler::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_SETFOCUS:
 		{
-			myInFocus = true;
+			SetInFocus(true);
 			return false;
 		}
 		case WM_KILLFOCUS:
 		{
-			if (myInFocus)
-			{
-				if (myFocusInput)
-				{
-					ResetTentativeState();
-				}
-				myInFocus = false;
-			}
+			SetInFocus(false);
 			return false;
 		}
 	}
 
 	return GetInFocus() ? HandleEventImpl(aMessage, wParam, lParam) : false;
+}
+
+void InputHandler::OnEnable()
+{
+
+}
+void InputHandler::OnDisable()
+{
+
+}
+
+void InputHandler::OnFocusGained()
+{
+
+}
+void InputHandler::OnFocusLost()
+{
+
 }
 
 namespace CommonUtilities::deprecated

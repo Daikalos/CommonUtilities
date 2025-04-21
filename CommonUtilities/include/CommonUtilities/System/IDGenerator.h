@@ -2,6 +2,7 @@
 
 #include <typeinfo>
 #include <string_view>
+#include <string>
 
 #include <CommonUtilities/Utility/TypeUtils.hpp>
 #include <CommonUtilities/Utility/HashUtils.hpp>
@@ -65,4 +66,6 @@ namespace CommonUtilities
 		}
 #endif
 	};
+
+	COMMON_UTILITIES_API std::string CreateGUID();
 }

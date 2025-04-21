@@ -64,7 +64,8 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInside(const AABB<T>& aBox) const;
 		NODISC constexpr bool IsInside(const Vector3<T>& aPoint) const;
 		NODISC constexpr bool IsInside(const Capsule<T>& aCapsule) const;
-		NODISC constexpr bool IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const;
+		NODISC constexpr bool IsInside(const Vector3<T>& aStart, const Vector3<T>& aEnd) const;
+		NODISC constexpr bool IsInside(const Frustum<T>& aFrustum) const;
 
 		NODISC constexpr bool IsInsideNoDepth(const Sphere<T>& aSphere) const;
 		NODISC constexpr bool IsInsideNoDepth(const AABB<T>& aBox) const;
@@ -361,11 +362,8 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr bool Frustum<T>::IsInside(const cu::Vector3f& aStart, const cu::Vector3f& aEnd) const
+	constexpr bool Frustum<T>::IsInside(const Vector3<T>& aStart, const Vector3<T>& aEnd) const
 	{
-		if (IsInside(aStart) || IsInside(aEnd))
-			return true;
-
 		for (size_t i = 0; i < 6; i++)
 		{
 			Face face = static_cast<Face>(i);
@@ -378,6 +376,12 @@ namespace CommonUtilities
 		}
 
 		return true;
+	}
+
+	template<typename T>
+	constexpr bool Frustum<T>::IsInside(const Frustum<T>& aFrustum) const
+	{
+		return false;
 	}
 
 	template<typename T>
@@ -473,7 +477,7 @@ namespace CommonUtilities
 		return result;
 	}
 
-	using Frustumf = Frustum<float>;
+	using Frustumf  = Frustum<float>;
 	using Frustumd = Frustum<double>;
 	using Frustumi = Frustum<int>;
 }

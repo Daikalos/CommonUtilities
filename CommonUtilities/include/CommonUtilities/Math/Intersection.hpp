@@ -93,7 +93,7 @@ namespace CommonUtilities
 	namespace details // hide this from client
 	{
 		template<typename T>
-		constexpr const T& DownCastTo(const Shape& aShape, Shape::Type aExpectedType)
+		constexpr const T& DownCastTo(const Shape& aShape, UNSD Shape::Type aExpectedType)
 		{
 			assert(aShape.GetType() == aExpectedType && "This shape's type is incorrectly set");
 			return reinterpret_cast<const T&>(aShape); // should only "crash" if shape has incorrectly set its enum type

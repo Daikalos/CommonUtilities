@@ -8,8 +8,8 @@
 
 #include <CommonUtilities/Config.h>
 #include <CommonUtilities/System/IDGenerator.h>
-#include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Structures/FreeVector.hpp>
+#include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Utility/Clonable.hpp>
 
 namespace CommonUtilities

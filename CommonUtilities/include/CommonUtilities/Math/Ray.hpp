@@ -36,7 +36,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Ray<T>::Ray(const Vector3<T>& aOrigin, const Vector3<T>& aDirection)
 		: myOrigin(aOrigin)
-		, myDirection(aDirection.GetNormalized()) // make sure it is normalized
+		, myDirection(aDirection.GetNormalizedSafe()) // make sure it is normalized
 	{
 
 	}

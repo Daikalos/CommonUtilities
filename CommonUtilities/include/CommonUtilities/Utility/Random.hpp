@@ -5,8 +5,10 @@
 #include <numeric>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
+#include <CommonUtilities/Structures/EnumArray.hpp>
 #include <CommonUtilities/Math/Vector2.hpp>
 #include <CommonUtilities/Math/Vector3.hpp>
+#include <CommonUtilities/Math/Quaternion.hpp>
 
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Config.h>
@@ -85,10 +87,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	NODISC inline Vector2<T> RandomPointInCircle(const Vector2<T>& aCenter, T aRadius)
+	NODISC inline Vector2<T> RandomPointInCircle(const Vector2<T>& aCenter, T aRadius, T aInnerRadius = T())
 	{
-		float r = aRadius * std::sqrt(Random());
-		float theta = Random() * 2.0f * PI;
+		const float a		= Random() * (aRadius * aRadius - aInnerRadius * aInnerRadius) + aInnerRadius * aInnerRadius;
+		const float r		= (a ? std::sqrt(a) : 0.0f);
+		const float theta	= Random() * cu::TAU;
 
 		return Vector2<T>(
 			(T)(aCenter.x + r * std::cos(theta)),
@@ -109,6 +112,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC inline Vector3<T> RandomPointOnSegment(const Vector3<T>& aStart, const Vector3<T>& aEnd)
+	{
+		return Vector3<T>::Lerp(aStart, aEnd, cu::Random());
+	}
+
+	template<typename T>
 	NODISC inline Vector3<T> RandomPointInBox(const Vector3<T>& aCenter, const Vector3<T>& aHalfSize)
 	{
 		return Vector3<T>(
@@ -118,11 +127,123 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC inline Vector3<T> RandomPointInBoxShell(const Vector3<T>& aCenter, const Vector3<T>& aHalfSize)
+	{
+		enum class BoxSide
+		{
+			Front,
+			Back,
+			Right,
+			Left,
+			Top,
+			Bot
+		};
+
+		EnumArray<BoxSide, T, 6> sidesWeights;
+
+		sidesWeights[BoxSide::Front]	= sidesWeights[BoxSide::Back]	= aHalfSize.y * aHalfSize.x * T(4);
+		sidesWeights[BoxSide::Right]	= sidesWeights[BoxSide::Left]	= aHalfSize.y * aHalfSize.z * T(4);
+		sidesWeights[BoxSide::Top]		= sidesWeights[BoxSide::Bot]	= aHalfSize.x * aHalfSize.z * T(4);
+
+		T totalArea		= std::accumulate(sidesWeights.begin(), sidesWeights.end(), T(0));
+		T randomWeight	= Random(T(0), totalArea);
+
+		BoxSide chosenSide		= BoxSide::Front;
+		T		currentWeight	= T(0);
+
+		for (std::size_t i = 0; i < sidesWeights.size(); ++i)
+		{
+			T sideWeight = sidesWeights[(BoxSide)i];
+
+			currentWeight += sideWeight;
+			if (currentWeight >= randomWeight)
+			{
+				chosenSide = (BoxSide)i;
+				break;
+			}
+		}
+		
+		Vector3<T> randomPoint = aCenter;
+
+		switch (chosenSide)
+		{
+			case BoxSide::Front:
+			{
+				randomPoint = Vector3<T>
+				{
+					RandomDev<T>(aCenter.x, aHalfSize.x),
+					RandomDev<T>(aCenter.y, aHalfSize.y), 
+					aCenter.z + aHalfSize.z 
+				};
+
+				break;
+			}
+			case BoxSide::Back:
+			{
+				randomPoint = Vector3<T>
+				{
+					RandomDev<T>(aCenter.x, aHalfSize.x),
+					RandomDev<T>(aCenter.y, aHalfSize.y), 
+					aCenter.z - aHalfSize.z 
+				};
+
+				break;
+			}
+			case BoxSide::Right:
+			{
+				randomPoint = Vector3<T>
+				{
+					aCenter.x + aHalfSize.x,
+					RandomDev<T>(aCenter.y, aHalfSize.y), 
+					RandomDev<T>(aCenter.z, aHalfSize.z) 
+				};
+
+				break;
+			}
+			case BoxSide::Left:
+			{
+				randomPoint = Vector3<T>
+				{
+					aCenter.x - aHalfSize.x,
+					RandomDev<T>(aCenter.y, aHalfSize.y),
+					RandomDev<T>(aCenter.z, aHalfSize.z)
+				};
+
+				break;
+			}
+			case BoxSide::Top:
+			{
+				randomPoint = Vector3<T>
+				{
+					RandomDev<T>(aCenter.x, aHalfSize.x),
+					aCenter.y + aHalfSize.y,
+					RandomDev<T>(aCenter.z, aHalfSize.z)
+				};
+
+				break;
+			}
+			case BoxSide::Bot:
+			{
+				randomPoint = Vector3<T>
+				{
+					RandomDev<T>(aCenter.x, aHalfSize.x),
+					aCenter.y - aHalfSize.y,
+					RandomDev<T>(aCenter.z, aHalfSize.z) 
+				};
+
+				break;
+			}
+		}
+
+		return randomPoint;
+	}
+
+	template<typename T>
 	NODISC inline Vector3<T> RandomPointInSphere(const Vector3<T>& aCenter, T aRadius, T aInnerRadius = T())
 	{
 		const float p		= cu::Random(aInnerRadius, aRadius);
 		const float r		= p * std::cbrt(p / aRadius);
-		const float theta	= Random() * 2.0f * PI;
+		const float theta	= Random() * cu::TAU;
 		const float phi		= std::acos(Random(-1.0f, 1.0f));
 
 		const float sinTheta = std::sin(theta);
@@ -132,9 +253,36 @@ namespace CommonUtilities
 		const float cosPhi = std::cos(phi);
 
 		return Vector3<T>(
-			(T)(aCenter.x + r * sinPhi * cosTheta),
-			(T)(aCenter.y + r * sinPhi * sinTheta),
-			(T)(aCenter.z + r * cosPhi));
+			aCenter.x + (T)(r * sinPhi * cosTheta),
+			aCenter.y + (T)(r * sinPhi * sinTheta),
+			aCenter.z + (T)(r * cosPhi));
+	}
+
+	template<typename T>
+	NODISC inline Vector3<T> RandomPointInCone(const Vector3<T>& aCenter, const cu::Quatf& aRotation, T aAngle, T aLength, T aRadius, T aInnerRadius = T())
+	{
+		const float t = Random(0.0f, aLength);
+		const float c = std::tan(aAngle);
+		const float a = t * c;
+		const float b = aLength * c;
+
+		cu::Vector3f randomPoint = RandomPointInCircle(cu::Vector2f::Zero, aRadius + a, std::max(aInnerRadius - b + a, 0.0f)).XZY(t);
+
+		return aRotation * randomPoint + aCenter;
+	}
+
+	template<typename T>
+	NODISC inline Vector2<T> RandomDirection2D()
+	{
+		Vector2<T> randomPoint = RandomPointInCircle(cu::Vector2f(), 1.0f);
+		return randomPoint.GetNormalizedSafe();
+	}
+
+	template<typename T>
+	NODISC inline Vector3<T> RandomDirection3D()
+	{
+		Vector3<T> randomPoint = RandomPointInSphere(cu::Vector3f(), 1.0f);
+		return randomPoint.GetNormalizedSafe();
 	}
 
 	COMMON_UTILITIES_API void Seed(std::uint64_t seed = std::mt19937_64::default_seed);

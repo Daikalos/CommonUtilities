@@ -24,6 +24,23 @@ bool MouseInput::IsReleased(ButtonType aButton) const
 	return GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
+bool MouseInput::IsAnyPressed() const
+{
+	if (!GetEnabled())
+		return false;
+
+	for (std::size_t i = 0; i < Mouse::ButtonCount; ++i)
+	{
+		ButtonType button = (ButtonType)i;
+		if (myCurrentState[button] && !myPreviousState[button])
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void MouseInput::SetScrollThreshold(float aScrollThreshold)
 {
 	myScrollThreshold = aScrollThreshold;

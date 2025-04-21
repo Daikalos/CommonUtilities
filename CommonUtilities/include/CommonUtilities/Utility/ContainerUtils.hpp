@@ -248,23 +248,23 @@ namespace CommonUtilities
 		return someItems;
 	}
 
-	template<typename T>
-	NODISC constexpr void ApplyPermutation(T& aContainer, std::span<const std::size_t> someIndices)
+	template<IsIntegralType T, typename U>
+	NODISC constexpr void ApplyPermutation(U& aContainer, std::span<const T> someIndices)
 	{
 		assert(aContainer.size() == someIndices.size() && "Vector and indices must be of equal size");
 
 		using std::swap; // koenig lookup
 
-		std::vector<bool> done(aContainer.size());
-		for (std::size_t i = 0; i < aContainer.size(); ++i)
+		std::vector<std::uint8_t> done(aContainer.size());
+		for (T i = 0; i < (T)aContainer.size(); ++i)
 		{
 			if (done[i])
 				continue;
 
 			done[i] = true;
 
-			std::size_t current = i;
-			std::size_t next = someIndices[i];
+			auto current = i;
+			auto next = someIndices[i];
 
 			while (i != next)
 			{

@@ -6,9 +6,12 @@ using namespace CommonUtilities;
 
 namespace chr = std::chrono;
 
-StopWatch::StopWatch()
+StopWatch::StopWatch(bool aStartImmediately)
 {
-	Start();
+	if (aStartImmediately)
+	{
+		Start();
+	}
 }
 
 StopWatch::~StopWatch() = default;
@@ -29,6 +32,11 @@ bool StopWatch::IsRunning() const noexcept
 void StopWatch::Start()
 {
 	myIsRunning = true;
+}
+void StopWatch::StartNew()
+{
+	Reset();
+	Start();
 }
 void StopWatch::Stop()
 {

@@ -18,6 +18,7 @@ namespace CommonUtilities
 
 		NODISC bool GetEnabled() const noexcept;
 		NODISC bool GetInFocus() const noexcept;
+		NODISC bool GetHasExternalFocus() const noexcept;
 
 		/// Enable or disable the InputHandler, will cause all input to return false or 0.0f.
 		/// 
@@ -27,6 +28,12 @@ namespace CommonUtilities
 		/// 
 		void SetFocusAffectInput(bool aFlag) noexcept;
 
+		/// Manually enable or disable that input has focus
+		/// 
+		void SetInFocus(bool aFlag);
+
+		void SetHasExternalFocus(bool aFlag);
+
 		///	Update which should determine the current and previous state of the input
 		/// 
 		virtual void Update() = 0;
@@ -34,6 +41,12 @@ namespace CommonUtilities
 		NODISC bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	protected:
+		virtual void OnEnable();
+		virtual void OnDisable();
+
+		virtual void OnFocusGained();
+		virtual void OnFocusLost();
+
 		virtual void ResetTentativeState() = 0;
 
 		virtual bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) = 0;
@@ -41,6 +54,7 @@ namespace CommonUtilities
 		bool	myEnabled			{true};		// is always enabled initially
 		bool	myInFocus			{true};
 		bool	myFocusInput		{true};		// focus affects input at start
+		bool	myHasExternalFocus	{false};
 	};
 
 	namespace deprecated

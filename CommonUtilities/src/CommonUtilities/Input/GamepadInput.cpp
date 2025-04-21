@@ -4,6 +4,8 @@
 
 using namespace CommonUtilities;
 
+bool GamepadInput::gOccupiedGamepadIndices[XUSER_MAX_COUNT] = { false };
+
 static constexpr WORD locXINPUTButtons[] 
 {
       XINPUT_GAMEPAD_A,
@@ -22,11 +24,9 @@ static constexpr WORD locXINPUTButtons[]
       XINPUT_GAMEPAD_BACK
 };
 
-GamepadInput::GamepadInput(int aGamepadIndex) 
+GamepadInput::GamepadInput() 
 	: myState()
-	, myIndex(aGamepadIndex - 1)
 {
-
 }
 
 const Vector2f& GamepadInput::GetDeadzone() const
@@ -65,6 +65,23 @@ bool GamepadInput::IsReleased(ButtonType aButton) const
 	return GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
+bool GamepadInput::IsAnyPressed() const
+{
+	if (!GetEnabled())
+		return false;
+
+	for (std::size_t i = 0; i < Gamepad::ButtonCount; ++i)
+	{
+		ButtonType button = (ButtonType)i;
+		if (myCurrentState[button] && !myPreviousState[button])
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int GamepadInput::GetIndex() const
 {
 	return myIndex;
@@ -80,6 +97,11 @@ void GamepadInput::Connect()
 }
 void GamepadInput::Disconnect()
 {
+	if (myIndex != -1)
+	{
+		gOccupiedGamepadIndices[myIndex] = false;
+	}
+
 	myIndex			= -1;
 
 	myLeftStick		= Vector2f{};
@@ -131,6 +153,11 @@ void GamepadInput::Update()
 	}
 	else // current state is invalid, try and find a new port
 	{
+		if (myIndex != -1)
+		{
+			gOccupiedGamepadIndices[myIndex] = false;
+		}
+
 		myIndex = -1;
 		Update();
 
@@ -192,6 +219,8 @@ bool GamepadInput::TryConnect()
 {
 	for (DWORD i = 0; i < XUSER_MAX_COUNT && myIndex == -1; i++)
 	{
+		if (gOccupiedGamepadIndices[i]) continue;
+
 		if (auto gamepadState = Gamepad::GetState(i); gamepadState.has_value())
 		{
 			myState = gamepadState.value();

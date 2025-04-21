@@ -30,6 +30,10 @@ namespace CommonUtilities
 
 		NODISC float GetRemaining() const;
 
+		NODISC float GetElapsedRatio() const;
+
+		NODISC float GetRemainingRatio() const;
+
 		NODISC bool IsRunning() const noexcept;
 		
 		NODISC bool IsLooping() const noexcept;
@@ -96,11 +100,15 @@ namespace CommonUtilities
 
 		void SetRepeat(bool aFlag);
 
+		void StartNew();
+
 		void Start();
 
 		void Stop();
 
 		void Reset(float aHeadStart = 0.0f);
+
+		void Finish();
 
 		void Update(const Timer& aTimer);
 

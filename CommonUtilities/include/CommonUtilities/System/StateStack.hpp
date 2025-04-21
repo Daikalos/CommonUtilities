@@ -366,15 +366,17 @@ namespace CommonUtilities
 			{
 				case Action::Push:
 				{
-					if (!myStack.empty())
-					{
-						myStack.back()->OnDeactivate();
-					}
+					auto* prevState = (!myStack.empty() ? myStack.back().get() : nullptr);
 
 					StatePtr newState = CreateState(change.stateID);
-					newState->OnActivate();
-
 					myStack.emplace_back(std::move(newState));
+
+					if (prevState != nullptr)
+					{
+						prevState->OnDeactivate();
+					}
+
+					myStack.back()->OnActivate();
 
 					break;
 				}
@@ -417,9 +419,9 @@ namespace CommonUtilities
 					if (it == myStack.end())
 						break;
 
-					const std::size_t currentIndex = std::distance(it, myStack.begin());
+					const auto currentIndex = std::distance(myStack.begin(), it);
 
-					if (currentIndex == change.index) // nothing to move anyways
+					if (currentIndex == (decltype(currentIndex))change.index) // nothing to move anyways
 						break;
 
 					if (change.index == myStack.size() - 1)

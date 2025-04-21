@@ -5,13 +5,13 @@
 #include <cassert>
 #include <immintrin.h>
 #include <stdexcept>
-
-#include "Vector3.hpp"
-#include "Vector4.hpp"
+#include <iostream>
 
 #include <CommonUtilities/Config.h>
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 
+#include "Vector4.hpp"
+#include "Vector3.hpp"
 #include "Quaternion.hpp"
 
 namespace CommonUtilities
@@ -58,6 +58,8 @@ namespace CommonUtilities
 		NODISC constexpr const T* GetData() const noexcept;
 		NODISC constexpr T* GetData() noexcept;
 
+		NODISC constexpr const std::array<T, 16>& GetValues() const noexcept;
+
 		NODISC constexpr auto GetTranspose() const -> Matrix4x4;
 		NODISC constexpr auto GetTranslationMatrix() const -> Matrix4x4;
 		NODISC constexpr auto GetRotationMatrix() const -> Matrix4x4;
@@ -75,8 +77,8 @@ namespace CommonUtilities
 
 		NODISC constexpr std::array<__m128, 4> ToSIMD() const requires (std::is_same_v<T, float>);
 
-		constexpr void DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale);
-		constexpr void DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale);
+		constexpr void DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale) const;
+		constexpr void DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale) const;
 
 		constexpr void SetTranslation(const Vector3<T>& aTranslation);
 		constexpr void SetRotation(const Vector3<T>& aPitchYawRoll);
@@ -139,9 +141,14 @@ namespace CommonUtilities
 		NODISC constexpr static auto CreateRotationMatrixFromQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 		NODISC constexpr static auto CreateRotationMatrixFromNormalizedQuaternion(const Quaternion<T>& aQuaternion) -> Matrix4x4;
 
+		NODISC constexpr static auto BlendMatrices(const Matrix4x4& aFrom, const Matrix4x4& aTo, T aBlendFactor) -> Matrix4x4;
+
+		NODISC constexpr static auto DominantEigen(const Matrix4x4& aMatrix, const Vector4<T>& aVector, int aIterations, float aEpsilon) -> Vector4<T>;
+
 		NODISC constexpr static auto Multiply(const Matrix4x4& aLeft, const Matrix4x4& aRight) -> Matrix4x4;
 
 		static const Matrix4x4 IDENTITY;
+		static const Matrix4x4 Zero;
 
 	private:
 		std::array<T, 16> myMatrix
@@ -261,6 +268,12 @@ namespace CommonUtilities
 	constexpr T* Matrix4x4<T>::GetData() noexcept
 	{
 		return myMatrix.data();
+	}
+
+	template<typename T>
+	constexpr const std::array<T, 16>& Matrix4x4<T>::GetValues() const noexcept
+	{
+		return myMatrix;
 	}
 
 	template<typename T>
@@ -396,7 +409,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Matrix4x4<T>::DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale)
+	constexpr void Matrix4x4<T>::DecomposeTransform(Vector3<T>& outPosition, Vector3<T>& outRotation, Vector3<T>& outScale) const
 	{
 		outPosition = GetTranslation();
 
@@ -417,7 +430,7 @@ namespace CommonUtilities
 		outRotation.z = std::atan2f(right.y, right.x);
 	}
 	template<typename T>
-	constexpr void Matrix4x4<T>::DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale)
+	constexpr void Matrix4x4<T>::DecomposeTransform(Vector3<T>& outPosition, Quaternion<T>& outQuaternion, Vector3<T>& outScale) const
 	{
 		outPosition = GetTranslation();
 
@@ -441,7 +454,7 @@ namespace CommonUtilities
 			0,			0,			0,			1
 		};
 
-		outQuaternion = Quaternion<T>(rotationMatrix);
+		outQuaternion = Quaternion<T>(rotationMatrix).GetNormalized();
 	}
 
 	template<typename T>
@@ -935,6 +948,51 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr auto Matrix4x4<T>::BlendMatrices(const Matrix4x4& aFrom, const Matrix4x4& aTo, T aBlendFactor) -> Matrix4x4
+	{
+		Vector3<T> currentPosition;
+		Quaternion<T> currentRotation;
+		Vector3<T> currentScale;
+		aFrom.DecomposeTransform(currentPosition, currentRotation, currentScale);
+
+		Vector3<T> nextPosition;
+		Quaternion<T> nextRotation;
+		Vector3<T> nextScale;
+		aTo.DecomposeTransform(nextPosition, nextRotation, nextScale);
+
+		const Vector3<T> lerpPos		= cu::Vector3f::Lerp(currentPosition, nextPosition, aBlendFactor);
+		const Quaternion<T> slerpRot	= cu::Quatf::Slerp(currentRotation, nextRotation, aBlendFactor);
+		const Vector3<T> lerpScale		= cu::Vector3f::Lerp(currentScale, nextScale, aBlendFactor);
+
+		return Matrix4x4<T>::CreateTRS(lerpPos, slerpRot, lerpScale);
+	}
+
+	template<typename T>
+	constexpr auto Matrix4x4<T>::DominantEigen(const Matrix4x4& aMatrix, const Vector4<T>& aVector, int aIterations, float aEpsilon) -> Vector4<T>
+	{
+		Vector4<T> v = aVector;
+		float ev = (aMatrix * v).x / v.x;
+    
+		for (int i = 0; i < aIterations; ++i)
+		{
+			Vector4<T> matV = aMatrix * v;
+        
+			Vector4<T> vNew = matV.GetNormalizedSafe();
+			T evNew = (aMatrix * vNew).x / vNew.x;
+       
+			if (std::abs(ev - evNew) < aEpsilon)
+			{
+				break;
+			}
+        
+			v = vNew;
+			ev = evNew;
+		}
+    
+		return v;
+	}
+
+	template<typename T>
 	constexpr auto Matrix4x4<T>::Multiply(const Matrix4x4& aLeft, const Matrix4x4& aRight) -> Matrix4x4
 	{
 		// https://stackoverflow.com/a/18508113
@@ -1028,6 +1086,23 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC constexpr Matrix4x4<T> operator*(const Matrix4x4<T>& aLeft, T aRight)
+	{
+		return Matrix4x4<T>
+		{
+			aLeft[0] * aRight,  aLeft[1] * aRight,  aLeft[2] * aRight,  aLeft[3] * aRight,
+			aLeft[4] * aRight,  aLeft[5] * aRight,  aLeft[6] * aRight,  aLeft[7] * aRight,
+			aLeft[8] * aRight,  aLeft[9] * aRight,  aLeft[10] * aRight, aLeft[11] * aRight,
+			aLeft[12] * aRight, aLeft[13] * aRight, aLeft[14] * aRight, aLeft[15] * aRight
+		};
+	}
+	template<typename T>
+	NODISC constexpr Matrix4x4<T> operator*(T aLeft, const Matrix4x4<T>& aRight)
+	{
+		return aRight * aLeft;
+	}
+
+	template<typename T>
 	NODISC constexpr bool operator==(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		for (int i = 0; i < 16; ++i)
@@ -1046,8 +1121,21 @@ namespace CommonUtilities
 		return !(aLeft == aRight);
 	}
 
+	template <class T>
+	constexpr std::ostream& operator<<(std::ostream& os, const Matrix4x4<T>& aMatrix)
+	{
+		os << "{ " << aMatrix(1, 1) << ", " << aMatrix(1, 2) << ", " << aMatrix(1, 3) << ", " << aMatrix(1, 4) << " }\n"
+			<< "{ " << aMatrix(2, 1) << ", " << aMatrix(2, 2) << ", " << aMatrix(2, 3) << ", " << aMatrix(2, 4) << " }\n"
+			<< "{ " << aMatrix(3, 1) << ", " << aMatrix(3, 2) << ", " << aMatrix(3, 3) << ", " << aMatrix(3, 4) << " }\n"
+			<< "{ " << aMatrix(4, 1) << ", " << aMatrix(4, 2) << ", " << aMatrix(4, 3) << ", " << aMatrix(4, 4) << " }\n";
+		return os;
+	}
+
 	template<typename T>
 	inline const Matrix4x4<T> Matrix4x4<T>::IDENTITY;
+
+	template<typename T>
+	inline const Matrix4x4<T> Matrix4x4<T>::Zero(std::array<T, 16>{});
 
 	// using declarations
 

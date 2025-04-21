@@ -59,6 +59,8 @@ namespace CommonUtilities
 		NODISC bool IsPressed(const ButtonType& aBind) const;
 		NODISC bool IsReleased(const ButtonType& aBind) const;
 
+		NODISC bool IsAnyPressed() const;
+
 	private:
 		using ButtonReg = std::variant<Keyboard::Key, Mouse::Button>;
 
@@ -250,6 +252,21 @@ namespace CommonUtilities
 				return true;
 			}
 		}
+
+		return false;
+	}
+
+	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
+	inline bool InputBind<Bind>::IsAnyPressed() const
+	{
+		if (!GetEnabled())
+			return false;
+
+		if (IsKeyboardConnected() && myKeyboard->IsAnyPressed())
+			return true;
+
+		if (IsMouseConnected() && myMouse->IsAnyPressed())
+			return true;
 
 		return false;
 	}

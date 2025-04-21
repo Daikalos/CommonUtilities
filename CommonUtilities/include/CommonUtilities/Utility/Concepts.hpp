@@ -51,6 +51,24 @@ namespace CommonUtilities
 		tr::NoDuplicates<Ts...>{};
 	};
 
+	template<typename T>
+	concept HasValueType = requires
+	{
+		typename T::value_type;
+	};
+
+	template<typename T>
+	concept HasKeyType = requires
+	{
+		typename T::key_type;
+	};
+
+	template<typename T>
+	concept HasMappedType = requires
+	{
+		typename T::mapped_type;
+	};
+
 	template<typename F, typename T>
 	concept IsHashableType = std::regular_invocable<F, T> && requires(F f, T t) 
 	{

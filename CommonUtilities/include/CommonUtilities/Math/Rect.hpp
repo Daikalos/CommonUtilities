@@ -78,7 +78,7 @@ namespace CommonUtilities
 	template<typename T>
 	template<typename U>
 	constexpr Rect<T>::Rect(const Rect<U>& aRhs)
-		: Rect(aRhs.left, aRhs.bottom, aRhs.right, aRhs.top)
+		: Rect(static_cast<T>(aRhs.left), static_cast<T>(aRhs.bottom), static_cast<T>(aRhs.right), static_cast<T>(aRhs.top))
 	{
 
 	}

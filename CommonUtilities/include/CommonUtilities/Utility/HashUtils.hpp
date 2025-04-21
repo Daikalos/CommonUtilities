@@ -59,7 +59,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr void HashCombine(const T& aValue, std::size_t& aSeed)
 	{
-		aSeed ^= static_cast<std::size_t>(aSeed) + 0x9e3779b9 + (aSeed << 6) + (aSeed >> 2);
+		aSeed ^= static_cast<std::size_t>(aValue) + 0x9e3779b9 + (aSeed << 6) + (aSeed >> 2);
 	}
 
 	template<typename T>
@@ -77,6 +77,20 @@ namespace CommonUtilities
 
 				HashCombine(x, seed);
 			}
+
+			return seed;
+		}
+	};
+
+	template<std::integral T>
+	struct PairIntegralHash
+	{
+		NODISC constexpr std::size_t operator()(const std::pair<T, T>& pair) const
+		{
+			std::size_t seed = 2;
+
+			HashCombine(pair.first, seed);
+			HashCombine(pair.second, seed);
 
 			return seed;
 		}

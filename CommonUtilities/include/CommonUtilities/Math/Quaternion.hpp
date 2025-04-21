@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <utility>
 #include <cassert>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
@@ -55,11 +56,14 @@ namespace CommonUtilities
 		NODISC constexpr T Length() const;
 		NODISC constexpr T LengthSqr() const;
 
+		NODISC constexpr T Angle() const;
+		NODISC constexpr T AngleTo(const Quaternion& aRight) const;
+
 		NODISC constexpr Quaternion GetNormalized(T aNormLength = static_cast<T>(1)) const;
 		NODISC constexpr Quaternion GetConjugate() const;
 
-		NODISC constexpr Vector3<T> GetEulerAngles() const;
-		NODISC constexpr Vector3<T> GetEulerAnglesDetect() const;
+		NODISC constexpr Vector3<T> ToEuler() const;
+		NODISC constexpr std::pair<T, Vector3<T>> ToRadiansUnitAxis() const;
 
 		NODISC constexpr Vector3<T> GetRight() const;
 		NODISC constexpr Vector3<T> GetUp() const;
@@ -69,6 +73,8 @@ namespace CommonUtilities
 
 		NODISC constexpr Quaternion GetInverse() const;
 
+		NODISC constexpr Quaternion GetAbs() const;
+
 		constexpr Quaternion& Add(const Quaternion& aRight);
 		constexpr Quaternion& Subtract(const Quaternion& aRight);
 		constexpr Quaternion& Combine(const Quaternion& aRight);
@@ -76,11 +82,16 @@ namespace CommonUtilities
 		NODISC constexpr static Quaternion Lerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 		NODISC constexpr static Quaternion Slerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 
+		/// Will ignore shorter slerp paths, if any.
+		/// 
+		NODISC constexpr static Quaternion SlerpLong(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
+
 		NODISC constexpr static Quaternion AxisAngle(const Vector3<T>& aVector, T aAngle);
 		NODISC constexpr static Quaternion LookRotation(const Vector3<T>& aForward, const Vector3<T>& aUp = Vector3<T>::Up);
 		NODISC constexpr static Quaternion RotateTowards(Quaternion aQuatA, Quaternion aQuatB, T aMaxRadiansDelta);
 		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate);
 		NODISC constexpr static Quaternion RotationFromTo(Vector3<T> aFrom, Vector3<T> aTo);
+		NODISC constexpr static Quaternion Difference(Quaternion aQuatA, Quaternion aQuatB);
 
 		static const Quaternion IDENTITY;
 	};
@@ -166,13 +177,42 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T>::Quaternion(const Matrix4x4<T>& aMatrix)
 	{
-		w = std::sqrt((std::max)(T(0), T(1) + aMatrix[0] + aMatrix[5] + aMatrix[10])) * T(0.5);
-		x = std::sqrt((std::max)(T(0), T(1) + aMatrix[0] - aMatrix[5] - aMatrix[10])) * T(0.5);
-		y = std::sqrt((std::max)(T(0), T(1) - aMatrix[0] + aMatrix[5] - aMatrix[10])) * T(0.5);
-		z = std::sqrt((std::max)(T(0), T(1) - aMatrix[0] - aMatrix[5] + aMatrix[10])) * T(0.5);
-		x = std::copysign(x, aMatrix[6] - aMatrix[9]);
-		y = std::copysign(y, aMatrix[8] - aMatrix[2]);
-		z = std::copysign(z, aMatrix[1] - aMatrix[4]);
+		T trace = aMatrix[0] + aMatrix[5] + aMatrix[10];
+		if (trace > T(0))
+		{
+			float s = T(0.5) / std::sqrt(trace + T(1));
+			w = T(0.25) / s;
+			x = (aMatrix[6] - aMatrix[9]) * s;
+			y = (aMatrix[8] - aMatrix[2]) * s;
+			z = (aMatrix[1] - aMatrix[4]) * s;
+		}
+		else 
+		{
+			if (aMatrix[0] > aMatrix[5] && aMatrix[0] > aMatrix[10])
+			{
+				T s = T(2) * std::sqrt(1.0f + aMatrix[0] - aMatrix[5] - aMatrix[10]);
+				w = (aMatrix[6] - aMatrix[9]) / s;
+				x = T(0.25) * s;
+				y = (aMatrix[4] + aMatrix[1]) / s;
+				z = (aMatrix[8] + aMatrix[2]) / s;
+			}
+			else if (aMatrix[5] > aMatrix[10]) 
+			{
+				T s = T(2) * std::sqrt(1.0f + aMatrix[5] - aMatrix[0] - aMatrix[10]);
+				w = (aMatrix[8] - aMatrix[2]) / s;
+				x = (aMatrix[4] + aMatrix[1]) / s;
+				y = T(0.25) * s;
+				z = (aMatrix[9] + aMatrix[6]) / s;
+			}
+			else
+			{
+				T s = T(2) * std::sqrt(1.0f + aMatrix[10] - aMatrix[0] - aMatrix[5]);
+				w = (aMatrix[1] - aMatrix[4]) / s;
+				x = (aMatrix[8] + aMatrix[2]) / s;
+				y = (aMatrix[9] + aMatrix[6]) / s;
+				z = T(0.25) * s;
+			}
+		}
 	}
 
 	template<typename T>
@@ -218,39 +258,24 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::GetEulerAngles() const
+	constexpr T Quaternion<T>::Angle() const
 	{
-		// Read more about it here: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-
-		const T sqx = x * x;
-		const T sqy = y * y;
-		const T sqz = z * z;
-
-		// pitch (x-axis rotation)
-		const T sinp	= T(2) * (w * x + y * z);
-		const T cosp	= T(1) - T(2) * (sqx + sqy);
-		const T pitch	= std::atan2(sinp, cosp);
-
-		// yaw (y-axis rotation)
-		const T siny = T(2) * (w * y - z * x);
-
-		T yaw = (std::abs(siny) > T(0.99999) ? std::copysign(PI_2_V<T>, siny) : std::asin(siny));
-
-		// roll (z-axis rotation)
-		const T sinr	= T(2) * (w * z + x * y);
-		const T cosr	= T(1) - T(2) * (sqy + sqz);
-		const T roll	= std::atan2(sinr, cosr);
-
-		return Vector3<T>(pitch, yaw, roll);
+		return std::acos(w) * T(2);
 	}
 	template<typename T>
-	constexpr Vector3<T> Quaternion<T>::GetEulerAnglesDetect() const
+	constexpr T Quaternion<T>::AngleTo(const Quaternion& aRight) const
+	{
+		return std::acos(Clamp(std::abs(Dot(aRight)), T(-1), T(1))) * T(2);
+	}
+
+	template<typename T>
+	constexpr Vector3<T> Quaternion<T>::ToEuler() const
 	{
 		// Read more about it here: https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
 		const T test = T(2) * (w * y - z * x);
 
-		if (test > T(0.99999)) // singularity at north pole
+		if (test > T(0.999999999)) // singularity at north pole
 		{ 
 			const T pitch	= -T(2) * std::atan2(x, w);
 			const T yaw		= PI_2_V<T>;
@@ -259,25 +284,49 @@ namespace CommonUtilities
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
-		if (test < -T(0.99999)) // singularity at south pole
+		if (test < T(-0.999999999)) // singularity at south pole
 		{ 
 			const T pitch	= T(2) * std::atan2(x, w);
-			const T yaw		= -PI_2_V<T>;;
+			const T yaw		= -PI_2_V<T>;
 			const T roll	= 0;
 
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
-		const T sqw = w * w;
+		// TODO: FIX THIS CRAP
+
 		const T sqx = x * x;
 		const T sqy = y * y;
 		const T sqz = z * z;
 
-		const T pitch	= std::atan2(T(2) * (w * x + y * z), -sqx - sqy + sqz + sqw);
-		const T yaw		= std::asin(test);
-		const T roll	= std::atan2(T(2) * (w * z + x * y), sqx - sqy - sqz + sqw);
+		const T siny = std::sqrt(T(1) + test);
+		const T cosp = std::sqrt(T(1) - test);
+
+		const T pitch	= std::atan2(T(2) * (w * x + y * z), T(1) - T(2) * (sqx + sqy));
+		const T yaw		= T(2) * std::atan2(siny, cosp) - PI_2;
+		const T roll	= std::atan2(T(2) * (w * z + x * y), T(1) - T(2) * (sqy + sqz));
 
 		return Vector3<T>{ pitch, yaw, roll };
+	}
+
+	template<typename T>
+	constexpr std::pair<T, Vector3<T>> Quaternion<T>::ToRadiansUnitAxis() const
+	{
+		static constexpr T epsilon = T(1.0e-8);
+
+		T angle = T(0);
+		Vector3<T> axis = Vector3<T>::Right;
+
+		const T s2 = x * x + y * y + z * z;
+		if (s2 >= epsilon * epsilon)
+		{
+			const T s = T(1) / std::sqrt(s2);
+
+			axis	= Vector3<T>(x, y, z) * s;
+			angle	= std::abs(w) < epsilon ? PI_V<T> : std::atan2(s2 * s, w) * T(2);
+		}
+
+		return std::make_pair(angle, axis);
 	}
 
 	template<typename T>
@@ -306,6 +355,12 @@ namespace CommonUtilities
 	constexpr Quaternion<T> Quaternion<T>::GetInverse() const
 	{
 		return GetConjugate() / Length();
+	}
+
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::GetAbs() const
+	{
+		return w < T(0) ? -*this : *this;
 	}
 
 	template<typename T>
@@ -374,7 +429,30 @@ namespace CommonUtilities
 		}
 
 		// Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
-		if (cosTheta > T(1) - T(0.9995))
+		if (cosTheta >= T(0.999999))
+		{
+			// Linear interpolation
+			return Lerp(aQuatA, qz, aDelta);
+		}
+
+		// Essential Mathematics, page 467
+
+		const T angle = std::acos(cosTheta);
+		return (std::sin((T(1) - aDelta) * angle) * aQuatA + std::sin(aDelta * angle) * qz) / std::sin(angle);
+	}
+
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::SlerpLong(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta)
+	{
+		Quaternion<T> qz = aQuatB;
+
+		T cosTheta = aQuatA.Dot(aQuatB);
+
+		// If cosTheta < 0, the interpolation will take the long way around the sphere. 
+		// In this function, that is probably intended.
+
+		// Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
+		if (cosTheta >= T(0.999999))
 		{
 			// Linear interpolation
 			return Lerp(aQuatA, qz, aDelta);
@@ -394,7 +472,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::LookRotation(const Vector3<T>& aForward, const Vector3<T>& aUp)
 	{
-		if (aForward.LengthSqr() < T(0.0001))
+		if (aForward.LengthSqr() < T(0.000001))
 			return Quaternion<T>();
 
 		const Vector3<T> f = aForward.GetNormalized();
@@ -404,7 +482,7 @@ namespace CommonUtilities
 
 		const Vector3<T> newUp = rot1 * Vector3<T>::Up;
 
-		const Vector3<T> xAxis = (u.GetAbs() != f.GetAbs()) ? u.Cross(f) : Vector3<T>::Right;
+		const Vector3<T> xAxis = !Vector3<T>::Equal(u.GetAbs(), f.GetAbs(), T(0.000001)) ? u.Cross(f) : Vector3<T>::Right;
 		const Vector3<T> yAxis = f.Cross(xAxis);
 
 		const Quaternion<T> rot2 = Quaternion<T>::RotationFromTo(newUp, yAxis);
@@ -419,7 +497,7 @@ namespace CommonUtilities
 
 		T cosTheta = aQuatA.Dot(aQuatB);
 
-		if (cosTheta >= T(0.99999)) // already equal
+		if (cosTheta >= T(0.999999999)) // already equal
 			return aQuatB;
 
 		if (cosTheta < T(0))
@@ -428,9 +506,9 @@ namespace CommonUtilities
 			cosTheta = -cosTheta;
 		}
 
-		T angle = std::acos(cosTheta);
+		T angle = std::acos(Clamp(cosTheta, T(-1), T(1)));
 
-		if (angle < aMaxRadiansDelta) // arrived
+		if (angle <= aMaxRadiansDelta) // arrived
 			return aQuatB;
 
 		const T fT = aMaxRadiansDelta / angle;
@@ -456,11 +534,11 @@ namespace CommonUtilities
 
 		const T d = aFrom.Dot(aTo);
 
-		if (d >= T(0.99999)) // same direction
+		if (d >= T(0.999999999)) // same direction
 		{
 			return IDENTITY; 
 		}
-		else if (d <= T(-0.99999)) // opposites
+		else if (d <= T(-0.999999999)) // opposites
 		{
 			Vector3<T> axis = Vector3<T>::Right;
 			axis = axis.Cross(aFrom);
@@ -470,7 +548,7 @@ namespace CommonUtilities
 				axis = axis.Cross(aFrom);
 			}
 
-			return Quaternion(PI_V<T>, axis.x, axis.y, axis.z).GetNormalized();
+			return Quaternion(T(0), axis.x, axis.y, axis.z).GetNormalized();
 		}
 
 		const T s			= std::sqrt((T(1) + d) * T(2));
@@ -478,6 +556,12 @@ namespace CommonUtilities
 		const Vector3<T> c	= aFrom.Cross(aTo) * invs;
 
 		return Quaternion(s * T(0.5), c.x, c.y, c.z).GetNormalized();
+	}
+
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::Difference(Quaternion aQuatA, Quaternion aQuatB)
+	{
+		return aQuatB * aQuatA.GetInverse();
 	}
 
 	// GLOBAL OPERATORS

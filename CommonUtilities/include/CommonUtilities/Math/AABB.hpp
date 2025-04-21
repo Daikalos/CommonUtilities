@@ -33,6 +33,7 @@ namespace CommonUtilities
 		NODISC constexpr Vector3<T> GetCenter() const;
 		NODISC constexpr std::array<Vector3<T>, 8> GetPoints() const;
 		NODISC constexpr T GetVolume() const;
+		NODISC constexpr T GetSurfaceArea() const;
 
 		NODISC constexpr Vector3<T> GetPointP(const Vector3<T>& aNormal) const;
 		NODISC constexpr Vector3<T> GetPointN(const Vector3<T>& aNormal) const;
@@ -54,6 +55,8 @@ namespace CommonUtilities
 		NODISC constexpr bool Contains(T aX, T aY, T aZ) const;
 		NODISC constexpr bool Contains(const Vector3<T>& aPosition) const;
 		NODISC constexpr bool Contains(const AABB& aOther) const;
+
+		NODISC constexpr Vector3<T> ClampToSide(const Vector3<T>& aPosition) const;
 
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
@@ -138,6 +141,12 @@ namespace CommonUtilities
 	{
 		Vector3<T> size = GetSize();
 		return size.x * size.y * size.z;
+	}
+	template<typename T>
+	constexpr T AABB<T>::GetSurfaceArea() const
+	{
+		Vector3<T> size = GetSize();
+		return T(2) * size.x * size.z + T(2) * size.x * size.y + T(2) * size.z * size.y;
 	}
 
 	template<typename T>
@@ -264,6 +273,15 @@ namespace CommonUtilities
 		return	(aOther.myMin.x >= myMin.x && aOther.myMax.x < myMax.x) && 
 				(aOther.myMin.y >= myMin.y && aOther.myMax.y < myMax.y) &&
 				(aOther.myMin.z >= myMin.z && aOther.myMax.z < myMax.z);
+	}
+
+	template<typename T>
+	constexpr Vector3<T> AABB<T>::ClampToSide(const Vector3<T>& aPosition) const
+	{
+		return Vector3<T>(
+			Clamp(aPosition.x, myMin.x, myMax.x), 
+			Clamp(aPosition.y, myMin.y, myMax.y),
+			Clamp(aPosition.z, myMin.z, myMax.z));
 	}
 
 	template<typename T>

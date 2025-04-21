@@ -20,6 +20,8 @@ namespace CommonUtilities
 		NODISC bool IsPressed(ButtonType aKey) const;
 		NODISC bool IsReleased(ButtonType aKey) const;
 
+		NODISC bool IsAnyPressed() const;
+
 		void Update() override;
 
 	private:

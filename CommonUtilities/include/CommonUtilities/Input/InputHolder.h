@@ -25,10 +25,16 @@ namespace CommonUtilities
 		NODISC const MouseCursor& Cursor() const noexcept;
 		NODISC MouseCursor& Cursor() noexcept;
 
-		NODISC const GamepadInput& Gamepad() const noexcept;
-		NODISC GamepadInput& Gamepad() noexcept;
+		NODISC const GamepadInput& Gamepad(const unsigned aGamepadIndex = 0) const noexcept;
+		NODISC GamepadInput& Gamepad(const unsigned aGamepadIndex = 0) noexcept;
+
+		NODISC bool IsAnyPressed() const;
 
 		void SetEnabled(bool aFlag);
+
+		void SetInFocus(bool aFlag);
+
+		void SetHasExternalFocus(bool aFlag);
 
 		void Update();
 		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
@@ -37,6 +43,6 @@ namespace CommonUtilities
 		KeyboardInput	myKeyboard;
 		MouseInput		myMouse;
 		MouseCursor		myCursor;
-		GamepadInput	myGamepad;
+		std::array<GamepadInput, XUSER_MAX_COUNT> myGamepads;
 	};
 }

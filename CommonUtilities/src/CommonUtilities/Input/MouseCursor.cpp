@@ -22,6 +22,10 @@ bool MouseCursor::GetVisible() const noexcept
 {
 	return myIsVisible;
 }
+bool MouseCursor::GetLocked() const noexcept
+{
+	return myIsLocked;
+}
 
 const Vector2i& MouseCursor::GetPosition() const noexcept
 {
@@ -114,7 +118,11 @@ void MouseCursor::SetVisible(bool aState)
 {
 	if (aState != myIsVisible)
 	{
-		ShowCursor(aState);
+		if (aState)
+			while (ShowCursor(true) <= 0);
+		else
+			while (ShowCursor(false) >= 0);
+
 		myIsVisible = aState;
 	}
 }
@@ -131,7 +139,7 @@ void MouseCursor::Update()
 	myMoveDelta	= myTentativeMoveDelta;
 	myTentativeMoveDelta = { 0, 0 };
 
-	if (IsConnected() && myEnabled && myInFocus && myIsLocked)
+	if (IsConnected() && GetEnabled() && GetInFocus() && !GetHasExternalFocus() && myIsLocked)
 	{
 		SetRelativePosition(myWindowSize / 2);
 	}
@@ -204,18 +212,6 @@ bool MouseCursor::HandleEventImpl(UINT aMessage, UNSD WPARAM wParam, LPARAM lPar
 			GrabCursor(myIsGrabbed);
 			return false;
 		}
-		case WM_SETFOCUS:
-		{
-			GrabCursor(myIsGrabbed);
-			SetVisible(myIsVisible);
-			return false;
-		}
-		case WM_KILLFOCUS:
-		{
-			GrabCursor(false);
-			SetVisible(true);
-			return false;
-		}
 	}
 	return false;
 }
@@ -240,4 +236,34 @@ void MouseCursor::GrabCursor(bool aGrabbed)
 void MouseCursor::ResetTentativeState()
 {
 
+}
+
+void MouseCursor::OnEnable()
+{
+	GrabCursor(myIsGrabbed);
+
+	if (myIsVisible)  
+		while (ShowCursor(true) <= 0);
+	else 
+		while (ShowCursor(false) >= 0);
+}
+void MouseCursor::OnDisable()
+{
+	GrabCursor(false);
+	while (ShowCursor(true) <= 0);
+}
+
+void MouseCursor::OnFocusGained()
+{
+	GrabCursor(myIsGrabbed);
+
+	if (myIsVisible)
+		while (ShowCursor(true) <= 0);
+	else
+		while (ShowCursor(false) >= 0);
+}
+void MouseCursor::OnFocusLost()
+{
+	GrabCursor(false);
+	while (ShowCursor(true) <= 0);
 }

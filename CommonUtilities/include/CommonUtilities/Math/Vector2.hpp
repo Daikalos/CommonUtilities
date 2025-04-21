@@ -5,6 +5,7 @@
 #include <immintrin.h>
 #include <array>
 #include <tuple>
+#include <iostream>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -103,7 +104,7 @@ namespace CommonUtilities
 		/// 
 		/// \returns Normalized vector
 		/// 
-		NODISC constexpr Vector2<T> GetNormalizedSafe(T aLength, T aRadius = T(1)) const;
+		NODISC constexpr Vector2<T> GetNormalizedSafe(T aLength, T aRadius) const;
 
 		/// Computes a normalized vector.
 		/// 
@@ -426,7 +427,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector2<T> Vector2<T>::Reflect(const Vector2& aVector) const
 	{
-		return aVector - T{2} * ProjectOnto(aVector);
+		return aVector - T{2} *  aVector.ProjectOnto(*this);
 	}
 
 	template<typename T>
@@ -575,7 +576,7 @@ namespace CommonUtilities
 				return aCurrent;
 			}
 
-			return aCurrent + dir.GetNormalized(std::sqrt(distSqr)) * aDistance;
+			return aCurrent + dir.GetNormalized(std::sqrt(lenSqr), 1.0f) * aDistance;
 		}
 
 		return aCurrent;
@@ -751,6 +752,13 @@ namespace CommonUtilities
 	NODISC constexpr Vector2<T> Lerp(const Vector2<T>& aStart, const Vector2<T>& aEnd, float aPercentage)
 	{
 		return Vector2<T>::Lerp(aStart, aEnd, aPercentage);
+	}
+
+	template <class T>
+	constexpr std::ostream& operator<<(std::ostream& os, const Vector2<T>& aVector)
+	{
+		os << "{ " << aVector.x << ", " << aVector.y << " }";
+		return os;
 	}
 
 	// using declarations

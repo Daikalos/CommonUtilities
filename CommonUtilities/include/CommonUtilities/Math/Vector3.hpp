@@ -5,6 +5,7 @@
 #include <immintrin.h>
 #include <array>
 #include <tuple>
+#include <iostream>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -44,6 +45,9 @@ namespace CommonUtilities
 
 		template <typename U>
 		constexpr explicit Vector3(const Vector3<U>& aVector);
+
+		template<typename U>
+		constexpr explicit Vector3(const U& aVector);
 
 		template<class OtherVector>
 		NODISC constexpr explicit operator OtherVector() const;
@@ -232,6 +236,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr static T Dot(const Vector3& aLeft, const Vector3& aRight);
 
+		/// \returns Cross product of the two vectors
+		/// 
+		NODISC constexpr static Vector3 Cross(const Vector3& aLeft, const Vector3& aRight);
+
 		/// \returns Lerped vector between current and target.
 		/// 
 		NODISC constexpr static Vector3 Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage);
@@ -354,6 +362,11 @@ namespace CommonUtilities
 		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(static_cast<T>(aVector.z)) {}
 
 	template<typename T>
+	template<typename U>
+	constexpr Vector3<T>::Vector3(const U& aVector)
+		: x(static_cast<T>(aVector.x)), y(static_cast<T>(aVector.y)), z(static_cast<T>(aVector.z)) {}
+
+	template<typename T>
 	template<class OtherVector>
 	constexpr Vector3<T>::operator OtherVector() const
 	{
@@ -443,13 +456,13 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Vector3<T>::Reflect(const Vector3& aVector) const
 	{
-		return aVector - T{2} * ProjectOnto(aVector);
+		return aVector - T{2} *  aVector.ProjectOnto(*this);
 	}
 
 	template<typename T>
 	constexpr T Vector3<T>::AngleTo(const Vector3& aVector) const
 	{
-		return std::acos(Dot(aVector) / (Length() * aVector.Length()));
+		return (*this != aVector) ? std::acos(Clamp(Dot(aVector) / (Length() * aVector.Length()), T(-1), T(1))) : T(0);
 	}
 
 	template<typename T>
@@ -558,6 +571,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr Vector3<T> Vector3<T>::Cross(const Vector3& aLeft, const Vector3& aRight)
+	{
+		return aLeft.Cross(aRight);
+	}
+
+	template<typename T>
 	constexpr Vector3<T> Vector3<T>::Lerp(const Vector3& aCurrent, const Vector3& aTarget, float aPercentage)
 	{
 		using CommonUtilities::Lerp;
@@ -601,7 +620,7 @@ namespace CommonUtilities
 				return aCurrent;
 			}
 
-			return aCurrent + dir.GetNormalized(std::sqrt(distSqr)) * aDistance;
+			return aCurrent + dir.GetNormalized(std::sqrt(lenSqr), 1.0f) * aDistance;
 		}
 
 		return aCurrent;
@@ -897,6 +916,13 @@ namespace CommonUtilities
 	NODISC constexpr Vector3<T> Lerp(const Vector3<T>& aStart, const Vector3<T>& aEnd, float aPercentage)
 	{
 		return Vector3<T>::Lerp(aStart, aEnd, aPercentage);
+	}
+
+	template <class T>
+	constexpr std::ostream& operator<<(std::ostream& os, const Vector3<T>& aVector)
+	{
+		os << "{ " << aVector.x << ", " << aVector.y << ", " << aVector.z << " }";
+		return os;
 	}
 
 	// using declarations

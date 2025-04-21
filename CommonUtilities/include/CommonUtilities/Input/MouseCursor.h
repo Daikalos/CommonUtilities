@@ -16,6 +16,7 @@ namespace CommonUtilities
 
 		NODISC bool GetGrabbed() const noexcept;
 		NODISC bool GetVisible() const noexcept;
+		NODISC bool GetLocked() const noexcept;
 
 		NODISC const Vector2i& GetPosition() const noexcept;
 		NODISC const Vector2i& GetDelta() const noexcept;
@@ -37,6 +38,12 @@ namespace CommonUtilities
 
 	private:
 		void ResetTentativeState() override;
+
+		void OnEnable() override;
+		void OnDisable() override;
+
+		void OnFocusGained() override;
+		void OnFocusLost() override;
 
 		bool HandleEventImpl(UINT aMessage, WPARAM wParam, LPARAM lParam) override;
 

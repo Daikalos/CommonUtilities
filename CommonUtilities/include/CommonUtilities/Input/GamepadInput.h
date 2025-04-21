@@ -17,7 +17,7 @@ namespace CommonUtilities
 	public:
 		using ButtonType = Gamepad::Button;
 
-		GamepadInput(int aGamepadIndex = 0);
+		GamepadInput();
 		~GamepadInput() = default;
 
 		NODISC const Vector2f& GetDeadzone() const;
@@ -31,6 +31,8 @@ namespace CommonUtilities
 		NODISC bool IsHeld(ButtonType aButton) const;
 		NODISC bool IsPressed(ButtonType aButton) const;
 		NODISC bool IsReleased(ButtonType aButton) const;
+
+		NODISC bool IsAnyPressed() const;
 
 		NODISC int GetIndex() const;
 		NODISC bool IsConnected() const;
@@ -49,6 +51,8 @@ namespace CommonUtilities
 		void SetDeadzoneY(float aDeadzoneY);
 
 		void Update() override;
+
+		static bool gOccupiedGamepadIndices[XUSER_MAX_COUNT];
 
 	private:
 		bool TryConnect();

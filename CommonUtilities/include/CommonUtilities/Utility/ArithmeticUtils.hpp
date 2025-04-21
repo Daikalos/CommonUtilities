@@ -20,6 +20,9 @@ namespace CommonUtilities
 	constexpr T PI_4_V = PI_2_V<T> / T{2};
 
 	template<typename T = float>
+	constexpr T TAU_V = PI_V<T> * T{2};
+
+	template<typename T = float>
 	constexpr T DEG2RAD_V = PI_V<T> / T{180.0};
 
 	template<typename T = float>
@@ -46,6 +49,10 @@ namespace CommonUtilities
 	inline constexpr long double	PI_2_LD		= PI_2_V<long double>;
 	inline constexpr long double	PI_4_LD		= PI_4_V<long double>;
 
+	inline constexpr float			TAU 		= TAU_V<float>;
+	inline constexpr double			TAU_D		= TAU_V<double>;
+	inline constexpr long double	TAU_LD		= TAU_V<long double>;
+
 	inline constexpr float			DEG2RAD		= DEG2RAD_V<float>;
 	inline constexpr double			DEG2RAD_D	= DEG2RAD_V<double>;
 	inline constexpr long double	DEG2RAD_LD	= DEG2RAD_V<long double>;
@@ -71,12 +78,18 @@ namespace CommonUtilities
 	}
 
 	template<IsArithmeticType T>
+	NODISC constexpr T ChangeAngleDiagram(T aAngle)
+	{
+		return -(aAngle + PI_2_V<T>) + PI_V<T>;
+	}
+
+	template<IsArithmeticType T>
 	NODISC constexpr T Pow(T aBase, std::int32_t aExponent)
 	{
-		if (aExponent < 0)
+		if (aExponent < 0) [[unlikely]]
 			return Pow(1 / aBase, -aExponent);
 
-		if (aExponent == 0)
+		if (aExponent == 0) [[unlikely]]
 			return 1;
 
 		if (aExponent % 2 == 0)
@@ -219,7 +232,6 @@ namespace CommonUtilities
 	template<IsArithmeticType T>
 	NODISC constexpr T Abs(T aValue)
 	{
-		// since the minus operator will possibly create a new object, we cannot return a reference
 		return (aValue >= T{}) ? aValue : -aValue;
 	}
 

@@ -5,6 +5,7 @@
 #include <immintrin.h>
 #include <array>
 #include <tuple>
+#include <iostream>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -222,7 +223,7 @@ namespace CommonUtilities
 
 	template<typename T>
 	constexpr Vector4<T>::Vector4(const std::array<T, 4>& aArray)
-		: Vector4(aArray[0], aArray[1], aArray[2], aArray[4]) {}
+		: Vector4(aArray[0], aArray[1], aArray[2], aArray[3]) {}
 
 	template<typename T>
 	constexpr Vector4<T>::Vector4(__m128 aRegister) requires (std::is_same_v<T, float>)
@@ -664,6 +665,13 @@ namespace CommonUtilities
 	NODISC constexpr Vector4<T> Lerp(const Vector4<T>& aStart, const Vector4<T>& aEnd, float aPercentage)
 	{
 		return Vector4<T>::Lerp(aStart, aEnd, aPercentage);
+	}
+
+	template <class T>
+	constexpr std::ostream& operator<<(std::ostream& os, const Vector4<T>& aVector)
+	{
+		os << "{ " << aVector.x << ", " << aVector.y << ", " << aVector.z << ", " << aVector.w << " }";
+		return os;
 	}
 
 	// using declarations

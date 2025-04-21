@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "Vector3.hpp"
 #include "Shape.h"
 
@@ -18,53 +20,71 @@ namespace CommonUtilities
 		constexpr Triangle() = default;
 		constexpr ~Triangle() = default;
 
-		constexpr Triangle(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2);
+		constexpr Triangle(const Vector3<T>& aPointA, const Vector3<T>& aPointB, const Vector3<T>& aPointC);
+		constexpr Triangle(const std::array<Vector3<T>, 3>& aPoints);
 
-		NODISC constexpr const Vector3<T>& GetPoint0() const noexcept;
-		NODISC constexpr const Vector3<T>& GetPoint1() const noexcept;
-		NODISC constexpr const Vector3<T>& GetPoint2() const noexcept;
+		NODISC constexpr const Vector3<T>& operator[](std::size_t aIndex) const;
+
+		NODISC constexpr const Vector3<T>& GetPointA() const noexcept;
+		NODISC constexpr const Vector3<T>& GetPointB() const noexcept;
+		NODISC constexpr const Vector3<T>& GetPointC() const noexcept;
 		NODISC constexpr const Vector3<T>& GetNormal() const noexcept;
+
+		NODISC constexpr const std::array<Vector3<T>, 3>& GetPoints() const;
+		NODISC constexpr const Vector3<T>& GetPoint(std::size_t aIndex) const;
 
 		NODISC constexpr Vector3<T> GetCenter() const;
 		NODISC constexpr AABB<T> GetAABB() const;
+		NODISC constexpr T GetArea() const;
 
-		constexpr void SetPoint0(const Vector3<T>& aPoint);
-		constexpr void SetPoint1(const Vector3<T>& aPoint);
-		constexpr void SetPoint2(const Vector3<T>& aPoint);
+		constexpr void SetPointA(const Vector3<T>& aPoint);
+		constexpr void SetPointB(const Vector3<T>& aPoint);
+		constexpr void SetPointC(const Vector3<T>& aPoint);
+
+		constexpr void SetPoint(const Vector3<T>& aPoint, std::size_t aIndex);
 
 		NODISC constexpr Shape::Type GetType() const noexcept override;
 
 	private:
-		Vector3<T> myPoint0;
-		Vector3<T> myPoint1;
-		Vector3<T> myPoint2;
+		std::array<Vector3<T>, 3> myPoints;
 		Vector3<T> myNormal;
 	};
 
 	template<typename T>
-	constexpr Triangle<T>::Triangle(const Vector3<T>& aPoint0, const Vector3<T>& aPoint1, const Vector3<T>& aPoint2)
-		: myPoint0(aPoint0)
-		, myPoint1(aPoint1)
-		, myPoint2(aPoint2)
-		, myNormal((myPoint1 - myPoint0).Cross(myPoint2 - myPoint0).GetNormalized())
+	constexpr Triangle<T>::Triangle(const Vector3<T>& aPointA, const Vector3<T>& aPointB, const Vector3<T>& aPointC)
+		: myPoints(aPointA, aPointB, aPointC)
+		, myNormal((GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized())
 	{
 
 	}
 
 	template<typename T>
-	constexpr const Vector3<T>& Triangle<T>::GetPoint0() const noexcept
+	constexpr Triangle<T>::Triangle(const std::array<Vector3<T>, 3>& aPoints)
+		: Triangle(aPoints[0], aPoints[1], aPoints[2])
 	{
-		return myPoint0;
+
+	}
+
+	template<typename T>
+	constexpr const Vector3<T>& Triangle<T>::operator[](std::size_t aIndex) const
+	{
+		return myPoints[aIndex];
+	}
+
+	template<typename T>
+	constexpr const Vector3<T>& Triangle<T>::GetPointA() const noexcept
+	{
+		return myPoints[0];
 	}
 	template<typename T>
-	constexpr const Vector3<T>& Triangle<T>::GetPoint1() const noexcept
+	constexpr const Vector3<T>& Triangle<T>::GetPointB() const noexcept
 	{
-		return myPoint1;
+		return myPoints[1];
 	}
 	template<typename T>
-	constexpr const Vector3<T>& Triangle<T>::GetPoint2() const noexcept
+	constexpr const Vector3<T>& Triangle<T>::GetPointC() const noexcept
 	{
-		return myPoint2;
+		return myPoints[2];
 	}
 	template<typename T>
 	constexpr const Vector3<T>& Triangle<T>::GetNormal() const noexcept
@@ -73,9 +93,20 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	constexpr const std::array<Vector3<T>, 3>& Triangle<T>::GetPoints() const
+	{
+		return myPoints;
+	}
+	template<typename T>
+	constexpr const Vector3<T>& Triangle<T>::GetPoint(std::size_t aIndex) const
+	{
+		return myPoints[aIndex];
+	}
+
+	template<typename T>
 	constexpr Vector3<T> Triangle<T>::GetCenter() const
 	{
-		return (myPoint0 + myPoint1 + myPoint2) / T(3);
+		return (GetPointA() + GetPointB() + GetPointC()) / T(3);
 	}
 	template<typename T>
 	constexpr AABB<T> Triangle<T>::GetAABB() const
@@ -83,29 +114,46 @@ namespace CommonUtilities
 		Vector3<T> min;
 		Vector3<T> max;
 
-		min.x = Min(myPoint0.x, myPoint1.x, myPoint2.x), min.y = Min(myPoint0.y, myPoint1.y, myPoint2.y), min.z = Min(myPoint0.z, myPoint1.z, myPoint2.z);
-		max.x = Max(myPoint0.x, myPoint1.x, myPoint2.x), max.y = Max(myPoint0.y, myPoint1.y, myPoint2.y), max.z = Max(myPoint0.z, myPoint1.z, myPoint2.z);
+		min.x = Min(GetPointA().x, GetPointB().x, GetPointC().x), min.y = Min(GetPointA().y, GetPointB().y, GetPointC().y), min.z = Min(GetPointA().z, GetPointB().z, GetPointC().z);
+		max.x = Max(GetPointA().x, GetPointB().x, GetPointC().x), max.y = Max(GetPointA().y, GetPointB().y, GetPointC().y), max.z = Max(GetPointA().z, GetPointB().z, GetPointC().z);
 
 		return AABB<T>(min, max);
 	}
 
 	template<typename T>
-	constexpr void Triangle<T>::SetPoint0(const Vector3<T>& aPoint)
+	constexpr T Triangle<T>::GetArea() const
 	{
-		myPoint0 = aPoint;
-		myNormal = (myPoint1 - myPoint0).Cross(myPoint2 - myPoint0).GetNormalized();
+		const Vector3<T> AB = (GetPointB() - GetPointA());
+		const Vector3<T> AC = (GetPointC() - GetPointA());
+
+		const Vector3<T> ABxAC = AB.Cross(AC);
+
+		return ABxAC.Length() / T(2);
+	}
+
+	template<typename T>
+	constexpr void Triangle<T>::SetPointA(const Vector3<T>& aPoint)
+	{
+		myPoints[0] = aPoint;
+		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 	template<typename T>
-	constexpr void Triangle<T>::SetPoint1(const Vector3<T>& aPoint)
+	constexpr void Triangle<T>::SetPointB(const Vector3<T>& aPoint)
 	{
-		myPoint1 = aPoint;
-		myNormal = (myPoint1 - myPoint0).Cross(myPoint2 - myPoint0).GetNormalized();
+		myPoints[1] = aPoint;
+		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 	template<typename T>
-	constexpr void Triangle<T>::SetPoint2(const Vector3<T>& aPoint)
+	constexpr void Triangle<T>::SetPointC(const Vector3<T>& aPoint)
 	{
-		myPoint2 = aPoint;
-		myNormal = (myPoint1 - myPoint0).Cross(myPoint2 - myPoint0).GetNormalized();
+		myPoints[2] = aPoint;
+		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
+	}
+
+	template<typename T>
+	constexpr void Triangle<T>::SetPoint(const Vector3<T>& aPoint, std::size_t aIndex)
+	{
+		myPoints[aIndex] = aPoint;
 	}
 
 	template<typename T>
@@ -119,9 +167,9 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC constexpr bool operator==(const Triangle<T>& aLeft, const Triangle<T>& aRight)
 	{
-		return  aLeft.GetPoint0() == aRight.GetPoint0() &&
-				aLeft.GetPoint1() == aRight.GetPoint1() &&
-				aLeft.GetPoint2() == aRight.GetPoint2();
+		return  aLeft.GetPointA() == aRight.GetPointA() &&
+				aLeft.GetPointB() == aRight.GetPointB() &&
+				aLeft.GetPointC() == aRight.GetPointC();
 	}
 	template<typename T>
 	NODISC constexpr bool operator!=(const Triangle<T>& aLeft, const Triangle<T>& aRight)

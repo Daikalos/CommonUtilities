@@ -27,6 +27,8 @@ namespace CommonUtilities
 	NODISC COMMON_UTILITIES_API bool Contains(std::string_view aString, std::string_view aSubString);
 	NODISC COMMON_UTILITIES_API bool Contains(std::string_view aString, const char aCharacter);
 
+	NODISC COMMON_UTILITIES_API bool ContainsAny(std::string_view aString, std::initializer_list<std::string_view> aSubStrings);
+
 	NODISC COMMON_UTILITIES_API bool CompareIgnoreCase(std::string_view aFirstString, std::string_view aSecondString);
 
 	COMMON_UTILITIES_API void TrimLeft(std::string& aString);
@@ -46,7 +48,9 @@ namespace CommonUtilities
 	COMMON_UTILITIES_API bool StartsWith(std::string_view aString, std::string_view aPrefix);
 	COMMON_UTILITIES_API bool StartsWith(std::string_view aString, const char aPrefix);
 
-	NODISC COMMON_UTILITIES_API std::string RemoveTrailingZeroes(std::string_view aString);
+	NODISC COMMON_UTILITIES_API std::string RemoveTrailingZeroes(std::string_view aString, int aKeepPlaces = 0);
+
+	NODISC COMMON_UTILITIES_API float JaroWinklerDistance(std::string_view aFirst, std::string_view aSecond, bool aIgnoreCase = false);
 
 	template<typename T>
 	inline std::string ToString(const T& aValue)

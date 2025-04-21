@@ -23,6 +23,8 @@ namespace CommonUtilities
 		NODISC bool IsPressed(ButtonType aButton) const;
 		NODISC bool IsReleased(ButtonType aButton) const;
 
+		NODISC bool IsAnyPressed() const;
+
 		void SetScrollThreshold(float aScrollThreshold);
 
 		void Update() override;

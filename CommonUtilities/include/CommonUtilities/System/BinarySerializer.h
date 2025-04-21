@@ -99,6 +99,8 @@ namespace CommonUtilities
 	public:
 		COMMON_UTILITIES_API BinaryWriteSerializer();
 
+		NODISC std::vector<std::byte>&& MoveBuffer() { return std::move(myBuffer); }
+
 		NODISC std::span<const std::byte> GetBuffer() const noexcept { return myBuffer; }
 		NODISC const std::byte* GetBufferData() const noexcept { return myBuffer.data(); }
 

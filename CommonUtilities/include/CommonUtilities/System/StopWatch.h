@@ -10,7 +10,7 @@ namespace CommonUtilities
 	class COMMON_UTILITIES_API StopWatch
 	{
 	public:
-		StopWatch();
+		StopWatch(bool aStartImmediately = false);
 		~StopWatch();
 
 		NODISC float GetElapsed() const noexcept;
@@ -18,6 +18,7 @@ namespace CommonUtilities
 		NODISC bool IsRunning() const noexcept;
 
 		void Start();
+		void StartNew();
 		void Stop();
 		void Reset(float aHeadStart = 0.0f);
 

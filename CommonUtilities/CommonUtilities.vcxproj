@@ -180,6 +180,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Heap.hpp" />
+    <ClInclude Include="include\CommonUtilities\Structures\Octree.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\Queue.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp" />
@@ -289,6 +290,7 @@
     <ClCompile Include="src\CommonUtilities\System\Timer.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Benchmark.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\FileUtils.cpp" />
+    <ClCompile Include="src\CommonUtilities\Utility\PerlinNoise.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Random.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\StringUtils.cpp" />
     <ClCompile Include="src\CommonUtilities\Utility\Win32Utils.cpp" />

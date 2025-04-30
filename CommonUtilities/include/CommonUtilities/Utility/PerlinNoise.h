@@ -4,7 +4,6 @@
 
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Structures/StaticVector.hpp>
-#include <CommonUtilities/Utility/JsonUtils.hpp>
 
 // THIS CLASS IS A TRANSLATION TO C++11 FROM THE REFERENCE
 // JAVA IMPLEMENTATION OF THE IMPROVED PERLIN FUNCTION (see http://mrl.nyu.edu/~perlin/noise/)
@@ -81,19 +80,6 @@ namespace CommonUtilities
 		std::array<cu::Vector2f, ourTableSize>	myGradients2D;
 		std::array<float, ourTableSize>			myGradients1D;
 		unsigned								mySeed = 0;
-
-		friend void to_json(nlohmann::json& nlohmann_json_j, const PerlinNoise& nlohmann_json_t)
-		{
-			nlohmann_json_j["mySeed"] = nlohmann_json_t.mySeed;
-		} 
-		friend void from_json(const nlohmann::json& nlohmann_json_j, PerlinNoise& nlohmann_json_t)
-		{
-			unsigned seed = 0;
-			nlohmann_json_j.at("mySeed").get_to(seed);
-
-			nlohmann_json_t.mySeed = 0;
-			nlohmann_json_t.SetSeed(seed);
-		}
     };
 
 	template<typename T>

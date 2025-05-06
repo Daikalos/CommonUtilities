@@ -293,8 +293,6 @@ namespace CommonUtilities
 			return Vector3<T>{ pitch, yaw, roll };
 		}
 
-		// TODO: FIX THIS CRAP
-
 		const T sqx = x * x;
 		const T sqy = y * y;
 		const T sqz = z * z;

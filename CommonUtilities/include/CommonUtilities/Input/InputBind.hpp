@@ -53,7 +53,7 @@ namespace CommonUtilities
 
 		///	\return Whether bind is set to some button
 		/// 
-		NODISC bool IsSet(const ButtonType& aBind);
+		NODISC bool IsSet(const ButtonType& aBind) const;
 
 		NODISC bool IsHeld(const ButtonType& aBind) const;
 		NODISC bool IsPressed(const ButtonType& aBind) const;
@@ -175,7 +175,7 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline bool InputBind<Bind>::IsSet(const ButtonType& aBind)
+	inline bool InputBind<Bind>::IsSet(const ButtonType& aBind) const
 	{
 		const auto it = myBinds.find(aBind);
 		return it != myBinds.end();

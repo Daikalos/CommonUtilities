@@ -53,7 +53,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsConnected() const noexcept
 	{
-		return myGamepad != nullptr;
+		return myGamepad != nullptr && myGamepad->IsConnected();
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)

@@ -12,6 +12,25 @@
 
 #include <CommonUtilities/Structures/FreeVector.hpp>
 
+template<typename MutexType>
+class MutexHolder
+{
+public:
+	typedef MutexType mutex_type;
+
+	MutexHolder() = default;
+	MutexHolder(const MutexHolder&) : myMutex() {}
+
+	MutexHolder& operator=(const MutexHolder&) { return *this; }
+	MutexHolder& operator=(MutexHolder&&) { return *this; }
+
+	operator std::shared_mutex&() { return myMutex; }
+	operator std::shared_mutex&() const { return myMutex; }
+
+private:
+	mutable mutex_type myMutex;
+};
+
 namespace CommonUtilities
 { 
 	///	Octree based upon: https://stackoverflow.com/questions/41946007/efficient-and-well-explained-implementation-of-a-quadtree-for-2d-collision-det
@@ -19,6 +38,8 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	class Octree
 	{
+		typedef std::shared_mutex MutexType;
+
 	public:
 		using ElementType	= T;
 		using ValueType		= std::remove_const_t<T>;
@@ -32,7 +53,7 @@ namespace CommonUtilities
 			ValueType	item;
 		};
 
-		Octree() = default;
+		Octree();
 
 		Octree(const cu::AABBf& aRootAABB, int aMaxElements = 16, int aMaxDepth = 16);
 
@@ -174,7 +195,8 @@ namespace CommonUtilities
 
 		struct NodeQuery
 		{
-			SizeType index {0};
+			SizeType	index {0};
+			bool		insideQuery {false};
 		};
 
 		struct NodeRegQuery
@@ -194,7 +216,7 @@ namespace CommonUtilities
 		auto QFindLeaves(const NodeRegQuery& aNode, const cu::AABBf& aAABB) const -> std::vector<NodeQuery>;
 		auto QFindLeaves(const NodeRegQuery& aNode, const cu::Spheref& aSphere) const -> std::vector<NodeQuery>;
 
-		void GetNodeLeaves(SizeType aNodeIndex, std::vector<NodeQuery>& outLeaves, std::vector<SizeType>& aProcessNodes) const;
+		void GetNodeLeaves(SizeType aNodeIndex, std::vector<NodeQuery>& outLeaves, std::vector<SizeType>& aProcessNodes, bool aInsideQuery = false) const;
 
 		static bool IsLeaf(const Node& aNode);
 		static bool IsBranch(const Node& aNode);
@@ -209,8 +231,13 @@ namespace CommonUtilities
 		SizeType	myMaxDepth		{8}; // max depth before no more leaves will be created
 
 		mutable std::vector<std::uint8_t> myVisited;
-		mutable std::shared_mutex myMutex;
+		mutable MutexHolder<MutexType> myMutex = {};
 	};
+
+	template <std::equality_comparable T>
+	inline Octree<T>::Octree() : Octree({Vector3f(-4096.0f), Vector3f(4096.0f) })
+	{
+	}
 
 	template<std::equality_comparable T>
 	inline Octree<T>::Octree(const cu::AABBf& aRootAABB, int aMaxElements, int aMaxDepth)
@@ -228,14 +255,14 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline const cu::AABBf& Octree<T>::GetRootAABB() const
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 		return myRootAABB;
 	}
 
 	template<std::equality_comparable T>
 	inline void Octree<T>::SetRootAABB(const cu::AABBf& aRootAABB)
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		if (myRootAABB == aRootAABB)
 			return;
@@ -298,7 +325,7 @@ namespace CommonUtilities
 	template<typename... Args> requires std::constructible_from<T, Args...>
 	inline auto Octree<T>::Insert(const cu::AABBf& aAABB, Args&&... someArgs) -> SizeType
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		if (!myRootAABB.Overlaps(aAABB)) // dont attempt to add if outside boundary
 			return -1;
@@ -312,7 +339,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline bool Octree<T>::Erase(SizeType aIndex)
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		const cu::AABBf& aabb	= myElements[aIndex].aabb;
 		const auto leaves		= QFindLeaves({ myRootAABB, 0 }, aabb);
@@ -363,7 +390,7 @@ namespace CommonUtilities
 	template<typename... Args> requires std::constructible_from<T, Args...>
 	inline bool Octree<T>::Update(SizeType aIndex, Args&&... someArgs)
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 
 		if (aIndex >= myElements.size() || !myElements.valid(aIndex))
 			return false;
@@ -376,28 +403,28 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	auto Octree<T>::Get(SizeType aIndex) -> ValueType&
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 		return myElements[aIndex].item;
 	}
 
 	template<std::equality_comparable T>
 	auto Octree<T>::Get(SizeType aIndex) const -> const ValueType&
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 		return myElements[aIndex].item;
 	}
 
 	template<std::equality_comparable T>
 	inline auto Octree<T>::GetAABB(SizeType aIndex) const -> const cu::AABBf&
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 		return myElements[aIndex].aabb;
 	}
 
 	template<std::equality_comparable T>
 	inline void Octree<T>::Query(const cu::Frustumf& aFrustum, std::vector<SizeType>& outResult) const
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		outResult.clear();
 
@@ -406,26 +433,44 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const auto& leaf : QFindLeaves({ myRootAABB, 0 }, aFrustum))
+		for (NodeQuery leaf : QFindLeaves({ myRootAABB, 0 }, aFrustum))
 		{
-			const auto nodeIndex = leaf.index;
+			const SizeType nodeIndex = leaf.index;
 
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
+			if (leaf.insideQuery)
 			{
-				const auto eltIndex = myElementsPtr[child].element;
-				const auto& elt = myElements[eltIndex];
-
-				if (!myVisited[eltIndex] && aFrustum.IsInside(elt.aabb)) // TODO: if leaf was detected as inside frustum, IsInside step can be skipped
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
 				{
-					outResult.emplace_back(eltIndex);
-					myVisited[eltIndex] = true;
-				}
+					const SizeType eltIndex = myElementsPtr[child].element;
 
-				child = myElementsPtr[child].next;
+					if (!myVisited[eltIndex])
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
+			}
+			else
+			{ 
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
+				{
+					const SizeType eltIndex = myElementsPtr[child].element;
+					const Element& elt		= myElements[eltIndex];
+
+					if (!myVisited[eltIndex] && aFrustum.IsInside(elt.aabb))
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
 			}
 		}
 
-		for (const auto eltIndex : outResult)
+		for (const SizeType eltIndex : outResult)
 		{
 			myVisited[eltIndex] = false;
 		}
@@ -434,7 +479,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::QueryNoDepth(const cu::Frustumf& aFrustum, std::vector<SizeType>& outResult) const
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		outResult.clear();
 
@@ -443,26 +488,44 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const auto& leaf : QFindLeavesNoDepth({ myRootAABB, 0 }, aFrustum))
+		for (NodeQuery leaf : QFindLeavesNoDepth({ myRootAABB, 0 }, aFrustum))
 		{
-			const auto nodeIndex = leaf.index;
+			const SizeType nodeIndex = leaf.index;
 
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
+			if (leaf.insideQuery)
 			{
-				const auto eltIndex = myElementsPtr[child].element;
-				const auto& elt = myElements[eltIndex];
-
-				if (!myVisited[eltIndex] && aFrustum.IsInsideNoDepth(elt.aabb))
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
 				{
-					outResult.emplace_back(eltIndex);
-					myVisited[eltIndex] = true;
-				}
+					const SizeType eltIndex = myElementsPtr[child].element;
 
-				child = myElementsPtr[child].next;
+					if (!myVisited[eltIndex])
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
+			}
+			else
+			{
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
+				{
+					const SizeType eltIndex = myElementsPtr[child].element;
+					const Element& elt		= myElements[eltIndex];
+
+					if (!myVisited[eltIndex] && aFrustum.IsInsideNoDepth(elt.aabb))
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
 			}
 		}
 
-		for (const auto eltIndex : outResult)
+		for (const SizeType eltIndex : outResult)
 		{
 			myVisited[eltIndex] = false;
 		}
@@ -471,7 +534,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::Query(const cu::Vector3f& aStartPos, const cu::Vector3f& aEndPos, std::vector<SizeType>& outResult) const
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		outResult.clear();
 
@@ -480,26 +543,44 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const auto& leaf : QFindLeaves({ myRootAABB, 0 }, aStartPos, aEndPos))
+		for (NodeQuery leaf : QFindLeaves({ myRootAABB, 0 }, aStartPos, aEndPos))
 		{
-			const auto nodeIndex = leaf.index;
+			const SizeType nodeIndex = leaf.index;
 			
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
+			if (leaf.insideQuery)
 			{
-				const auto eltIndex	= myElementsPtr[child].element;
-				const auto& elt		= myElements[eltIndex];
-
-				if (!myVisited[eltIndex] && cu::IntersectionAABBSegment(elt.aabb, aStartPos, aEndPos))
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
 				{
-					outResult.emplace_back(eltIndex);
-					myVisited[eltIndex] = true;
-				}
+					const SizeType eltIndex	= myElementsPtr[child].element;
 
-				child = myElementsPtr[child].next;
+					if (!myVisited[eltIndex])
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
+			}
+			else
+			{
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
+				{
+					const SizeType eltIndex	= myElementsPtr[child].element;
+					const Element& elt		= myElements[eltIndex];
+
+					if (!myVisited[eltIndex] && cu::IntersectionAABBSegment(elt.aabb, aStartPos, aEndPos))
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
 			}
 		}
 
-		for (const auto eltIndex : outResult)
+		for (const SizeType eltIndex : outResult)
 		{
 			myVisited[eltIndex] = false;
 		}
@@ -508,7 +589,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::Query(const cu::AABBf& aAABB, std::vector<SizeType>& outResult) const
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		outResult.clear();
 
@@ -517,26 +598,44 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const auto& leaf : QFindLeaves({ myRootAABB, 0 }, aAABB))
+		for (NodeQuery leaf : QFindLeaves({ myRootAABB, 0 }, aAABB))
 		{
-			const auto nodeIndex = leaf.index;
+			const SizeType nodeIndex = leaf.index;
 			
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
+			if (leaf.insideQuery)
 			{
-				const auto eltIndex	= myElementsPtr[child].element;
-				const auto& elt		= myElements[eltIndex];
-
-				if (!myVisited[eltIndex] && elt.aabb.Overlaps(aAABB))
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
 				{
-					outResult.emplace_back(eltIndex);
-					myVisited[eltIndex] = true;
-				}
+					const SizeType eltIndex	= myElementsPtr[child].element;
 
-				child = myElementsPtr[child].next;
+					if (!myVisited[eltIndex])
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
+			}
+			else
+			{
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
+				{
+					const SizeType eltIndex	= myElementsPtr[child].element;
+					const Element& elt		= myElements[eltIndex];
+
+					if (!myVisited[eltIndex] && elt.aabb.Overlaps(aAABB))
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
 			}
 		}
 
-		for (const auto eltIndex : outResult)
+		for (const SizeType eltIndex : outResult)
 		{
 			myVisited[eltIndex] = false;
 		}
@@ -545,7 +644,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::Query(const cu::Spheref& aSphere, std::vector<SizeType>& outResult) const
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		outResult.clear();
 
@@ -554,26 +653,44 @@ namespace CommonUtilities
 
 		myVisited.resize(myElements.size());
 
-		for (const auto& leaf : QFindLeaves({ myRootAABB, 0 }, aSphere))
+		for (NodeQuery leaf : QFindLeaves({ myRootAABB, 0 }, aSphere))
 		{
-			const auto nodeIndex = leaf.index;
+			const SizeType nodeIndex = leaf.index;
 			
-			for (auto child = myNodes[nodeIndex].firstChild; child != -1;)
+			if (leaf.insideQuery)
 			{
-				const auto eltIndex	= myElementsPtr[child].element;
-				const auto& elt		= myElements[eltIndex];
-
-				if (!myVisited[eltIndex] && cu::IntersectionSphereAABB(aSphere, elt.aabb))
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
 				{
-					outResult.emplace_back(eltIndex);
-					myVisited[eltIndex] = true;
-				}
+					const SizeType eltIndex	= myElementsPtr[child].element;
 
-				child = myElementsPtr[child].next;
+					if (!myVisited[eltIndex])
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
+			}
+			else
+			{
+				for (SizeType child = myNodes[nodeIndex].firstChild; child != -1;)
+				{
+					const SizeType eltIndex	= myElementsPtr[child].element;
+					const Element& elt		= myElements[eltIndex];
+
+					if (!myVisited[eltIndex] && aSphere.Overlaps(elt.aabb))
+					{
+						outResult.emplace_back(eltIndex);
+						myVisited[eltIndex] = true;
+					}
+
+					child = myElementsPtr[child].next;
+				}
 			}
 		}
 
-		for (const auto eltIndex : outResult)
+		for (const SizeType eltIndex : outResult)
 		{
 			myVisited[eltIndex] = false;
 		}
@@ -588,7 +705,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::Cleanup()
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		if (myNodes.empty())
 			return;
@@ -637,7 +754,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void Octree<T>::Clear()
 	{
-		std::scoped_lock lock(myMutex);
+		std::scoped_lock<MutexType> lock(myMutex);
 
 		myElements.clear();
 		myElementsPtr.clear();
@@ -647,7 +764,7 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline std::vector<cu::AABBf> Octree<T>::GetBranchAABBs() const
 	{
-		std::shared_lock lock(myMutex);
+		std::shared_lock<MutexType> lock(myMutex);
 
 		std::vector<cu::AABBf> result;
 
@@ -762,11 +879,13 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline auto Octree<T>::FindLeaves(const NodeReg& aNode, const cu::AABBf& aAABB) const -> std::vector<NodeReg>
 	{
-		std::vector<NodeReg> leaves;
-		std::vector<NodeReg> toProcess;
+		std::vector<NodeReg>	leaves;
+		std::vector<NodeReg>	toProcess;
+		std::vector<SizeType>	toProcessContained;
 
 		leaves.reserve(ourChildCount / 2);
 		toProcess.reserve(ourChildCount * myMaxDepth / 2);
+		toProcessContained.reserve(ourChildCount * myMaxDepth / 4);
 
 		toProcess.emplace_back(aNode);
 
@@ -926,11 +1045,11 @@ namespace CommonUtilities
 			{
 				leaves.emplace_back(nd.index);
 			}
-			else // TODO: optimize further if this becomes a bottleneck
+			else 
 			{
 				if (aFrustum.Contains(nd.aabb))
 				{
-					GetNodeLeaves(nd.index, leaves, toProcessContained);
+					GetNodeLeaves(nd.index, leaves, toProcessContained, true);
 				}
 				else
 				{ 
@@ -994,7 +1113,7 @@ namespace CommonUtilities
 			{
 				if (aFrustum.Contains(nd.aabb))
 				{
-					GetNodeLeaves(nd.index, leaves, toProcessContained);
+					GetNodeLeaves(nd.index, leaves, toProcessContained, true);
 				}
 				else
 				{
@@ -1035,11 +1154,13 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline auto Octree<T>::QFindLeaves(const NodeRegQuery& aNode, const cu::AABBf& aAABB) const -> std::vector<NodeQuery>
 	{
-		std::vector<NodeQuery> leaves;
-		std::vector<NodeRegQuery> toProcess;
+		std::vector<NodeQuery>		leaves;
+		std::vector<NodeRegQuery>	toProcess;
+		std::vector<SizeType>		toProcessContained;
 
 		leaves.reserve(ourChildCount / 2);
 		toProcess.reserve(ourChildCount * myMaxDepth / 2);
+		toProcessContained.reserve(ourChildCount * myMaxDepth / 4);
 
 		toProcess.emplace_back(aNode);
 
@@ -1054,64 +1175,71 @@ namespace CommonUtilities
 			}
 			else
 			{
-				const auto fc	= myNodes[nd.index].firstChild;
-
-				const auto c	= nd.aabb.GetCenter();
-				const auto hs	= nd.aabb.GetExtends();
-				const auto l	= nd.aabb.GetMin().x;
-				const auto b	= nd.aabb.GetMin().y;
-				const auto h	= nd.aabb.GetMin().z;
-				const auto r	= l + hs.x;
-				const auto t	= b + hs.y;
-				const auto f	= h + hs.z;
-
-				if (aAABB.GetMax().z >= c.z)
+				if (aAABB.Contains(nd.aabb))
 				{
-					if (aAABB.GetMax().y >= c.y)
-					{
-						if (aAABB.GetMax().x >= c.x)
-						{
-							toProcess.emplace_back(cu::AABBf(r, t, f, r + hs.x, t + hs.y, f + hs.z), fc + 0);
-						}
-						if (aAABB.GetMin().x < c.x)
-						{
-							toProcess.emplace_back(cu::AABBf(l, t, f, l + hs.x, t + hs.y, f + hs.z), fc + 1);
-						}
-					}
-					if (aAABB.GetMin().y < c.y)
-					{
-						if (aAABB.GetMax().x >= c.x)
-						{
-							toProcess.emplace_back(cu::AABBf(r, b, f, r + hs.x, b + hs.y, f + hs.z), fc + 2);
-						}
-						if (aAABB.GetMin().x < c.x)
-						{
-							toProcess.emplace_back(cu::AABBf(l, b, f, l + hs.x, b + hs.y, f + hs.z), fc + 3);
-						}
-					}
+					GetNodeLeaves(nd.index, leaves, toProcessContained, true);
 				}
-				if (aAABB.GetMin().z < c.z)
+				else
 				{
-					if (aAABB.GetMax().y >= c.y)
+					const auto fc	= myNodes[nd.index].firstChild;
+
+					const auto c	= nd.aabb.GetCenter();
+					const auto hs	= nd.aabb.GetExtends();
+					const auto l	= nd.aabb.GetMin().x;
+					const auto b	= nd.aabb.GetMin().y;
+					const auto h	= nd.aabb.GetMin().z;
+					const auto r	= l + hs.x;
+					const auto t	= b + hs.y;
+					const auto f	= h + hs.z;
+
+					if (aAABB.GetMax().z >= c.z)
 					{
-						if (aAABB.GetMax().x >= c.x)
+						if (aAABB.GetMax().y >= c.y)
 						{
-							toProcess.emplace_back(cu::AABBf(r, t, h, r + hs.x, t + hs.y, h + hs.z), fc + 4);
+							if (aAABB.GetMax().x >= c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(r, t, f, r + hs.x, t + hs.y, f + hs.z), fc + 0);
+							}
+							if (aAABB.GetMin().x < c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(l, t, f, l + hs.x, t + hs.y, f + hs.z), fc + 1);
+							}
 						}
-						if (aAABB.GetMin().x < c.x)
+						if (aAABB.GetMin().y < c.y)
 						{
-							toProcess.emplace_back(cu::AABBf(l, t, h, l + hs.x, t + hs.y, h + hs.z), fc + 5);
+							if (aAABB.GetMax().x >= c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(r, b, f, r + hs.x, b + hs.y, f + hs.z), fc + 2);
+							}
+							if (aAABB.GetMin().x < c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(l, b, f, l + hs.x, b + hs.y, f + hs.z), fc + 3);
+							}
 						}
 					}
-					if (aAABB.GetMin().y < c.y)
+					if (aAABB.GetMin().z < c.z)
 					{
-						if (aAABB.GetMax().x >= c.x)
+						if (aAABB.GetMax().y >= c.y)
 						{
-							toProcess.emplace_back(cu::AABBf(r, b, h, r + hs.x, b + hs.y, h + hs.z), fc + 6);
+							if (aAABB.GetMax().x >= c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(r, t, h, r + hs.x, t + hs.y, h + hs.z), fc + 4);
+							}
+							if (aAABB.GetMin().x < c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(l, t, h, l + hs.x, t + hs.y, h + hs.z), fc + 5);
+							}
 						}
-						if (aAABB.GetMin().x < c.x)
+						if (aAABB.GetMin().y < c.y)
 						{
-							toProcess.emplace_back(cu::AABBf(l, b, h, l + hs.x, b + hs.y, h + hs.z), fc + 7);
+							if (aAABB.GetMax().x >= c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(r, b, h, r + hs.x, b + hs.y, h + hs.z), fc + 6);
+							}
+							if (aAABB.GetMin().x < c.x)
+							{
+								toProcess.emplace_back(cu::AABBf(l, b, h, l + hs.x, b + hs.y, h + hs.z), fc + 7);
+							}
 						}
 					}
 				}
@@ -1163,14 +1291,14 @@ namespace CommonUtilities
 				const auto b7 = cu::AABBf(r, b, h, r + hs.x, b + hs.y, h + hs.z);
 				const auto b8 = cu::AABBf(l, b, h, l + hs.x, b + hs.y, h + hs.z);
 
-				if (cu::IntersectionSphereAABB(aSphere, b1)) toProcess.emplace_back(b1, fc + 0);
-				if (cu::IntersectionSphereAABB(aSphere, b2)) toProcess.emplace_back(b2, fc + 1);
-				if (cu::IntersectionSphereAABB(aSphere, b3)) toProcess.emplace_back(b3, fc + 2);
-				if (cu::IntersectionSphereAABB(aSphere, b4)) toProcess.emplace_back(b4, fc + 3);
-				if (cu::IntersectionSphereAABB(aSphere, b5)) toProcess.emplace_back(b5, fc + 4);
-				if (cu::IntersectionSphereAABB(aSphere, b6)) toProcess.emplace_back(b6, fc + 5);
-				if (cu::IntersectionSphereAABB(aSphere, b7)) toProcess.emplace_back(b7, fc + 6);
-				if (cu::IntersectionSphereAABB(aSphere, b8)) toProcess.emplace_back(b8, fc + 7);
+				if (aSphere.Overlaps(b1)) toProcess.emplace_back(b1, fc + 0);
+				if (aSphere.Overlaps(b2)) toProcess.emplace_back(b2, fc + 1);
+				if (aSphere.Overlaps(b3)) toProcess.emplace_back(b3, fc + 2);
+				if (aSphere.Overlaps(b4)) toProcess.emplace_back(b4, fc + 3);
+				if (aSphere.Overlaps(b5)) toProcess.emplace_back(b5, fc + 4);
+				if (aSphere.Overlaps(b6)) toProcess.emplace_back(b6, fc + 5);
+				if (aSphere.Overlaps(b7)) toProcess.emplace_back(b7, fc + 6);
+				if (aSphere.Overlaps(b8)) toProcess.emplace_back(b8, fc + 7);
 			}
 		}
 
@@ -1178,7 +1306,7 @@ namespace CommonUtilities
 	}
 
 	template<std::equality_comparable T>
-	inline void Octree<T>::GetNodeLeaves(SizeType aNodeIndex, std::vector<NodeQuery>& outLeaves, std::vector<SizeType>& aProcessNodes) const
+	inline void Octree<T>::GetNodeLeaves(SizeType aNodeIndex, std::vector<NodeQuery>& outLeaves, std::vector<SizeType>& aProcessNodes, bool aInsideQuery) const
 	{
 		aProcessNodes.clear();
 
@@ -1186,16 +1314,16 @@ namespace CommonUtilities
 
 		while (!aProcessNodes.empty())
 		{
-			const auto index = aProcessNodes.back();
+			const SizeType index = aProcessNodes.back();
 			aProcessNodes.pop_back();
 
 			if (IsLeaf(myNodes[index]))
 			{
-				outLeaves.emplace_back(index);
+				outLeaves.emplace_back(index, aInsideQuery);
 			}
 			else
 			{
-				const auto fc = myNodes[index].firstChild;
+				const SizeType fc = myNodes[index].firstChild;
 
 				aProcessNodes.emplace_back(fc + 0);
 				aProcessNodes.emplace_back(fc + 1);

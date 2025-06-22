@@ -11,8 +11,24 @@ MouseInput& InputHolder::Mouse() noexcept					{ return myMouse; }
 const MouseCursor& InputHolder::Cursor() const noexcept		{ return myCursor; }
 MouseCursor& InputHolder::Cursor() noexcept					{ return myCursor; }
 
-const GamepadInput& InputHolder::Gamepad(const unsigned aGamepadIndex) const noexcept	{ return myGamepads[aGamepadIndex]; }
-GamepadInput& InputHolder::Gamepad(const unsigned aGamepadIndex) noexcept				{ return myGamepads[aGamepadIndex]; }
+const GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) const noexcept	{ return myGamepads[aGamepadIndex]; }
+GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) noexcept				{ return myGamepads[aGamepadIndex]; }
+
+int InputHolder::GetPluggedInGamepadAmount() const
+{
+	int pluggedInGamepads = 0;
+
+	for (int i = 0; i < XUSER_MAX_COUNT; i++)
+	{
+		XINPUT_STATE gamepadState{};
+		if (Gamepad::IsConnected(i))
+		{
+			++pluggedInGamepads;
+		}
+	}
+
+	return pluggedInGamepads;
+}
 
 bool InputHolder::IsAnyPressed() const
 {

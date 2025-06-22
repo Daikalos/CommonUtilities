@@ -25,8 +25,10 @@ namespace CommonUtilities
 		NODISC const MouseCursor& Cursor() const noexcept;
 		NODISC MouseCursor& Cursor() noexcept;
 
-		NODISC const GamepadInput& Gamepad(const unsigned aGamepadIndex = 0) const noexcept;
-		NODISC GamepadInput& Gamepad(const unsigned aGamepadIndex = 0) noexcept;
+		NODISC const GamepadInput& Gamepad(unsigned aGamepadIndex = 0) const noexcept;
+		NODISC GamepadInput& Gamepad(unsigned aGamepadIndex = 0) noexcept;
+
+		NODISC int GetPluggedInGamepadAmount() const;
 
 		NODISC bool IsAnyPressed() const;
 
@@ -40,9 +42,11 @@ namespace CommonUtilities
 		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);
 
 	private:
+		using GamepadArray = std::array<GamepadInput, XUSER_MAX_COUNT>;
+
 		KeyboardInput	myKeyboard;
 		MouseInput		myMouse;
 		MouseCursor		myCursor;
-		std::array<GamepadInput, XUSER_MAX_COUNT> myGamepads;
+		GamepadArray	myGamepads;
 	};
 }

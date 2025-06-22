@@ -89,7 +89,6 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
 {
     while (true)
     {
-        LoopTask task;
         {
             std::unique_lock<std::mutex> lock(myMutex);
 
@@ -101,17 +100,17 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
             if (myShutdown)
                 break;
 
-            task = myLoopTasks[aLoopID];
-
             myDispatchedLoops[aLoopID] = false;
         }
 
-        if (!task.callback)
+        auto& loopTask = myLoopTasks[aLoopID];
+
+        if (!loopTask.callback)
             continue;
 
         try
         {
-            task.callback();
+            loopTask.callback();
         }
         catch (std::exception& e)
         {
@@ -120,9 +119,9 @@ void ThreadLoops::ThreadLoop(LoopID aLoopID)
                 myExceptions.emplace(GetCurrentThread(), std::current_exception());
             }
 
-            if (task.exceptionCallback)
+            if (loopTask.exceptionCallback)
             {
-                task.exceptionCallback(e);
+                loopTask.exceptionCallback(e);
             }
         }
     }

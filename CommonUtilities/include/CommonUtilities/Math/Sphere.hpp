@@ -36,6 +36,7 @@ namespace CommonUtilities
 		NODISC constexpr Sphere Union(const Sphere& aOther) const;
 
 		NODISC constexpr bool Overlaps(const Sphere& aOther) const;
+		NODISC constexpr bool Overlaps(const AABB<T>& aOther) const;
 
 		NODISC constexpr bool Contains(T aX, T aY, T aZ) const;
 		NODISC constexpr bool Contains(const Vector3<T>& aPosition) const;
@@ -129,6 +130,12 @@ namespace CommonUtilities
 		const T radius	= GetRadius() + aOther.GetRadius();
 
 		return distSqr <= radius * radius;
+	}
+	template<typename T>
+	constexpr bool Sphere<T>::Overlaps(const AABB<T>& aOther) const
+	{
+		Vector3<T> pt = aOther.ClampToSide(GetCenter());
+		return Vector3<T>::DistanceSqr(pt, GetCenter()) <= myRadiusSqr;
 	}
 
 	template<typename T>

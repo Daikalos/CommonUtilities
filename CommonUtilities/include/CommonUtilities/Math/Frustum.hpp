@@ -45,12 +45,11 @@ namespace CommonUtilities
 		NODISC constexpr const Vector3<T>& GetCenter() const noexcept;
 		NODISC constexpr const Vector3<T>& GetNearCenter() const noexcept;
 		NODISC constexpr const Vector3<T>& GetFarCenter() const noexcept;
+		NODISC constexpr T GetRadius() const;
 
 		constexpr Frustum& SetPoints(const Matrix4x4<T>& aViewProjection);
 		constexpr Frustum& SetPoints(const AABB<T>& aBox);
 		constexpr Frustum& SetPoints(const FrustumPoints& aPoints);
-
-		NODISC constexpr T GetRadius() const;
 
 		template<std::size_t N>
 		NODISC constexpr std::array<Frustum, N> Subdivide(std::span<const float, N> aSubdivisions) const;
@@ -71,9 +70,12 @@ namespace CommonUtilities
 		NODISC constexpr bool IsInsideNoDepth(const AABB<T>& aBox) const;
 
 	private:
+		constexpr void RecomputeState();
+
 		constexpr void ComputeBox();
 		constexpr void ComputeCenters();
 		constexpr void ComputePlanes();
+		constexpr void ComputeRadius();
 
 		FrustumPlanes	myPlanes;
 		FrustumPoints	myPoints;
@@ -81,6 +83,7 @@ namespace CommonUtilities
 		Vector3<T>		myCenter;
 		Vector3<T>		myNearCenter;
 		Vector3<T>		myFarCenter;
+		T				myRadius {0.0f};
 	};
 
 	template<typename T>
@@ -129,6 +132,11 @@ namespace CommonUtilities
 	{
 		return myFarCenter;
 	}
+	template<typename T>
+	constexpr T Frustum<T>::GetRadius() const
+	{
+		return myRadius;
+	}
 
 	template<typename T>
 	constexpr Frustum<T>& Frustum<T>::SetPoints(const Matrix4x4<T>& aViewProjection)
@@ -163,9 +171,7 @@ namespace CommonUtilities
 		myPoints[6] = farBotLeft;
 		myPoints[7] = farBotRight;
 
-		ComputeBox();
-		ComputeCenters();
- 		ComputePlanes();
+		RecomputeState();
 
 		return *this;
 	}
@@ -184,9 +190,7 @@ namespace CommonUtilities
 		myPoints[6] = boxPoints[5];
 		myPoints[7] = boxPoints[6];
 
-		ComputeBox();
-		ComputeCenters();
-		ComputePlanes();
+		RecomputeState();
 
 		return *this;
 	}
@@ -195,24 +199,9 @@ namespace CommonUtilities
 	{
 		myPoints = aPoints;
 
-		ComputeBox();
-		ComputeCenters();
- 		ComputePlanes();
+		RecomputeState();
 
 		return *this;
-	}
-
-	template<typename T>
-	constexpr T Frustum<T>::GetRadius() const
-	{
-		T radius = MIN_V<T>;
-		for (const auto& point : myPoints)
-		{
-			T distance = Vector3<T>::DistanceSqr(point, myCenter);
-			radius = (std::max)(radius, distance);
-		}
-
-		return (T)std::sqrt(radius);
 	}
 
 	template<typename T>
@@ -240,9 +229,7 @@ namespace CommonUtilities
 		result.myPoints[6] = farBotLeft;
 		result.myPoints[7] = farBotRight;
 
-		result.ComputeBox();
-		result.ComputeCenters();
-		result.ComputePlanes();
+		result.RecomputeState();
 
 		return result;
 	}
@@ -412,6 +399,15 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	inline constexpr void Frustum<T>::RecomputeState()
+	{
+		ComputeBox();
+		ComputeCenters();
+		ComputePlanes();
+		ComputeRadius();
+	}
+
+	template<typename T>
 	constexpr void Frustum<T>::ComputeBox()
 	{
 		Vector3<T> min = myPoints[0];
@@ -453,6 +449,11 @@ namespace CommonUtilities
 		myPlanes[Face::Bottom]	= Plane<T>::InitWith3Points(myPoints[2], myPoints[6], myPoints[7]);
 		myPlanes[Face::Far]		= Plane<T>::InitWith3Points(myPoints[4], myPoints[5], myPoints[6]);
 		myPlanes[Face::Near]	= Plane<T>::InitWith3Points(myPoints[2], myPoints[1], myPoints[0]);
+	}
+	template<typename T>
+	constexpr void Frustum<T>::ComputeRadius()
+	{
+		myRadius = myBox.GetRadius();
 	}
 
 	template<typename T>

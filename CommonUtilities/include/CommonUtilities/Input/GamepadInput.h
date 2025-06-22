@@ -53,7 +53,6 @@ namespace CommonUtilities
 		void Update() override;
 
 		static bool gOccupiedGamepadIndices[XUSER_MAX_COUNT];
-
 	private:
 		bool TryConnect();
 

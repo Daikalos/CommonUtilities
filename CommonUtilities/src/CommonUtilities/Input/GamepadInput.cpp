@@ -2,9 +2,9 @@
 
 #pragma comment(lib, "Xinput.lib")
 
-using namespace CommonUtilities;
-
 bool GamepadInput::gOccupiedGamepadIndices[XUSER_MAX_COUNT] = { false };
+
+using namespace CommonUtilities;
 
 static constexpr WORD locXINPUTButtons[] 
 {
@@ -175,8 +175,8 @@ void GamepadInput::Update()
 		myLeftStick.x = (absLX < myDeadzone.x || !GetInFocus()) ? 0 : (absLX - myDeadzone.x) * (normLX / absLX);
 		myLeftStick.y = (absLY < myDeadzone.y || !GetInFocus()) ? 0 : (absLY - myDeadzone.y) * (normLY / absLY);
 
-		if (myDeadzone.x > 0) myLeftStick.x *= 1.0f / (1.0f - myDeadzone.x);
-		if (myDeadzone.y > 0) myLeftStick.y *= 1.0f / (1.0f - myDeadzone.y);
+		if (myDeadzone.x != 1.0f) myLeftStick.x *= 1.0f / (1.0f - myDeadzone.x);
+		if (myDeadzone.y != 1.0f) myLeftStick.y *= 1.0f / (1.0f - myDeadzone.y);
 	}
 
 	// update right stick
@@ -190,8 +190,8 @@ void GamepadInput::Update()
 		myRightStick.x = (absRX < myDeadzone.x || !GetInFocus()) ? 0 : (absRX - myDeadzone.x) * (normRX / absRX);
 		myRightStick.y = (absRY < myDeadzone.y || !GetInFocus()) ? 0 : (absRY - myDeadzone.y) * (normRY / absRY);
 
-		if (myDeadzone.x > 0) myRightStick.x *= 1.0f / (1.0f - myDeadzone.x);
-		if (myDeadzone.y > 0) myRightStick.y *= 1.0f / (1.0f - myDeadzone.y);
+		if (myDeadzone.x != 1.0f) myRightStick.x *= 1.0f / (1.0f - myDeadzone.x);
+		if (myDeadzone.y != 1.0f) myRightStick.y *= 1.0f / (1.0f - myDeadzone.y);
 	}
 
 	// update triggers

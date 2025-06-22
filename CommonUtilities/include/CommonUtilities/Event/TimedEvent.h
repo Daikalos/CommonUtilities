@@ -1,7 +1,8 @@
 #pragma once
 
+#include <CommonUtilities/Time/StopWatch.h>
+
 #include "Event.hpp"
-#include "StopWatch.h"
 
 namespace CommonUtilities
 {

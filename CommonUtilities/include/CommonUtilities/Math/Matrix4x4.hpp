@@ -5,7 +5,6 @@
 #include <cassert>
 #include <immintrin.h>
 #include <stdexcept>
-#include <iostream>
 
 #include <CommonUtilities/Config.h>
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
@@ -1119,16 +1118,6 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Matrix4x4<T>& aLeft, const Matrix4x4<T>& aRight)
 	{
 		return !(aLeft == aRight);
-	}
-
-	template <class T>
-	constexpr std::ostream& operator<<(std::ostream& os, const Matrix4x4<T>& aMatrix)
-	{
-		os << "{ " << aMatrix(1, 1) << ", " << aMatrix(1, 2) << ", " << aMatrix(1, 3) << ", " << aMatrix(1, 4) << " }\n"
-			<< "{ " << aMatrix(2, 1) << ", " << aMatrix(2, 2) << ", " << aMatrix(2, 3) << ", " << aMatrix(2, 4) << " }\n"
-			<< "{ " << aMatrix(3, 1) << ", " << aMatrix(3, 2) << ", " << aMatrix(3, 3) << ", " << aMatrix(3, 4) << " }\n"
-			<< "{ " << aMatrix(4, 1) << ", " << aMatrix(4, 2) << ", " << aMatrix(4, 3) << ", " << aMatrix(4, 4) << " }\n";
-		return os;
 	}
 
 	template<typename T>

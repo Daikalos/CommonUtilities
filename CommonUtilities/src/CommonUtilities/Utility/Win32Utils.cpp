@@ -27,14 +27,19 @@ const Vector2f& CommonUtilities::GetDesktopResolution()
 	return desktopResolution;
 }
 
+float CommonUtilities::GetDesktopAspectRatio()
+{
+	Vector2f desktopResolution = GetDesktopResolution();
+	return desktopResolution.x / desktopResolution.y;
+}
+
 const std::vector<Vector2f>& CommonUtilities::GetValidResolutions()
 {
 	static const auto validResolutions = []
 	{
 		std::vector<Vector2f> result;
 
-		Vector2f desktopResolution = GetDesktopResolution();
-		float desktopRatio = desktopResolution.x / desktopResolution.y;
+		float desktopRatio = GetDesktopAspectRatio();
 
 		DEVMODE win32Mode{};
 		win32Mode.dmSize = sizeof(win32Mode);

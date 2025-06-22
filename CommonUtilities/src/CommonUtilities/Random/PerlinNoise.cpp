@@ -1,6 +1,6 @@
-#include <CommonUtilities/Utility/PerlinNoise.h>
+#include <CommonUtilities/Random/PerlinNoise.h>
 
-#include <CommonUtilities/Utility/Random.hpp>
+#include <CommonUtilities/Random/Random.hpp>
 
 #include <cmath>
 #include <random>

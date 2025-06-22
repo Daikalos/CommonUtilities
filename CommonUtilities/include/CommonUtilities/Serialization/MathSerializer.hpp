@@ -1,14 +1,14 @@
 #pragma once
 
-#include "AABB.hpp"
-#include "Sphere.hpp"
-#include "Capsule.hpp"
-#include "Triangle.hpp"
-#include "Plane.hpp"
-#include "Ray.hpp"
-#include "Transform3D.h"
+#include <CommonUtilities/Math/AABB.hpp>
+#include <CommonUtilities/Math/Sphere.hpp>
+#include <CommonUtilities/Math/Capsule.hpp>
+#include <CommonUtilities/Math/Triangle.hpp>
+#include <CommonUtilities/Math/Plane.hpp>
+#include <CommonUtilities/Math/Ray.hpp>
+#include <CommonUtilities/Math/Transform3D.h>
 
-#include <CommonUtilities/System/BinarySerializer.h>
+#include "BinarySerializer.h"
 
 namespace CommonUtilities
 {

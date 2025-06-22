@@ -6,18 +6,20 @@
 #include <CommonUtilities/Math/Matrix4x4.hpp>
 #include <CommonUtilities/Utility/Benchmark.h>
 #include <CommonUtilities\Utility\Win32Utils.h>
-#include <CommonUtilities/System/BinarySerializer.h>
+#include <CommonUtilities/Serialization/BinarySerializer.h>
 #include <CommonUtilities/Utility/TypeUtils.hpp>
 #include <CommonUtilities/Utility/Easings.hpp>
 
-#include <CommonUtilities/System/TimedEvent.h>
+#include <CommonUtilities/Event/TimedEvent.h>
 
 #include <CommonUtilities/Structures/Blackboard.hpp>
 
 #include <CommonUtilities/Utility/BitUtils.hpp>
 #include <CommonUtilities/Math/AABB.hpp>
 
-#include <CommonUtilities/System/BinarySerializer.h>
+#include <CommonUtilities/Serialization/BinarySerializer.h>
+
+#include <CommonUtilities/Thread/Parallell.hpp>
 
 int main()
 {
@@ -56,6 +58,14 @@ int main()
 
 	cu::BinaryWriteSerializer write;
 	write << testa;
+
+	std::vector<int> aBc;
+
+	cu::ParallelFor(write.GetBuffer(),
+		[](std::byte aLeft)
+		{
+			
+		});
 
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read >> testa2;

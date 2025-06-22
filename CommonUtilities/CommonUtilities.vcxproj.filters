@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\CommonUtilities\System\Timer.h">
+    <ClInclude Include="include\CommonUtilities\Time\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Config.h">
@@ -63,7 +63,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\Traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\Random.hpp">
+    <ClInclude Include="include\CommonUtilities\Random\Random.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp">
@@ -129,7 +129,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Intersection.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\ThreadPool.h">
+    <ClInclude Include="include\CommonUtilities\Thread\ThreadPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Matrix3x3.hpp">
@@ -147,19 +147,19 @@
     <ClInclude Include="include\CommonUtilities\Math\Transform3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\Event.hpp">
+    <ClInclude Include="include\CommonUtilities\Event\Event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\EventHandler.hpp">
+    <ClInclude Include="include\CommonUtilities\Event\EventHandler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\IEvent.h">
+    <ClInclude Include="include\CommonUtilities\Event\IEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\EventID.h">
+    <ClInclude Include="include\CommonUtilities\Event\EventID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\EventIdentifiers.h">
+    <ClInclude Include="include\CommonUtilities\Event\EventIdentifiers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Input\Binds.hpp">
@@ -231,7 +231,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h">
+    <ClInclude Include="include\CommonUtilities\Serialization\BinarySerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\Win32Utils.h">
@@ -243,10 +243,10 @@
     <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\StopWatch.h">
+    <ClInclude Include="include\CommonUtilities\Time\StopWatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\TimedEvent.h">
+    <ClInclude Include="include\CommonUtilities\Event\TimedEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonUtilities.pch.h">
@@ -255,7 +255,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\ThreadLoops.h">
+    <ClInclude Include="include\CommonUtilities\Thread\ThreadLoops.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\TypeUtils.hpp">
@@ -270,7 +270,7 @@
     <ClInclude Include="include\CommonUtilities\Math\Triangle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Math\MathSerializer.hpp">
+    <ClInclude Include="include\CommonUtilities\Serialization\MathSerializer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp">
@@ -291,7 +291,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\Gradients.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\PerlinNoise.h">
+    <ClInclude Include="include\CommonUtilities\Random\PerlinNoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\Spline.h">
@@ -303,9 +303,12 @@
     <ClInclude Include="include\CommonUtilities\Utility\RandomBag.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Thread\Parallell.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\CommonUtilities\System\Timer.cpp">
+    <ClCompile Include="src\CommonUtilities\Time\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Input\InputHandler.cpp">
@@ -332,7 +335,7 @@
     <ClCompile Include="src\CommonUtilities\Utility\Benchmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp">
+    <ClCompile Include="src\CommonUtilities\Thread\ThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Math\Transform2D.cpp">
@@ -341,7 +344,7 @@
     <ClCompile Include="src\CommonUtilities\Math\Transform3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\EventID.cpp">
+    <ClCompile Include="src\CommonUtilities\Event\EventID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Input\MouseCursor.cpp">
@@ -371,10 +374,10 @@
     <ClCompile Include="src\CommonUtilities\Math\Distribution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\Utility\Random.cpp">
+    <ClCompile Include="src\CommonUtilities\Random\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp">
+    <ClCompile Include="src\CommonUtilities\Serialization\BinarySerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Utility\Win32Utils.cpp">
@@ -383,19 +386,19 @@
     <ClCompile Include="src\CommonUtilities\Utility\FileUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\StopWatch.cpp">
+    <ClCompile Include="src\CommonUtilities\Time\StopWatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\TimedEvent.cpp">
+    <ClCompile Include="src\CommonUtilities\Event\TimedEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CommonUtilities.pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\System\ThreadLoops.cpp">
+    <ClCompile Include="src\CommonUtilities\Thread\ThreadLoops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtilities\Utility\PerlinNoise.cpp">
+    <ClCompile Include="src\CommonUtilities\Random\PerlinNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\IDGenerator.cpp">

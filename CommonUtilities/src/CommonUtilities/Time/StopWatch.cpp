@@ -1,6 +1,6 @@
-#include <CommonUtilities/System/StopWatch.h>
+#include <CommonUtilities/Time/StopWatch.h>
 
-#include <CommonUtilities/System/Timer.h>
+#include <CommonUtilities/Time/Timer.h>
 
 using namespace CommonUtilities;
 

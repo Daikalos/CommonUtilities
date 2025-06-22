@@ -1,6 +1,6 @@
 #include <CommonUtilities/Math/Distribution.hpp>
 
-#include <CommonUtilities/Utility/Random.hpp>
+#include <CommonUtilities/Random/Random.hpp>
 
 using namespace CommonUtilities;
 

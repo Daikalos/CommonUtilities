@@ -2,7 +2,6 @@
 
 #include <tuple>
 
-#include <CommonUtilities/System/Timer.h>
 #include <CommonUtilities/Config.h>
 
 #include "Transform3D.h"

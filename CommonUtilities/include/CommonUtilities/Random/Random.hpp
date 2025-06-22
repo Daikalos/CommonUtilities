@@ -89,9 +89,9 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC inline Vector2<T> RandomPointInCircle(const Vector2<T>& aCenter, T aRadius, T aInnerRadius = T())
 	{
-		const float a		= Random() * (aRadius * aRadius - aInnerRadius * aInnerRadius) + aInnerRadius * aInnerRadius;
-		const float r		= (a ? std::sqrt(a) : 0.0f);
-		const float theta	= Random() * cu::TAU;
+		const T a		= Random<T>(T(0), T(1)) * (aRadius * aRadius - aInnerRadius * aInnerRadius) + aInnerRadius * aInnerRadius;
+		const T r		= (a ? std::sqrt(a) : 0.0f);
+		const T theta	= Random<T>(T(0), T(1)) * TAU_V<T>;
 
 		return Vector2<T>(
 			(T)(aCenter.x + r * std::cos(theta)),
@@ -241,16 +241,19 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC inline Vector3<T> RandomPointInSphere(const Vector3<T>& aCenter, T aRadius, T aInnerRadius = T())
 	{
-		const float p		= cu::Random(aInnerRadius, aRadius);
-		const float r		= p * std::cbrt(p / aRadius);
-		const float theta	= Random() * cu::TAU;
-		const float phi		= std::acos(Random(-1.0f, 1.0f));
+		if (aRadius == T(0))
+			return Vector3<T>::Zero;
 
-		const float sinTheta = std::sin(theta);
-		const float cosTheta = std::cos(theta);
+		const T p		= Random<T>(aInnerRadius, aRadius);
+		const T r		= p * std::cbrt(p / aRadius);
+		const T theta	= Random<T>(T(0), T(1)) * TAU_V<T>;
+		const T phi		= std::acos(Random<T>(-T(1), T(1)));
 
-		const float sinPhi = std::sin(phi);
-		const float cosPhi = std::cos(phi);
+		const T sinTheta = std::sin(theta);
+		const T cosTheta = std::cos(theta);
+
+		const T sinPhi = std::sin(phi);
+		const T cosPhi = std::cos(phi);
 
 		return Vector3<T>(
 			aCenter.x + (T)(r * sinPhi * cosTheta),
@@ -261,12 +264,12 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC inline Vector3<T> RandomPointInCone(const Vector3<T>& aCenter, const cu::Quatf& aRotation, T aAngle, T aLength, T aRadius, T aInnerRadius = T())
 	{
-		const float t = Random(0.0f, aLength);
-		const float c = std::tan(aAngle);
-		const float a = t * c;
-		const float b = aLength * c;
+		const T rndLen = Random<T>(T(0), aLength);
+		const T c = std::tan(aAngle);
+		const T a = rndLen * c;
+		const T b = aLength * c;
 
-		cu::Vector3f randomPoint = RandomPointInCircle(cu::Vector2f::Zero, aRadius + a, std::max(aInnerRadius - b + a, 0.0f)).XZY(t);
+		Vector3<T> randomPoint = RandomPointInCircle<T>(Vector2<T>::Zero, aRadius + a, std::max(aInnerRadius - b + a, T(0))).XZY(rndLen);
 
 		return aRotation * randomPoint + aCenter;
 	}
@@ -274,14 +277,14 @@ namespace CommonUtilities
 	template<typename T>
 	NODISC inline Vector2<T> RandomDirection2D()
 	{
-		Vector2<T> randomPoint = RandomPointInCircle(cu::Vector2f(), 1.0f);
+		Vector2<T> randomPoint = RandomPointInCircle<T>(Vector2<T>(), T(1));
 		return randomPoint.GetNormalizedSafe();
 	}
 
 	template<typename T>
 	NODISC inline Vector3<T> RandomDirection3D()
 	{
-		Vector3<T> randomPoint = RandomPointInSphere(cu::Vector3f(), 1.0f);
+		Vector3<T> randomPoint = RandomPointInSphere<T>(Vector3<T>(), T(1));
 		return randomPoint.GetNormalizedSafe();
 	}
 

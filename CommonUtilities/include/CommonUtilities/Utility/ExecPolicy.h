@@ -6,10 +6,10 @@ namespace CommonUtilities
 {
 	enum class Policy
 	{
-		seq,
-		unseq,
-		par,
-		par_unseq
+		Seq,
+		Unseq,
+		Par,
+		ParUnseq
 	};
 
 	template<class F>
@@ -17,10 +17,10 @@ namespace CommonUtilities
 	{
 		switch (aPolicy)
 		{
-			case Policy::seq:		return aFunc(std::execution::seq);
-			case Policy::unseq:		return aFunc(std::execution::unseq);
-			case Policy::par:		return aFunc(std::execution::par);
-			case Policy::par_unseq:	return aFunc(std::execution::par_unseq);
+			case Policy::Seq:		return aFunc(std::execution::seq);
+			case Policy::Unseq:		return aFunc(std::execution::unseq);
+			case Policy::Par:		return aFunc(std::execution::par);
+			case Policy::ParUnseq:	return aFunc(std::execution::par_unseq);
 		}
 	}
 }

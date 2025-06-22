@@ -5,7 +5,6 @@
 #include <immintrin.h>
 #include <array>
 #include <tuple>
-#include <iostream>
 
 #include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Config.h>
@@ -665,13 +664,6 @@ namespace CommonUtilities
 	NODISC constexpr Vector4<T> Lerp(const Vector4<T>& aStart, const Vector4<T>& aEnd, float aPercentage)
 	{
 		return Vector4<T>::Lerp(aStart, aEnd, aPercentage);
-	}
-
-	template <class T>
-	constexpr std::ostream& operator<<(std::ostream& os, const Vector4<T>& aVector)
-	{
-		os << "{ " << aVector.x << ", " << aVector.y << ", " << aVector.z << ", " << aVector.w << " }";
-		return os;
 	}
 
 	// using declarations

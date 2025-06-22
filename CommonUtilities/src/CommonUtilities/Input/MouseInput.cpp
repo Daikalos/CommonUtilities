@@ -4,29 +4,29 @@ using namespace CommonUtilities;
 
 bool MouseInput::ScrollUp() const noexcept
 {
-    return GetEnabled() && myScrollDelta > myScrollThreshold;
+    return IsEnabled() && myScrollDelta > myScrollThreshold;
 }
 bool MouseInput::ScrollDown() const noexcept
 {
-	return GetEnabled() && myScrollDelta < -myScrollThreshold;
+	return IsEnabled() && myScrollDelta < -myScrollThreshold;
 }
 
 bool MouseInput::IsHeld(ButtonType aButton) const
 {
-    return GetEnabled() && myCurrentState[aButton];
+    return IsEnabled() && myCurrentState[aButton];
 }
 bool MouseInput::IsPressed(ButtonType aButton) const
 {
-	return GetEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
+	return IsEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
 }
 bool MouseInput::IsReleased(ButtonType aButton) const
 {
-	return GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
+	return IsEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
 bool MouseInput::IsAnyPressed() const
 {
-	if (!GetEnabled())
+	if (!IsEnabled())
 		return false;
 
 	for (std::size_t i = 0; i < Mouse::ButtonCount; ++i)

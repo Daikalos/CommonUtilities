@@ -16,9 +16,9 @@ namespace CommonUtilities
 		InputHandler() = default;
 		virtual ~InputHandler() = default;
 
-		NODISC bool GetEnabled() const noexcept;
-		NODISC bool GetInFocus() const noexcept;
-		NODISC bool GetHasExternalFocus() const noexcept;
+		NODISC bool IsEnabled() const noexcept;
+		NODISC bool IsInFocus() const noexcept;
+		NODISC bool HasExternalFocus() const noexcept;
 
 		/// Enable or disable the InputHandler, will cause all input to return false or 0.0f.
 		/// 
@@ -32,7 +32,9 @@ namespace CommonUtilities
 		/// 
 		void SetInFocus(bool aFlag);
 
-		void SetHasExternalFocus(bool aFlag);
+		/// Whether something inside the application is stealing input, for example, ImGui
+		/// 
+		void SetExternalFocus(bool aFlag);
 
 		///	Update which should determine the current and previous state of the input
 		/// 
@@ -56,53 +58,4 @@ namespace CommonUtilities
 		bool	myFocusInput		{true};		// focus affects input at start
 		bool	myHasExternalFocus	{false};
 	};
-
-	namespace deprecated
-	{
-		class COMMON_UTILITIES_API InputHandler
-		{
-		public:
-			InputHandler();
-
-			bool HandleEvents(HWND aHandle, UINT aMessage, WPARAM wParam, LPARAM lParam);
-
-			bool HandleWindowEvents(HWND aHandle, UINT aMessage, WPARAM wParam, LPARAM lParam);
-			bool HandleKeyboardEvents(UINT aMessage, WPARAM wParam, LPARAM lParam);
-			bool HandleMouseEvents(UINT aMessage, WPARAM wParam, LPARAM lParam);
-
-			bool IsKeyDown(int aKeyCode) const;
-			bool IsKeyPressed(int aKeyCode) const;
-			bool IsKeyReleased(int aKeyCode) const;
-
-			float GetScrollDelta() const;
-			bool GetCursorGrabbed() const;
-
-			POINT GetMousePosition() const;
-			POINT GetMousePosition(HWND aHandle) const;
-
-			POINT GetMouseDelta() const;
-
-			void SetMousePosition(const POINT& aPoint);
-			void SetMousePosition(POINT aPoint, HWND aHandle);
-
-			void SetCursorGrabbed(bool aGrabbed, HWND aHandle);
-
-			void UpdateInput();
-
-		private:
-			void GrabCursor(bool aGrabbed, HWND aHandle);
-
-			static const int ourKeyCount = 256;
-
-			std::array<bool, ourKeyCount>	myCurrentState;
-			std::array<bool, ourKeyCount>	myPreviousState;
-			std::array<bool, ourKeyCount>	myInputState;
-			POINT							myMousePosition;
-			POINT							myPreviousMousePos;
-			POINT							myMouseDeltaPos;
-			float							myScrollDelta;
-			bool							myCursorGrabbed;
-			bool							myInFocus;
-		};
-	}
 }

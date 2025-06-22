@@ -1,7 +1,9 @@
 #include <CommonUtilities/System/IDGenerator.h>
 
 #include <combaseapi.h>
+#include <sstream>
 #include <string>
+#include <iomanip>
 
 namespace CommonUtilities
 {

@@ -14,15 +14,15 @@ MouseCursor::MouseCursor(HWND aHandle) : myHandle(nullptr)
 	Connect(aHandle);
 }
 
-bool MouseCursor::GetGrabbed() const noexcept
+bool MouseCursor::IsGrabbed() const noexcept
 {
 	return myIsGrabbed;
 }
-bool MouseCursor::GetVisible() const noexcept
+bool MouseCursor::IsVisible() const noexcept
 {
 	return myIsVisible;
 }
-bool MouseCursor::GetLocked() const noexcept
+bool MouseCursor::IsLocked() const noexcept
 {
 	return myIsLocked;
 }
@@ -139,7 +139,7 @@ void MouseCursor::Update()
 	myMoveDelta	= myTentativeMoveDelta;
 	myTentativeMoveDelta = { 0, 0 };
 
-	if (IsConnected() && GetEnabled() && GetInFocus() && !GetHasExternalFocus() && myIsLocked)
+	if (IsConnected() && IsEnabled() && IsInFocus() && !HasExternalFocus() && IsLocked())
 	{
 		SetRelativePosition(myWindowSize / 2);
 	}

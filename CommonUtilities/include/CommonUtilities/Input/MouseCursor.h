@@ -14,9 +14,9 @@ namespace CommonUtilities
 
 		MouseCursor(HWND aHandle);
 
-		NODISC bool GetGrabbed() const noexcept;
-		NODISC bool GetVisible() const noexcept;
-		NODISC bool GetLocked() const noexcept;
+		NODISC bool IsGrabbed() const noexcept;
+		NODISC bool IsVisible() const noexcept;
+		NODISC bool IsLocked() const noexcept;
 
 		NODISC const Vector2i& GetPosition() const noexcept;
 		NODISC const Vector2i& GetDelta() const noexcept;

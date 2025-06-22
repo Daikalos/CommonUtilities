@@ -2,9 +2,9 @@
 
 #pragma comment(lib, "Xinput.lib")
 
-bool GamepadInput::gOccupiedGamepadIndices[XUSER_MAX_COUNT] = { false };
-
 using namespace CommonUtilities;
+
+bool GamepadInput::ourOccupiedGamepadIndices[XUSER_MAX_COUNT] = { false };
 
 static constexpr WORD locXINPUTButtons[] 
 {
@@ -36,38 +36,38 @@ const Vector2f& GamepadInput::GetDeadzone() const
 
 Vector2f GamepadInput::GetLeftStick() const
 {
-	return GetEnabled() ? myLeftStick : Vector2f();
+	return IsEnabled() ? myLeftStick : Vector2f();
 }
 Vector2f GamepadInput::GetRightStick() const
 {
-	return GetEnabled() ? myRightStick : Vector2f();
+	return IsEnabled() ? myRightStick : Vector2f();
 }
 
 float GamepadInput::GetLeftTrigger() const
 {
-	return GetEnabled() ? myLeftTrigger : 0.0f;
+	return IsEnabled() ? myLeftTrigger : 0.0f;
 }
 float GamepadInput::GetRightTrigger() const
 {
-	return GetEnabled() ? myRightTrigger : 0.0f;
+	return IsEnabled() ? myRightTrigger : 0.0f;
 }
 
 bool GamepadInput::IsHeld(ButtonType aButton) const
 {
-	return GetEnabled() && myCurrentState[aButton];
+	return IsEnabled() && myCurrentState[aButton];
 }
 bool GamepadInput::IsPressed(ButtonType aButton) const
 {
-	return GetEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
+	return IsEnabled() && myCurrentState[aButton] && !myPreviousState[aButton];
 }
 bool GamepadInput::IsReleased(ButtonType aButton) const
 {
-	return GetEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
+	return IsEnabled() && !myCurrentState[aButton] && myPreviousState[aButton];
 }
 
 bool GamepadInput::IsAnyPressed() const
 {
-	if (!GetEnabled())
+	if (!IsEnabled())
 		return false;
 
 	for (std::size_t i = 0; i < Gamepad::ButtonCount; ++i)
@@ -99,7 +99,7 @@ void GamepadInput::Disconnect()
 {
 	if (myIndex != -1)
 	{
-		gOccupiedGamepadIndices[myIndex] = false;
+		ourOccupiedGamepadIndices[myIndex] = false;
 	}
 
 	myIndex			= -1;
@@ -155,7 +155,7 @@ void GamepadInput::Update()
 	{
 		if (myIndex != -1)
 		{
-			gOccupiedGamepadIndices[myIndex] = false;
+			ourOccupiedGamepadIndices[myIndex] = false;
 		}
 
 		myIndex = -1;
@@ -172,8 +172,8 @@ void GamepadInput::Update()
 		float absLX = std::fabs(normLX);
 		float absLY = std::fabs(normLY);
 
-		myLeftStick.x = (absLX < myDeadzone.x || !GetInFocus()) ? 0 : (absLX - myDeadzone.x) * (normLX / absLX);
-		myLeftStick.y = (absLY < myDeadzone.y || !GetInFocus()) ? 0 : (absLY - myDeadzone.y) * (normLY / absLY);
+		myLeftStick.x = (absLX < myDeadzone.x || !IsInFocus()) ? 0 : (absLX - myDeadzone.x) * (normLX / absLX);
+		myLeftStick.y = (absLY < myDeadzone.y || !IsInFocus()) ? 0 : (absLY - myDeadzone.y) * (normLY / absLY);
 
 		if (myDeadzone.x != 1.0f) myLeftStick.x *= 1.0f / (1.0f - myDeadzone.x);
 		if (myDeadzone.y != 1.0f) myLeftStick.y *= 1.0f / (1.0f - myDeadzone.y);
@@ -187,8 +187,8 @@ void GamepadInput::Update()
 		float absRX = std::fabs(normRX);
 		float absRY = std::fabs(normRY);
 
-		myRightStick.x = (absRX < myDeadzone.x || !GetInFocus()) ? 0 : (absRX - myDeadzone.x) * (normRX / absRX);
-		myRightStick.y = (absRY < myDeadzone.y || !GetInFocus()) ? 0 : (absRY - myDeadzone.y) * (normRY / absRY);
+		myRightStick.x = (absRX < myDeadzone.x || !IsInFocus()) ? 0 : (absRX - myDeadzone.x) * (normRX / absRX);
+		myRightStick.y = (absRY < myDeadzone.y || !IsInFocus()) ? 0 : (absRY - myDeadzone.y) * (normRY / absRY);
 
 		if (myDeadzone.x != 1.0f) myRightStick.x *= 1.0f / (1.0f - myDeadzone.x);
 		if (myDeadzone.y != 1.0f) myRightStick.y *= 1.0f / (1.0f - myDeadzone.y);
@@ -197,15 +197,15 @@ void GamepadInput::Update()
 	// update triggers
 	{
 		BYTE leftTrigger = myState.Gamepad.bLeftTrigger;
-		myLeftTrigger = (leftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) && GetInFocus() ? (leftTrigger / 255.0f) : 0.0f;
+		myLeftTrigger = (leftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) && IsInFocus() ? (leftTrigger / 255.0f) : 0.0f;
 
 		BYTE rightTrigger = myState.Gamepad.bRightTrigger;
-		myRightTrigger = (rightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) && GetInFocus() ? (rightTrigger / 255.0f) : 0.0f;
+		myRightTrigger = (rightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) && IsInFocus() ? (rightTrigger / 255.0f) : 0.0f;
 	}
 
 	// update buttons
 	{
-		for (int i = 0; i < Gamepad::ButtonCount && GetInFocus(); ++i)
+		for (int i = 0; i < Gamepad::ButtonCount && IsInFocus(); ++i)
 		{
 			myTentativeState[i] = (myState.Gamepad.wButtons & locXINPUTButtons[i]) == locXINPUTButtons[i];
 		}
@@ -219,7 +219,8 @@ bool GamepadInput::TryConnect()
 {
 	for (DWORD i = 0; i < XUSER_MAX_COUNT && myIndex == -1; i++)
 	{
-		if (gOccupiedGamepadIndices[i]) continue;
+		if (ourOccupiedGamepadIndices[i]) 
+			continue;
 
 		if (auto gamepadState = Gamepad::GetState(i); gamepadState.has_value())
 		{

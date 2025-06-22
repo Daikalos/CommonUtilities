@@ -86,52 +86,52 @@ namespace CommonUtilities
 
 	constexpr Color operator+(const Color& aLeft, const Color& aRight)
 	{
-		const auto clampedAdd = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
+		const auto ClampedAdd = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
-			const int result = int(aLhs) + int(aRhs);
+			const std::uint16_t result = (std::uint16_t)(std::uint16_t(aLhs) + std::uint16_t(aRhs));
 			return static_cast<std::uint8_t>(result < 255 ? result : 255);
 		};
 
 		return Color 
 		{ 
-			clampedAdd(aLeft.r, aRight.r),
-			clampedAdd(aLeft.g, aRight.g),
-			clampedAdd(aLeft.b, aRight.b),
-			clampedAdd(aLeft.a, aRight.a)
+			ClampedAdd(aLeft.r, aRight.r),
+			ClampedAdd(aLeft.g, aRight.g),
+			ClampedAdd(aLeft.b, aRight.b),
+			ClampedAdd(aLeft.a, aRight.a)
 		};
 	}
 
 	constexpr Color operator-(const Color& aLeft, const Color& aRight)
 	{
-		const auto clampedSub = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
+		const auto ClampedSub = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
-			const int result = int(aLhs) - int(aRhs);
+			const std::uint16_t result = (std::int16_t)(std::int16_t(aLhs) - std::int16_t(aRhs));
 			return static_cast<std::uint8_t>(result > 0 ? result : 0);
 		};
 
 		return Color
 		{
-			clampedSub(aLeft.r, aRight.r),
-			clampedSub(aLeft.g, aRight.g),
-			clampedSub(aLeft.b, aRight.b),
-			clampedSub(aLeft.a, aRight.a)
+			ClampedSub(aLeft.r, aRight.r),
+			ClampedSub(aLeft.g, aRight.g),
+			ClampedSub(aLeft.b, aRight.b),
+			ClampedSub(aLeft.a, aRight.a)
 		};
 	}
 
 	constexpr Color operator*(const Color& aLeft, const Color& aRight)
 	{
-		const auto scaledMul = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
+		const auto ScaledMul = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
-			const std::uint16_t result = static_cast<std::uint16_t>(std::uint16_t(aLhs) * std::uint16_t(aRhs));
+			const std::uint16_t result = (std::uint16_t)(std::uint16_t(aLhs) * std::uint16_t(aRhs));
 			return static_cast<std::uint8_t>(result / 255u);
 		};
 
 		return Color
 		{
-			scaledMul(aLeft.r, aRight.r),
-			scaledMul(aLeft.g, aRight.g),
-			scaledMul(aLeft.b, aRight.b),
-			scaledMul(aLeft.a, aRight.a)
+			ScaledMul(aLeft.r, aRight.r),
+			ScaledMul(aLeft.g, aRight.g),
+			ScaledMul(aLeft.b, aRight.b),
+			ScaledMul(aLeft.a, aRight.a)
 		};
 	}
 

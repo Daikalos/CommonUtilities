@@ -29,7 +29,7 @@ namespace CommonUtilities
 		NODISC bool IsKeyboardConnected() const noexcept;
 		NODISC bool IsMouseConnected() const noexcept;
 
-		NODISC bool GetEnabled() const noexcept;
+		NODISC bool IsEnabled() const noexcept;
 
 		void Connect(KeyboardInput& aKeyboard);
 		void Connect(MouseInput& aMouse);
@@ -118,7 +118,7 @@ namespace CommonUtilities
 	}
 
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
-	inline bool InputBind<Bind>::GetEnabled() const noexcept
+	inline bool InputBind<Bind>::IsEnabled() const noexcept
 	{
 		return myEnabled;
 	}
@@ -184,7 +184,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
+		if (!IsEnabled())
 			return false;
 
 		auto range = this->At(aBind);
@@ -209,7 +209,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
+		if (!IsEnabled())
 			return false;
 
 		auto range = this->At(aBind);
@@ -234,7 +234,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		if (!GetEnabled())
+		if (!IsEnabled())
 			return false;
 
 		auto range = this->At(aBind);
@@ -259,7 +259,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key> && !std::same_as<Bind, Mouse::Button>)
 	inline bool InputBind<Bind>::IsAnyPressed() const
 	{
-		if (!GetEnabled())
+		if (!IsEnabled())
 			return false;
 
 		if (IsKeyboardConnected() && myKeyboard->IsAnyPressed())

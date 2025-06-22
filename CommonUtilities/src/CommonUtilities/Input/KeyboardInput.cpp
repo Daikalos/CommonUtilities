@@ -4,20 +4,20 @@ using namespace CommonUtilities;
 
 bool KeyboardInput::IsHeld(ButtonType aKey) const
 {
-	return GetEnabled() && myCurrentState[aKey];
+	return IsEnabled() && myCurrentState[aKey];
 }
 bool KeyboardInput::IsPressed(ButtonType aKey) const
 {
-	return GetEnabled() && myCurrentState[aKey] && !myPreviousState[aKey];
+	return IsEnabled() && myCurrentState[aKey] && !myPreviousState[aKey];
 }
 bool KeyboardInput::IsReleased(ButtonType aKey) const
 {
-	return GetEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
+	return IsEnabled() && !myCurrentState[aKey] && myPreviousState[aKey];
 }
 
 bool KeyboardInput::IsAnyPressed() const
 {
-	if (!GetEnabled())
+	if (!IsEnabled())
 		return false;
 
 	for (std::size_t i = 0; i < Keyboard::KeyCount; ++i)

@@ -28,7 +28,7 @@ namespace CommonUtilities
 		NODISC const GamepadInput& Gamepad(unsigned aGamepadIndex = 0) const noexcept;
 		NODISC GamepadInput& Gamepad(unsigned aGamepadIndex = 0) noexcept;
 
-		NODISC int GetPluggedInGamepadAmount() const;
+		NODISC int ConnectedGamepadCount() const;
 
 		NODISC bool IsAnyPressed() const;
 
@@ -36,7 +36,7 @@ namespace CommonUtilities
 
 		void SetInFocus(bool aFlag);
 
-		void SetHasExternalFocus(bool aFlag);
+		void SetExternalFocus(bool aFlag);
 
 		void Update();
 		bool HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam);

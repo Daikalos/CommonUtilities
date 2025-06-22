@@ -14,7 +14,7 @@ MouseCursor& InputHolder::Cursor() noexcept					{ return myCursor; }
 const GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) const noexcept	{ return myGamepads[aGamepadIndex]; }
 GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) noexcept				{ return myGamepads[aGamepadIndex]; }
 
-int InputHolder::GetPluggedInGamepadAmount() const
+int InputHolder::ConnectedGamepadCount() const
 {
 	int pluggedInGamepads = 0;
 
@@ -67,15 +67,15 @@ void InputHolder::SetInFocus(bool aFlag)
 	}
 }
 
-void InputHolder::SetHasExternalFocus(bool aFlag)
+void InputHolder::SetExternalFocus(bool aFlag)
 {
-	myKeyboard.SetHasExternalFocus(aFlag);
-	myMouse.SetHasExternalFocus(aFlag);
-	myCursor.SetHasExternalFocus(aFlag);
+	myKeyboard.SetExternalFocus(aFlag);
+	myMouse.SetExternalFocus(aFlag);
+	myCursor.SetExternalFocus(aFlag);
 
 	for (auto& gamepad : myGamepads)
 	{
-		gamepad.SetHasExternalFocus(aFlag);
+		gamepad.SetExternalFocus(aFlag);
 	}
 }
 
@@ -90,7 +90,7 @@ void InputHolder::Update()
 		gamepad.Update();
 		if (gamepad.GetIndex() != -1)
 		{
-			GamepadInput::gOccupiedGamepadIndices[gamepad.GetIndex()] = gamepad.IsConnected();
+			GamepadInput::ourOccupiedGamepadIndices[gamepad.GetIndex()] = gamepad.IsConnected();
 		}
 	}
 }

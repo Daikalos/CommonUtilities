@@ -24,14 +24,19 @@ namespace CommonUtilities
         auto Enqueue(F&& aFunc, std::string&& aThreadName = "CU THREAD", Args&&... someArgs) -> std::future<std::invoke_result_t<F, Args...>>;
 
     private:
+        struct Task
+        {
+            std::string             name;
+            std::function<void()>   func;
+        };
+
         void ThreadLoop();
 
-        std::vector<std::jthread>           myThreads;
-        std::queue<std::function<void()>>   myTasks;
-        std::queue<std::string>             myQueuedNames;
-        std::condition_variable             myCV;
-        std::mutex                          myMutex; // sync access to task queue
-        bool                                myShutdown = true;
+        std::vector<std::jthread>   myThreads;
+        std::queue<Task>            myTasks;
+        std::condition_variable     myCV;
+        std::mutex                  myMutex; // sync access to task queue
+        bool                        myShutdown = true;
     };
 
     template<class F, typename... Args> requires(std::is_invocable_v<F, Args...>)
@@ -54,8 +59,7 @@ namespace CommonUtilities
             }
 
             // place task in queue, copying the shared pointer keeps it alive
-            myTasks.emplace([task] { (*task)(); });
-            myQueuedNames.emplace(std::move(aThreadName));
+            myTasks.emplace(std::move(aThreadName), [task] { (*task)(); });
         }
 
         myCV.notify_one(); // notify a thread that a task is available

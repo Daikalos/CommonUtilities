@@ -65,7 +65,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -84,7 +84,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -103,7 +103,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Mouse::Button>)
 	inline bool MouseBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);

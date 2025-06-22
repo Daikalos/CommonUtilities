@@ -70,7 +70,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -89,7 +89,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -108,7 +108,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -127,7 +127,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Gamepad::Button>)
 	inline bool GamepadBind<Bind>::IsAnyPressed() const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		return myGamepad->IsAnyPressed();

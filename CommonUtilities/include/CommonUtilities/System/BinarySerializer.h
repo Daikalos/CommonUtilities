@@ -28,10 +28,17 @@ namespace CommonUtilities
 	};
 
 	template<>
-	struct SerializeAsBinary<std::string>
+	struct COMMON_UTILITIES_API SerializeAsBinary<std::string>
 	{
 		NODISC std::size_t operator()(SerializerState aState, std::string& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 		NODISC std::size_t operator()(SerializerState aState, const std::string& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+	};
+
+	template<>
+	struct COMMON_UTILITIES_API SerializeAsBinary<std::wstring>
+	{
+		NODISC std::size_t operator()(SerializerState aState, std::wstring& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
+		NODISC std::size_t operator()(SerializerState aState, const std::wstring& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset);
 	};
 
 	template<typename T>
@@ -92,6 +99,7 @@ namespace CommonUtilities
 	{
 	public:
 		COMMON_UTILITIES_API BinaryReadSerializer(std::span<const std::byte> aBuffer);
+		COMMON_UTILITIES_API BinaryReadSerializer(std::vector<std::byte>&& aBuffer);
 	};
 
 	class BinaryWriteSerializer : public BinarySerializer
@@ -369,7 +377,6 @@ namespace CommonUtilities
 		aBinaryWriteSerializer.Serialize(aInData);
 		return aBinaryWriteSerializer;
 	}
-
 	template<typename T>
 	inline BinaryReadSerializer& operator>>(BinaryReadSerializer& aBinaryReadSerializer, T& aOutData)
 	{

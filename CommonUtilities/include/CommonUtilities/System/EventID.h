@@ -9,7 +9,7 @@ namespace CommonUtilities
 	/// Wrapper around event id to better manage the events lifetime, for example, will remove the callback 
 	/// when this is destroyed.
 	/// 
-	class EventID
+	class COMMON_UTILITIES_API EventID
 	{
 	public:
 		EventID() = default;

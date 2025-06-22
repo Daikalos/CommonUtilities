@@ -52,7 +52,6 @@ namespace CommonUtilities
 
 		void Update() override;
 
-		static bool gOccupiedGamepadIndices[XUSER_MAX_COUNT];
 	private:
 		bool TryConnect();
 
@@ -73,5 +72,9 @@ namespace CommonUtilities
 		std::array<bool, Gamepad::ButtonCount> myCurrentState	= {false};
 		std::array<bool, Gamepad::ButtonCount> myPreviousState	= {false};
 		std::array<bool, Gamepad::ButtonCount> myTentativeState	= {false};
+
+		static bool ourOccupiedGamepadIndices[XUSER_MAX_COUNT];
+
+		friend class InputHolder;
 	};
 }

@@ -68,7 +68,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsHeld(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -87,7 +87,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsPressed(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);
@@ -106,7 +106,7 @@ namespace CommonUtilities
 	template<typename Bind> requires (!std::same_as<Bind, Keyboard::Key>)
 	inline bool KeyboardBind<Bind>::IsReleased(const ButtonType& aBind) const
 	{
-		if (!this->GetEnabled() || !IsConnected())
+		if (!this->IsEnabled() || !IsConnected())
 			return false;
 
 		auto range = this->At(aBind);

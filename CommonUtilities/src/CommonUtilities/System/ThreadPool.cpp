@@ -44,7 +44,7 @@ void ThreadPool::ThreadLoop()
 {
     while (true)
     {
-        std::function<void()> task;
+        Task task;
         {
             std::unique_lock<std::mutex> lock(myMutex);
 
@@ -56,15 +56,13 @@ void ThreadPool::ThreadLoop()
             if (myTasks.empty() && myShutdown)
                 break;
 
-            std::wstring wName = std::wstring(myQueuedNames.front().begin(), myQueuedNames.front().end());
-            myQueuedNames.pop();
-
-            SetThreadDescription(GetCurrentThread(), PCWSTR(wName.c_str()));
-
             task = std::move(myTasks.front());
             myTasks.pop();
+
+            std::wstring wName = std::wstring(task.name.begin(), task.name.end());
+            SetThreadDescription(GetCurrentThread(), PCWSTR(wName.c_str()));
         }
 
-        task();
+        task.func();
     }
 }

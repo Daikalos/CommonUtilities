@@ -189,12 +189,12 @@ namespace CommonUtilities
 	}
 
 	template<IsFloatingPointType T>
-	NODISC constexpr T ShortestAngleRadians(T aFirstRadians, T aSecondRadians)
+	NODISC constexpr T ShortestAngleRad(T aFirstRadians, T aSecondRadians)
 	{
-		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), PI_V<T> * 2) - PI_V<T>);
+		return PI_V<T> - std::abs(std::fmodf(std::abs(aSecondRadians - aFirstRadians), TAU_V<T>) - PI_V<T>);
 	}
 	template<IsFloatingPointType T>
-	NODISC constexpr T ShortestAngleDegrees(T aFirstDegrees, T aSecondDegrees)
+	NODISC constexpr T ShortestAngleDeg(T aFirstDegrees, T aSecondDegrees)
 	{
 		return T(180) - std::abs(std::fmodf(std::abs(aSecondDegrees - aFirstDegrees), T(360)) - T(180));
 	}

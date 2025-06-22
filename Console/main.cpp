@@ -17,6 +17,8 @@
 #include <CommonUtilities/Utility/BitUtils.hpp>
 #include <CommonUtilities/Math/AABB.hpp>
 
+#include <CommonUtilities/System/BinarySerializer.h>
+
 int main()
 {
 	cu::Vector2f vec(5.0f, 3.0f);
@@ -33,21 +35,30 @@ int main()
 
 	constexpr cu::Capsulef caps = cu::Capsulef(cu::Vector3f(0.0f, 0.0f, 0.0f), cu::Vector3f(0.0f, 10.0f, 0.0f), 16.0f);
 
-	cu::ISectf intersection = cu::IntersectionCapsuleSegment(
+	const cu::ISectf intersection = cu::IntersectionCapsuleSegment(
 		caps,
 		cu::Vector3f(-32.0f, 1.0f, 2.0f), 
 		cu::Vector3f(32.0f, 1.0f, 2.0f));
 
 	constexpr cu::AABBf test = caps.GetAABB();
 
-	cu::BinaryWriteSerializer write;
-	std::tuple<std::string, int, float> abc("hello", 5, 9.0f);
-	write.Serialize(abc);
+	//cu::BinaryWriteSerializer write;
+	//std::tuple<std::string, int, float> abc("hello", 5, 9.0f);
+	//write.Serialize(abc);
 	
 	constexpr std::uint64_t packed = cu::PackValues64<8, 4, 9, 43>({ 3, 5, 1, 3 });
 	constexpr std::uint64_t extracted = cu::ExtractValue64<43, 21>(packed);
 	std::string bits = cu::ToBinary(packed);
 	std::string bits2 = cu::ToBinary(extracted);
+
+	std::wstring testa = L"aoiasdfé 22";
+	std::wstring testa2;
+
+	cu::BinaryWriteSerializer write;
+	write << testa;
+
+	cu::BinaryReadSerializer read(write.GetBuffer());
+	read >> testa2;
 
 	return 0;
 }

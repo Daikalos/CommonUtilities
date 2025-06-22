@@ -12,7 +12,7 @@ namespace CommonUtilities
 	class Binds : private NonCopyable
 	{
 	public:
-		NODISC bool GetEnabled() const noexcept;
+		NODISC bool IsEnabled() const noexcept;
 
 		void SetEnabled(bool aFlag);
 
@@ -43,7 +43,7 @@ namespace CommonUtilities
 	};
 
 	template<typename Bind, typename Reg>
-	inline bool Binds<Bind, Reg>::GetEnabled() const noexcept
+	inline bool Binds<Bind, Reg>::IsEnabled() const noexcept
 	{
 		return myEnabled;
 	}

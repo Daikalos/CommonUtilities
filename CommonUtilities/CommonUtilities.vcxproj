@@ -164,8 +164,6 @@
     <ClInclude Include="include\CommonUtilities\Math\MathSerializer.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Triangle.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\Dijkstra.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\Sort.hpp" />
     <ClInclude Include="include\CommonUtilities\Config.h" />
     <ClInclude Include="include\CommonUtilities\Input\GamepadBind.hpp" />
     <ClInclude Include="include\CommonUtilities\Input\InputBind.hpp" />
@@ -175,16 +173,9 @@
     <ClInclude Include="include\CommonUtilities\Math\Relation2D.h" />
     <ClInclude Include="include\CommonUtilities\Math\Relation3D.h" />
     <ClInclude Include="include\CommonUtilities\Structures\Blackboard.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\BSTSet.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\DoublyLinkedList.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\EnumArray.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\HashMap.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\Heap.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\Octree.hpp" />
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\Queue.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\SolveSudoku.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\Stack.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BinarySerializer.h" />
     <ClInclude Include="include\CommonUtilities\System\StopWatch.h" />
@@ -193,8 +184,11 @@
     <ClInclude Include="include\CommonUtilities\System\WindowsHeader.h" />
     <ClInclude Include="include\CommonUtilities\Utility\BitUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\Clonable.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\Curve.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Easings.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\ExecPolicy.h" />
     <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h" />
+    <ClInclude Include="include\CommonUtilities\Utility\Gradients.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />
@@ -248,14 +242,16 @@
     <ClInclude Include="include\CommonUtilities\Utility\Concepts.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\ContainerUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\CRTP.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\PerlinNoise.h" />
     <ClInclude Include="include\CommonUtilities\Utility\PrintUtils.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\RandomBag.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\Spline.h" />
     <ClInclude Include="include\CommonUtilities\Utility\StringUtils.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Traits.h" />
     <ClInclude Include="include\CommonUtilities\Math\Vector2.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\NonCopyable.h" />
     <ClInclude Include="include\CommonUtilities\System\Timer.h" />
     <ClInclude Include="include\CommonUtilities\Utility\Random.hpp" />
-    <ClInclude Include="include\CommonUtilities\Structures\Misc\StackVector.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\TypeUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\Win32Utils.h" />
   </ItemGroup>
@@ -283,6 +279,7 @@
     <ClCompile Include="src\CommonUtilities\Math\Transform2D.cpp" />
     <ClCompile Include="src\CommonUtilities\System\BinarySerializer.cpp" />
     <ClCompile Include="src\CommonUtilities\System\EventID.cpp" />
+    <ClCompile Include="src\CommonUtilities\System\IDGenerator.cpp" />
     <ClCompile Include="src\CommonUtilities\System\StopWatch.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadLoops.cpp" />
     <ClCompile Include="src\CommonUtilities\System\ThreadPool.cpp" />

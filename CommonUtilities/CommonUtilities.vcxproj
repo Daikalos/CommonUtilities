@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CommonUtilities.pch.h" />
+    <ClInclude Include="include\CommonUtilities\Allocator\ArenaAlloc.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Capsule.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp" />
     <ClInclude Include="include\CommonUtilities\Serialization\MathSerializer.hpp" />

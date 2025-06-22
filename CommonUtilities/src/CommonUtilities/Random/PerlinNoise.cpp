@@ -96,7 +96,7 @@ void PerlinNoise::SetSeed(unsigned aSeed)
 		return;
 	}
 
-	myTable.resize(ourTableSize);
+	myTable.resize(TABLE_SIZE);
 
 	// Fill p with values from 0 to 255
 	std::iota(myTable.begin(), myTable.end(), 0);
@@ -110,24 +110,24 @@ void PerlinNoise::SetSeed(unsigned aSeed)
 	// Duplicate the permutation vector
 	myTable.insert(myTable.end(), myTable.begin(), myTable.end());
 
-	cu::Seed(mySeed);
+	cu::PushSeed(mySeed);
 
-	for (std::size_t i = 0; i < ourTableSize; ++i)
+	for (std::size_t i = 0; i < TABLE_SIZE; ++i)
 	{
 		myGradients[i] = cu::RandomDirection3D<float>();
 	}
 
-	for (std::size_t i = 0; i < ourTableSize; ++i)
+	for (std::size_t i = 0; i < TABLE_SIZE; ++i)
 	{
 		myGradients2D[i] = cu::RandomDirection2D<float>();
 	}
 
-	for (std::size_t i = 0; i < ourTableSize; ++i)
+	for (std::size_t i = 0; i < TABLE_SIZE; ++i)
 	{
 		myGradients1D[i] = cu::Random(-1.0f, 1.0f);
 	}
 
-	cu::Seed(); // reset to previous
+	cu::PopSeed(); // reset to previous
 }
 
 NoiseSample1D PerlinNoise::Noise1D(float aPoint, float aFrequency) const

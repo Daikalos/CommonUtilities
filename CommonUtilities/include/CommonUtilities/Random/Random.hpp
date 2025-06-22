@@ -15,7 +15,12 @@
 
 namespace CommonUtilities
 {
-	inline thread_local std::mt19937_64 dre(std::random_device{}());
+	namespace priv
+	{
+		inline thread_local std::uint64_t Seed = std::random_device{}();
+	}
+
+	inline thread_local std::mt19937_64 dre(priv::Seed);
 
 	NODISC inline float Random()
 	{
@@ -288,5 +293,7 @@ namespace CommonUtilities
 		return randomPoint.GetNormalizedSafe();
 	}
 
-	COMMON_UTILITIES_API void Seed(std::uint64_t seed = std::mt19937_64::default_seed);
+	COMMON_UTILITIES_API void PushSeed(std::uint64_t seed = std::mt19937_64::default_seed);
+
+	COMMON_UTILITIES_API void PopSeed();
 }

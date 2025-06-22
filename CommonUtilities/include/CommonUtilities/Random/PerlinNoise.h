@@ -5,12 +5,6 @@
 #include <CommonUtilities/Math/Vector.hpp>
 #include <CommonUtilities/Structures/StaticVector.hpp>
 
-// THIS CLASS IS A TRANSLATION TO C++11 FROM THE REFERENCE
-// JAVA IMPLEMENTATION OF THE IMPROVED PERLIN FUNCTION (see http://mrl.nyu.edu/~perlin/noise/)
-// THE ORIGINAL JAVA IMPLEMENTATION IS COPYRIGHT 2002 KEN PERLIN
-
-// I ADDED AN EXTRA METHOD THAT GENERATES A NEW PERMUTATION VECTOR (THIS IS NOT PRESENT IN THE ORIGINAL IMPLEMENTATION)
-
 namespace CommonUtilities
 {
 	enum class NoiseQuality
@@ -69,16 +63,16 @@ namespace CommonUtilities
 		Vector3f Curl(const cu::Vector3f& aPoint, float aFrequency, const Vector3f& aStrength, int aOctaves, float aOctaveMultiplier = 1.0f, float aOctaveScale = 1.0f, NoiseQuality aQuality = NoiseQuality::High) const;
 
     private:
-		static constexpr std::size_t ourTableSize = 256;
+		static constexpr std::size_t TABLE_SIZE = 256;
 
         float Fade(float t) const;
         float FadeDerivate(float t) const;
 
         // The permutation vector
-        cu::StaticVector<int, ourTableSize * 2>	myTable;
-		std::array<cu::Vector3f, ourTableSize>	myGradients;
-		std::array<cu::Vector2f, ourTableSize>	myGradients2D;
-		std::array<float, ourTableSize>			myGradients1D;
+        cu::StaticVector<int, TABLE_SIZE * 2>	myTable;
+		std::array<Vector3f, TABLE_SIZE>		myGradients;
+		std::array<Vector2f, TABLE_SIZE>		myGradients2D;
+		std::array<float, TABLE_SIZE>			myGradients1D;
 		unsigned								mySeed = 0;
     };
 

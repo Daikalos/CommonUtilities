@@ -45,7 +45,7 @@ namespace CommonUtilities
 
 		NODISC constexpr bool IsInside(const Vector3<T>& aPosition) const;
 
-		constexpr AABB Inflate(float aInflation) const;
+		NODISC constexpr AABB Inflate(float aInflation) const;
 
 		NODISC constexpr AABB Union(const AABB& aOther) const;
 		NODISC constexpr std::optional<AABB> Intersection(const AABB& aOther) const;

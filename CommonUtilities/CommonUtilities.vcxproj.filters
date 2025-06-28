@@ -303,7 +303,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\RandomBag.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Thread\Parallell.hpp">
+    <ClInclude Include="include\CommonUtilities\Thread\Parallel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Allocator\ArenaAlloc.hpp">

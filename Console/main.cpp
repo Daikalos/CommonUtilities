@@ -20,6 +20,7 @@
 #include <CommonUtilities/Serialization/BinarySerializer.h>
 
 #include <CommonUtilities/Thread/Parallell.hpp>
+#include <CommonUtilities/Allocator/ArenaAlloc.hpp>
 
 int main()
 {
@@ -66,6 +67,8 @@ int main()
 		{
 			
 		});
+
+	cu::ArenaAlloc<int> a;
 
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read >> testa2;

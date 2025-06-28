@@ -111,7 +111,7 @@ namespace CommonUtilities
 		/// 
 		/// \param Radius: Length of the normalized vector
 		/// 
-		constexpr void SafeNormalize(T aRadius = T(1)) &;
+		constexpr void NormalizeSafe(T aRadius = T(1)) &;
 
 		/// Dot product of two vectors.
 		/// 
@@ -426,7 +426,7 @@ namespace CommonUtilities
 		*this = GetNormalized(aRadius);
 	}
 	template<typename T>
-	constexpr void Vector3<T>::SafeNormalize(T aRadius) &
+	constexpr void Vector3<T>::NormalizeSafe(T aRadius) &
 	{
 		*this = GetNormalizedSafe(aRadius);
 	}

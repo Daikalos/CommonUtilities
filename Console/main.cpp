@@ -19,7 +19,7 @@
 
 #include <CommonUtilities/Serialization/BinarySerializer.h>
 
-#include <CommonUtilities/Thread/Parallell.hpp>
+#include <CommonUtilities/Thread/Parallel.hpp>
 #include <CommonUtilities/Allocator/ArenaAlloc.hpp>
 
 int main()

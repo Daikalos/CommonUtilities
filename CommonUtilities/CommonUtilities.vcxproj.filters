@@ -306,7 +306,7 @@
     <ClInclude Include="include\CommonUtilities\Thread\Parallel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Allocator\ArenaAlloc.hpp">
+    <ClInclude Include="include\CommonUtilities\Alloc\ArenaAlloc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -405,6 +405,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\System\IDGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonUtilities\Alloc\ArenaAlloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

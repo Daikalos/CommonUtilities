@@ -170,8 +170,8 @@ namespace CommonUtilities
 	{
 		std::scoped_lock lock(myMutex);
 
-		const Rectf& rect = myElements[aIndex].rect;
-		const auto& leaves = FindLeaves({ myRootRect, 0, 0 }, rect);
+		const Rectf& rect	= myElements[aIndex].rect;
+		const auto& leaves	= FindLeaves({ myRootRect, 0, 0 }, rect);
 
 		if (leaves.empty())
 			return false;
@@ -180,8 +180,8 @@ namespace CommonUtilities
 		{
 			Node& node = myNodes[leaf.index];
 
-			auto ptrIndex = node.firstChild;
-			auto prvIdx = -1;
+			auto ptrIndex	= node.firstChild;
+			auto prvIdx		= -1;
 
 			while (ptrIndex != -1 && myElementsPtr[ptrIndex].element != aIndex)
 			{
@@ -206,7 +206,7 @@ namespace CommonUtilities
 
 				--node.count;
 
-				assert(node.count >= 0);
+				assert(node.count >= 0 && "Node cannot have a negative count of elements");
 			}
 		}
 
@@ -356,10 +356,11 @@ namespace CommonUtilities
 	template<std::equality_comparable T>
 	inline void QuadTree<T>::LeafInsert(const NodeReg& aNode, SizeType aEltIndex)
 	{
-		Node& node = myNodes[aNode.index];
-		node.firstChild = myElementsPtr.emplace(aEltIndex, node.firstChild);
+		Node* node = &myNodes[aNode.index];
 
-		if (node.count == myMaxElements && aNode.depth < myMaxDepth)
+		node->firstChild = myElementsPtr.emplace(aEltIndex, node->firstChild);
+
+		if (node->count == myMaxElements && aNode.depth < myMaxDepth && aNode.rect.Contains(myElements[aEltIndex].rect))
 		{
 			std::vector<SizeType> elements;
 			while (node.firstChild != -1)
@@ -369,19 +370,22 @@ namespace CommonUtilities
 				const auto next = myElementsPtr[index].next;
 				const auto elt = myElementsPtr[index].element;
 
-				node.firstChild = next;
+				node->firstChild = next;
 				myElementsPtr.erase(index);
 
 				elements.emplace_back(elt);
 			}
 
 			const auto fc = myNodes.emplace();
-			myNodes.emplace();
-			myNodes.emplace();
-			myNodes.emplace();
+			for (int i = 0; i < ourChildCount - 1; ++i)
+			{
+				myNodes.emplace();
+			}
 
-			node.firstChild = fc;
-			node.count = -1; // set as branch
+			node = &myNodes[aNode.index];
+
+			node->firstChild	= (SizeType)fc;
+			node->count			= -1; // set as branch
 
 			for (const auto elt : elements)
 			{
@@ -389,7 +393,7 @@ namespace CommonUtilities
 			}
 		}
 		else
-			++node.count;
+			++node->count;
 	}
 
 	template<std::equality_comparable T>

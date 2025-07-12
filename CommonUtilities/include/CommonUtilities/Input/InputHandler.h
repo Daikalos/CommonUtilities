@@ -22,7 +22,7 @@ namespace CommonUtilities
 
 		/// Enable or disable the InputHandler, will cause all input to return false or 0.0f.
 		/// 
-		void SetEnabled(bool aFlag) noexcept;
+		void SetEnabled(bool aFlag);
 
 		/// Enable or disable for focus to affect whether input gets enabled or disabled
 		/// 

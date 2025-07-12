@@ -179,12 +179,12 @@ namespace CommonUtilities
 		}
 	}
 
-	template<class T, typename ...Args> requires HasButtonInput<T>
+	template<class T, typename... Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Connect(const T& aInput)
 	{
 		myInput = &aInput;
 	}
-	template<class T, typename ...Args> requires HasButtonInput<T>
+	template<class T, typename... Args> requires HasButtonInput<T>
 	inline void ButtonEvent<T, Args...>::Disconnect()
 	{
 		myInput = nullptr;

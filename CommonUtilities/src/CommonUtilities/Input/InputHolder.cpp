@@ -88,6 +88,7 @@ void InputHolder::Update()
 	for (auto& gamepad : myGamepads)
 	{
 		gamepad.Update();
+
 		if (gamepad.GetIndex() != -1)
 		{
 			GamepadInput::ourOccupiedGamepadIndices[gamepad.GetIndex()] = gamepad.IsConnected();
@@ -110,13 +111,13 @@ bool InputHolder::HandleEvent(UINT aMessage, WPARAM wParam, LPARAM lParam)
 		return true;
 	}
 
-	bool gamePadHandledEvent = false;
+	bool gamepadHandledEvent = false;
 	for (auto& gamepad : myGamepads)
 	{
-		gamePadHandledEvent = gamepad.HandleEvent(aMessage, wParam, lParam);
+		gamepadHandledEvent = gamepad.HandleEvent(aMessage, wParam, lParam);
 	}
 
-	if (gamePadHandledEvent)
+	if (gamepadHandledEvent)
 	{
 		return true;
 	}

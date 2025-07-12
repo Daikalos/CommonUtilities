@@ -20,7 +20,9 @@
 #include <CommonUtilities/Serialization/BinarySerializer.h>
 
 #include <CommonUtilities/Thread/Parallel.hpp>
-#include <CommonUtilities/Allocator/ArenaAlloc.hpp>
+#include <CommonUtilities/Alloc/ArenaAlloc.hpp>
+
+#include <CommonUtilities/Random/Random.hpp>
 
 int main()
 {
@@ -68,10 +70,15 @@ int main()
 			
 		});
 
-	cu::ArenaAlloc<int> a;
-
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read >> testa2;
+
+	std::vector<int, cu::ArenaAlloc<int>> wow;
+	for (int i = 0; i < 100000; ++i)
+		wow.emplace_back(cu::Random(-10000000, 10000000));
+
+	for (int a : wow)
+		std::cout << a << '\n';
 
 	return 0;
 }

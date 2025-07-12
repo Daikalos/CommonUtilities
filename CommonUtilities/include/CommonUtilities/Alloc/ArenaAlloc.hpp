@@ -3,15 +3,16 @@
 #include <cstddef>
 #include <shared_mutex>
 
+#include <CommonUtilities/Config.h>
+
 namespace CommonUtilities
 { 
 	namespace details::arena
 	{
 		static std::shared_mutex globalMutex;
 
-		std::byte* Allocate(std::size_t aNumBytes, std::size_t aAlignment, const std::byte* aHint);
-		void Deallocate(std::byte* aMemory, std::size_t aNumBytes);
-		std::byte* Reallocate(std::byte* aMemory, std::size_t aFromBytes, std::size_t aToBytes, std::size_t aAlignment, const std::byte* aHint);
+		COMMON_UTILITIES_API NODISC std::byte* Allocate(std::size_t aNumBytes, std::size_t aAlignment, const std::byte* aHint);
+		COMMON_UTILITIES_API void Deallocate(std::byte* aMemory, std::size_t aNumBytes);
 	}
 
 	template<typename T>
@@ -34,10 +35,10 @@ namespace CommonUtilities
 
 		constexpr ArenaAlloc& operator=(const ArenaAlloc&) = default;
 
-		constexpr __declspec(allocator) T* allocate(size_type aNumObjects, const T* aHint = nullptr)
+		NODISC constexpr __declspec(allocator) T* allocate(size_type aNumObjects, const T* aHint = nullptr)
 		{
 			std::scoped_lock lock(details::arena::globalMutex);
-			return reinterpret_cast<T*>(details::arena::Allocate(aNumObjects * sizeof(T), alignof(T), reinterpret_cast<const std::byte*>(aHint));
+			return reinterpret_cast<T*>(details::arena::Allocate(aNumObjects * sizeof(T), alignof(T), reinterpret_cast<const std::byte*>(aHint)));
 		}
 
 		constexpr void deallocate(T* aObject, size_type aNumObjects)
@@ -46,6 +47,4 @@ namespace CommonUtilities
 			details::arena::Deallocate(reinterpret_cast<std::byte*>(aObject), aNumObjects * sizeof(T));
 		}
 	};
-	
-	std::vector<int, std::pmr::polymorphic_allocator<int>> a;
 }

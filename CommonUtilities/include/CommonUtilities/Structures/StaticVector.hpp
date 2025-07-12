@@ -235,7 +235,7 @@ namespace CommonUtilities
 #ifdef _DEBUG
 		union
 		{
-			T myDebugData[Capacity];
+			T myDebugData[Capacity]; // to allow you to view data when debugging
 #endif
 			alignas(T) std::byte myData[sizeof(T) * Capacity]{};
 #ifdef _DEBUG

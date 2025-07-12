@@ -3,9 +3,7 @@
 
 #include <sstream>
 
-#include <CommonUtilities/InputHandler.h>
-
-#include "EnumKeys.h"
+#include <CommonUtilities/Input/InputHolder.h>
 
 #define MAX_LOADSTRING 100
 
@@ -13,7 +11,7 @@ HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];      
 WCHAR szWindowClass[MAX_LOADSTRING];
 
-CommonUtilities::InputHandler globalInputHandler;
+CommonUtilities::InputHolder globalInputHolder;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -48,7 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         // update should be before events are dispatched
-        globalInputHandler.UpdateInput();
+        globalInputHolder.Update();
 
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
@@ -56,77 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
 
-        //POINT mouseDelta = globalInputHandler.GetMouseDelta();
 
-        //std::stringstream ss;
-        //ss << "Screen Coords: " << mouseDelta.x << " " << mouseDelta.y << '\n';
-
-        //OutputDebugStringA(ss.str().c_str());
-
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::T)))
-        {
-            POINT mousePos = globalInputHandler.GetMousePosition();
-
-            std::stringstream ss;
-            ss << "Screen Coords: " << mousePos.x << " " << mousePos.y << '\n';
-
-            OutputDebugStringA(ss.str().c_str());
-        }
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::Y)))
-        {
-            POINT mousePos = globalInputHandler.GetMousePosition(msg.hwnd);
-
-            std::stringstream ss;
-            ss << "Local Coords: " << mousePos.x << " " << mousePos.y << '\n';
-
-            OutputDebugStringA(ss.str().c_str());
-        }
-
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::BACK)))
-        {
-            globalInputHandler.SetMousePosition(POINT{ 200, 200 });
-            OutputDebugStringA("Mouse set in screen coords\n");
-        }
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::RETURN)))
-        {
-            globalInputHandler.SetMousePosition(POINT{ 200, 200 }, msg.hwnd);
-            OutputDebugStringA("Mouse set in local coords\n");
-        }
-
-        if (globalInputHandler.GetScrollDelta() > 0.0f)
-        {
-            OutputDebugStringA("Scroll Up\n");
-        }
-        if (globalInputHandler.GetScrollDelta() < 0.0f)
-        {
-            OutputDebugStringA("Scroll Down\n");
-        }
-
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::MOUSELBUTTON)))
-        {
-            OutputDebugStringA("LMB Pressed\n");
-        }
-        if (globalInputHandler.IsKeyDown(static_cast<int>(Keys::MOUSELBUTTON)))
-        {
-            OutputDebugStringA("LMB Down\n");
-        }
-        if (globalInputHandler.IsKeyReleased(static_cast<int>(Keys::MOUSELBUTTON)))
-        {
-            OutputDebugStringA("LMB Released\n");
-        }
-
-        if (globalInputHandler.IsKeyPressed(static_cast<int>(Keys::MBUTTON)))
-        {
-            OutputDebugStringA("Middle Pressed\n");
-        }
-        if (globalInputHandler.IsKeyDown(static_cast<int>(Keys::MBUTTON)))
-        {
-            OutputDebugStringA("Middle Down\n");
-        }
-        if (globalInputHandler.IsKeyReleased(static_cast<int>(Keys::MBUTTON)))
-        {
-            OutputDebugStringA("Middle Released\n");
-        }
     }
 
     return (int)msg.wParam;
@@ -173,7 +101,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (globalInputHandler.HandleEvents(hWnd, message, wParam, lParam))
+    if (globalInputHolder.HandleEvent(message, wParam, lParam))
     {
         return 0;
     }

@@ -19,7 +19,7 @@ bool InputHandler::HasExternalFocus() const noexcept
 	return myHasExternalFocus;
 }
 
-void InputHandler::SetEnabled(bool aFlag) noexcept
+void InputHandler::SetEnabled(bool aFlag)
 {
 	if (myEnabled == aFlag)
 		return;

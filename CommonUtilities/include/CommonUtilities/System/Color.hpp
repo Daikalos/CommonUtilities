@@ -25,8 +25,8 @@ namespace CommonUtilities
 
 		constexpr std::uint32_t ToInteger() const noexcept;
 
-		template<template<typename> class T, typename U>
-		constexpr T<U> ToFloatingPoint() const;
+		template<class T>
+		constexpr Vector4<T> ToNormalized() const;
 
 		static const Color Black;       
 		static const Color White;       
@@ -60,16 +60,16 @@ namespace CommonUtilities
 	{
 		return static_cast<std::uint32_t>((r << 24) | (g << 16) | (b << 8) | a);
 	}
-	template<template<typename> class T, typename U>
-	constexpr T<U> Color::ToFloatingPoint() const
+	template<class T>
+	constexpr Vector4<T> Color::ToNormalized() const
 	{
-		return T<U>
+		return Vector4<T>
 		{ 
-			static_cast<U>(r), 
-			static_cast<U>(g), 
-			static_cast<U>(b), 
-			static_cast<U>(a) 
-		} * (1 / U{255.0});
+			static_cast<T>(r), 
+			static_cast<T>(g), 
+			static_cast<T>(b), 
+			static_cast<T>(a) 
+		} * (1 / T{255.0});
 	}
 
 	// GLOBAL OPERATORS

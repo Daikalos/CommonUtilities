@@ -33,13 +33,11 @@ float CommonUtilities::GetDesktopAspectRatio()
 	return desktopResolution.x / desktopResolution.y;
 }
 
-const std::vector<Vector2f>& CommonUtilities::GetValidResolutions()
+const std::vector<Vector2f>& CommonUtilities::GetAllResolutions()
 {
 	static const auto validResolutions = []
 	{
 		std::vector<Vector2f> result;
-
-		float desktopRatio = GetDesktopAspectRatio();
 
 		DEVMODE win32Mode{};
 		win32Mode.dmSize = sizeof(win32Mode);
@@ -53,15 +51,7 @@ const std::vector<Vector2f>& CommonUtilities::GetValidResolutions()
 				(float)win32Mode.dmPelsHeight
 			};
 
-			float ratio = resolution.x / resolution.y;
-
-			if (!Equal(ratio, desktopRatio))
-				continue;
-
-			if (std::find(result.begin(), result.end(), resolution) == result.end())
-			{
-				result.emplace_back(resolution);
-			}
+			result.emplace_back(resolution);
 		}
 
 		std::sort(result.begin(), result.end(), 
@@ -72,6 +62,33 @@ const std::vector<Vector2f>& CommonUtilities::GetValidResolutions()
 
 				return aLeft.y > aRight.y;
 			});
+
+		return result;
+	}();
+
+	return validResolutions;
+}
+
+const std::vector<Vector2f>& CommonUtilities::GetInRatioResolutions()
+{
+	static const auto validResolutions = []
+	{
+		std::vector<Vector2f> result;
+
+		float desktopRatio = GetDesktopAspectRatio();
+
+		for (Vector2f resolution : GetAllResolutions())
+		{
+			float ratio = resolution.x / resolution.y;
+
+			if (!Equal(ratio, desktopRatio))
+				continue;
+
+			if (std::find(result.begin(), result.end(), resolution) == result.end())
+			{
+				result.emplace_back(resolution);
+			}
+		}
 
 		return result;
 	}();

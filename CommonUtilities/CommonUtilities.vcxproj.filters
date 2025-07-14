@@ -288,7 +288,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\ExecPolicy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\Gradients.hpp">
+    <ClInclude Include="include\CommonUtilities\Utility\BlendSpace.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Random\PerlinNoise.h">
@@ -307,6 +307,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Alloc\ArenaAlloc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\ColorGradient.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

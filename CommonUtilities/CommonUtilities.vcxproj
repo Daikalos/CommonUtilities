@@ -179,6 +179,7 @@
     <ClInclude Include="include\CommonUtilities\Structures\QuadTree.hpp" />
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\Serialization\BinarySerializer.h" />
+    <ClInclude Include="include\CommonUtilities\System\ColorGradient.hpp" />
     <ClInclude Include="include\CommonUtilities\Thread\Parallel.hpp" />
     <ClInclude Include="include\CommonUtilities\Time\StopWatch.h" />
     <ClInclude Include="include\CommonUtilities\Thread\ThreadLoops.h" />
@@ -190,7 +191,7 @@
     <ClInclude Include="include\CommonUtilities\Utility\Easings.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\ExecPolicy.h" />
     <ClInclude Include="include\CommonUtilities\Utility\FileUtils.h" />
-    <ClInclude Include="include\CommonUtilities\Utility\Gradients.hpp" />
+    <ClInclude Include="include\CommonUtilities\Utility\BlendSpace.hpp" />
     <ClInclude Include="include\CommonUtilities\Utility\HashUtils.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateMachine.hpp" />
     <ClInclude Include="include\CommonUtilities\System\StateStack.hpp" />

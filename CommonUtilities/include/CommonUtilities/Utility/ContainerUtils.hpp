@@ -214,6 +214,129 @@ namespace CommonUtilities
 		return false;
 	}
 
+	template<typename T, typename U>
+		requires (std::is_same_v<typename T::value_type, U>)
+	auto GetRange(T& aSortedList, const U& aTarget)
+	{
+		if (aSortedList.empty())
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		std::pair<int, int> upperLowerBounds;
+
+		const int sortedListSize = (int)aSortedList.size();
+
+		int startIndex  = 0;
+		int endIndex    = sortedListSize - 1;
+		while (startIndex < endIndex) 
+		{
+			int midIndex = (startIndex + endIndex) / 2;
+			if (aTarget <= aSortedList[midIndex])
+			{
+				endIndex = midIndex;
+			}
+			else 
+			{
+				startIndex = midIndex + 1;
+			}
+		}
+
+		if (startIndex == sortedListSize - 1 && aSortedList[startIndex] != aTarget)
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		upperLowerBounds.first = startIndex;
+
+		endIndex = sortedListSize - 1;
+		while (startIndex < endIndex) 
+		{
+			int midIndex = (startIndex + endIndex) / 2 + 1;
+			if (aTarget < aSortedList[midIndex])
+			{
+				endIndex = midIndex - 1;
+			}
+			else 
+			{
+				startIndex = midIndex;
+			}
+		}
+
+		upperLowerBounds.second = endIndex;
+
+		if (upperLowerBounds.first == upperLowerBounds.second && aSortedList[upperLowerBounds.first] != aTarget)
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		return std::ranges::subrange(
+			aSortedList.begin() + upperLowerBounds.first, 
+			aSortedList.begin() + upperLowerBounds.second + 1);
+	}
+
+	template<typename T, typename Conv>
+	auto GetRange(T& aSortedList, int aTarget, const Conv& aIndexToValueConv)
+	{
+		if (aSortedList.empty())
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		std::pair<int, int> upperLowerBounds;
+
+		const int sortedListSize = (int)aSortedList.size();
+
+		int startIndex  = 0;
+		int endIndex    = sortedListSize - 1;
+		while (startIndex < endIndex) 
+		{
+			int midIndex = (startIndex + endIndex) / 2;
+			if (aTarget <= aIndexToValueConv(aSortedList[midIndex]))
+			{
+				endIndex = midIndex;
+			}
+			else 
+			{
+				startIndex = midIndex + 1;
+			}
+		}
+
+		if (startIndex == sortedListSize - 1 &&
+			aIndexToValueConv(aSortedList[startIndex]) != aTarget)
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		upperLowerBounds.first = startIndex;
+
+		endIndex = sortedListSize - 1;
+		while (startIndex < endIndex) 
+		{
+			int midIndex = (startIndex + endIndex) / 2 + 1;
+			if (aTarget < aIndexToValueConv(aSortedList[midIndex]))
+			{
+				endIndex = midIndex - 1;
+			}
+			else 
+			{
+				startIndex = midIndex;
+			}
+		}
+
+		upperLowerBounds.second = endIndex;
+
+		if (upperLowerBounds.first == upperLowerBounds.second &&
+			aIndexToValueConv(aSortedList[upperLowerBounds.first]) != aTarget)
+		{
+			return std::ranges::subrange(aSortedList.end(), aSortedList.end());
+		}
+
+		return std::ranges::subrange(
+			aSortedList.begin() + upperLowerBounds.first, 
+			aSortedList.begin() + upperLowerBounds.second + 1);
+	}
+
 	template<typename T>
 	constexpr void Sort(std::span<const T> someItems)
 	{

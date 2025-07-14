@@ -3,47 +3,30 @@
 #include <vector>
 #include <memory>
 
-#include <CommonUtilities/System/WindowsHeader.h>
-
 using namespace CommonUtilities;
 
-inline constexpr std::size_t DEFAULT_REGION_CAPACITY = 4096;
+inline constexpr std::size_t DEFAULT_Buffer_CAPACITY = 4096;
 
-static std::byte* AllocateMemory(std::size_t aBytes)
-{
-	return new std::byte[aBytes];
-}
-
-static void DeallocateMemory(std::byte* aMemory)
-{
-	delete[] aMemory;
-}
-
-class MemoryRegion
+class Buffer
 {
 public:
-	MemoryRegion(std::size_t aMinCapacity)
-		: myCapacity((std::max)(DEFAULT_REGION_CAPACITY, aMinCapacity))
-		, myData(AllocateMemory(myCapacity))
+	Buffer(std::size_t aMinCapacity)
+		: myCapacity((std::max)(DEFAULT_Buffer_CAPACITY, aMinCapacity))
+		, myData(std::make_unique<std::byte[]>(myCapacity))
 	{
 
 	}
 
-	~MemoryRegion()
-	{
-		DeallocateMemory(myData);
-	}
-
-	NODISC const std::byte* data() const	{ return myData; }
+	NODISC const std::byte* data() const	{ return myData.get(); }
 	NODISC std::byte* data()				{ return const_cast<std::byte*>(std::as_const(*this).data()); }
 
-	NODISC const std::byte* top() const		{ return myData + mySize; }
+	NODISC const std::byte* top() const		{ return myData.get() + mySize; }
 	NODISC std::byte* top()					{ return const_cast<std::byte*>(std::as_const(*this).top()); }
 
-	NODISC const std::byte* begin() const	{ return myData; }
+	NODISC const std::byte* begin() const	{ return myData.get(); }
 	NODISC std::byte* begin()				{ return const_cast<std::byte*>(std::as_const(*this).begin()); }
 
-	NODISC const std::byte* end() const		{ return myData + myCapacity; }
+	NODISC const std::byte* end() const		{ return myData.get() + myCapacity; }
 	NODISC std::byte* end()					{ return const_cast<std::byte*>(std::as_const(*this).end()); }
 
 	NODISC unsigned ref_count() const		{ return myRefCount; }
@@ -56,20 +39,20 @@ public:
 	void clear()						{ mySize = 0; }
 
 private:
-	std::size_t	myCapacity	= 0;
-	std::byte*	myData		= nullptr;
-	std::size_t	mySize		= 0;
-	unsigned	myRefCount	= 0;
+	std::size_t						myCapacity	= 0;
+	std::unique_ptr<std::byte[]>	myData		= nullptr;
+	std::size_t						mySize		= 0;
+	unsigned						myRefCount	= 0;
 };
 
-static std::vector<std::unique_ptr<MemoryRegion>> locMemoryRegions;
+static std::vector<std::unique_ptr<Buffer>> locMemoryBuffers;
 
-using RegionIterator = decltype(locMemoryRegions)::iterator;
+using BufferIterator = decltype(locMemoryBuffers)::iterator;
 
-static auto FindRegion(const std::byte* aHint)
+static auto FindBuffer(const std::byte* aHint)
 {
-	const auto end = locMemoryRegions.end();
-	for (auto it = locMemoryRegions.begin(); it != end; ++it)
+	const auto end = locMemoryBuffers.end();
+	for (auto it = locMemoryBuffers.begin(); it != end; ++it)
 	{
 		if (aHint >= (*it)->data() && aHint < (*it)->top())
 			return it;
@@ -84,26 +67,26 @@ static __forceinline std::ptrdiff_t AlignmentOffset(const std::byte* aMemory, st
 	return off == aAlignment ? 0 : off;
 }
 
-static __forceinline bool Fits(const MemoryRegion& aRegion, std::size_t aNumBytes, std::size_t aAlignment)
+static __forceinline bool Fits(const Buffer& aBuffer, std::size_t aNumBytes, std::size_t aAlignment)
 {
-	aNumBytes += AlignmentOffset(aRegion.top(), aAlignment);
-	return aRegion.top() + aNumBytes < aRegion.end();
+	aNumBytes += AlignmentOffset(aBuffer.top(), aAlignment);
+	return aBuffer.top() + aNumBytes < aBuffer.end();
 }
 
-static auto FindRegion(std::size_t aNumBytes, std::size_t aAlignment, const std::byte* aHint)
+static auto FindBuffer(std::size_t aNumBytes, std::size_t aAlignment, const std::byte* aHint)
 {
-	const auto end = locMemoryRegions.end();
+	const auto end = locMemoryBuffers.end();
 
-	RegionIterator it;
+	BufferIterator it;
 
 	if (aHint)
 	{
-		it = FindRegion(aHint);
+		it = FindBuffer(aHint);
 		if (it != end && Fits(**it, aNumBytes, aAlignment))
 			return it;
 	}
 
-	for (it = locMemoryRegions.begin(); it != end; ++it)
+	for (it = locMemoryBuffers.begin(); it != end; ++it)
 	{
 		if (Fits(**it, aNumBytes, aAlignment))
 			return it;
@@ -114,11 +97,11 @@ static auto FindRegion(std::size_t aNumBytes, std::size_t aAlignment, const std:
 
 std::byte* details::arena::Allocate(std::size_t aNumBytes, std::size_t aAlignment, const std::byte* aHint)
 {
-	auto it = FindRegion(aNumBytes, aAlignment, aHint);
-	if (it == locMemoryRegions.end())
+	auto it = FindBuffer(aNumBytes, aAlignment, aHint);
+	if (it == locMemoryBuffers.end())
 	{
-		locMemoryRegions.emplace_back(std::make_unique<MemoryRegion>(aNumBytes));
-		it = std::prev(locMemoryRegions.end());
+		locMemoryBuffers.emplace_back(std::make_unique<Buffer>(aNumBytes));
+		it = std::prev(locMemoryBuffers.end());
 	}
 
 	(*it)->resize(AlignmentOffset((*it)->top(), aAlignment));
@@ -133,8 +116,8 @@ std::byte* details::arena::Allocate(std::size_t aNumBytes, std::size_t aAlignmen
 
 void details::arena::Deallocate(std::byte* aMemory, std::size_t aNumBytes)
 {
-	auto it = FindRegion(aMemory);
-	if (it == locMemoryRegions.end())
+	auto it = FindBuffer(aMemory);
+	if (it == locMemoryBuffers.end())
 		return;
 
 	(*it)->unref();

@@ -11,7 +11,7 @@ namespace CommonUtilities
 {
 	/// Structure that enables for quick insertion and removal from anywhere in the container.
 	/// 
-	template<class T>
+	template<class T, class Alloc = std::allocator<T>>
 	class FreeVector
 	{
 	public:
@@ -21,6 +21,8 @@ namespace CommonUtilities
 		using pointer			= T*;
 		using const_pointer		= const T*;
 		using size_type			= std::size_t;
+
+		constexpr explicit FreeVector(const Alloc& aAllocator);
 
 		constexpr FreeVector() = default;
 		constexpr ~FreeVector() = default;
@@ -64,70 +66,77 @@ namespace CommonUtilities
 		constexpr void for_each(const Func& func);
 
 	private:
-		using container_type = std::vector<std::variant<T, std::int64_t>>;
+		using container_type = std::vector<std::variant<T, std::int64_t>, Alloc>;
 
 		container_type	myData;
 		std::int64_t	myFirstFree {-1};
 		size_type		myCount		{0};
 	};
 
-	template<class T>
-	constexpr auto FreeVector<T>::operator[](size_type anIndex) -> reference
+	template<class T, class Alloc>
+	constexpr FreeVector<T, Alloc>::FreeVector(const Alloc& aAllocator)
+		: myData(aAllocator)
+	{
+
+	}
+
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::operator[](size_type anIndex) -> reference
 	{
 		return std::get<T>(myData[anIndex]);
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::operator[](size_type anIndex) const -> const_reference
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::operator[](size_type anIndex) const -> const_reference
 	{
 		return std::get<T>(myData[anIndex]);
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::at(size_type anIndex) -> reference
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::at(size_type anIndex) -> reference
 	{
 		return std::get<T>(myData.at(anIndex));
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::at(size_type anIndex) const -> const_reference
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::at(size_type anIndex) const -> const_reference
 	{
 		return std::get<T>(myData.at(anIndex));
 	}
 
-	template<class T>
-	constexpr bool FreeVector<T>::valid(size_type anIndex) const
+	template<class T, class Alloc>
+	constexpr bool FreeVector<T, Alloc>::valid(size_type anIndex) const
 	{
 		return myData.at(anIndex).index() == 0;
 	}
 
-	template<class T>
-	constexpr bool FreeVector<T>::empty() const noexcept
+	template<class T, class Alloc>
+	constexpr bool FreeVector<T, Alloc>::empty() const noexcept
 	{
 		return myCount == 0;
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::size() const noexcept -> size_type
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::size() const noexcept -> size_type
 	{
 		return static_cast<size_type>(myData.size());
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::count() const noexcept -> size_type
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::count() const noexcept -> size_type
 	{
 		return myCount;
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::max_size() const noexcept -> size_type
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::max_size() const noexcept -> size_type
 	{
 		return static_cast<size_type>(myData.max_size());
 	}
 
-	template<class T>
+	template<class T, class Alloc>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	constexpr auto FreeVector<T>::emplace(Args&&... someArgs) -> size_type
+	constexpr auto FreeVector<T, Alloc>::emplace(Args&&... someArgs) -> size_type
 	{
 		size_type index = 0;
 
@@ -153,20 +162,20 @@ namespace CommonUtilities
 		return index;
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::insert(const T& anElement) -> size_type
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::insert(const T& anElement) -> size_type
 	{
 		return emplace(anElement);
 	}
 
-	template<class T>
-	constexpr auto FreeVector<T>::insert(T&& anElement) -> size_type
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::insert(T&& anElement) -> size_type
 	{
 		return emplace(std::move(anElement));
 	}
 
-	template<class T>
-	constexpr void FreeVector<T>::erase(size_type anIndex)
+	template<class T, class Alloc>
+	constexpr void FreeVector<T, Alloc>::erase(size_type anIndex)
 	{
 		assert(anIndex >= 0 && anIndex < myData.size() && valid(anIndex));
 
@@ -176,23 +185,23 @@ namespace CommonUtilities
 		--myCount;
 	}
 
-	template<class T>
-	constexpr void FreeVector<T>::clear()
+	template<class T, class Alloc>
+	constexpr void FreeVector<T, Alloc>::clear()
 	{
 		myData.clear();
 		myFirstFree = -1;
 		myCount = 0;
 	}
 
-	template<class T>
-	constexpr void FreeVector<T>::reserve(size_type aCapacity)
+	template<class T, class Alloc>
+	constexpr void FreeVector<T, Alloc>::reserve(size_type aCapacity)
 	{
 		myData.reserve(aCapacity);
 	}
 
-	template<class T>
+	template<class T, class Alloc>
 	template<typename Func>
-	constexpr void FreeVector<T>::for_each(const Func& func) const
+	constexpr void FreeVector<T, Alloc>::for_each(const Func& func) const
 	{
 		for (const auto& elt : myData)
 		{
@@ -201,9 +210,9 @@ namespace CommonUtilities
 		}
 	}
 
-	template<class T>
+	template<class T, class Alloc>
 	template<typename Func>
-	constexpr void FreeVector<T>::for_each(const Func& func)
+	constexpr void FreeVector<T, Alloc>::for_each(const Func& func)
 	{
 		for (auto& elt : myData)
 		{

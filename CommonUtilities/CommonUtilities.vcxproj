@@ -160,7 +160,6 @@
   <ItemGroup>
     <ClInclude Include="CommonUtilities.pch.h" />
     <ClInclude Include="include\CommonUtilities\Alloc\ArenaAlloc.hpp" />
-    <ClInclude Include="include\CommonUtilities\Alloc\BlockAlloc.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Capsule.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp" />
     <ClInclude Include="include\CommonUtilities\Serialization\MathSerializer.hpp" />
@@ -264,7 +263,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\CommonUtilities\Alloc\ArenaAlloc.cpp" />
-    <ClCompile Include="src\CommonUtilities\Alloc\BlockAlloc.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\Gamepad.cpp" />
     <ClCompile Include="src\CommonUtilities\Input\GamepadInput.cpp" />
     <ClCompile Include="src\CommonUtilities\Math\Camera2D.cpp" />

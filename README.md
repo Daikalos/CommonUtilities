@@ -2,7 +2,7 @@
 Assortment of useful utilites you can apply in your projects. It can be compiled as either a DLL or as a static library through Visual Studio.
 
 ### Allocators
-WIP
+- **Arena** - Simple arena allocator that works with stl containers.
 
 ### Event
 - **Event** - Holds any number of callbacks that may all be executed manually. Expanded with thread-safety and an **EventID** that removes a callback when instance is destructed.

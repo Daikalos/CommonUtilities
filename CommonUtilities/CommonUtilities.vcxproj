@@ -180,7 +180,7 @@
     <ClInclude Include="include\CommonUtilities\System\BaseEntity.hpp" />
     <ClInclude Include="include\CommonUtilities\Serialization\BinarySerializer.h" />
     <ClInclude Include="include\CommonUtilities\System\Curve.hpp" />
-    <ClInclude Include="include\CommonUtilities\System\LinearCurve2D.hpp" />
+    <ClInclude Include="include\CommonUtilities\System\LinearCurve.hpp" />
     <ClInclude Include="include\CommonUtilities\Thread\Parallel.hpp" />
     <ClInclude Include="include\CommonUtilities\Time\StopWatch.h" />
     <ClInclude Include="include\CommonUtilities\Thread\ThreadLoops.h" />

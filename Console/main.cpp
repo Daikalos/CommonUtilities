@@ -25,7 +25,7 @@
 #include <CommonUtilities/Random/Random.hpp>
 
 #include <CommonUtilities/System/Color.hpp>
-#include <CommonUtilities/System/Curve.hpp>
+#include <CommonUtilities/System/LinearCurve.hpp>
 
 int main()
 {

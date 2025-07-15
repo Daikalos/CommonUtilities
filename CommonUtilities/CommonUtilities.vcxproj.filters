@@ -294,10 +294,10 @@
     <ClInclude Include="include\CommonUtilities\Random\PerlinNoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\Spline.h">
+    <ClInclude Include="include\CommonUtilities\System\Spline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\Utility\Curve.h">
+    <ClInclude Include="include\CommonUtilities\System\Curve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\Utility\RandomBag.hpp">
@@ -310,6 +310,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommonUtilities\System\Curve.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommonUtilities\System\LinearCurve2D.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

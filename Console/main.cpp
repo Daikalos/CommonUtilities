@@ -84,6 +84,7 @@ int main()
 	//	std::cout << a << '\n';
 
 	constexpr cu::Vector4f colVec = cu::Vector4f(3.0f, 0.99f, 0.5f, -54.0f);
+	constexpr cu::Vector4f testrVec = cu::Vector4f::CLerp(cu::Vector4f(0.5f, 0.2f, 0.4f, 1.0f), cu::Vector4f(-0.2f, 0.5f, 10.0f, 1.0f), 0.5f);
 
 	cu::Color color = cu::Color(126, 32, 45, 200);
 	cu::Color color2 = cu::Color::CLerp(color, cu::Color(190, 90, 200, 50), -2.5f);

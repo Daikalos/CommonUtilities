@@ -9,13 +9,13 @@
 namespace CommonUtilities
 {
 	template<typename T>
-	class Curve
+	class LinearCurve
 	{
 	public:
-		constexpr Curve() = default;
-		constexpr ~Curve() = default;
+		constexpr LinearCurve() = default;
+		constexpr ~LinearCurve() = default;
 
-		constexpr Curve(const T& aMin, const T& aMax);
+		constexpr LinearCurve(const T& aMin, const T& aMax);
 
 		NODISC constexpr const std::unordered_map<unsigned, T>& GetKeyPositions() const;
 		NODISC constexpr const std::unordered_map<unsigned, T>& GetKeys() const;
@@ -39,24 +39,24 @@ namespace CommonUtilities
 	};
 
 	template<typename T>
-	constexpr Curve<T>::Curve(const T& aMin, const T& aMax)
+	constexpr LinearCurve<T>::LinearCurve(const T& aMin, const T& aMax)
 	{
 		Reset(aMin, aMax);
 	}
 
 	template<typename T>
-	constexpr const std::unordered_map<unsigned, T>& Curve<T>::GetKeyPositions() const
+	constexpr const std::unordered_map<unsigned, T>& LinearCurve<T>::GetKeyPositions() const
 	{
 		return myKeyPositions;
 	}
 	template<typename T>
-	constexpr const std::unordered_map<unsigned, T>& Curve<T>::GetKeys() const
+	constexpr const std::unordered_map<unsigned, T>& LinearCurve<T>::GetKeys() const
 	{
 		return myKeys;
 	}
 
 	template<typename T>
-	constexpr T Curve<T>::Get(float aPosition) const
+	constexpr T LinearCurve<T>::Get(float aPosition) const
 	{
 		const unsigned realValue = static_cast<unsigned>(aPosition * ourPrecision);
 
@@ -103,7 +103,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr unsigned Curve<T>::AddKey(float aPosition, const T& aValue)
+	constexpr unsigned LinearCurve<T>::AddKey(float aPosition, const T& aValue)
 	{
 		aPosition = Saturate(aPosition);
 
@@ -119,7 +119,7 @@ namespace CommonUtilities
 		return realValue;
 	}
 	template<typename T>
-	constexpr bool Curve<T>::RemoveKey(unsigned aRealValue)
+	constexpr bool LinearCurve<T>::RemoveKey(unsigned aRealValue)
 	{
 		auto it = myKeys.find(aRealValue);
 
@@ -133,7 +133,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr bool Curve<T>::RemoveKey(float aPosition, float aTolerance)
+	constexpr bool LinearCurve<T>::RemoveKey(float aPosition, float aTolerance)
 	{
 		using CommonUtilities::Equal;
 
@@ -155,7 +155,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Curve<T>::Reset(const T& aMin, const T& aMax)
+	constexpr void LinearCurve<T>::Reset(const T& aMin, const T& aMax)
 	{
 		Clear();
 
@@ -164,11 +164,11 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Curve<T>::Clear()
+	constexpr void LinearCurve<T>::Clear()
 	{
 		myKeyPositions.clear();
 		myKeys.clear();
 	}
 
-	using ColorGradient = Curve<Color>;
+	using ColorGradient = LinearCurve<Color>;
 }

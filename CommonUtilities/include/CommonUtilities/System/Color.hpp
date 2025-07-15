@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
 
 #include <CommonUtilities/Config.h>
+#include <CommonUtilities/Utility/ArithmeticUtils.hpp>
 #include <CommonUtilities/Math/Vector4.hpp>
 
 namespace CommonUtilities
@@ -23,10 +25,17 @@ namespace CommonUtilities
 		constexpr Color(std::uint8_t aRed, std::uint8_t aGreen, std::uint8_t aBlue, std::uint8_t aAlpha = 255);
 		constexpr explicit Color(std::uint32_t aColor);
 
-		constexpr std::uint32_t ToInteger() const noexcept;
+		NODISC constexpr std::uint32_t ToInteger() const noexcept;
 
-		template<class T>
-		constexpr Vector4<T> ToNormalized() const;
+		template<typename T>
+		NODISC constexpr Vector4<T> ToNormalized() const;
+
+		template<typename T>
+		NODISC constexpr static Color FromNormalized(Vector4<T> aNormalized);
+
+		NODISC constexpr static Color Lerp(const Color& aCurrent, const Color& aTarget, float aPercentage);
+
+		NODISC constexpr static Color CLerp(const Color& aCurrent, const Color& aTarget, float aPercentage);
 
 		static const Color Black;       
 		static const Color White;       
@@ -60,7 +69,8 @@ namespace CommonUtilities
 	{
 		return static_cast<std::uint32_t>((r << 24) | (g << 16) | (b << 8) | a);
 	}
-	template<class T>
+
+	template<typename T>
 	constexpr Vector4<T> Color::ToNormalized() const
 	{
 		return Vector4<T>
@@ -72,19 +82,47 @@ namespace CommonUtilities
 		} * (1 / T{255.0});
 	}
 
+	template<typename T>
+	constexpr Color Color::FromNormalized(Vector4<T> aNormalized)
+	{
+		aNormalized *= T(255);
+
+		return Color(
+			static_cast<std::uint8_t>(Clamp(std::round(aNormalized.x), T(0), T(255))),
+			static_cast<std::uint8_t>(Clamp(std::round(aNormalized.y), T(0), T(255))),
+			static_cast<std::uint8_t>(Clamp(std::round(aNormalized.z), T(0), T(255))),
+			static_cast<std::uint8_t>(Clamp(std::round(aNormalized.w), T(0), T(255))));
+	}
+
+	constexpr Color Color::Lerp(const Color& aCurrent, const Color& aTarget, float aPercentage)
+	{
+		using CommonUtilities::Lerp;
+
+		return Color
+		{
+			Lerp(aCurrent.r, aTarget.r, aPercentage),
+			Lerp(aCurrent.g, aTarget.g, aPercentage),
+			Lerp(aCurrent.b, aTarget.b, aPercentage),
+			Lerp(aCurrent.a, aTarget.a, aPercentage)
+		};
+	}
+
+	constexpr Color Color::CLerp(const Color& aCurrent, const Color& aTarget, float aPercentage)
+	{
+		using CommonUtilities::CLerp;
+
+		return Color
+		{
+			CLerp(aCurrent.r, aTarget.r, aPercentage),
+			CLerp(aCurrent.g, aTarget.g, aPercentage),
+			CLerp(aCurrent.b, aTarget.b, aPercentage),
+			CLerp(aCurrent.a, aTarget.a, aPercentage)
+		};
+	}
+
 	// GLOBAL OPERATORS
 
-	constexpr bool operator==(const Color& aLeft, const Color& aRight)
-	{
-		return (aLeft.r == aRight.r) && (aLeft.g == aRight.g) && (aLeft.b == aRight.b) && (aLeft.a == aRight.a);
-	}
-
-	constexpr bool operator!=(const Color& aLeft, const Color& aRight)
-	{
-		return !(aLeft == aRight);
-	}
-
-	constexpr Color operator+(const Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator+(const Color& aLeft, const Color& aRight)
 	{
 		const auto ClampedAdd = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
@@ -101,7 +139,7 @@ namespace CommonUtilities
 		};
 	}
 
-	constexpr Color operator-(const Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator-(const Color& aLeft, const Color& aRight)
 	{
 		const auto ClampedSub = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
@@ -118,7 +156,7 @@ namespace CommonUtilities
 		};
 	}
 
-	constexpr Color operator*(const Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator*(const Color& aLeft, const Color& aRight)
 	{
 		const auto ScaledMul = [](std::uint8_t aLhs, std::uint8_t aRhs) -> std::uint8_t
 		{
@@ -135,19 +173,39 @@ namespace CommonUtilities
 		};
 	}
 
-	constexpr Color operator+=(Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator+=(Color& aLeft, const Color& aRight)
 	{
 		return aLeft = aLeft + aRight;
 	}
 
-	constexpr Color operator-=(Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator-=(Color& aLeft, const Color& aRight)
 	{
 		return aLeft = aLeft - aRight;
 	}
 
-	constexpr Color operator*=(Color& aLeft, const Color& aRight)
+	NODISC constexpr Color operator*=(Color& aLeft, const Color& aRight)
 	{
 		return aLeft = aLeft * aRight;
+	}
+
+	NODISC constexpr bool operator==(const Color& aLeft, const Color& aRight)
+	{
+		return (aLeft.r == aRight.r) && (aLeft.g == aRight.g) && (aLeft.b == aRight.b) && (aLeft.a == aRight.a);
+	}
+
+	NODISC constexpr bool operator!=(const Color& aLeft, const Color& aRight)
+	{
+		return !(aLeft == aRight);
+	}
+
+	NODISC constexpr Color Lerp(const Color& aStart, const Color& aEnd, float aPercentage)
+	{
+		return Color::Lerp(aStart, aEnd, aPercentage);
+	}
+
+	NODISC constexpr Color CLerp(const Color& aStart, const Color& aEnd, float aPercentage)
+	{
+		return Color::CLerp(aStart, aEnd, aPercentage);
 	}
 
 	inline constexpr Color Color::Black(		0,		0,		0);

@@ -548,13 +548,12 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector2<T> Vector2<T>::CLerp(const Vector2& aCurrent, const Vector2& aTarget, float aPercentage)
 	{
-		using CommonUtilities::Clamp;
-		using CommonUtilities::Lerp;
+		using CommonUtilities::CLerp;
 
 		return Vector2<T>
 		{
-			Clamp(Lerp(aCurrent.x, aTarget.x, aPercentage), (std::min)(aCurrent.x, aTarget.x), (std::max)(aCurrent.x, aTarget.x)),
-			Clamp(Lerp(aCurrent.y, aTarget.y, aPercentage), (std::min)(aCurrent.y, aTarget.y), (std::max)(aCurrent.y, aTarget.y))
+			CLerp(aCurrent.x, aTarget.x, aPercentage),
+			CLerp(aCurrent.y, aTarget.y, aPercentage)
 		};
 	}
 
@@ -751,6 +750,12 @@ namespace CommonUtilities
 	NODISC constexpr Vector2<T> Lerp(const Vector2<T>& aStart, const Vector2<T>& aEnd, float aPercentage)
 	{
 		return Vector2<T>::Lerp(aStart, aEnd, aPercentage);
+	}
+
+	template<typename T>
+	NODISC constexpr Vector2<T> CLerp(const Vector2<T>& aStart, const Vector2<T>& aEnd, float aPercentage)
+	{
+		return Vector2<T>::CLerp(aStart, aEnd, aPercentage);
 	}
 
 	// using declarations

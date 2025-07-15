@@ -11,7 +11,7 @@ namespace CommonUtilities
 {
 	/// Structure that enables for quick insertion and removal from anywhere in the container.
 	/// 
-	template<class T, class Alloc = std::allocator<T>>
+	template<class T, class Alloc = std::allocator<std::variant<T, std::int64_t>>>
 	class FreeVector
 	{
 	public:

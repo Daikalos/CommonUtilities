@@ -251,22 +251,25 @@ namespace CommonUtilities
 	template<IsArithmeticType T>
 	NODISC constexpr T CLerp(T aStart, T aEnd, float aPercentage)
 	{
-		return Clamp(Lerp(aStart, aEnd, aPercentage), aStart, aEnd);
+		return Lerp(aStart, aEnd, Saturate(aPercentage));
 	}
 
-	NODISC __forceinline float AtanApproximation(float aX)
+	NODISC __forceinline float AtanApproximation1(float aX)
 	{
-		//static constexpr float a1  =  0.99997726f;
-		//static constexpr float a3  = -0.33262347f;
-		//static constexpr float a5  =  0.19354346f;
-		//static constexpr float a7  = -0.11643287f;
-		//static constexpr float a9  =  0.05265332f;
-		//static constexpr float a11 = -0.01172120f;
+		static constexpr float a1  =  0.99997726f;
+		static constexpr float a3  = -0.33262347f;
+		static constexpr float a5  =  0.19354346f;
+		static constexpr float a7  = -0.11643287f;
+		static constexpr float a9  =  0.05265332f;
+		static constexpr float a11 = -0.01172120f;
 
-		//const float xSq = x * x;
+		const float xSq = aX * aX;
 
-		//return x * fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, a11, a9), a7), a5), a3), a1);
+		return aX * fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, fmaf(xSq, a11, a9), a7), a5), a3), a1);
+	}
 
+	NODISC __forceinline float AtanApproximation2(float aX)
+	{
 		static constexpr float a1 =  0.97239411f;
 		static constexpr float a3 = -0.19194795f;
 
@@ -283,7 +286,7 @@ namespace CommonUtilities
 		const bool swap = ax < ay;
 		const float atanInput = (swap ? ax / ay : ay / ax);
 
-		float res = AtanApproximation(atanInput);
+		float res = AtanApproximation2(atanInput);
 
 		if (swap)	res = PI_2 - res;
 		if (aX < 0)	res = PI - res;

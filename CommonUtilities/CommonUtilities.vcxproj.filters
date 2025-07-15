@@ -309,7 +309,7 @@
     <ClInclude Include="include\CommonUtilities\Alloc\ArenaAlloc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\CommonUtilities\System\ColorGradient.hpp">
+    <ClInclude Include="include\CommonUtilities\System\Curve.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

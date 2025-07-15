@@ -24,6 +24,9 @@
 
 #include <CommonUtilities/Random/Random.hpp>
 
+#include <CommonUtilities/System/Color.hpp>
+#include <CommonUtilities/System/Curve.hpp>
+
 int main()
 {
 	cu::Vector2f vec(5.0f, 3.0f);
@@ -73,12 +76,21 @@ int main()
 	cu::BinaryReadSerializer read(write.GetBuffer());
 	read >> testa2;
 
-	std::vector<int, cu::ArenaAlloc<int>> wow;
-	for (int i = 0; i < 100000; ++i)
-		wow.emplace_back(cu::Random(-10000000, 10000000));
+	//std::vector<int, cu::ArenaAlloc<int>> wow;
+	//for (int i = 0; i < 100000; ++i)
+	//	wow.emplace_back(cu::Random(-10000000, 10000000));
 
-	for (int a : wow)
-		std::cout << a << '\n';
+	//for (int a : wow)
+	//	std::cout << a << '\n';
+
+	constexpr cu::Vector4f colVec = cu::Vector4f(3.0f, 0.99f, 0.5f, -54.0f);
+
+	cu::Color color = cu::Color(126, 32, 45, 200);
+	cu::Color color2 = cu::Color::CLerp(color, cu::Color(190, 90, 200, 50), -2.5f);
+
+	cu::ColorGradient gradient;
+	gradient.Reset(cu::Color::Black, cu::Color::White);
+	cu::Color color3 = gradient.Get(0.5f);
 
 	return 0;
 }

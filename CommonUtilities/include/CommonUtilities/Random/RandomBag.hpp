@@ -373,6 +373,8 @@ namespace CommonUtilities
 		}
 
 		assert(false && "Reaching here should be impossible");
+
+		return T{};
 	}
 
 	template<typename T, typename Alloc>

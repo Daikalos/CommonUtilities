@@ -26,6 +26,7 @@ Full **Windows** support for keyboard, mouse, cursor, and 4 gamepads. Expanded w
 Comprehensive support for generating random things, e.g., number between a range, shuffled array, point in sphere, point in cone.
 
 - **PerlinNoise** - Support for 1D, 2D, 3D Perlin Noise and Curl Noise.
+- **RandomBag** - Support for weighted randomization for items. Add an item into the bag with a weight and then use **peek** or **pop** to get a random item.
 
 ### Serialization
 Comprehensive support for serializing many structures to and from binary data. Can serialize, for example, all trivial types, std::string, std::vector, and std::tuple. You can provide serialization for your own types by specializing SerializeAsBinary.

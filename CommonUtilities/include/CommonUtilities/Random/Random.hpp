@@ -22,18 +22,33 @@ namespace CommonUtilities
 
 	inline thread_local std::mt19937_64 dre(priv::Seed);
 
+	/// Generates random float between 0 and 1.
+	/// 
 	NODISC inline float Random()
 	{
 		std::uniform_real_distribution<float> uid(0.0f, 1.0f);
 		return uid(dre);
 	}
 
+	/// Returns true or false based on given probability.
+	/// 
+	NODISC inline bool RandomCondition(float aProbability = 0.5f)
+	{
+		aProbability = (1.0f - Clamp(aProbability, 0.0f, 1.0f));
+		return (Random() > aProbability);
+	}
+
+	/// Generates random float between [min, max).
+	/// 
 	template<IsFloatingPointType T>
 	NODISC inline T Random(T aMin, T aMax)
 	{
 		std::uniform_real_distribution<T> uid(aMin, aMax);
 		return uid(dre);
 	}
+
+	/// Generates random integer between [min, max].
+	/// 
 	template<IsIntegralType T>
 	NODISC inline T Random(T aMin, T aMax)
 	{
@@ -81,6 +96,24 @@ namespace CommonUtilities
 		std::shuffle(result.begin(), result.end(), dre);
 
 		return result;
+	}
+
+	/// Returns a random const element from container.
+	/// 
+	template<typename T>
+	NODISC inline typename T::const_reference RandomElement(const T& aContainer)
+	{
+		const auto randomIndex = Random(0, aContainer.size() - 1);
+		return *(aContainer.cbegin() + randomIndex);
+	}
+
+	/// Returns a random element from container.
+	/// 
+	template<typename T>
+	NODISC inline typename T::reference RandomElement(T& aContainer)
+	{
+		const auto randomIndex = Random(0, aContainer.size() - 1);
+		return *(aContainer.begin() + randomIndex);
 	}
 
 	template<typename T>

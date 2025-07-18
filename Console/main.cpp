@@ -26,6 +26,7 @@
 
 #include <CommonUtilities/System/Color.hpp>
 #include <CommonUtilities/System/LinearCurve.hpp>
+#include <CommonUtilities/Random/RandomBag.hpp>
 
 int main()
 {
@@ -95,6 +96,29 @@ int main()
 
 	cu::FreeVector<int> testabc;
 	testabc.emplace(59);
+
+	cu::RandomBag<int> randomBag;
+	for (int i = 0; i < 5000; ++i)
+	{
+		assert(randomBag.empty());
+
+		for (int j = 0; j < cu::Random(0, 100); ++j)
+		{
+			randomBag.emplace_back(cu::Random(0, 100), cu::Random(-1000, 1000));
+		}
+
+		while (!randomBag.empty())
+		{
+			int yeas = randomBag.pop(); 
+			std::cout << yeas << ' ';
+		}
+
+		std::cout << '\n';
+	}
+
+	system("pause");
+
+	int adaosdas = cu::Random(0, 1);
 
 	return 0;
 }

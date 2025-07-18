@@ -250,7 +250,11 @@ void MouseCursor::OnEnable()
 void MouseCursor::OnDisable()
 {
 	GrabCursor(false);
-	while (ShowCursor(true) <= 0);
+
+	if (!myIsVisible)
+	{
+		while (ShowCursor(true) <= 0);
+	}
 }
 
 void MouseCursor::OnFocusGained()
@@ -265,5 +269,9 @@ void MouseCursor::OnFocusGained()
 void MouseCursor::OnFocusLost()
 {
 	GrabCursor(false);
-	while (ShowCursor(true) <= 0);
+
+	if (!myIsVisible)
+	{
+		while (ShowCursor(true) <= 0);
+	}
 }

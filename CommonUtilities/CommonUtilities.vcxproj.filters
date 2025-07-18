@@ -315,6 +315,9 @@
     <ClInclude Include="include\CommonUtilities\System\LinearCurve.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CommonUtilities\Random\RandomBag.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CommonUtilities\Time\Timer.cpp">

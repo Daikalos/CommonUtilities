@@ -194,8 +194,8 @@ namespace CommonUtilities
 
 		constexpr void pop_back();
 
-		constexpr auto erase(const_iterator aPosition) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_destructible_v<T>)->iterator;
-		constexpr auto erase(const_iterator aFirst, const_iterator aLast) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_destructible_v<T>)->iterator;
+		constexpr auto erase(const_iterator aPosition) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_destructible_v<T>) -> iterator;
+		constexpr auto erase(const_iterator aFirst, const_iterator aLast) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_destructible_v<T>) -> iterator;
 
 		template<typename... Args> requires(std::constructible_from<T, Args...>)
 		constexpr auto emplace(const_iterator aPosition, Args&&... someArgs) -> iterator;
@@ -1096,5 +1096,11 @@ namespace CommonUtilities
 	constexpr bool operator==(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
 	{
 		return std::equal(aLeft.begin(), aLeft.end(), aRight.begin(), aRight.end());
+	}
+
+	template<typename T, std::size_t LeftCapacity, std::size_t RightCapacity> requires(std::equality_comparable<T>)
+	constexpr bool operator!=(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
+	{
+		return !(aLeft == aRight);
 	}
 }

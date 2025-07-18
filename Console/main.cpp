@@ -93,5 +93,8 @@ int main()
 	gradient.Reset(cu::Color::Black, cu::Color::White);
 	cu::Color color3 = gradient.Get(0.5f);
 
+	cu::FreeVector<int> testabc;
+	testabc.emplace(59);
+
 	return 0;
 }

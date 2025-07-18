@@ -165,7 +165,7 @@ namespace CommonUtilities
 	template<IsArithmeticType T>
 	NODISC constexpr auto Equal(T aFirst, T aSecond, T aTolerance = EPSILON_V<T>)
 	{
-		return std::abs(aFirst - aSecond) <= aTolerance;
+		return std::fabs(aFirst - aSecond) <= aTolerance;
 	}
 
 	template<IsArithmeticType T>

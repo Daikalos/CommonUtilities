@@ -6,11 +6,11 @@
 #include <cassert>
 #include <shared_mutex>
 
-#include <CommonUtilities/Config.h>
 #include <CommonUtilities/System/IDGenerator.h>
 #include <CommonUtilities/Structures/FreeVector.hpp>
 #include <CommonUtilities/Utility/Concepts.hpp>
 #include <CommonUtilities/Utility/Clonable.hpp>
+#include <CommonUtilities/Config.h>
 
 namespace CommonUtilities
 {

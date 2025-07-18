@@ -100,6 +100,10 @@ void Transform3D::SetRotation(const Quatf& aRotation)
 		myUpdateInverseMatrix	= true;
 	}
 }
+void Transform3D::SetRotationDeg(const Vector3f& aDegrees)
+{
+	SetRotation(Quatf(aDegrees * DEG2RAD, myRotationOrder));
+}
 void Transform3D::SetScale(const Vector3f& aScale)
 {
 	if (myScale != aScale)
@@ -120,7 +124,11 @@ void Transform3D::Move(const Vector3f& aPosition)
 }
 void Transform3D::Rotate(const Vector3f& aRotation)
 {
-	SetRotation(GetRotation() * cu::Quatf(aRotation, myRotationOrder));
+	SetRotation(GetRotation() * Quatf(aRotation, myRotationOrder));
+}
+void Transform3D::RotateDeg(const Vector3f& aDegrees)
+{
+	Rotate(aDegrees * DEG2RAD);
 }
 void Transform3D::Scale(const Vector3f& aScale)
 {

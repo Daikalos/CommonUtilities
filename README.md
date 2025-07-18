@@ -1,7 +1,7 @@
 # CommonUtilities
 Assortment of useful utilites you can apply in your projects. It can be compiled as either a DLL or as a static library through Visual Studio.
 
-When including in your project, make sure to specify COMMON_UTILITIES_STATIC if you are going to use the statically linked libraries [.lib]. If not specified, then [.dll] is assumed.
+When including in your project, make sure to define COMMON_UTILITIES_STATIC if you are going to use the statically linked libraries [.lib]. If not defined, then [.dll] is assumed.
 
 ### Allocators
 - **Arena** - Simple arena allocator that works with stl containers.

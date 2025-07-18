@@ -33,11 +33,14 @@ namespace CommonUtilities
 
 		virtual void SetPosition(const Vector3f& aPosition);
 		virtual void SetRotation(const Quatf& aRotation);
+		virtual void SetRotationDeg(const Vector3f& aDegrees);
 		virtual void SetScale(const Vector3f& aScale);
+
 		void SetRotationOrder(AxisOrder aRotationOrder);
 
 		void Move(const Vector3f& aPosition);
 		void Rotate(const Vector3f& aRotation);
+		void RotateDeg(const Vector3f& aDegrees);
 		void Scale(const Vector3f& aScale);
 
 	protected:

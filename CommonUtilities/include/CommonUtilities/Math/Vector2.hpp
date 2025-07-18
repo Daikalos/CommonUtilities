@@ -370,8 +370,6 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector2<T> Vector2<T>::GetNormalizedSafe(T aRadius) const
 	{
-		using CommonUtilities::Equal;
-
 		if (const T lenSqr = LengthSqr(); lenSqr >= EPSILON_V<T> * EPSILON_V<T>)
 			return GetNormalized((T)std::sqrt(lenSqr), aRadius);
 
@@ -380,8 +378,6 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector2<T> Vector2<T>::GetNormalizedSafe(T aLength, T aRadius) const
 	{
-		using CommonUtilities::Equal;
-
 		if (aLength >= EPSILON_V<T>)
 			return GetNormalized(aLength, aRadius);
 
@@ -744,6 +740,12 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Vector2<T>& aLeft, const Vector2<T>& aRight)
 	{
 		return !(aLeft == aRight);
+	}
+
+	template<typename T>
+	NODISC constexpr bool Equal(const Vector2<T>& aLeft, const Vector2<T>& aRight, T aTolerance)
+	{
+		return Vector2<T>::Equal(aLeft, aRight, aTolerance);
 	}
 
 	template<typename T>

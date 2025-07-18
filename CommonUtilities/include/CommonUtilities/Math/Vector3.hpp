@@ -911,6 +911,12 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
+	NODISC constexpr bool Equal(const Vector3<T>& aLeft, const Vector3<T>& aRight, T aTolerance)
+	{
+		return Vector3<T>::Equal(aLeft, aRight, aTolerance);
+	}
+
+	template<typename T>
 	NODISC constexpr Vector3<T> Lerp(const Vector3<T>& aStart, const Vector3<T>& aEnd, float aPercentage)
 	{
 		return Vector3<T>::Lerp(aStart, aEnd, aPercentage);

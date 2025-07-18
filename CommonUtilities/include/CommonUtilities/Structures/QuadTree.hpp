@@ -34,45 +34,45 @@ namespace CommonUtilities
 
 		/// Inserts given element into the quadtree.
 		/// 
-		/// \param Rect: Rectangle encompassing item
-		/// \param Args: Constructor parameters for item
+		/// \param Rect: Rectangle encompassing item.
+		/// \param Args: Constructor parameters for item.
 		/// 
-		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
+		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		auto Insert(const Rectf& aRect, Args&&... someArgs) -> SizeType;
 
 		/// Attempts to erase element from tree.
 		/// 
-		/// \param Index: Index to element to erase
+		/// \param Index: Index to element to erase.
 		/// 
-		/// \returns True if successfully removed the element, otherwise false
+		/// \returns True if successfully removed the element, otherwise false.
 		/// 
 		bool Erase(SizeType aIndex);
 
 		/// Updates the given element with new data.
 		/// 
-		/// \param Index: index to element
-		/// \param Args: Data to update the current element
+		/// \param Index: index to element.
+		/// \param Args: Data to update the current element.
 		/// 
-		/// \returns True if successfully updated the element, otherwise false
+		/// \returns True if successfully updated the element, otherwise false.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		bool Update(SizeType aIndex, Args&&... someArgs);
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element
+		/// \param Index: index to element.
 		/// 
 		NODISC auto Get(SizeType aIndex) -> ValueType&;
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element
+		/// \param Index: index to element.
 		/// 
 		NODISC auto Get(SizeType aIndex) const -> const ValueType&;
 
-		/// Retrieves the rectangle encompassing item
+		/// Retrieves the rectangle encompassing item.
 		/// 
 		/// \param Index: index to item.
 		/// 
@@ -80,17 +80,17 @@ namespace CommonUtilities
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Rect: Bounding rectangle where all the elements are contained
+		/// \param Rect: Bounding rectangle where all the elements are contained.
 		/// 
-		/// \returns List of entities contained within the bounding rectangle
+		/// \returns List of entities contained within the bounding rectangle.
 		/// 
 		NODISC auto Query(const Rectf& aRect) const -> std::vector<SizeType>;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Point: Point to search for overlapping elements
+		/// \param Point: Point to search for overlapping elements.
 		/// 
-		/// \returns List of entities contained at the point
+		/// \returns List of entities contained at the point.
 		/// 
 		NODISC auto Query(const Vector2f& aPoint) const-> std::vector<SizeType>;
 

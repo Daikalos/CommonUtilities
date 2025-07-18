@@ -35,6 +35,7 @@ void InputHandler::SetEnabled(bool aFlag)
 		OnDisable();
 	}
 }
+
 void InputHandler::SetFocusAffectInput(bool aFlag) noexcept
 {
 	myFocusInput = aFlag;

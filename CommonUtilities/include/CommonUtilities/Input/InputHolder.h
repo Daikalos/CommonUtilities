@@ -25,17 +25,23 @@ namespace CommonUtilities
 		NODISC const MouseCursor& Cursor() const noexcept;
 		NODISC MouseCursor& Cursor() noexcept;
 
-		NODISC const GamepadInput& Gamepad(unsigned aGamepadIndex = 0) const noexcept;
-		NODISC GamepadInput& Gamepad(unsigned aGamepadIndex = 0) noexcept;
+		NODISC const GamepadInput& Gamepad(unsigned aGamepadIndex = 0) const;
+		NODISC GamepadInput& Gamepad(unsigned aGamepadIndex = 0);
 
 		NODISC int ConnectedGamepadCount() const;
 
 		NODISC bool IsAnyPressed() const;
 
+		/// Enable or disable the InputHandler, will cause all input to return false or 0.0f.
+		/// 
 		void SetEnabled(bool aFlag);
 
+		/// Manually enable or disable that input has focus
+		/// 
 		void SetInFocus(bool aFlag);
 
+		/// Whether something inside the application is stealing input, for example, ImGui
+		/// 
 		void SetExternalFocus(bool aFlag);
 
 		void Update();

@@ -162,6 +162,7 @@
     <ClInclude Include="include\CommonUtilities\Alloc\ArenaAlloc.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Capsule.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Frustum.hpp" />
+    <ClInclude Include="include\CommonUtilities\Random\RandomBag.hpp" />
     <ClInclude Include="include\CommonUtilities\Serialization\MathSerializer.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Quaternion.hpp" />
     <ClInclude Include="include\CommonUtilities\Math\Triangle.hpp" />

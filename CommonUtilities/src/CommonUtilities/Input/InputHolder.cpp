@@ -11,8 +11,8 @@ MouseInput& InputHolder::Mouse() noexcept					{ return myMouse; }
 const MouseCursor& InputHolder::Cursor() const noexcept		{ return myCursor; }
 MouseCursor& InputHolder::Cursor() noexcept					{ return myCursor; }
 
-const GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) const noexcept	{ return myGamepads[aGamepadIndex]; }
-GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) noexcept				{ return myGamepads[aGamepadIndex]; }
+const GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex) const	{ return myGamepads[aGamepadIndex]; }
+GamepadInput& InputHolder::Gamepad(unsigned aGamepadIndex)				{ return myGamepads[aGamepadIndex]; }
 
 int InputHolder::ConnectedGamepadCount() const
 {

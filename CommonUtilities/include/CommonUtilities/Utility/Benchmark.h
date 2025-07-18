@@ -35,7 +35,7 @@ namespace CommonUtilities::bm
 		constexpr static std::size_t Megabyte(std::size_t aBytes) { return Kilobyte(aBytes) / 1024LLU; }
 		constexpr static std::size_t Gigabyte(std::size_t aBytes) { return Megabyte(aBytes) / 1024LLU; }
 
-		class Benchmark
+		class COMMON_UTILITIES_API Benchmark
 		{
 		public:
 			using Ptr = std::unique_ptr<Benchmark>;

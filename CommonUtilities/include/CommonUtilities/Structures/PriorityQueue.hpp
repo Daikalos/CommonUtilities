@@ -43,33 +43,30 @@ namespace CommonUtilities
 
 		constexpr PriorityQueue(std::initializer_list<T> aInitList);
 
-		NODISC constexpr auto operator[](size_type aIndex) -> reference;
 		NODISC constexpr auto operator[](size_type aIndex) const -> const_reference;
 
-		NODISC constexpr auto At(size_type aIndex) -> reference;
-		NODISC constexpr auto At(size_type aIndex) const -> const_reference;
+		NODISC constexpr auto at(size_type aIndex) const -> const_reference;
 
-		NODISC constexpr bool IsEmpty() const noexcept;
-		NODISC constexpr auto Size() const noexcept -> size_type;
+		NODISC constexpr bool empty() const noexcept;
+		NODISC constexpr auto size() const noexcept -> size_type;
 
-		NODISC constexpr auto MaxSize() const noexcept -> size_type;
+		NODISC constexpr auto max_size() const noexcept -> size_type;
 
-		NODISC constexpr auto Top() noexcept -> reference;
-		NODISC constexpr auto Top() const noexcept -> const_reference;
+		NODISC constexpr auto top() const noexcept -> const_reference;
 
-		constexpr void Push(const T& aItem);
-		constexpr void Push(T&& aItem);
+		constexpr void push(const T& aItem);
+		constexpr void push(T&& aItem);
 
 		template<typename... Args> requires std::constructible_from<T, Args...>
-		constexpr void Emplace(Args&&... someArgs);
+		constexpr void emplace(Args&&... someArgs);
 
-		constexpr void Pop();
+		constexpr void pop();
 
-		constexpr void Reserve(size_type aCapacity);
+		constexpr void reserve(size_type aCapacity);
 
-		constexpr void Clear();
+		constexpr void clear();
 
-		constexpr void ShrinkToFit();
+		constexpr void shrink_to_fit();
 
 		NODISC constexpr auto begin() const noexcept -> const_iterator;
 		NODISC constexpr auto end() const noexcept -> const_iterator;
@@ -127,83 +124,68 @@ namespace CommonUtilities
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::operator[](size_type aIndex) -> reference
-	{
-		return myNodes[aIndex];
-	}
-	template<typename T, pq::HeapType C>
 	constexpr auto PriorityQueue<T, C>::operator[](size_type aIndex) const -> const_reference
 	{
 		return myNodes[aIndex];
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::At(size_type aIndex) -> reference
+	constexpr auto PriorityQueue<T, C>::at(size_type aIndex) const -> const_reference
 	{
-		return myNodes.At(aIndex);
-	}
-	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::At(size_type aIndex) const -> const_reference
-	{
-		return myNodes.At(aIndex);
+		return myNodes.at(aIndex);
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr bool PriorityQueue<T, C>::IsEmpty() const noexcept
+	constexpr bool PriorityQueue<T, C>::empty() const noexcept
 	{
 		return myNodes.empty();
 	}
 	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::Size() const noexcept -> size_type
+	constexpr auto PriorityQueue<T, C>::size() const noexcept -> size_type
 	{
 		return myNodes.size();
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::MaxSize() const noexcept -> size_type
+	constexpr auto PriorityQueue<T, C>::max_size() const noexcept -> size_type
 	{
 		return myNodes.max_size();
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::Top() noexcept -> reference
-	{
-		return myNodes.front();
-	}
-	template<typename T, pq::HeapType C>
-	constexpr auto PriorityQueue<T, C>::Top() const noexcept -> const_reference
+	constexpr auto PriorityQueue<T, C>::top() const noexcept -> const_reference
 	{
 		return myNodes.front();
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::Push(const T& aItem)
+	constexpr void PriorityQueue<T, C>::push(const T& aItem)
 	{
-		Emplace(aItem);
+		emplace(aItem);
 	}
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::Push(T&& aItem)
+	constexpr void PriorityQueue<T, C>::push(T&& aItem)
 	{
-		Emplace(std::move(aItem));
+		emplace(std::move(aItem));
 	}
 
 	template<typename T, pq::HeapType C>
 	template<typename... Args> requires std::constructible_from<T, Args...>
-	constexpr void PriorityQueue<T, C>::Emplace(Args&&... someArgs)
+	constexpr void PriorityQueue<T, C>::emplace(Args&&... someArgs)
 	{
 		myNodes.emplace_back(std::forward<Args>(someArgs)...);
 		std::ranges::push_heap(myNodes.begin(), myNodes.end(), myComp);
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::Pop()
+	constexpr void PriorityQueue<T, C>::pop()
 	{
 		std::ranges::pop_heap(myNodes.begin(), myNodes.end(), myComp);
 		myNodes.pop_back();
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::Reserve(size_type aCapacity)
+	constexpr void PriorityQueue<T, C>::reserve(size_type aCapacity)
 	{
 		myNodes.reserve(aCapacity);
 	}
@@ -215,7 +197,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::ShrinkToFit()
+	constexpr void PriorityQueue<T, C>::shrink_to_fit()
 	{
 		myNodes.shrink_to_fit();
 	}

@@ -327,7 +327,7 @@ namespace CommonUtilities
 			return result;
 		}
 
-		if (!Equal(distSqr, T(0), EPSILON_V<T> *EPSILON_V<T>))
+		if (!Equal(distSqr, T(0), EPSILON_V<T> * EPSILON_V<T>))
 		{
 			normal = normal.GetNormalized(std::sqrt(distSqr), 1.0f);
 		}

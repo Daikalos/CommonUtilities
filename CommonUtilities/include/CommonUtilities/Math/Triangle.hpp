@@ -154,6 +154,7 @@ namespace CommonUtilities
 	constexpr void Triangle<T>::SetPoint(const Vector3<T>& aPoint, std::size_t aIndex)
 	{
 		myPoints[aIndex] = aPoint;
+		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 
 	template<typename T>

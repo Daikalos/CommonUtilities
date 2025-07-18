@@ -71,45 +71,45 @@ namespace CommonUtilities
 
 		/// Inserts given element into the quadtree.
 		/// 
-		/// \param AABB: Rectangle encompassing item
-		/// \param Args: Constructor parameters for item
+		/// \param AABB: Rectangle encompassing item.
+		/// \param Args: Constructor parameters for item.
 		/// 
-		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree
+		/// \returns Index to element, can be used to directly access it when, e.g., erasing it from the tree.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		auto Insert(const cu::AABBf& aAABB, Args&&... someArgs) -> SizeType;
 
 		/// Attempts to erase element from tree.
 		/// 
-		/// \param Index: Index to element to erase
+		/// \param Index: Index to element to erase.
 		/// 
-		/// \returns True if successfully removed the element, otherwise false
+		/// \returns True if successfully removed the element, otherwise false.
 		/// 
 		bool Erase(SizeType aIndex);
 
 		/// Updates the given element with new data.
 		/// 
-		/// \param Index: index to element
-		/// \param Args: Data to update the current element
+		/// \param Index: index to element.
+		/// \param Args: Data to update the current element.
 		/// 
-		/// \returns True if successfully updated the element, otherwise false
+		/// \returns True if successfully updated the element, otherwise false.
 		/// 
 		template<typename... Args> requires std::constructible_from<T, Args...>
 		bool Update(SizeType aIndex, Args&&... someArgs);
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element
+		/// \param Index: index to element.
 		/// 
 		NODISC auto Get(SizeType aIndex) -> ValueType&;
 
 		/// Retrieves an element.
 		/// 
-		/// \param Index: index to element
+		/// \param Index: index to element.
 		/// 
 		NODISC auto Get(SizeType aIndex) const -> const ValueType&;
 
-		/// Retrieves the aabb encompassing item
+		/// Retrieves the aabb encompassing item.
 		/// 
 		/// \param Index: index to item.
 		/// 
@@ -117,49 +117,49 @@ namespace CommonUtilities
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Frustum: Frustum to search for overlapping elements
+		/// \param Frustum: Frustum to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the frustum
+		/// \returns List of entities intersecting the frustum.
 		/// 
 		NODISC void Query(const cu::Frustumf& aFrustum, std::vector<SizeType>& outResult) const;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Frustum: Frustum to search for overlapping elements
+		/// \param Frustum: Frustum to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the frustum
+		/// \returns List of entities intersecting the frustum.
 		/// 
 		NODISC void QueryNoDepth(const cu::Frustumf& aFrustum, std::vector<SizeType>& outResult) const;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Frustum: Frustum to search for overlapping elements
+		/// \param Frustum: Frustum to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the frustum
+		/// \returns List of entities intersecting the frustum.
 		/// 
 		NODISC void Query(const cu::Vector3f& aStartPos, const cu::Vector3f& aEndPos, std::vector<SizeType>& outResult) const;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param AABB: Bounding box to search for overlapping elements
+		/// \param AABB: Bounding box to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the aabb
+		/// \returns List of entities intersecting the aabb.
 		/// 
 		NODISC void Query(const cu::AABBf& aAABB, std::vector<SizeType>& outResult) const;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Point: Point to search for overlapping elements
+		/// \param Point: Point to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the point
+		/// \returns List of entities intersecting the point.
 		/// 
 		NODISC void Query(const cu::Spheref& aSphere, std::vector<SizeType>& outResult) const;
 
 		/// Queries the tree for elements.
 		/// 
-		/// \param Point: Point to search for overlapping elements
+		/// \param Point: Point to search for overlapping elements.
 		/// 
-		/// \returns List of entities intersecting the point
+		/// \returns List of entities intersecting the point.
 		/// 
 		NODISC void Query(const cu::Vector3f& aPoint, std::vector<SizeType>& outResult) const;
 
@@ -167,7 +167,7 @@ namespace CommonUtilities
 		/// 
 		void Cleanup();
 
-		/// Clears the tree
+		/// Clears the tree.
 		/// 
 		void Clear();
 

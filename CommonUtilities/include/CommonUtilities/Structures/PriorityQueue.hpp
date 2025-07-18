@@ -191,7 +191,7 @@ namespace CommonUtilities
 	}
 
 	template<typename T, pq::HeapType C>
-	constexpr void PriorityQueue<T, C>::Clear()
+	constexpr void PriorityQueue<T, C>::clear()
 	{
 		myNodes.clear();
 	}

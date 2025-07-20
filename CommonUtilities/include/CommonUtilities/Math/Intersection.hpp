@@ -771,7 +771,7 @@ namespace CommonUtilities
 		const Vector3<T> C = aStart;
 		const Vector3<T> D = aEnd;
 
-		const auto CheckSpheres = 
+		const auto CheckSphereCaps = 
 			[&aCapsule, &A, &B, &C, &D]() -> ISect<T>
 			{
 				ISect<T> isectSphereBaseSeg = IntersectionSphereSegment(Sphere<T>(A, aCapsule.GetRadius()), C, D);
@@ -848,7 +848,7 @@ namespace CommonUtilities
 
 			if (ACdotAB < T(0) || ACdotAB > ABdotAB) // intersects either base or tip from outside
 			{
-				return CheckSpheres();
+				return CheckSphereCaps();
 			}
 			else // completely inside
 			{
@@ -883,7 +883,7 @@ namespace CommonUtilities
 
 		if (entryOutside || exitOutside)
 		{
-			ISect<T> spheresISect = CheckSpheres();
+			ISect<T> spheresISect = CheckSphereCaps();
 
 			if (entryOutside)
 			{
@@ -905,7 +905,7 @@ namespace CommonUtilities
 
 		if (t1 > T(1))
 		{
-			return CheckSpheres();
+			return CheckSphereCaps();
 		}
 		else if (t1 < T(0))
 		{
@@ -921,7 +921,7 @@ namespace CommonUtilities
 				return result;
 			}
 
-			return CheckSpheres();
+			return CheckSphereCaps();
 		}
 
 		t1 = Max(t1, T(0));

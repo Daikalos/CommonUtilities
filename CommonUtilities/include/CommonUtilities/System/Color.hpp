@@ -85,7 +85,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Color Color::FromNormalized(Vector4<T> aNormalized)
 	{
-		aNormalized *= T(255);
+		aNormalized *= T(255.99999);
 
 		return Color(
 			static_cast<std::uint8_t>(Clamp(std::round(aNormalized.x), T(0), T(255))),

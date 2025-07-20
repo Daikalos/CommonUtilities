@@ -135,26 +135,26 @@ namespace CommonUtilities
 	constexpr void Triangle<T>::SetPointA(const Vector3<T>& aPoint)
 	{
 		myPoints[0] = aPoint;
-		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
+		myNormal	= (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 	template<typename T>
 	constexpr void Triangle<T>::SetPointB(const Vector3<T>& aPoint)
 	{
 		myPoints[1] = aPoint;
-		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
+		myNormal	= (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 	template<typename T>
 	constexpr void Triangle<T>::SetPointC(const Vector3<T>& aPoint)
 	{
 		myPoints[2] = aPoint;
-		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
+		myNormal	= (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 
 	template<typename T>
 	constexpr void Triangle<T>::SetPoint(const Vector3<T>& aPoint, std::size_t aIndex)
 	{
-		myPoints[aIndex] = aPoint;
-		myNormal = (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
+		myPoints[aIndex]	= aPoint;
+		myNormal			= (GetPointB() - GetPointA()).Cross(GetPointC() - GetPointA()).GetNormalized();
 	}
 
 	template<typename T>

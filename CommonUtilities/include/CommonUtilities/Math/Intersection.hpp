@@ -338,7 +338,7 @@ namespace CommonUtilities
 		result.intersection = 0.5f * (firstContact + secondContact);
 		result.normal		= (normal == Vector3<T>()) ? Vector3<T>(1, 0, 0) : normal;
 		result.penetration	= -Vector3<T>::Direction(firstContact, secondContact).Dot(normal);
-		result.intersects		= true;
+		result.intersects	= true;
 
 		return result;
 	}
@@ -504,6 +504,7 @@ namespace CommonUtilities
 		result.normal		= (inside ? -normal : normal);
 		result.penetration	= aSphere.GetRadius() - distance;
 		result.intersects	= true;
+		result.inside		= inside;
 
 		return result;
 	}
@@ -542,8 +543,8 @@ namespace CommonUtilities
 			result.intersection = aRay.GetOrigin() + aRay.GetDirection() * tMin;
 			result.enter		= tMin;
 			result.exit			= tMax;
-			result.inside		= inside;
 			result.intersects	= true;
+			result.inside		= inside;
 
 			const Vector3<T> iDir = Vector3<T>::Direction(aAABB.GetCenter(), result.intersection);
 
@@ -577,7 +578,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr ISect<T> IntersectionCapsuleAABB(const Capsule<T>& aCapsule, const AABB<T>& aAABB)
 	{
-		// don't know if this even works, use with causion
+		// don't know if this even works, use with caution
 
 		ISect<T> result{};
 
@@ -619,55 +620,6 @@ namespace CommonUtilities
 		}
 
 		return IntersectionSphereAABB(Sphere<T>(closestPointOnSegment, aCapsule.GetRadius()), aAABB);
-
-		//cu::AABB<T> expandedAABB
-		//{
-		//	aAABB.GetMin() - Vector3<T>(aCapsule.GetRadius()),
-		//	aAABB.GetMin() + Vector3<T>(aCapsule.GetRadius())
-		//};
-
-		//const ISect<T> isectSegAABB = IntersectionAABBSegment(expandedAABB, aCapsule.GetBase(), aCapsule.GetTip());
-		//
-		//if (!isectSegAABB)
-		//	return result;
-
-		//const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
-
-		//const Vector3<T> p1 = isectSegAABB.intersection;
-		//const Vector3<T> p2 = aCapsule.GetBase() + AB * isectSegAABB.exit;
-
-		//int u = 0, v = 0;
-		//if (p1.x < aAABB.min.x) u |= 1;
-		//if (p1.x > aAABB.max.x) v |= 1;
-		//if (p1.y < aAABB.min.y) u |= 2;
-		//if (p1.y > aAABB.max.y) v |= 2;
-		//if (p1.z < aAABB.min.z) u |= 4;
-		//if (p1.z > aAABB.max.z) v |= 4;
-
-		//const auto GetCorner =
-		//	[&aAABB](int aIndex) -> Vector3<T>
-		//	{
-		//		Vector3<T> p;
-		//		p.x = ((aIndex & 1) ? aAABB.GetMax().x, aAABB.GetMin().x);
-		//		p.y = ((aIndex & 2) ? aAABB.GetMax().y, aAABB.GetMin().y);
-		//		p.z = ((aIndex & 4) ? aAABB.GetMax().z, aAABB.GetMin().z);
-		//		return p;
-		//	};
-
-		//int m = u | v;
-
-		//if (m == 7)
-		//{
-
-		//}
-
-		//if ((m & (m - 1)) == 0) // in face region
-		//{
-		//	result.intersection = isectSegAABB.intersection;
-		//	result.normal		= isectSegAABB.normal;
-		//	result.intersects	= isectSegAABB.intersects;
-		//	result.inside		= isectSegAABB.inside;
-		//}
 	}
 
 	template<typename T>
@@ -710,9 +662,23 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& /*aSphere*/, const Plane<T>& /*aPlane*/)
+	constexpr ISect<T> IntersectionSpherePlane(const Sphere<T>& aSphere, const Plane<T>& aPlane)
 	{
-		return ISect<T>();
+		ISect<T> result{};
+
+		T OC		= Vector3<T>::Direction(aPlane.GetOrigin(), aSphere.GetCenter());
+		T OdotC		= OC.Dot(aPlane.GetNormal());
+		T OdotCAbs	= std::abs(OdotC);
+
+		if (OdotCAbs <= aSphere.GetRadius())
+		{
+			result.intersection = aSphere.GetCenter() - aPlane.GetNormal() * OdotC;
+			result.normal		= (OdotC >= T(0)) ? aPlane.GetNormal() : -aPlane.GetNormal();
+			result.penetration	= OdotC;
+			result.intersects	= true;
+		}
+
+		return result;
 	}
 
 	template<typename T>
@@ -731,22 +697,7 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr ISect<T> IntersectionCapsuleRay(const Capsule<T>& aCapsule, const Ray<T>& aRay)
 	{
-		const Vector3<T> AB = Vector3<T>::Direction(aCapsule.GetBase(), aCapsule.GetTip());
-		const Vector3<T> AO = Vector3<T>::Direction(aCapsule.GetBase(), aRay.GetOrigin());
-
-		const T ABdotD	= Vector3<T>::Dot(AB, aRay.GetDirection());
-		const T ABdotAO = Vector3<T>::Dot(AB, AO);
-		const T ABdotAB = Vector3<T>::Dot(AB, AB);
-
-		const T m = ABdotD / ABdotAB;
-		const T n = ABdotAO / ABdotAB;
-
-		const Vector3<T> Q = aRay.GetDirection() - (AB * m);
-		const Vector3<T> R = AO - (AB * n);
-
-		// https://gist.github.com/jdryg/ecde24d34aa0ce2d4d87 ...
-
-		return ISect<T>(); // TODO: implement
+		return IntersectionCapsuleSegment(aCapsule, aRay.GetOrigin(), aRay.GetOrigin() + aRay.GetDirection() * T(9999999999)); // TODO: lazy solution, maybe fix?
 	}
 
 	template<typename T>

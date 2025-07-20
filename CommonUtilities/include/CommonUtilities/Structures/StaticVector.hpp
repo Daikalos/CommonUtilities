@@ -1093,13 +1093,13 @@ namespace CommonUtilities
 	}
 
 	template<typename T, std::size_t LeftCapacity, std::size_t RightCapacity> requires(std::equality_comparable<T>)
-	constexpr bool operator==(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
+	NODISC constexpr bool operator==(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
 	{
 		return std::equal(aLeft.begin(), aLeft.end(), aRight.begin(), aRight.end());
 	}
 
 	template<typename T, std::size_t LeftCapacity, std::size_t RightCapacity> requires(std::equality_comparable<T>)
-	constexpr bool operator!=(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
+	NODISC constexpr bool operator!=(const StaticVector<T, LeftCapacity>& aLeft, const StaticVector<T, RightCapacity>& aRight) noexcept
 	{
 		return !(aLeft == aRight);
 	}

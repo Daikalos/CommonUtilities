@@ -45,7 +45,8 @@ namespace CommonUtilities
 		constexpr explicit Quaternion(const Vector3<T>& aVector, T aAngle);
 		constexpr explicit Quaternion(const Matrix4x4<T>& aMatrix);
 
-		constexpr void Normalize(T aNormLength = T(1));
+		constexpr void Normalize(T aNormLength = T(1)) &;
+		constexpr void NormalizeSafe(T aNormLength = T(1)) &;
 
 		constexpr void RotateWithEuler(const Vector3<T>& aEuler);
 
@@ -59,7 +60,9 @@ namespace CommonUtilities
 		NODISC constexpr T Angle() const;
 		NODISC constexpr T AngleTo(const Quaternion& aRight) const;
 
-		NODISC constexpr Quaternion GetNormalized(T aNormLength = static_cast<T>(1)) const;
+		NODISC constexpr Quaternion GetNormalized(T aNormLength = T(1)) const;
+		NODISC constexpr Quaternion GetNormalizedSafe(T aNormLength = T(1)) const;
+
 		NODISC constexpr Quaternion GetConjugate() const;
 
 		NODISC constexpr Vector3<T> ToEuler() const;
@@ -81,9 +84,6 @@ namespace CommonUtilities
 
 		NODISC constexpr static Quaternion Lerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 		NODISC constexpr static Quaternion Slerp(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
-
-		/// Will ignore shorter slerp paths, if any.
-		/// 
 		NODISC constexpr static Quaternion SlerpLong(const Quaternion& aQuatA, const Quaternion& aQuatB, T aDelta);
 
 		NODISC constexpr static Quaternion AxisAngle(const Vector3<T>& aVector, T aAngle);
@@ -92,6 +92,7 @@ namespace CommonUtilities
 		NODISC constexpr static Vector3<T> RotateVectorByQuaternion(const Quaternion& aQuaternion, const Vector3<T>& aVectorToRotate);
 		NODISC constexpr static Quaternion RotationFromTo(Vector3<T> aFrom, Vector3<T> aTo);
 		NODISC constexpr static Quaternion Difference(Quaternion aQuatA, Quaternion aQuatB);
+		NODISC constexpr static bool Equal(const Quaternion& aLeft, const Quaternion& aRight, T aTolerance = EPSILON_V<T>) requires IsFloatingPointType<T>;
 
 		static const Quaternion IDENTITY;
 	};
@@ -216,9 +217,14 @@ namespace CommonUtilities
 	}
 
 	template<typename T>
-	constexpr void Quaternion<T>::Normalize(T aNormLength)
+	constexpr void Quaternion<T>::Normalize(T aNormLength) &
 	{
 		*this = GetNormalized(aNormLength);
+	}
+	template<typename T>
+	constexpr void Quaternion<T>::NormalizeSafe(T aNormLength) &
+	{
+		*this = GetNormalizedSafe(aNormLength);
 	}
 
 	template<typename T>
@@ -234,6 +240,15 @@ namespace CommonUtilities
 		assert(length > T{} && "Negative or zero length is an error");
 		return (*this) * (aNormLength / length);
 	}
+	template<typename T>
+	constexpr Quaternion<T> Quaternion<T>::GetNormalizedSafe(T aNormLength) const
+	{
+		if (const T lenSqr = LengthSqr(); lenSqr >= EPSILON_V<T> * EPSILON_V<T>)
+			return GetNormalized((T)std::sqrt(lenSqr), aNormLength);
+
+		return *this;
+	}
+
 	template<typename T>
 	constexpr Quaternion<T> Quaternion<T>::GetConjugate() const
 	{
@@ -330,17 +345,17 @@ namespace CommonUtilities
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetRight() const
 	{
-		return Quaternion<T>::RotateVectorByQuaternion(*this, { 1, 0, 0 });;
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 1, 0, 0 });
 	}
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetUp() const 
 	{
-		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 1, 0 });;
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 1, 0 });
 	}
 	template<typename T>
 	constexpr Vector3<T> Quaternion<T>::GetForward() const 
 	{
-		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 0, 1 });;
+		return Quaternion<T>::RotateVectorByQuaternion(*this, { 0, 0, 1 });
 	}
 
 	template<typename T>
@@ -447,7 +462,12 @@ namespace CommonUtilities
 		T cosTheta = aQuatA.Dot(aQuatB);
 
 		// If cosTheta < 0, the interpolation will take the long way around the sphere. 
-		// In this function, that is probably intended.
+		// In this function, that is intended.
+		if (cosTheta > T(0))
+		{
+			cosTheta = -cosTheta;
+			qz = -qz;
+		}
 
 		// Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
 		if (cosTheta >= T(0.999999))
@@ -562,6 +582,17 @@ namespace CommonUtilities
 		return aQuatB * aQuatA.GetInverse();
 	}
 
+	template<typename T>
+	constexpr bool Quaternion<T>::Equal(const Quaternion<T>& aLeft, const Quaternion<T>& aRight, T aTolerance) requires IsFloatingPointType<T>
+	{
+		using CommonUtilities::Equal; // koenig lookup if you wanna know
+
+		return	Equal(aLeft.w, aRight.w, aTolerance) &&
+				Equal(aLeft.x, aRight.x, aTolerance) &&
+				Equal(aLeft.y, aRight.y, aTolerance) &&
+				Equal(aLeft.z, aRight.z, aTolerance);
+	}
+
 	// GLOBAL OPERATORS
 
 	template <typename T>
@@ -646,6 +677,12 @@ namespace CommonUtilities
 	NODISC constexpr bool operator!=(const Quaternion<T>& aLeft, const Quaternion<T>& aRight)
 	{
 		return !(aLeft == aRight);
+	}
+
+	template<typename T>
+	NODISC constexpr bool Equal(const Quaternion<T>& aLeft, const Quaternion<T>& aRight, T aTolerance)
+	{
+		return Quaternion<T>::Equal(aLeft, aRight, aTolerance);
 	}
 
 	template<typename T>

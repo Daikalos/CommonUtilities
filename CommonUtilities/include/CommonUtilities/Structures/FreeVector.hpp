@@ -77,6 +77,10 @@ namespace CommonUtilities
 		/// 
 		NODISC constexpr auto count() const noexcept -> size_type;
 
+		/// \returns Capacity of the container.
+		/// 
+		NODISC constexpr auto capacity() const noexcept -> size_type;
+
 		/// \returns Maximum number of elements allowed.
 		/// 
 		NODISC constexpr auto max_size() const noexcept -> size_type;
@@ -120,7 +124,7 @@ namespace CommonUtilities
 		/// 
 		constexpr void reserve(size_type aCapacity);
 
-		/// Swap two free vectors.
+		/// Swap two FreeVector.
 		/// 
 		constexpr void swap(FreeVector& aOther);
 
@@ -191,6 +195,12 @@ namespace CommonUtilities
 	constexpr auto FreeVector<T, Alloc>::count() const noexcept -> size_type
 	{
 		return myCount;
+	}
+
+	template<class T, class Alloc>
+	constexpr auto FreeVector<T, Alloc>::capacity() const noexcept -> size_type
+	{
+		return static_cast<size_type>(myData.capacity());
 	}
 
 	template<class T, class Alloc>
@@ -303,7 +313,7 @@ namespace CommonUtilities
 	}
 
 	template<class T, class Alloc>
-	constexpr bool operator==(const FreeVector<T, Alloc>& aLeft, const FreeVector<T, Alloc>& aRight) noexcept
+	NODISC constexpr bool operator==(const FreeVector<T, Alloc>& aLeft, const FreeVector<T, Alloc>& aRight) noexcept
 	{
 		return	(aLeft.myData == aRight.myData) &&
 				(aLeft.myFirstFree == aRight.myFirstFree) &&
@@ -311,7 +321,7 @@ namespace CommonUtilities
 	}
 
 	template<class T, class Alloc>
-	constexpr bool operator!=(const FreeVector<T, Alloc>& aLeft, const FreeVector<T, Alloc>& aRight) noexcept
+	NODISC constexpr bool operator!=(const FreeVector<T, Alloc>& aLeft, const FreeVector<T, Alloc>& aRight) noexcept
 	{
 		return !(aLeft == aRight);
 	}

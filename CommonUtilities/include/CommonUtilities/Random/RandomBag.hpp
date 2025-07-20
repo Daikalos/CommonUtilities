@@ -116,6 +116,8 @@ namespace CommonUtilities
 		using container_reverse_iterator		= typename container_type::reverse_iterator;
 		using container_const_reverse_iterator	= typename container_type::const_reverse_iterator;
 
+		constexpr explicit RandomBag(const Alloc& aAllocator);
+
 		constexpr RandomBag() = default;
 		constexpr ~RandomBag() noexcept(std::is_nothrow_destructible_v<T>) = default;
 
@@ -180,10 +182,21 @@ namespace CommonUtilities
 		NODISC constexpr auto crbegin() const noexcept -> const_reverse_iterator;
 		NODISC constexpr auto crend() const noexcept -> const_reverse_iterator;
 
+		constexpr friend bool operator==(RandomBag& aLeft, RandomBag& aRight);
+
+		constexpr friend bool operator==(RandomBag& aLeft, std::vector<T, Alloc>& aRight);
+
 	private:
 		container_type	myItems;
 		int				myTotalWeight = 0;
 	};
+
+	template<class T, class Alloc>
+	constexpr RandomBag<T, Alloc>::RandomBag(const Alloc& aAllocator)
+		: myItems(aAllocator)
+	{
+
+	}
 
 	template<typename T, typename Alloc>
 	constexpr auto RandomBag<T, Alloc>::operator[](size_type aIndex) -> reference
@@ -463,5 +476,46 @@ namespace CommonUtilities
 	constexpr auto RandomBag<T, Alloc>::crend() const noexcept -> const_reverse_iterator 
 	{
 		return rend();
+	}
+
+	// GLOBAL FUNCTIONS
+
+	template<typename T, typename Alloc>
+	constexpr void swap(RandomBag<T, Alloc>& aLeft, RandomBag<T, Alloc>& aRight)
+	{
+		aLeft.swap(aRight);
+	}
+
+	template<typename T, typename Alloc>
+	NODISC constexpr bool operator==(const RandomBag<T, Alloc>& aLeft, const RandomBag<T, Alloc>& aRight) noexcept
+	{
+		return (aLeft.myItems == aRight.myItems);
+	}
+
+	template<typename T, typename Alloc>
+	NODISC constexpr bool operator==(RandomBag<T, Alloc>& aLeft, std::vector<T, Alloc>& aRight)
+	{
+		if (aLeft.myItems.size() != aRight.size())
+			return false;
+
+		for (std::size_t i = 0; i < aLeft.myItems.size(); ++i)
+		{
+			if (aLeft.myItems[i].item != aRight[i])
+				return false;
+		}
+
+		return true;
+	}
+
+	template<typename T, typename Alloc>
+	NODISC constexpr bool operator!=(const RandomBag<T, Alloc>& aLeft, const RandomBag<T, Alloc>& aRight) noexcept
+	{
+		return !(aLeft == aRight);
+	}
+
+	template<typename T, typename Alloc>
+	NODISC constexpr bool operator!=(const RandomBag<T, Alloc>& aLeft, std::vector<T, Alloc>& aRight) noexcept
+	{
+		return !(aLeft == aRight);
 	}
 }

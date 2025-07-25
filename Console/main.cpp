@@ -61,10 +61,11 @@ int main()
 	std::string bits2 = cu::ToBinary(extracted);
 
 	std::wstring testa = L"aoiasdfé 22";
-	std::wstring testa2;
+	std::wstring testa2 = L"daspjdas";
+	std::wstring testa3;
 
 	cu::BinaryWriteSerializer write;
-	write << testa;
+	write << testa << testa2;
 
 	std::vector<int> aBc;
 
@@ -75,7 +76,7 @@ int main()
 		});
 
 	cu::BinaryReadSerializer read(write.GetBuffer());
-	read >> testa2;
+	read >> testa3;
 
 	//std::vector<int, cu::ArenaAlloc<int>> wow;
 	//for (int i = 0; i < 100000; ++i)

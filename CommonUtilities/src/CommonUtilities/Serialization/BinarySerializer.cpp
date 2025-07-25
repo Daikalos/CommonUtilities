@@ -89,7 +89,7 @@ std::size_t SerializeAsBinary<std::wstring>::operator()(SerializerState aState, 
 		assert(wcslen(reinterpret_cast<const wchar_t*>(aInOutBytes.data() + aOffset)) == aInOutData.length()); // make sure it went well
 	}
 
-	return aInOutData.length() + 1;
+	return (aInOutData.length() + 1) * WCHAR_SIZE;
 }
 std::size_t SerializeAsBinary<std::wstring>::operator()(SerializerState aState, const std::wstring& aInOutData, std::vector<std::byte>& aInOutBytes, std::size_t aOffset)
 {
@@ -106,5 +106,5 @@ std::size_t SerializeAsBinary<std::wstring>::operator()(SerializerState aState, 
 		assert(wcslen(reinterpret_cast<const wchar_t*>(aInOutBytes.data() + aOffset)) == aInOutData.length()); // make sure it went well
 	}
 
-	return aInOutData.length() + 1;
+	return (aInOutData.length() + 1) * WCHAR_SIZE;
 }

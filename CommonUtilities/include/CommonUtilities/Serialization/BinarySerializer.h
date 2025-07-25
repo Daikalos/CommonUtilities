@@ -311,8 +311,8 @@ namespace CommonUtilities
 	{
 		const std::size_t prevOffset = aOffset;
 
-		aOffset += cu::SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
-		aOffset += cu::SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
+		aOffset += SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
+		aOffset += SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
 
 		const std::size_t numBytes = aOffset - prevOffset;
 
@@ -324,8 +324,8 @@ namespace CommonUtilities
 	{
 		const std::size_t prevOffset = aOffset;
 
-		aOffset += cu::SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
-		aOffset += cu::SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
+		aOffset += SerializeAsBinary<T>{}(aState, aInOutData.first, aInOutBytes, aOffset);
+		aOffset += SerializeAsBinary<U>{}(aState, aInOutData.second, aInOutBytes, aOffset);
 
 		const std::size_t numBytes = aOffset - prevOffset;
 
@@ -362,7 +362,7 @@ namespace CommonUtilities
 	{
 		if constexpr (I != sizeof...(Ts))
 		{
-			aOffset += cu::SerializeAsBinary<std::tuple_element_t<I, std::tuple<Ts...>>>{}(aState, std::get<I>(aInOutData), aInOutBytes, aOffset);
+			aOffset += SerializeAsBinary<std::tuple_element_t<I, std::tuple<Ts...>>>{}(aState, std::get<I>(aInOutData), aInOutBytes, aOffset);
 			return SerializeTuple<I + 1>(aState, aInOutData, aInOutBytes, aOffset);
 		}
 		else
